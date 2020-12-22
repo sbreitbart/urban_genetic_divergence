@@ -17,15 +17,7 @@ editor_options:
   
   
 Notes:
-  -DC1:
-  -DC2:
-    --Urban and rural plants had significantly different flowering rates! Urban flowered nearly 3.5x more frequently than rural plants. p = 0.0286.
-  -DC3:
-  -DC4:
-  -DC5:
-  -DC6:
-  -DC7:
-    --Total height does not significantly change along gradient, nor along two urban subtransects.
+
 ---
 # Set up notebook
 ## Load packages
@@ -73,6 +65,7 @@ require(ggiraph)
 require(ggiraphExtra)
 library(geosphere)
 library(vctrs)
+library(here)
 ```
 
 ## Add functions
@@ -103,44 +96,44 @@ diagnostic<-function(x){
 ## Import data
 ```{r, import}
 # 2019 data-----
-Distances <- read.csv("~/R_Projects/Chapter2_KSR/CommonGardenExperiment_2019Data/Transect_Milkweed_HaversineData_forjoining.csv", na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",")
+Distances <- read.csv(here("./CommonGardenExperiment_2019Data/raw_data/Transect_Milkweed_HaversineData_forjoining.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",")
 
-data_clean_2019 <- read.csv("~/R_Projects/Chapter2_KSR/CommonGardenExperiment_2019Data/clean_data/clean_data_2019KSR.csv", na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",")
+data_clean_2019 <- read.csv(here("./CommonGardenExperiment_2019Data/clean_data/clean_data_2019KSR.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",")
 
 
 # 2020 data-----
 
 # Heights------
 # at start of season (Data Collection 1)
-heights_1 <- read.csv("~/R_Projects/Chapter2_KSR/CommonGardenExperiment_2020Data/raw_data/Height/2020_Datacollection1_Height.csv",header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
+heights_1 <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Height/2020_Datacollection1_Height.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
 
 # at end of season (DC 7)
-heights_2 <- read.csv("~/R_Projects/Chapter2_KSR/CommonGardenExperiment_2020Data/raw_data/Height/2020_Datacollection7_Height.csv",header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
+heights_2 <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Height/2020_Datacollection7_Height.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
 
 # Weevil damage------
 # at start of season (Data Collection 1)- BINARY
-weevil_1 <- read.csv("~/R_Projects/Chapter2_KSR/CommonGardenExperiment_2020Data/raw_data/Weevil_Damage/2020_Datacollection1_WeevilBinary.csv",header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
+weevil_1 <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Weevil_Damage/2020_Datacollection1_WeevilBinary.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
 
 # at start of season (Data Collection 1)- QUANTITATIVE
-weevil_2 <- read.csv("~/R_Projects/Chapter2_KSR/CommonGardenExperiment_2020Data/raw_data/Weevil_Damage/2020_Datacollection4_WeevilScarLength.csv",header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
+weevil_2 <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Weevil_Damage/2020_Datacollection4_WeevilScarLength.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
 
 # Data about flowering, pollen removal, inflor and follicle count, + other reproductive traits (Data collection 2)-----
-reproductive <- read.csv("~/R_Projects/Chapter2_KSR/CommonGardenExperiment_2020Data/raw_data/Reproductive_Traits/2020_Datacollection2_20200911.csv",header=T, na.strings=c("NO PLANT", "none", "", "NA"), blank.lines.skip=TRUE)
+reproductive <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Reproductive_Traits/2020_Datacollection2_20200911.csv"),header=T, na.strings=c("NO PLANT", "none", "", "NA"), blank.lines.skip=TRUE)
 
 # Herbivory-----
 # in middle of season (DC 3)
-herbivory_1 <- read.csv("~/R_Projects/Chapter2_KSR/CommonGardenExperiment_2020Data/raw_data/Herbivory/2020_Datacollection3_Herbivory.csv",header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
+herbivory_1 <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Herbivory/2020_Datacollection3_Herbivory.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
 
 # towards end of season (DC 7)
-herbivory_2 <- read.csv("~/R_Projects/Chapter2_KSR/CommonGardenExperiment_2020Data/raw_data/Herbivory/2020_Datacollection7_Herbivory.csv",header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
+herbivory_2 <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Herbivory/2020_Datacollection7_Herbivory.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
 
 # Survival-----
 # at end of season (DC 7)
-survival <- read.csv("~/R_Projects/Chapter2_KSR/CommonGardenExperiment_2020Data/raw_data/Survival/2020_Datacollection7_Survival.csv",header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
+survival <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Survival/2020_Datacollection7_Survival.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
 
 # Herbivores-----
 # For both data collections (July & August)
-herbivores <- read.csv("~/R_Projects/Chapter2_KSR/CommonGardenExperiment_2020Data/raw_data/Herbivores/2020_Datacollection_Herbvivores2020_raw_formatted.csv",header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
+herbivores <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Herbivores/2020_Datacollection_Herbvivores2020_raw_formatted.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
 
 ```
 
