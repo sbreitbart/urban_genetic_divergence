@@ -1,0 +1,967 @@
+﻿Row,Column,Block,Population,Family,Replicate,Date_Measured,Comment,Dead_DC1,Dead_DC2,Total_Height_DC1,Total_Height_DC2,Height_Ram1,Height_Ram2,Height_Ram3,Height_Ram4,Height_Ram5,Height_Ram6,Height_Ram7,Height_Ram8,Measurer_DC2,Measurer_DC1,Exposed_rhizomes_first_measurement,Exp_rhiz_binary
+1,1,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NA
+1,2,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NA
+1,3,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NA
+1,4,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NA
+1,5,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NA
+1,6,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NA
+1,7,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NA
+1,8,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NA
+1,9,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NA
+1,10,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NA
+1,11,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NA
+1,12,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NA
+1,13,1,40,3,5,6/19/2019,,no,no,27,100,23,3,15,59,,,,,Sophie,Vanessa,yes,1
+1,14,1,41,2,5,6/19/2019,,no,no,10,22,22,,,,,,,,Sophie,Vanessa,no,0
+1,15,1,14,2,1,6/19/2019,,no,no,25,88,88,,,,,,,,Sophie,Vanessa,no,0
+1,16,1,40,4,5,6/19/2019,,no,yes,5,0,,,,,,,,,Sophie,Vanessa,no,0
+1,17,1,15,5,5,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+1,18,1,49,4,2,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+1,19,1,7,2,2,6/19/2019,,no,no,37,105,37,68,,,,,,,Sophie,Vanessa,yes,1
+1,20,1,29,3,5,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+1,21,1,15,5,2,6/19/2019,,no,no,1,3,2,1,,,,,,,Sophie,Vanessa,yes,1
+1,22,1,3,3,5,6/19/2019,,no,no,98,133,5,31,36,61,,,,,Sophie,Vanessa,yes,1
+1,23,1,68,4,5,6/19/2019,,maybe,no,0,10,5,5,,,,,,,Sophie,Vanessa,no,0
+1,24,2,11,3,5,6/19/2019,,no,no,41,88,79,5,4,,,,,,Sophie,Sophie,no,0
+1,25,2,36,4,2,6/19/2019,,no,no,9,45,29,16,,,,,,,Sophie,Sophie,no,0
+1,26,2,40,3,4,6/19/2019,,maybe,no,0,9,9,,,,,,,,Sophie,Sophie,no,0
+1,27,2,67,3,5,6/19/2019,,no,no,10,20,7,5,8,,,,,,Sophie,Sophie,yes,1
+1,28,2,13,3,4,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+1,29,2,5,2,2,6/19/2019,,no,no,18,55,55,,,,,,,,Sophie,Sophie,yes,1
+1,30,2,31,3,4,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+1,31,2,31,1,1,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+1,32,2,62,5,2,6/19/2019,,no,no,5,53,48,5,,,,,,,Sophie,Sophie,no,0
+1,33,2,13,1,5,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+1,34,2,13,2,3,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+1,35,2,19,3,2,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+1,36,2,30,3,1,6/19/2019,,no,yes,9,0,,,,,,,,,Sophie,Sophie,yes,1
+1,37,2,18,1,2,6/19/2019,,no,no,19,44,33,11,,,,,,,Sophie,Sophie,no,0
+1,38,2,31,5,1,6/19/2019,,no,no,32,81,81,,,,,,,,Sophie,Sophie,no,0
+1,39,2,7,4,2,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+1,40,2,8,1,4,6/19/2019,,no,no,40,65,65,,,,,,,,Sophie,Sophie,no,0
+1,41,2,23,1,5,6/19/2019,,no,no,10,43,43,,,,,,,,Sophie,Sophie,no,0
+1,42,2,4,1,3,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+1,43,2,36,3,3,6/19/2019,,no,no,56,103,42,61,,,,,,,Sophie,Sophie,no,0
+1,44,2,30,4,5,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+1,45,2,62,2,1,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+1,46,2,6,2,4,6/19/2019,,maybe,yes,8,0,,,,,,,,,Sophie,Sophie,yes,1
+2,1,1,79,4,5,6/19/2019,,no,no,57,106,52,54,,,,,,,Sophie,Vanessa,no,0
+2,2,1,6,2,5,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+2,3,1,68,1,4,6/19/2019,,no,no,26,91,32,59,,,,,,,Sophie,Vanessa,yes,1
+2,4,1,39,2,1,6/19/2019,,maybe,no,0,7,7,,,,,,,,Sophie,Vanessa,no,0
+2,5,1,49,3,5,6/19/2019,,no,no,47,113,9,10,11,31,27,6,19,,Sophie,Vanessa,yes,1
+2,6,1,14,5,2,6/19/2019,,no,no,46,97,25,72,,,,,,,Sophie,Vanessa,yes,1
+2,7,1,56,3,4,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+2,8,1,27,2,5,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+2,9,1,21,3,4,6/19/2019,,no,no,3,46,46,,,,,,,,Sophie,Vanessa,no,0
+2,10,1,14,2,2,6/19/2019,,no,no,36,87,55,20,12,,,,,,Sophie,Vanessa,yes,1
+2,11,1,72,2,1,6/19/2019,,no,no,6,58,58,,,,,,,,Sophie,Vanessa,yes,1
+2,12,1,2,1,1,6/19/2019,,no,no,48,168,45,4,4,4,61,50,,,Sophie,Vanessa,yes,1
+2,13,1,36,2,4,6/19/2019,,no,no,20,58,11,31,3,13,,,,,Sophie,Vanessa,yes,1
+2,14,1,35,2,1,6/19/2019,,no,no,50,122,116,6,,,,,,,Sophie,Vanessa,no,0
+2,15,1,15,3,4,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+2,16,1,40,2,2,6/19/2019,,no,no,5,8,8,,,,,,,,Sophie,Vanessa,no,0
+2,17,1,46,1,5,6/19/2019,,no,no,41,123,123,,,,,,,,Sophie,Vanessa,no,0
+2,18,1,6,4,2,6/19/2019,,no,no,15,43,43,,,,,,,,Sophie,Vanessa,no,0
+2,19,1,9,1,3,6/19/2019,yellow,no,no,7,11,11,,,,,,,,Sophie,Vanessa,no,0
+2,20,1,18,5,1,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+2,21,1,79,1,4,6/19/2019,,no,no,61,111,17,81,13,,,,,,Sophie,Vanessa,no,0
+2,22,1,77,1,5,6/19/2019,,no,no,2,13,11,2,,,,,,,Sophie,Vanessa,yes,1
+2,23,1,31,4,2,6/19/2019,,no,no,95,328,45,141,142,,,,,,Sophie,Vanessa,no,0
+2,24,2,47,2,3,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+2,25,2,68,5,3,6/19/2019,,no,no,5,36,36,,,,,,,,Sophie,Sophie,no,0
+2,26,2,28,1,4,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+2,27,2,14,3,5,6/19/2019,,nothing there,no,0,49,41,8,,,,,,,Sophie,Sophie,,0
+2,28,2,2,5,5,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+2,29,2,42,2,2,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+2,30,2,41,1,1,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+2,31,2,68,3,3,6/19/2019,,no,no,25,60,60,,,,,,,,Sophie,Sophie,no,0
+2,32,2,14,4,2,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+2,33,2,72,1,2,6/19/2019,,no,no,5,26,26,,,,,,,,Sophie,Sophie,no,0
+2,34,2,2,4,3,6/19/2019,,no,no,27,62,62,,,,,,,,Sophie,Sophie,yes,1
+2,35,2,4,1,2,6/19/2019,,no,no,13,56,20,36,,,,,,,Sophie,Sophie,yes,1
+2,36,2,49,4,3,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+2,37,2,17,2,4,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+2,38,2,6,1,3,6/19/2019,,no,no,51,101,53,48,,,,,,,Sophie,Sophie,no,0
+2,39,2,77,2,2,6/19/2019,,no,no,71,113,113,,,,,,,,Sophie,Sophie,no,0
+2,40,2,47,2,4,6/19/2019,,no,no,20,63,63,,,,,,,,Sophie,Sophie,no,0
+2,41,2,64,1,3,6/19/2019,,no,no,8,87,55,28,4,,,,,,Sophie,Sophie,no,0
+2,42,2,57,5,1,6/19/2019,,maybe,no,0,0,,,,,,,,,Sophie,Sophie,no,0
+2,43,2,57,1,4,6/19/2019,,maybe,no,0,0,,,,,,,,,Sophie,Sophie,no,0
+2,44,2,15,2,3,6/19/2019,,no,no,35,92,92,,,,,,,,Sophie,Sophie,no,0
+2,45,2,79,5,2,6/19/2019,,no,no,16,57,15,42,,,,,,,Sophie,Sophie,no,0
+2,46,2,17,5,4,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+3,1,1,12,5,1,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Vanessa,,0
+3,2,1,68,3,4,6/19/2019,,no,no,43,119,92,27,,,,,,,Sophie,Vanessa,no,0
+3,3,1,14,5,1,6/19/2019,,no,no,61,162,55,50,57,,,,,,Sophie,Vanessa,no,0
+3,4,1,9,2,2,6/19/2019,,no,no,55,247,97,150,,,,,,,Sophie,Vanessa,no,0
+3,5,1,13,5,5,6/19/2019,,no,no,37,117,79,38,,,,,,,Sophie,Vanessa,yes,1
+3,6,1,1,1,2,6/19/2019,,no,no,16,33,33,,,,,,,,Sophie,Vanessa,no,0
+3,7,1,68,3,5,6/19/2019,,no,no,77,211,25,101,85,,,,,,Sophie,Vanessa,no,0
+3,8,1,15,4,1,6/19/2019,,no,no,10,79,56,23,,,,,,,Sophie,Vanessa,no,0
+3,9,1,4,3,5,6/19/2019,,no,no,18,75,75,,,,,,,,Sophie,Vanessa,no,0
+3,10,1,2,5,3,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+3,11,1,49,3,4,6/19/2019,,no,no,27,65,9,42,4,4,3,3,,,Sophie,Vanessa,yes,1
+3,12,1,15,2,4,6/19/2019,,no,no,101,193,51,55,13,74,,,,,Sophie,Vanessa,no,0
+3,13,1,39,2,2,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+3,14,1,2,2,5,6/19/2019,,no,no,27,80,80,,,,,,,,Sophie,Vanessa,no,0
+3,15,1,64,3,2,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+3,16,1,31,2,2,6/19/2019,,no,no,70,268,73,76,110,9,,,,,Sophie,Vanessa,no,0
+3,17,1,8,2,5,6/19/2019,,no,no,14,66,7,59,,,,,,,Sophie,Vanessa,yes,1
+3,18,1,17,1,1,6/19/2019,,no,no,31,108,108,,,,,,,,Sophie,Vanessa,no,0
+3,19,1,18,1,4,6/19/2019,,no,no,5,55,14,41,,,,,,,Sophie,Vanessa,yes,1
+3,20,1,36,2,2,6/19/2019,,no,no,7,27,14,8,5,,,,,,Sophie,Vanessa,yes,1
+3,21,1,7,3,1,6/19/2019,,no,no,27,66,15,51,,,,,,,Sophie,Vanessa,yes,1
+3,22,1,69,2,1,6/19/2019,,no,no,29,65,65,,,,,,,,Sophie,Vanessa,no,0
+3,23,1,30,5,4,6/19/2019,,no,no,10,67,9,6,21,31,,,,,Sophie,Vanessa,yes,1
+3,24,2,4,4,5,6/19/2019,,no,no,82,231,44,87,100,,,,,,Sophie,Sophie,yes,1
+3,25,2,16,3,4,6/19/2019,,maybe,yes,3,0,,,,,,,,,Sophie,Sophie,yes,1
+3,26,2,62,3,1,6/19/2019,,maybe,yes,7,0,,,,,,,,,Sophie,Sophie,yes,1
+3,27,2,39,4,2,6/19/2019,,no,no,199,377,132,58,80,107,,,,,Sophie,Sophie,yes,1
+3,28,2,77,3,2,6/19/2019,,no,no,30,70,30,36,4,,,,,,Sophie,Sophie,no,0
+3,29,2,4,4,4,6/19/2019,,maybe,no,0,18,18,,,,,,,,Sophie,Sophie,no,0
+3,30,2,72,1,3,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+3,31,2,56,4,4,6/19/2019,,no,no,47,97,90,7,,,,,,,Sophie,Sophie,no,0
+3,32,2,36,3,5,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+3,33,2,21,2,5,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+3,34,2,31,1,3,6/19/2019,,maybe,no,0,12,12,,,,,,,,Sophie,Sophie,no,0
+3,35,2,77,5,5,6/19/2019,,no,no,11,31,31,,,,,,,,Sophie,Sophie,no,0
+3,36,2,72,2,3,6/19/2019,,no,no,51,148,79,19,38,12,,,,,Sophie,Sophie,yes,1
+3,37,2,56,2,1,6/19/2019,,no,no,16,29,29,,,,,,,,Sophie,Sophie,no,0
+3,38,2,46,2,3,6/19/2019,,no,no,51,128,80,48,,,,,,,Sophie,Sophie,no,0
+3,39,2,49,5,3,6/19/2019,,no,no,22,113,73,40,,,,,,,Sophie,Sophie,no,0
+3,40,2,12,5,3,6/19/2019,,no,no,7,48,35,7,6,,,,,,Sophie,Sophie,no,0
+3,41,2,67,4,3,6/19/2019,,maybe,no,0,26,26,,,,,,,,Sophie,Sophie,no,0
+3,42,2,46,2,2,6/19/2019,,no,no,61,239,87,152,,,,,,,Sophie,Sophie,no,0
+3,43,2,40,5,2,6/19/2019,,no,no,13,115,115,,,,,,,,Sophie,Sophie,yes,1
+3,44,2,67,2,5,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+3,45,2,1,1,5,6/19/2019,,no,no,100,281,9,78,61,88,45,,,,Sophie,Sophie,no,0
+3,46,2,19,1,1,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+4,1,1,21,4,1,6/19/2019,,no,no,66,203,73,63,67,,,,,,Sophie,Vanessa,no,0
+4,2,1,79,2,1,6/19/2019,,maybe,no,0,52,37,15,,,,,,,Sophie,Vanessa,no,0
+4,3,1,12,4,1,6/19/2019,,no,no,19,48,48,,,,,,,,Sophie,Vanessa,no,0
+4,4,1,47,3,5,6/19/2019,,maybe,no,0,12,7,5,,,,,,,Sophie,Vanessa,no,0
+4,5,1,47,1,1,6/19/2019,,no,no,32,101,101,,,,,,,,Sophie,Vanessa,no,0
+4,6,1,21,2,3,6/19/2019,,no,no,26,84,10,47,27,,,,,,Sophie,Vanessa,no,0
+4,7,1,1,2,1,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+4,8,1,1,2,2,6/19/2019,,no,no,7,7,7,,,,,,,,Sophie,Vanessa,yes,1
+4,9,1,30,4,3,6/19/2019,,no,yes,9,0,,,,,,,,,Sophie,Vanessa,yes,1
+4,10,1,61,5,1,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+4,11,1,1,4,1,6/19/2019,,maybe,no,0,16,16,,,,,,,,Sophie,Vanessa,no,0
+4,12,1,6,4,5,6/19/2019,,no,yes,23,0,,,,,,,,,Sophie,Vanessa,no,0
+4,13,1,17,4,4,6/19/2019,,no,no,16,17,17,,,,,,,,Sophie,Vanessa,no,0
+4,14,1,79,4,4,6/19/2019,,no,no,61,109,36,16,8,11,17,21,,,Sophie,Vanessa,yes,1
+4,15,1,36,2,1,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+4,16,1,4,1,1,6/19/2019,,no,no,95,188,93,51,44,,,,,,Sophie,Vanessa,no,0
+4,17,1,56,4,2,6/19/2019,,no,no,34,112,75,18,15,4,,,,,Sophie,Vanessa,yes,1
+4,18,1,67,1,4,6/19/2019,,no,no,23,80,80,,,,,,,,Sophie,Vanessa,no,0
+4,19,1,2,3,1,6/19/2019,,no,no,9,19,19,,,,,,,,Sophie,Vanessa,no,0
+4,20,1,8,1,1,6/19/2019,,no,no,44,109,109,,,,,,,,Sophie,Vanessa,no,0
+4,21,1,72,5,5,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+4,22,1,12,4,4,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+4,23,1,74,2,5,6/19/2019,,no,no,87,198,112,86,,,,,,,Sophie,Vanessa,no,0
+4,24,2,77,1,4,6/19/2019,,no,no,55,116,35,81,,,,,,,Sophie,Sophie,no,0
+4,25,2,15,2,5,6/19/2019,,no,no,65,92,47,45,,,,,,,Sophie,Sophie,no,0
+4,26,2,56,2,3,6/19/2019,,no,no,34,86,86,,,,,,,,Sophie,Sophie,no,0
+4,27,2,32,1,2,6/19/2019,,no,no,41,90,90,,,,,,,,Sophie,Sophie,no,0
+4,28,2,68,4,3,6/19/2019,,no,no,28,116,116,,,,,,,,Sophie,Sophie,no,0
+4,29,2,23,1,2,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+4,30,2,4,1,4,6/19/2019,,no,no,8,25,25,,,,,,,,Sophie,Sophie,no,0
+4,31,2,6,3,1,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+4,32,2,72,5,3,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+4,33,2,4,3,2,6/19/2019,,no,no,15,59,59,,,,,,,,Sophie,Sophie,no,0
+4,34,2,51,4,3,6/19/2019,,no,no,20,84,84,,,,,,,,Sophie,Sophie,no,0
+4,35,2,20,3,2,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+4,36,2,7,5,5,6/19/2019,,no,no,22,142,56,86,,,,,,,Sophie,Sophie,no,0
+4,37,2,36,5,3,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+4,38,2,40,5,3,6/19/2019,,no,no,48,120,39,51,17,7,6,,,,Sophie,Sophie,yes,1
+4,39,2,18,1,1,6/19/2019,,no,no,28,102,102,,,,,,,,Sophie,Sophie,no,0
+4,40,2,36,1,4,6/19/2019,,no,no,188,379,153,71,123,15,17,,,,Sophie,Sophie,yes,1
+4,41,2,36,1,5,6/19/2019,,no,no,55,148,26,115,7,,,,,,Sophie,Sophie,no,0
+4,42,2,2,2,2,6/19/2019,,no,no,52,133,133,,,,,,,,Sophie,Sophie,no,0
+4,43,2,1,3,5,6/19/2019,,no,yes,22,0,,,,,,,,,Sophie,Sophie,yes,1
+4,44,2,61,4,4,6/19/2019,,no,no,22,55,33,20,2,,,,,,Sophie,Sophie,yes,1
+4,45,2,18,5,2,6/19/2019,,maybe,no,0,6,6,,,,,,,,Sophie,Sophie,no,0
+4,46,2,46,4,1,6/19/2019,,no,no,50,121,121,,,,,,,,Sophie,Sophie,no,0
+5,1,1,77,1,1,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+5,2,1,21,5,3,6/19/2019,,no,no,34,80,80,,,,,,,,Sophie,Vanessa,no,0
+5,3,1,19,3,5,6/19/2019,,maybe,no,0,26,26,,,,,,,,Sophie,Vanessa,no,0
+5,4,1,56,3,3,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Vanessa,,0
+5,5,1,32,1,3,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+5,6,1,8,3,5,6/19/2019,,no,no,63,272,150,122,,,,,,,Sophie,Vanessa,no,0
+5,7,1,11,1,2,6/19/2019,,no,no,24,67,64,3,,,,,,,Sophie,Vanessa,no,0
+5,8,1,4,5,2,6/19/2019,,no,no,61,146,101,45,,,,,,,Sophie,Vanessa,yes,1
+5,9,1,28,1,3,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Vanessa,,0
+5,10,1,29,1,3,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+5,11,1,3,2,4,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+5,12,1,23,1,5,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+5,13,1,21,3,1,6/19/2019,,no,no,45,90,86,4,,,,,,,Sophie,Vanessa,no,0
+5,14,1,49,2,3,6/19/2019,,no,no,138,276,42,35,75,82,42,,,,Sophie,Vanessa,no,0
+5,15,1,72,3,5,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Vanessa,,0
+5,16,1,47,1,5,6/19/2019,,no,no,30,82,76,6,,,,,,,Sophie,Vanessa,yes,1
+5,17,1,47,3,3,6/19/2019,,no,no,22,121,42,6,73,,,,,,Sophie,Vanessa,no,0
+5,18,1,46,5,3,6/19/2019,,no,no,34,105,105,,,,,,,,Sophie,Vanessa,yes,1
+5,19,1,21,3,5,6/19/2019,,no,no,8,204,66,73,65,,,,,,Sophie,Vanessa,no,0
+5,20,1,9,1,5,6/19/2019,,no,no,26,105,105,,,,,,,,Sophie,Vanessa,no,0
+5,21,1,47,4,5,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Vanessa,no,0
+5,22,1,13,1,4,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Vanessa,,0
+5,23,2,3,4,3,6/19/2019,,maybe,no,5,3,3,,,,,,,,Sophie,Vanessa,yes,1
+5,24,2,62,1,1,6/19/2019,,no,no,91,286,83,86,117,,,,,,Sophie,Sophie,yes,1
+5,25,2,12,5,2,6/19/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+5,26,2,74,2,1,6/19/2019,,no,no,67,90,27,63,,,,,,,Sophie,Sophie,no,0
+5,27,2,30,5,2,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+5,28,2,79,1,3,6/19/2019,,no,no,19,38,38,,,,,,,,Sophie,Sophie,yes,1
+5,29,2,17,1,3,6/19/2019,,no,no,42,51,51,,,,,,,,Sophie,Sophie,no,0
+5,30,2,6,5,4,6/19/2019,,no,no,62,86,86,,,,,,,,Sophie,Sophie,no,0
+5,31,2,77,4,2,6/19/2019,,no,no,65,144,63,81,,,,,,,Sophie,Sophie,yes,1
+5,32,2,27,5,3,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+5,33,2,40,3,1,6/19/2019,,no,no,4,12,5,5,2,,,,,,Sophie,Sophie,no,0
+5,34,2,67,5,1,6/19/2019,,no,no,61,208,92,116,,,,,,,Sophie,Sophie,no,0
+5,35,2,17,5,1,6/19/2019,,no,no,35,102,102,,,,,,,,Sophie,Sophie,no,0
+5,36,2,41,1,5,6/19/2019,,no,no,24,46,46,,,,,,,,Sophie,Sophie,no,0
+5,37,2,8,3,3,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+5,38,2,72,4,3,6/19/2019,,no,no,6,42,25,17,,,,,,,Sophie,Sophie,no,0
+5,39,2,77,5,1,6/19/2019,,no,no,74,127,11,116,,,,,,,Sophie,Sophie,no,0
+5,40,2,14,1,4,6/19/2019,,nothing there,no,0,17,17,,,,,,,,Sophie,Sophie,,0
+5,41,2,2,1,5,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+5,42,2,39,5,3,6/19/2019,it hasn't rained for a few days so plants may be raising their leaves higher than after a rain so they may be taller than usual,no,no,56,181,118,63,,,,,,,Sophie,Sophie,no,0
+5,43,2,36,3,4,6/19/2019,,no,no,54,94,83,6,5,,,,,,Sophie,Sophie,yes,1
+5,44,2,69,1,4,6/19/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+5,45,2,64,1,2,6/19/2019,,maybe,no,0,45,45,,,,,,,,Sophie,Sophie,no,0
+5,46,2,29,5,4,6/19/2019,,no,no,23,17,17,,,,,,,,Sophie,Sophie,no,0
+6,1,1,36,4,4,6/18/2019,,no,no,11,45,45,,,,,,,,Sophie,Sophie,no,0
+6,2,1,61,4,5,6/18/2019,,no,no,96,212,40,45,7,43,77,,,,Sophie,Sophie,no,0
+6,3,1,2,2,3,6/18/2019,,no,no,53,138,61,55,22,,,,,,Sophie,Sophie,yes,1
+6,4,1,27,3,3,6/18/2019,,no,no,23,20,20,,,,,,,,Sophie,Sophie,no,0
+6,5,1,11,2,4,6/18/2019,,no,no,12,93,43,50,,,,,,,Sophie,Sophie,no,0
+6,6,1,12,1,4,6/18/2019,,no,no,21,24,24,,,,,,,,Sophie,Sophie,no,0
+6,7,1,57,5,3,6/18/2019,,no,no,49,43,43,,,,,,,,Sophie,Sophie,no,0
+6,8,1,7,5,3,6/18/2019,,no,no,94,123,34,54,19,10,6,,,,Sophie,Sophie,no,0
+6,9,1,21,4,4,6/18/2019,,no,no,15,232,8,62,77,85,,,,,Sophie,Sophie,no,0
+6,10,1,49,4,5,6/18/2019,,maybe,no,0,40,40,,,,,,,,Sophie,Sophie,no,0
+6,11,1,40,5,5,6/18/2019,,no,no,50,22,16,2,2,2,,,,,Sophie,Sophie,no,0
+6,12,1,7,5,2,6/18/2019,,no,no,52,94,94,,,,,,,,Sophie,Sophie,yes,1
+6,13,1,46,5,1,6/18/2019,,no,no,24,85,18,20,47,,,,,,Sophie,Sophie,yes,1
+6,14,1,36,2,5,6/18/2019,,maybe,no,0,54,8,46,,,,,,,Sophie,Sophie,no,0
+6,15,1,26,1,2,6/18/2019,,no,yes,24,0,,,,,,,,,Sophie,Sophie,yes,1
+6,16,1,51,2,1,6/18/2019,,maybe,no,0,60,5,55,,,,,,,Sophie,Sophie,no,0
+6,17,1,46,1,3,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+6,18,1,6,2,1,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+6,19,1,19,5,2,6/18/2019,,no,no,29,53,46,7,,,,,,,Sophie,Sophie,no,0
+6,20,1,3,5,1,6/18/2019,,no,no,29,45,9,36,,,,,,,Sophie,Sophie,yes,1
+6,21,1,29,4,5,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+6,22,1,79,4,1,6/18/2019,,no,no,46,187,75,112,,,,,,,Sophie,Sophie,no,0
+6,23,2,21,2,2,6/18/2019,,no,no,14,56,52,4,,,,,,,Sophie,Sophie,no,0
+6,24,2,77,4,5,6/18/2019,,no,no,21,68,68,,,,,,,,Sophie,Sophie,no,0
+6,25,2,72,2,4,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+6,26,2,1,1,3,6/18/2019,,no,no,30,69,69,,,,,,,,Sophie,Sophie,no,0
+6,27,2,5,5,3,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+6,28,2,36,1,1,6/18/2019,,no,no,56,69,69,,,,,,,,Sophie,Sophie,no,0
+6,29,2,62,3,4,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+6,30,2,12,5,4,6/18/2019,,no,no,50,80,80,,,,,,,,Sophie,Sophie,no,0
+6,31,2,18,4,3,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+6,32,2,18,2,1,6/18/2019,,no,no,51,107,62,45,,,,,,,Sophie,Sophie,no,0
+6,33,2,14,1,1,6/18/2019,,no,no,63,108,34,74,,,,,,,Sophie,Sophie,no,0
+6,34,2,57,5,2,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+6,35,2,1,3,4,6/18/2019,,no,no,135,235,87,55,18,75,,,,,Sophie,Sophie,no,0
+6,36,2,74,2,3,6/18/2019,,no,no,71,140,70,70,,,,,,,Sophie,Sophie,no,0
+6,37,2,17,3,2,6/18/2019,,no,no,37,43,43,,,,,,,,Sophie,Sophie,no,0
+6,38,2,1,4,5,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+6,39,2,62,4,1,6/18/2019,,no,no,51,141,80,61,,,,,,,Sophie,Sophie,no,0
+6,40,2,17,2,1,6/18/2019,,no,no,88,177,76,101,,,,,,,Sophie,Sophie,no,0
+6,41,2,42,1,2,6/18/2019,,no,no,16,11,5,6,,,,,,,Sophie,Sophie,yes,1
+6,42,2,4,3,4,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+6,43,2,79,2,5,6/18/2019,,no,no,32,77,77,,,,,,,,Sophie,Sophie,no,0
+6,44,2,17,5,2,6/18/2019,,no,no,42,120,100,20,,,,,,,Sophie,Sophie,no,0
+6,45,2,18,2,4,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+6,46,2,7,4,3,6/18/2019,,no,no,19,66,21,42,3,,,,,,Sophie,Sophie,yes,1
+7,1,1,3,2,5,6/18/2019,,no,no,17,112,76,36,,,,,,,Sophie,Sophie,no,0
+7,2,1,6,2,3,6/18/2019,,no,no,28,78,78,,,,,,,,Sophie,Sophie,yes,1
+7,3,1,7,1,3,6/18/2019,,no,no,28,91,91,,,,,,,,Sophie,Sophie,no,0
+7,4,1,47,2,2,6/18/2019,,no,no,7,9,9,,,,,,,,Sophie,Sophie,yes,1
+7,5,1,62,1,5,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+7,6,1,64,2,3,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+7,7,1,67,2,1,6/18/2019,,no,no,45,146,146,,,,,,,,Sophie,Sophie,no,0
+7,8,1,5,5,4,6/18/2019,,no,no,36,116,116,,,,,,,,Sophie,Sophie,no,0
+7,9,1,39,2,4,6/18/2019,,no,no,18,60,60,,,,,,,,Sophie,Sophie,no,0
+7,10,1,79,3,4,6/18/2019,,no,no,37,96,50,46,,,,,,,Sophie,Sophie,no,0
+7,11,1,47,4,4,6/18/2019,,no,no,51,198,83,115,,,,,,,Sophie,Sophie,no,0
+7,12,1,4,4,2,6/18/2019,,no,no,34,131,131,,,,,,,,Sophie,Sophie,no,0
+7,13,1,19,2,2,6/18/2019,,maybe,no,0,8,8,,,,,,,,Sophie,Sophie,no,0
+7,14,1,46,5,5,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+7,15,1,7,4,4,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+7,16,1,68,1,5,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+7,17,1,5,2,4,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+7,18,1,5,3,2,6/18/2019,,maybe,no,0,21,10,11,,,,,,,Sophie,Sophie,no,0
+7,19,1,29,1,2,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+7,20,1,79,3,3,6/18/2019,,no,no,23,29,29,,,,,,,,Sophie,Sophie,no,0
+7,21,1,35,3,2,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,yes,1
+7,22,1,35,4,4,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,yes,1
+7,23,2,14,4,4,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+7,24,2,7,2,3,6/18/2019,,no,no,88,158,59,99,,,,,,,Sophie,Sophie,yes,1
+7,25,2,12,2,4,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+7,26,2,67,1,5,6/18/2019,,no,no,20,89,14,75,,,,,,,Sophie,Sophie,no,0
+7,27,2,30,2,4,6/18/2019,,no,no,95,164,54,40,70,,,,,,Sophie,Sophie,yes,1
+7,28,2,8,2,2,6/18/2019,,no,no,26,112,112,,,,,,,,Sophie,Sophie,no,0
+7,29,2,39,2,5,6/18/2019,,maybe,no,0,6,6,,,,,,,,Sophie,Sophie,no,0
+7,30,2,56,3,5,6/18/2019,,no,no,55,97,22,75,,,,,,,Sophie,Sophie,no,0
+7,31,2,62,2,3,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+7,32,2,5,1,4,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+7,33,2,12,2,2,6/18/2019,,no,no,116,329,117,40,91,81,,,,,Sophie,Sophie,no,0
+7,34,2,57,4,5,6/18/2019,,maybe,no,0,12,9,3,,,,,,,Sophie,Sophie,no,0
+7,35,2,62,3,5,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+7,36,2,79,5,1,6/18/2019,,no,no,8,38,38,,,,,,,,Sophie,Sophie,no,0
+7,37,2,1,1,1,6/18/2019,,no,no,30,89,63,26,,,,,,,Sophie,Sophie,no,0
+7,38,2,64,3,4,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+7,39,2,19,5,3,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+7,40,2,30,4,4,6/18/2019,,no,no,11,49,49,,,,,,,,Sophie,Sophie,no,0
+7,41,2,16,3,5,6/18/2019,,no,no,55,107,13,94,,,,,,,Sophie,Sophie,no,0
+7,42,2,13,3,1,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+7,43,2,27,4,3,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+7,44,2,11,2,5,6/18/2019,,no,no,41,79,79,,,,,,,,Sophie,Sophie,yes,1
+7,45,2,2,5,4,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+7,46,2,29,5,2,6/18/2019,,no,no,33,104,104,,,,,,,,Sophie,Sophie,no,0
+8,1,1,9,2,1,6/18/2019,,no,no,22,107,31,76,,,,,,,Sophie,Sophie,no,0
+8,2,1,57,1,2,6/18/2019,,no,no,55,123,64,59,,,,,,,Sophie,Sophie,no,0
+8,3,1,67,3,2,6/18/2019,,maybe,no,0,10,10,,,,,,,,Sophie,Sophie,no,0
+8,4,1,21,5,1,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+8,5,1,13,5,4,6/18/2019,,no,no,71,95,10,43,7,35,,,,,Sophie,Sophie,no,0
+8,6,1,74,1,3,6/18/2019,,no,no,107,201,10,26,75,90,,,,,Sophie,Sophie,yes,1
+8,7,1,17,1,4,6/18/2019,,no,no,49,102,102,,,,,,,,Sophie,Sophie,no,0
+8,8,1,15,4,4,6/18/2019,,no,no,15,34,34,,,,,,,,Sophie,Sophie,no,0
+8,9,1,7,3,2,6/18/2019,,no,no,46,108,78,30,,,,,,,Sophie,Sophie,yes,1
+8,10,1,12,3,2,6/18/2019,,no,no,8,86,86,,,,,,,,Sophie,Sophie,no,0
+8,11,1,11,4,5,6/18/2019,,no,no,60,108,108,,,,,,,,Sophie,Sophie,no,0
+8,12,1,20,5,1,6/18/2019,,no,no,97,234,81,67,86,,,,,,Sophie,Sophie,no,0
+8,13,1,72,4,5,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+8,14,1,62,2,5,6/18/2019,,maybe,no,0,47,31,16,,,,,,,Sophie,Sophie,no,0
+8,15,1,15,1,5,6/18/2019,,no,no,79,166,102,64,,,,,,,Sophie,Sophie,no,0
+8,16,1,14,3,2,6/18/2019,,no,no,24,55,55,,,,,,,,Sophie,Sophie,no,0
+8,17,1,57,3,2,6/18/2019,,no,no,32,78,78,,,,,,,,Sophie,Sophie,no,0
+8,18,1,62,1,2,6/18/2019,,no,no,7,49,49,,,,,,,,Sophie,Sophie,no,0
+8,19,1,47,5,1,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+8,20,1,15,5,1,6/18/2019,,no,no,8,22,22,,,,,,,,Sophie,Sophie,no,0
+8,21,1,16,2,1,6/18/2019,,no,no,38,129,29,18,29,10,10,22,11,,Sophie,Sophie,no,0
+8,22,1,29,4,3,6/18/2019,,no,no,0,36,9,8,19,,,,,,Sophie,Sophie,no,0
+8,23,2,68,5,2,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+8,24,2,4,2,2,6/18/2019,,no,yes,7,0,,,,,,,,,Sophie,Sophie,yes,1
+8,25,2,46,2,5,6/18/2019,,no,no,8,68,41,27,,,,,,,Sophie,Sophie,no,0
+8,26,2,68,4,1,6/18/2019,,no,no,52,86,12,24,50,,,,,,Sophie,Sophie,no,0
+8,27,2,6,3,5,6/18/2019,,no,no,45,89,21,68,,,,,,,Sophie,Sophie,yes,1
+8,28,2,7,1,2,6/18/2019,,maybe,no,0,30,30,,,,,,,,Sophie,Sophie,no,0
+8,29,2,35,3,5,6/18/2019,,maybe,no,0,129,82,42,5,,,,,,Sophie,Sophie,no,0
+8,30,2,39,3,3,6/18/2019,,no,no,40,144,52,92,,,,,,,Sophie,Sophie,no,0
+8,31,2,62,4,4,6/18/2019,,no,yes,60,0,,,,,,,,,Sophie,Sophie,no,0
+8,32,2,4,3,3,6/18/2019,,no,no,25,81,81,,,,,,,,Sophie,Sophie,no,0
+8,33,2,21,1,2,6/18/2019,,no,no,16,40,40,,,,,,,,Sophie,Sophie,yes,1
+8,34,2,77,4,3,6/18/2019,,no,yes,5,0,,,,,,,,,Sophie,Sophie,yes,1
+8,35,2,17,4,2,6/18/2019,,no,no,42,101,39,2,8,16,36,,,,Sophie,Sophie,yes,1
+8,36,2,27,5,2,6/18/2019,,no,no,7,34,30,2,2,,,,,,Sophie,Sophie,no,0
+8,37,2,26,1,1,6/18/2019,,no,no,44,30,30,,,,,,,,Sophie,Sophie,no,0
+8,38,2,17,3,1,6/18/2019,,no,no,30,109,36,73,,,,,,,Sophie,Sophie,no,0
+8,39,2,5,4,1,6/18/2019,,no,no,81,203,93,110,,,,,,,Sophie,Sophie,no,0
+8,40,2,39,3,5,6/18/2019,,nothing there,no,0,24,20,4,,,,,,,Sophie,Sophie,,0
+8,41,2,64,2,2,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+8,42,2,64,3,3,6/18/2019,plants dehydrated/wilting,no,no,57,163,30,37,47,49,,,,,Sophie,Sophie,no,0
+8,43,2,39,4,1,6/18/2019,,no,no,34,187,96,91,,,,,,,Sophie,Sophie,no,0
+8,44,2,62,1,3,6/18/2019,,no,no,55,115,115,,,,,,,,Sophie,Sophie,no,0
+8,45,2,67,2,2,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+8,46,2,67,5,3,6/18/2019,,no,no,11,72,55,17,,,,,,,Sophie,Sophie,no,0
+9,1,1,28,1,5,6/18/2019,,no,no,11,36,36,,,,,,,,Sophie,Sophie,no,0
+9,2,1,4,3,1,6/18/2019,,no,no,22,81,81,,,,,,,,Sophie,Sophie,no,0
+9,3,1,12,3,1,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+9,4,1,27,4,1,6/18/2019,,no,no,18,64,50,14,,,,,,,Sophie,Sophie,no,0
+9,5,1,1,4,3,6/18/2019,,no,no,7,16,16,,,,,,,,Sophie,Sophie,no,0
+9,6,1,49,5,5,6/18/2019,,no,no,47,234,11,69,66,88,,,,,Sophie,Sophie,no,0
+9,7,1,39,3,4,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+9,8,1,77,3,1,6/18/2019,,no,no,15,91,91,,,,,,,,Sophie,Sophie,no,0
+9,9,1,3,2,2,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+9,10,1,69,2,4,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+9,11,1,17,2,5,6/18/2019,,maybe,no,0,22,22,,,,,,,,Sophie,Sophie,no,0
+9,12,1,51,4,2,6/18/2019,,no,no,95,197,91,41,60,3,2,,,,Sophie,Sophie,no,0
+9,13,1,79,1,1,6/18/2019,,no,no,52,161,49,47,65,,,,,,Sophie,Sophie,no,0
+9,14,1,5,5,5,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+9,15,1,13,5,2,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+9,16,1,30,5,3,6/18/2019,,no,no,82,213,36,49,48,41,39,,,,Sophie,Sophie,no,0
+9,17,1,39,3,2,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+9,18,1,20,1,2,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+9,19,1,72,3,1,6/18/2019,,no,no,147,330,101,99,82,48,,,,,Sophie,Sophie,no,0
+9,20,1,7,3,3,6/18/2019,,no,no,56,77,77,,,,,,,,Sophie,Sophie,no,0
+9,21,1,79,4,2,6/18/2019,,no,no,55,157,83,74,,,,,,,Sophie,Sophie,no,0
+9,22,1,15,3,5,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+9,23,2,45,2,1,6/18/2019,,no,yes,17,0,,,,,,,,,Sophie,Sophie,yes,1
+9,24,2,27,4,5,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+9,25,2,64,5,3,6/18/2019,,no,no,9,41,41,,,,,,,,Sophie,Sophie,no,0
+9,26,2,77,1,2,6/18/2019,,no,no,22,65,48,17,,,,,,,Sophie,Sophie,no,0
+9,27,2,64,2,4,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+9,28,2,7,3,5,6/18/2019,,no,no,42,67,58,9,,,,,,,Sophie,Sophie,no,0
+9,29,2,35,4,1,6/18/2019,,maybe,no,0,20,20,,,,,,,,Sophie,Sophie,no,0
+9,30,2,36,4,1,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+9,31,2,45,2,4,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+9,32,2,15,3,1,6/18/2019,,no,no,26,72,13,59,,,,,,,Sophie,Sophie,no,0
+9,33,2,77,5,3,6/18/2019,,no,no,49,105,15,90,,,,,,,Sophie,Sophie,no,0
+9,34,2,36,3,1,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+9,35,2,49,3,1,6/18/2019,,no,no,16,44,38,6,,,,,,,Sophie,Sophie,no,0
+9,36,2,39,5,2,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+9,37,2,6,4,4,6/18/2019,,no,no,55,133,21,112,,,,,,,Sophie,Sophie,no,0
+9,38,2,57,5,4,6/18/2019,,no,no,14,14,14,,,,,,,,Sophie,Sophie,no,0
+9,39,2,15,5,4,6/18/2019,,no,no,37,112,47,65,,,,,,,Sophie,Sophie,no,0
+9,40,2,62,5,5,6/18/2019,,no,no,21,138,20,50,9,19,40,,,,Sophie,Sophie,no,0
+9,41,2,17,3,5,6/18/2019,,no,no,30,76,76,,,,,,,,Sophie,Sophie,no,0
+9,42,2,47,5,4,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+9,43,2,35,2,2,6/18/2019,,no,no,14,66,66,,,,,,,,Sophie,Sophie,no,0
+9,44,2,5,2,3,6/18/2019,,no,no,18,63,63,,,,,,,,Sophie,Sophie,no,0
+9,45,2,72,3,4,6/18/2019,,no,no,37,89,13,51,25,,,,,,Sophie,Sophie,no,0
+9,46,2,1,1,4,6/18/2019,,no,no,64,95,95,,,,,,,,Sophie,Sophie,no,0
+10,1,1,14,4,5,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+10,2,1,62,4,5,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+10,3,1,79,3,1,6/18/2019,,no,no,17,65,65,,,,,,,,Sophie,Sophie,no,0
+10,4,1,56,4,1,6/18/2019,,no,no,40,78,70,8,,,,,,,Sophie,Sophie,no,0
+10,5,1,1,5,2,6/18/2019,,no,no,49,178,100,78,,,,,,,Sophie,Sophie,no,0
+10,6,1,62,4,2,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+10,7,1,7,3,4,6/18/2019,,no,no,3,19,16,3,,,,,,,Sophie,Sophie,no,0
+10,8,1,42,1,1,6/18/2019,,no,no,107,224,20,40,66,98,,,,,Sophie,Sophie,no,0
+10,9,1,69,1,2,6/18/2019,,no,no,50,124,62,62,,,,,,,Sophie,Sophie,no,0
+10,10,1,67,4,5,6/18/2019,,maybe,no,0,14,14,,,,,,,,Sophie,Sophie,no,0
+10,11,1,16,3,3,6/18/2019,,no,no,15,47,47,,,,,,,,Sophie,Sophie,no,0
+10,12,1,72,4,4,6/18/2019,,no,no,2,11,11,,,,,,,,Sophie,Sophie,no,0
+10,13,1,12,3,4,6/18/2019,,no,no,6,44,44,,,,,,,,Sophie,Sophie,no,0
+10,14,1,42,2,1,6/18/2019,,no,no,9,21,21,,,,,,,,Sophie,Sophie,no,0
+10,15,1,61,3,3,6/18/2019,,no,no,20,76,76,,,,,,,,Sophie,Sophie,no,0
+10,16,1,23,1,4,6/18/2019,,no,no,31,72,56,16,,,,,,,Sophie,Sophie,no,0
+10,17,1,17,5,3,6/18/2019,,no,no,50,192,27,52,71,42,,,,,Sophie,Sophie,no,0
+10,18,1,72,1,5,6/18/2019,,no,no,38,145,96,20,29,,,,,,Sophie,Sophie,no,0
+10,19,1,9,2,4,6/18/2019,,no,no,36,72,72,,,,,,,,Sophie,Sophie,no,0
+10,20,1,31,2,1,6/18/2019,,no,no,29,77,36,31,10,,,,,,Sophie,Sophie,no,0
+10,21,1,47,5,2,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+10,22,1,46,1,1,6/18/2019,,no,no,55,135,135,,,,,,,,Sophie,Sophie,no,0
+10,23,1,31,3,3,6/18/2019,,no,no,3,21,21,,,,,,,,Sophie,Sophie,no,0
+10,24,2,5,3,5,6/18/2019,,no,no,51,102,10,92,,,,,,,Sophie,Sophie,no,0
+10,25,2,14,1,3,6/18/2019,,no,no,96,268,14,5,71,41,69,68,,,Sophie,Sophie,no,0
+10,26,2,3,5,4,6/18/2019,,no,no,31,87,87,,,,,,,,Sophie,Sophie,no,0
+10,27,2,30,3,3,6/18/2019,,no,no,73,181,86,95,,,,,,,Sophie,Sophie,no,0
+10,28,2,61,4,1,6/18/2019,,no,no,66,123,101,22,,,,,,,Sophie,Sophie,yes,1
+10,29,2,31,5,2,6/18/2019,,maybe,no,0,18,18,,,,,,,,Sophie,Sophie,no,0
+10,30,2,41,2,4,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+10,31,2,47,4,1,6/18/2019,,no,no,15,8,3,3,2,,,,,,Sophie,Sophie,yes,1
+10,32,2,16,1,2,6/18/2019,,no,yes,3,0,,,,,,,,,Sophie,Sophie,no,0
+10,33,2,28,4,5,6/18/2019,,no,no,26,49,4,45,,,,,,,Sophie,Sophie,no,0
+10,34,2,5,5,2,6/18/2019,,no,no,52,102,7,95,,,,,,,Sophie,Sophie,no,0
+10,35,2,56,2,4,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+10,36,2,72,5,1,6/18/2019,,no,no,19,101,27,58,16,,,,,,Sophie,Sophie,no,0
+10,37,2,57,1,1,6/18/2019,,no,no,33,62,62,,,,,,,,Sophie,Sophie,no,0
+10,38,2,57,1,3,6/18/2019,,no,no,91,182,56,60,66,,,,,,Sophie,Sophie,no,0
+10,39,2,79,3,5,6/18/2019,,maybe,no,0,9,4,5,,,,,,,Sophie,Sophie,no,0
+10,40,2,68,4,4,6/18/2019,,no,no,24,44,36,8,,,,,,,Sophie,Sophie,no,0
+10,41,4,15,2,1,6/17/2019,,no,no,65,231,84,69,78,,,,,,Sophie,Sophie,no,0
+10,42,4,5,4,4,6/17/2019,,no,no,5,37,28,9,,,,,,,Sophie,Sophie,no,0
+10,43,4,32,1,4,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+10,44,4,61,1,1,6/17/2019,,no,no,21,46,10,21,2,2,2,3,3,3,Sophie,Sophie,yes,1
+10,45,4,31,3,2,6/17/2019,,no,no,6,25,25,,,,,,,,Sophie,Sophie,no,0
+10,46,4,47,4,2,6/17/2019,,no,no,7,30,30,,,,,,,,Sophie,Sophie,no,0
+11,1,1,64,1,1,6/18/2019,,no,no,17,36,36,,,,,,,,Sophie,Sophie,no,0
+11,2,1,3,4,1,6/18/2019,,no,no,18,106,31,27,48,,,,,,Sophie,Sophie,no,0
+11,3,1,11,1,3,6/18/2019,,no,no,42,113,51,62,,,,,,,Sophie,Sophie,no,0
+11,4,1,11,3,2,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+11,5,1,18,3,1,6/18/2019,,no,no,70,171,46,115,10,,,,,,Sophie,Sophie,no,0
+11,6,1,29,4,1,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+11,7,1,35,5,3,6/18/2019,,no,no,42,102,102,,,,,,,,Sophie,Sophie,no,0
+11,8,1,64,1,4,6/18/2019,,no,no,53,138,40,63,35,,,,,,Sophie,Sophie,no,0
+11,9,1,2,1,2,6/18/2019,,no,no,12,12,4,4,4,,,,,,Sophie,Sophie,yes,1
+11,10,1,64,5,1,6/18/2019,,no,no,26,108,52,56,,,,,,,Sophie,Sophie,no,0
+11,11,1,36,1,2,6/18/2019,,no,no,40,81,81,,,,,,,,Sophie,Sophie,no,0
+11,12,1,67,5,5,6/18/2019,,no,no,107,102,14,39,49,,,,,,Sophie,Sophie,no,0
+11,13,1,61,1,5,6/18/2019,,no,no,23,74,74,,,,,,,,Sophie,Sophie,no,0
+11,14,1,74,2,2,6/18/2019,,no,no,49,71,71,,,,,,,,Sophie,Sophie,no,0
+11,15,1,68,2,5,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+11,16,1,29,2,2,6/18/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+11,17,1,40,5,1,6/18/2019,,no,no,28,109,27,82,,,,,,,Sophie,Sophie,no,0
+11,18,1,1,2,4,6/18/2019,,no,no,13,21,21,,,,,,,,Sophie,Sophie,no,0
+11,19,1,74,1,5,6/18/2019,,no,no,45,99,99,,,,,,,,Sophie,Sophie,no,0
+11,20,1,2,4,5,6/18/2019,was covered by dirt clod,no,no,12,42,18,24,,,,,,,Sophie,Sophie,no,0
+11,21,1,4,2,4,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+11,22,1,9,1,2,6/18/2019,,no,no,6,30,30,,,,,,,,Sophie,Sophie,no,0
+11,23,1,39,5,1,6/18/2019,,no,no,60,138,46,92,,,,,,,Sophie,Sophie,no,0
+11,24,4,57,2,1,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+11,25,4,17,4,1,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+11,26,4,67,1,3,6/17/2019,,no,no,43,82,82,,,,,,,,Sophie,Sophie,no,0
+11,27,4,42,2,4,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+11,28,4,12,2,1,6/17/2019,,maybe,no,0,15,15,,,,,,,,Sophie,Sophie,no,0
+11,29,4,30,2,1,6/17/2019,,no,no,7,42,42,,,,,,,,Sophie,Sophie,no,0
+11,30,4,4,4,1,6/17/2019,,no,no,21,92,92,,,,,,,,Sophie,Sophie,no,0
+11,31,4,17,4,5,6/17/2019,,no,no,69,104,34,35,35,,,,,,Sophie,Sophie,no,0
+11,32,4,35,4,3,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+11,33,4,68,5,5,6/17/2019,,no,no,12,21,10,6,3,2,,,,,Sophie,Sophie,yes,1
+11,34,4,67,1,2,6/17/2019,,no,no,145,205,89,63,53,,,,,,Sophie,Sophie,no,0
+11,35,4,40,3,2,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+11,36,4,68,5,4,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+11,37,4,4,2,1,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+11,38,4,28,1,2,6/17/2019,,maybe,no,0,16,16,,,,,,,,Sophie,Sophie,no,0
+11,39,4,26,1,4,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+11,40,4,6,3,4,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+11,41,4,16,1,1,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+11,42,4,42,1,4,6/17/2019,,no,no,11,19,19,,,,,,,,Sophie,Sophie,no,0
+11,43,4,41,1,4,6/17/2019,,no,no,44,90,90,,,,,,,,Sophie,Sophie,no,0
+11,44,4,21,3,3,6/17/2019,,no,no,50,96,96,,,,,,,,Sophie,Sophie,no,0
+11,45,4,35,3,3,6/17/2019,,no,no,3,7,7,,,,,,,,Sophie,Sophie,yes,1
+11,46,4,31,1,5,6/17/2019,,no,no,16,51,51,,,,,,,,Sophie,Sophie,no,0
+12,1,3,7,1,1,6/16/2019,,no,yes,3,0,,,,,,,,,Sophie,Sophie,yes,1
+12,2,3,1,3,2,6/16/2019,,maybe,no,0,19,19,,,,,,,,Sophie,Sophie,no,0
+12,3,3,47,4,3,6/16/2019,,no,no,3,18,4,14,,,,,,,Sophie,Sophie,yes,1
+12,4,3,61,1,3,6/16/2019,,no,no,14,41,41,,,,,,,,Sophie,Sophie,yes,1
+12,5,3,46,1,2,6/16/2019,,no,no,24,66,66,,,,,,,,Sophie,Sophie,no,0
+12,6,3,79,2,2,6/16/2019,,no,no,60,225,27,51,41,49,57,,,,Sophie,Sophie,no,0
+12,7,3,9,1,4,6/16/2019,,no,no,25,65,65,,,,,,,,Sophie,Sophie,no,0
+12,8,3,32,1,1,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+12,9,3,7,2,4,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+12,10,3,72,5,4,6/16/2019,,no,yes,3,0,,,,,,,,,Sophie,Sophie,no,0
+12,11,3,47,1,4,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+12,12,3,62,2,2,6/16/2019,,no,no,19,63,63,,,,,,,,Sophie,Sophie,no,0
+12,13,3,46,3,2,6/16/2019,,no,yes,1,0,,,,,,,,,Sophie,Sophie,no,0
+12,14,3,41,2,3,6/16/2019,,no,no,5,10,10,,,,,,,,Sophie,Sophie,yes,1
+12,15,3,67,4,1,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+12,16,3,67,4,2,6/16/2019,,maybe,no,0,45,45,,,,,,,,Sophie,Sophie,no,0
+12,17,3,8,1,2,6/16/2019,,no,no,16,111,59,52,,,,,,,Sophie,Sophie,no,0
+12,18,3,36,5,2,6/16/2019,,no,no,75,134,73,61,,,,,,,Sophie,Sophie,no,0
+12,19,3,57,5,5,6/16/2019,,no,no,40,116,28,9,10,33,36,,,,Sophie,Sophie,no,0
+12,20,3,68,2,3,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,yes,1
+12,21,3,23,1,1,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+12,22,1,21,4,3,6/18/2019,,no,no,6,27,27,,,,,,,,Sophie,Sophie,no,0
+12,23,1,6,1,1,6/18/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+12,24,4,17,3,4,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+12,25,4,57,4,4,6/17/2019,,no,no,32,89,31,49,9,,,,,,Sophie,Sophie,no,0
+12,26,4,29,5,3,6/17/2019,,no,no,6,9,9,,,,,,,,Sophie,Sophie,no,0
+12,27,4,6,1,2,6/17/2019,,no,yes,6,0,,,,,,,,,Sophie,Sophie,no,0
+12,28,4,17,2,3,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+12,29,4,41,1,3,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+12,30,4,14,4,3,6/17/2019,,no,no,24,62,62,,,,,,,,Sophie,Sophie,no,0
+12,31,4,51,4,1,6/17/2019,,no,no,66,202,95,96,11,,,,,,Sophie,Sophie,yes,1
+12,32,4,28,4,4,6/17/2019,,no,no,33,52,52,,,,,,,,Sophie,Sophie,no,0
+12,33,4,35,5,2,6/17/2019,,no,no,15,44,44,,,,,,,,Sophie,Sophie,no,0
+12,34,4,61,1,2,6/17/2019,,no,no,8,12,5,4,3,,,,,,Sophie,Sophie,no,0
+12,35,4,72,3,3,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+12,36,4,14,4,1,6/17/2019,,no,no,33,71,71,,,,,,,,Sophie,Sophie,no,0
+12,37,4,40,4,1,6/17/2019,,no,no,89,158,66,84,8,,,,,,Sophie,Sophie,no,0
+12,38,4,57,2,5,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+12,39,4,68,1,1,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+12,40,4,45,2,2,6/17/2019,,no,no,45,97,36,61,,,,,,,Sophie,Sophie,no,0
+12,41,4,13,1,2,6/17/2019,,maybe,no,0,2,2,,,,,,,,Sophie,Sophie,yes,1
+12,42,4,47,5,3,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+12,43,4,19,1,5,6/17/2019,,no,no,6,21,19,2,,,,,,,Sophie,Sophie,yes,1
+12,44,4,64,5,2,6/17/2019,,no,no,10,41,41,,,,,,,,Sophie,Sophie,yes,1
+12,45,4,21,5,5,6/17/2019,,no,no,33,74,74,,,,,,,,Sophie,Sophie,no,0
+12,46,4,21,5,4,6/17/2019,,no,no,32,101,40,61,,,,,,,Sophie,Sophie,no,0
+13,1,3,72,2,2,6/16/2019,,no,no,21,63,45,18,,,,,,,Sophie,Sophie,yes,1
+13,2,3,39,3,1,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+13,3,3,13,1,3,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+13,4,3,41,1,4,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+13,5,3,77,2,5,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+13,6,3,35,5,5,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+13,7,3,20,2,2,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+13,8,3,42,2,5,6/16/2019,,no,no,48,111,111,,,,,,,,Sophie,Sophie,no,0
+13,9,3,77,4,4,6/16/2019,,no,no,32,109,109,,,,,,,,Sophie,Sophie,no,0
+13,10,3,49,1,1,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+13,11,3,49,2,4,6/16/2019,,nothing there,no,0,42,42,,,,,,,,Sophie,Sophie,,0
+13,12,3,13,3,3,6/16/2019,,no,no,5,4,4,,,,,,,,Sophie,Sophie,no,0
+13,13,3,17,1,2,6/16/2019,,no,no,9,38,20,11,3,2,2,,,,Sophie,Sophie,yes,1
+13,14,3,61,5,3,6/16/2019,,no,no,7,71,71,,,,,,,,Sophie,Sophie,no,0
+13,15,3,62,1,4,6/16/2019,,maybe,no,0,9,9,,,,,,,,Sophie,Sophie,no,0
+13,16,3,61,4,3,6/16/2019,,maybe,no,0,29,16,13,,,,,,,Sophie,Sophie,no,0
+13,17,3,14,1,2,6/16/2019,,no,no,54,141,31,44,30,36,,,,,Sophie,Sophie,no,0
+13,18,3,14,5,5,6/16/2019,,no,no,41,119,119,,,,,,,,Sophie,Sophie,no,0
+13,19,3,72,3,2,6/16/2019,,maybe,no,0,13,13,,,,,,,,Sophie,Sophie,no,0
+13,20,3,20,5,5,6/16/2019,,no,no,14,30,15,15,,,,,,,Sophie,Sophie,no,0
+13,21,3,19,3,1,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+13,22,3,46,3,3,6/16/2019,,no,no,18,32,27,2,3,,,,,,Sophie,Sophie,yes,1
+13,23,3,56,4,3,6/16/2019,,no,no,17,64,22,42,,,,,,,Sophie,Sophie,yes,1
+13,24,3,11,2,3,6/16/2019,,no,no,6,6,6,,,,,,,,Sophie,Sophie,yes,1
+13,25,3,62,2,4,6/16/2019,,no,no,76,137,22,71,44,,,,,,Sophie,Sophie,no,0
+13,26,4,49,1,2,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+13,27,4,1,2,3,6/17/2019,,no,no,5,33,5,28,,,,,,,Sophie,Sophie,no,0
+13,28,4,11,1,1,6/17/2019,,no,yes,7,0,,,,,,,,,Sophie,Sophie,yes,1
+13,29,4,12,1,2,6/17/2019,,no,no,24,92,92,,,,,,,,Sophie,Sophie,no,0
+13,30,4,7,5,1,6/17/2019,,no,no,90,131,64,56,11,,,,,,Sophie,Sophie,yes,1
+13,31,4,1,2,5,6/17/2019,,no,no,56,117,59,39,19,,,,,,Sophie,Sophie,no,0
+13,32,4,61,3,4,6/17/2019,,no,no,49,129,33,36,57,3,,,,,Sophie,Sophie,no,0
+13,33,4,57,1,5,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+13,34,4,35,2,4,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+13,35,4,6,5,3,6/17/2019,,no,no,45,103,35,55,7,6,,,,,Sophie,Sophie,yes,1
+13,36,4,79,4,3,6/17/2019,,no,no,90,188,91,66,31,,,,,,Sophie,Sophie,yes,1
+13,37,4,39,5,4,6/17/2019,,no,no,64,115,30,85,,,,,,,Sophie,Sophie,no,0
+13,38,4,9,2,5,6/17/2019,,no,no,70,126,116,10,,,,,,,Sophie,Sophie,no,0
+13,39,4,5,1,3,6/17/2019,,nothing there,no,0,16,16,,,,,,,,Sophie,Sophie,,0
+13,40,4,56,2,2,6/17/2019,,no,no,24,91,91,,,,,,,,Sophie,Sophie,no,0
+13,41,4,12,1,3,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+13,42,4,19,5,5,6/17/2019,,no,no,46,82,54,9,19,,,,,,Sophie,Sophie,no,0
+13,43,4,1,3,1,6/17/2019,,no,no,43,79,79,,,,,,,,Sophie,Sophie,yes,1
+13,44,4,27,3,2,6/17/2019,,no,no,14,62,62,,,,,,,,Sophie,Sophie,yes,1
+13,45,4,19,5,1,6/17/2019,,no,no,119,165,126,7,32,,,,,,Sophie,Sophie,yes,1
+13,46,4,68,1,2,6/17/2019,,no,no,51,200,46,66,80,8,,,,,Sophie,Sophie,yes,1
+14,1,3,57,2,3,6/16/2019,,no,no,33,93,57,36,,,,,,,Sophie,Sophie,yes,1
+14,2,3,21,4,5,6/16/2019,,no,no,59,170,45,40,85,,,,,,Sophie,Sophie,no,0
+14,3,3,21,1,3,6/16/2019,,no,no,85,174,78,96,,,,,,,Sophie,Sophie,yes,1
+14,4,3,11,1,4,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+14,5,3,41,2,1,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+14,6,3,4,1,5,6/16/2019,,no,no,20,60,60,,,,,,,,Sophie,Sophie,yes,1
+14,7,3,21,1,4,6/16/2019,,no,no,55,136,69,20,47,,,,,,Sophie,Sophie,yes,1
+14,8,3,7,1,5,6/16/2019,,no,no,26,65,15,50,,,,,,,Sophie,Sophie,yes,1
+14,9,3,19,3,4,6/16/2019,,maybe,no,0,9,9,,,,,,,,Sophie,Sophie,no,0
+14,10,3,57,3,1,6/16/2019,,no,no,47,138,58,63,12,2,3,,,,Sophie,Sophie,yes,1
+14,11,3,74,2,4,6/16/2019,,no,no,27,51,17,34,,,,,,,Sophie,Sophie,yes,1
+14,12,3,35,3,1,6/16/2019,,no,no,29,71,71,,,,,,,,Sophie,Sophie,yes,1
+14,13,3,29,2,1,6/16/2019,,no,no,4,20,20,,,,,,,,Sophie,Sophie,no,0
+14,14,3,13,2,4,6/16/2019,,no,no,25,59,20,39,,,,,,,Sophie,Sophie,yes,1
+14,15,3,77,5,4,6/16/2019,,no,no,37,96,51,45,,,,,,,Sophie,Sophie,no,0
+14,16,3,35,2,5,6/16/2019,,maybe,no,0,20,20,,,,,,,,Sophie,Sophie,yes,1
+14,17,3,47,3,2,6/16/2019,,no,no,7,7,7,,,,,,,,Sophie,Sophie,no,0
+14,18,3,62,4,3,6/16/2019,,no,no,48,86,65,15,6,,,,,,Sophie,Sophie,yes,1
+14,19,3,30,4,2,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+14,20,3,31,4,3,6/16/2019,,no,yes,5,0,,,,,,,,,Sophie,Sophie,yes,1
+14,21,3,46,4,2,6/16/2019,,no,no,19,4,2,2,,,,,,,Sophie,Sophie,yes,1
+14,22,3,49,3,3,6/16/2019,,no,no,39,59,35,10,10,4,,,,,Sophie,Sophie,yes,1
+14,23,3,49,4,1,6/16/2019,,no,no,32,59,59,,,,,,,,Sophie,Sophie,yes,1
+14,24,3,31,4,4,6/16/2019,,no,no,21,53,15,8,10,20,,,,,Sophie,Sophie,yes,1
+14,25,3,40,4,2,6/16/2019,,no,no,14,35,35,,,,,,,,Sophie,Sophie,no,0
+14,26,4,13,2,5,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,yes,1
+14,27,4,6,5,2,6/17/2019,,no,no,89,183,47,65,45,26,,,,,Sophie,Sophie,no,0
+14,28,4,46,5,2,6/17/2019,,no,no,15,56,43,13,,,,,,,Sophie,Sophie,no,0
+14,29,4,19,1,2,6/17/2019,,no,no,44,171,28,80,43,20,,,,,Sophie,Sophie,yes,1
+14,30,4,47,2,1,6/17/2019,,maybe,no,0,4,4,,,,,,,,Sophie,Sophie,no,0
+14,31,4,2,1,3,6/17/2019,,no,no,28,110,110,,,,,,,,Sophie,Sophie,no,0
+14,32,4,12,2,3,6/17/2019,,no,no,83,170,21,67,82,,,,,,Sophie,Sophie,no,0
+14,33,4,13,3,5,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+14,34,4,5,4,3,6/17/2019,,no,no,108,147,81,31,35,,,,,,Sophie,Sophie,no,0
+14,35,4,79,2,4,6/17/2019,,no,no,33,23,8,7,3,3,2,,,,Sophie,Sophie,yes,1
+14,36,4,41,2,2,6/17/2019,,no,no,9,16,6,10,,,,,,,Sophie,Sophie,yes,1
+14,37,4,35,4,2,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+14,38,4,17,1,5,6/17/2019,,no,no,60,95,28,67,,,,,,,Sophie,Sophie,no,0
+14,39,4,13,2,1,6/17/2019,,no,no,18,48,43,3,2,,,,,,Sophie,Sophie,yes,1
+14,40,4,12,4,2,6/17/2019,slightly diseased/evidence of herbivory,no,no,45,105,73,32,,,,,,,Sophie,Sophie,no,0
+14,41,4,19,2,4,6/17/2019,,maybe,yes,5,0,,,,,,,,,Sophie,Sophie,yes,1
+14,42,4,39,1,5,6/17/2019,,no,no,33,71,71,,,,,,,,Sophie,Sophie,no,0
+14,43,4,41,1,2,6/17/2019,,no,no,73,149,71,63,15,,,,,,Sophie,Sophie,no,0
+14,44,4,20,2,1,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,yes,1
+14,45,4,5,1,5,6/17/2019,,no,no,83,135,51,62,22,,,,,,Sophie,Sophie,yes,1
+14,46,4,35,5,1,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+15,1,3,4,5,4,6/16/2019,,no,no,47,139,65,74,,,,,,,Sophie,Sophie,no,0
+15,2,3,29,3,4,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+15,3,3,41,1,3,6/16/2019,,no,no,22,47,36,11,,,,,,,Sophie,Sophie,yes,1
+15,4,3,27,4,2,6/16/2019,,no,yes,8,0,,,,,,,,,Sophie,Sophie,yes,1
+15,5,3,46,4,3,6/16/2019,,no,no,56,110,72,38,,,,,,,Sophie,Sophie,yes,1
+15,6,3,31,2,3,6/16/2019,,no,yes,6,0,,,,,,,,,Sophie,Sophie,yes,1
+15,7,3,17,4,3,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+15,8,3,57,2,4,6/16/2019,,no,no,81,295,118,80,97,,,,,,Sophie,Sophie,no,0
+15,9,3,18,3,3,6/16/2019,,no,no,42,77,39,28,10,,,,,,Sophie,Sophie,yes,1
+15,10,3,8,3,2,6/16/2019,,no,yes,10,0,,,,,,,,,Sophie,Sophie,yes,1
+15,11,3,68,2,2,6/16/2019,,no,yes,4,0,,,,,,,,,Sophie,Sophie,yes,1
+15,12,3,68,4,2,6/16/2019,,no,no,5,15,15,,,,,,,,Sophie,Sophie,no,0
+15,13,3,27,3,4,6/16/2019,,no,no,54,117,117,,,,,,,,Sophie,Sophie,no,0
+15,14,3,17,3,3,6/16/2019,,no,no,33,49,49,,,,,,,,Sophie,Sophie,no,0
+15,15,3,14,3,3,6/16/2019,,no,no,20,58,58,,,,,,,,Sophie,Sophie,no,0
+15,16,3,1,5,5,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+15,17,3,57,3,4,6/16/2019,,no,no,60,164,63,63,38,,,,,,Sophie,Sophie,no,0
+15,18,3,21,2,1,6/16/2019,,no,no,18,52,52,,,,,,,,Sophie,Sophie,no,0
+15,19,3,20,3,4,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+15,20,3,27,3,1,6/16/2019,,no,no,1,7,5,2,,,,,,,Sophie,Sophie,no,0
+15,21,3,67,2,4,6/16/2019,,no,no,1,12,8,4,,,,,,,Sophie,Sophie,no,0
+15,22,3,7,4,1,6/16/2019,,no,no,6,2,2,,,,,,,,Sophie,Sophie,no,0
+15,23,3,27,5,4,6/16/2019,,no,no,32,71,71,,,,,,,,Sophie,Sophie,no,0
+15,24,3,68,3,1,6/16/2019,,no,no,44,90,90,,,,,,,,Sophie,Sophie,no,0
+15,25,3,74,1,2,6/16/2019,,no,no,25,90,90,,,,,,,,Sophie,Sophie,no,0
+15,26,4,29,3,1,6/17/2019,,no,no,19,32,32,,,,,,,,Sophie,Sophie,no,0
+15,27,4,29,2,4,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+15,28,4,15,3,3,6/17/2019,,no,yes,5,0,,,,,,,,,Sophie,Sophie,yes,1
+15,29,4,14,2,5,6/17/2019,,no,no,39,43,43,,,,,,,,Sophie,Sophie,no,0
+15,30,4,31,3,5,6/17/2019,,no,no,6,16,16,,,,,,,,Sophie,Sophie,no,0
+15,31,4,69,1,1,6/17/2019,,maybe,yes,2,0,,,,,,,,,Sophie,Sophie,yes,1
+15,32,4,77,2,3,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+15,33,4,4,5,1,6/17/2019,,no,no,55,133,83,28,22,,,,,,Sophie,Sophie,no,0
+15,34,4,11,3,4,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+15,35,4,57,4,1,6/17/2019,,no,no,59,120,52,68,,,,,,,Sophie,Sophie,no,0
+15,36,4,72,4,2,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+15,37,4,5,1,1,6/17/2019,,no,no,79,119,21,94,4,,,,,,Sophie,Sophie,no,0
+15,38,4,56,4,5,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+15,39,4,40,2,5,6/17/2019,,no,no,25,121,76,45,,,,,,,Sophie,Sophie,no,0
+15,40,4,9,1,1,6/17/2019,,no,no,33,75,75,,,,,,,,Sophie,Sophie,no,0
+15,41,4,40,3,3,6/17/2019,,no,no,28,77,54,23,,,,,,,Sophie,Sophie,no,0
+15,42,4,3,3,4,6/17/2019,,no,no,22,61,61,,,,,,,,Sophie,Sophie,no,0
+15,43,4,20,5,2,6/17/2019,,no,no,75,108,91,17,,,,,,,Sophie,Sophie,no,0
+15,44,4,3,2,1,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+15,45,4,41,4,5,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+15,46,4,18,4,5,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+16,1,3,15,4,2,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+16,2,3,57,4,2,6/16/2019,,no,no,17,9,9,,,,,,,,Sophie,Sophie,no,0
+16,3,3,27,1,1,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+16,4,3,77,2,1,6/16/2019,,no,no,14,63,63,,,,,,,,Sophie,Sophie,no,0
+16,5,3,29,4,4,6/16/2019,,no,no,2,24,24,,,,,,,,Sophie,Sophie,no,0
+16,6,3,21,3,2,6/16/2019,,no,no,0,107,82,18,7,,,,,,Sophie,Sophie,no,0
+16,7,3,31,1,2,6/16/2019,,no,no,23,64,64,,,,,,,,Sophie,Sophie,no,0
+16,8,3,36,5,1,6/16/2019,,no,no,12,150,64,86,,,,,,,Sophie,Sophie,no,0
+16,9,3,21,4,2,6/16/2019,,no,no,28,94,94,,,,,,,,Sophie,Sophie,no,0
+16,10,3,15,5,3,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+16,11,3,46,4,4,6/16/2019,,no,no,12,106,34,72,,,,,,,Sophie,Sophie,no,0
+16,12,3,5,2,1,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+16,13,3,41,1,2,6/16/2019,,no,no,14,14,10,4,,,,,,,Sophie,Sophie,yes,1
+16,14,3,49,2,2,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+16,15,3,67,5,4,6/16/2019,,no,no,54,95,82,13,,,,,,,Sophie,Sophie,no,0
+16,16,3,7,5,4,6/16/2019,,no,no,66,210,89,121,,,,,,,Sophie,Sophie,no,0
+16,17,3,5,4,5,6/16/2019,,no,no,33,74,74,,,,,,,,Sophie,Sophie,no,0
+16,18,3,4,5,5,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+16,19,3,68,5,1,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+16,20,3,4,2,3,6/16/2019,,no,no,11,51,45,6,,,,,,,Sophie,Sophie,no,0
+16,21,3,61,4,2,6/16/2019,,no,no,3,23,23,,,,,,,,Sophie,Sophie,no,0
+16,22,3,39,4,4,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+16,23,3,1,5,3,6/16/2019,,no,no,96,238,50,104,54,30,,,,,Sophie,Sophie,yes,1
+16,24,3,2,3,2,6/16/2019,,no,no,31,113,33,30,50,,,,,,Sophie,Sophie,yes,1
+16,25,3,19,1,3,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+16,26,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,NO PLANT,Sophie,Sophie,,0
+16,27,4,27,1,2,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+16,28,4,2,4,2,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+16,29,4,30,2,5,6/17/2019,,no,no,28,54,46,8,,,,,,,Sophie,Sophie,no,0
+16,30,4,19,1,4,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+16,31,4,39,1,4,6/17/2019,,no,no,18,35,35,,,,,,,,Sophie,Sophie,yes,1
+16,32,4,79,5,5,6/17/2019,,no,no,20,76,64,4,6,2,,,,,Sophie,Sophie,yes,1
+16,33,4,18,2,5,6/17/2019,,no,no,110,242,109,120,13,,,,,,Sophie,Sophie,no,0
+16,34,4,31,2,4,6/17/2019,,no,no,10,39,29,10,,,,,,,Sophie,Sophie,yes,1
+16,35,4,67,1,1,6/17/2019,,no,no,5,44,44,,,,,,,,Sophie,Sophie,no,0
+16,36,4,45,1,5,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+16,37,4,3,3,1,6/17/2019,,no,no,10,25,19,3,3,,,,,,Sophie,Sophie,no,0
+16,38,4,79,2,3,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+16,39,4,68,3,2,6/17/2019,,no,no,86,139,20,119,,,,,,,Sophie,Sophie,no,0
+16,40,4,39,1,2,6/17/2019,,no,no,10,44,22,11,11,,,,,,Sophie,Sophie,no,0
+16,41,4,2,4,1,6/17/2019,,no,no,58,163,95,26,42,,,,,,Sophie,Sophie,no,0
+16,42,4,20,5,3,6/17/2019,,no,no,44,134,52,82,,,,,,,Sophie,Sophie,no,0
+16,43,4,3,2,3,6/17/2019,,no,no,28,98,43,55,,,,,,,Sophie,Sophie,no,0
+16,44,4,18,3,5,6/17/2019,,no,no,55,130,90,40,,,,,,,Sophie,Sophie,no,0
+16,45,4,42,1,5,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+16,46,4,12,3,5,6/17/2019,,no,no,35,95,20,75,,,,,,,Sophie,Sophie,no,0
+17,1,3,6,4,3,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+17,2,3,8,2,1,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+17,3,3,62,5,1,6/16/2019,,no,no,17,55,38,6,7,4,,,,,Sophie,Sophie,yes,1
+17,4,3,12,5,5,6/16/2019,,no,no,7,53,33,20,,,,,,,Sophie,Sophie,yes,1
+17,5,3,8,1,3,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+17,6,3,79,5,4,6/16/2019,,no,no,14,81,76,5,,,,,,,Sophie,Sophie,no,0
+17,7,3,3,4,5,6/16/2019,,no,no,25,53,19,34,,,,,,,Sophie,Sophie,no,0
+17,8,3,46,3,4,6/16/2019,,no,no,8,35,35,,,,,,,,Sophie,Sophie,yes,1
+17,9,3,79,1,5,6/16/2019,,no,no,2,6,6,,,,,,,,Sophie,Sophie,yes,1
+17,10,3,39,4,5,6/16/2019,,no,no,88,161,35,126,,,,,,,Sophie,Sophie,yes,1
+17,11,3,69,2,3,6/16/2019,,no,no,60,121,25,96,,,,,,,Sophie,Sophie,no,0
+17,12,3,67,4,4,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+17,13,3,11,2,1,6/16/2019,,no,no,68,155,77,37,13,15,13,,,,Sophie,Sophie,yes,1
+17,14,3,13,5,1,6/16/2019,,no,no,30,113,49,64,,,,,,,Sophie,Sophie,no,0
+17,15,3,54,1,5,6/16/2019,,no,no,33,94,94,,,,,,,,Sophie,Sophie,no,0
+17,16,3,40,2,1,6/16/2019,,no,no,63,105,105,,,,,,,,Sophie,Sophie,no,0
+17,17,3,12,2,5,6/16/2019,,no,no,20,73,73,,,,,,,,Sophie,Sophie,no,0
+17,18,3,15,4,5,6/16/2019,,no,no,35,72,31,41,,,,,,,Sophie,Sophie,no,0
+17,19,3,77,5,2,6/16/2019,,no,no,95,210,79,131,,,,,,,Sophie,Sophie,no,0
+17,20,3,40,1,1,6/16/2019,,no,no,30,65,65,,,,,,,,Sophie,Sophie,no,0
+17,21,3,69,1,5,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+17,22,3,67,3,1,6/16/2019,,no,no,9,31,31,,,,,,,,Sophie,Sophie,no,0
+17,23,3,36,4,5,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+17,24,3,16,1,3,6/16/2019,,no,no,43,105,105,,,,,,,,Sophie,Sophie,no,0
+17,25,3,13,1,1,6/16/2019,,no,no,58,144,84,60,,,,,,,Sophie,Sophie,yes,1
+17,26,4,18,1,5,6/17/2019,,no,no,90,210,28,88,94,,,,,,Sophie,Sophie,yes,1
+17,27,4,61,3,2,6/17/2019,,no,no,73,133,16,57,60,,,,,,Sophie,Sophie,no,0
+17,28,4,12,4,3,6/17/2019,,no,no,44,80,5,75,,,,,,,Sophie,Sophie,no,0
+17,29,4,5,5,1,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+17,30,4,49,2,5,6/17/2019,,no,no,22,58,58,,,,,,,,Sophie,Sophie,no,0
+17,31,4,74,1,1,6/17/2019,,maybe,no,0,42,42,,,,,,,,Sophie,Sophie,no,0
+17,32,4,36,4,3,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+17,33,4,67,3,4,6/17/2019,,no,yes,5,0,,,,,,,,,Sophie,Sophie,no,0
+17,34,4,15,1,3,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+17,35,4,5,3,4,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+17,36,4,16,3,2,6/17/2019,,no,no,82,169,110,59,,,,,,,Sophie,Sophie,no,0
+17,37,4,7,2,5,6/17/2019,,no,no,44,65,65,,,,,,,,Sophie,Sophie,no,0
+17,38,4,26,1,5,6/17/2019,,no,no,3,15,15,,,,,,,,Sophie,Sophie,no,0
+17,39,4,57,3,3,6/17/2019,,no,no,73,110,60,50,,,,,,,Sophie,Sophie,no,0
+17,40,4,68,2,4,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+17,41,4,19,2,3,6/17/2019,,no,no,24,40,40,,,,,,,,Sophie,Sophie,no,0
+17,42,4,61,5,4,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+17,43,4,30,3,2,6/17/2019,,no,no,55,187,24,71,92,,,,,,Sophie,Sophie,no,0
+17,44,4,5,4,2,6/17/2019,,no,no,40,78,21,57,,,,,,,Sophie,Sophie,no,0
+17,45,4,27,5,5,6/17/2019,,no,no,42,106,21,30,55,,,,,,Sophie,Sophie,no,0
+17,46,4,1,4,4,6/17/2019,,no,no,48,121,50,71,,,,,,,Sophie,Sophie,no,0
+18,1,3,5,1,2,6/16/2019,,no,yes,3,0,,,,,,,,,Sophie,Sophie,no,0
+18,2,3,39,2,3,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+18,3,3,61,1,4,6/16/2019,,no,no,5,12,12,,,,,,,,Sophie,Sophie,no,0
+18,4,3,64,5,4,6/16/2019,,no,no,19,100,57,33,10,,,,,,Sophie,Sophie,no,0
+18,5,3,46,4,5,6/16/2019,,no,no,24,111,24,23,64,,,,,,Sophie,Sophie,no,0
+18,6,3,2,3,3,6/16/2019,,no,no,28,27,9,6,5,4,3,,,,Sophie,Sophie,no,0
+18,7,3,17,2,2,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+18,8,3,68,1,3,6/16/2019,,no,no,17,135,119,16,,,,,,,Sophie,Sophie,no,0
+18,9,3,4,4,3,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+18,10,3,3,5,2,6/16/2019,,maybe,no,0,41,10,7,12,5,7,,,,Sophie,Sophie,no,0
+18,11,3,18,3,2,6/16/2019,,maybe,no,0,27,16,8,3,,,,,,Sophie,Sophie,no,0
+18,12,3,56,3,2,6/16/2019,,no,no,35,33,33,,,,,,,,Sophie,Sophie,yes,1
+18,13,3,42,1,3,6/16/2019,looks diseased,no,no,16,35,26,9,,,,,,,Sophie,Sophie,no,0
+18,14,3,62,5,4,6/16/2019,,no,yes,8,0,,,,,,,,,Sophie,Sophie,yes,1
+18,15,3,14,3,4,6/16/2019,,no,no,54,70,56,14,,,,,,,Sophie,Sophie,yes,1
+18,16,3,28,4,2,6/16/2019,,no,no,39,150,41,31,36,26,16,,,,Sophie,Sophie,yes,1
+18,17,3,11,1,5,6/16/2019,,no,no,66,172,81,41,50,,,,,,Sophie,Sophie,yes,1
+18,18,3,49,3,2,6/16/2019,,no,no,50,115,45,5,35,30,,,,,Sophie,Sophie,yes,1
+18,19,3,7,4,5,6/16/2019,,no,no,21,18,4,8,3,3,,,,,Sophie,Sophie,yes,1
+18,20,3,15,1,1,6/16/2019,,no,no,39,180,58,111,11,,,,,,Sophie,Sophie,no,0
+18,21,3,69,1,3,6/16/2019,,no,yes,2,0,,,,,,,,,Sophie,Sophie,yes,1
+18,22,3,74,5,3,6/16/2019,,no,no,96,236,100,98,32,6,,,,,Sophie,Sophie,yes,1
+18,23,3,47,3,4,6/16/2019,,no,no,32,14,14,,,,,,,,Sophie,Sophie,yes,1
+18,24,3,62,3,2,6/16/2019,,no,no,15,22,16,2,4,,,,,,Sophie,Sophie,yes,1
+18,25,3,39,1,3,6/16/2019,,no,no,114,189,2,2,3,16,42,29,44,51,Sophie,Sophie,yes,1
+18,26,4,36,5,5,6/17/2019,,nothing there,no,0,39,39,,,,,,,,Sophie,Sophie,,0
+18,27,4,6,3,2,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+18,28,4,39,1,1,6/17/2019,,no,no,30,74,74,,,,,,,,Sophie,Sophie,no,0
+18,29,4,20,1,1,6/17/2019,,no,no,14,55,55,,,,,,,,Sophie,Sophie,no,0
+18,30,4,21,1,5,6/17/2019,,no,no,19,64,7,57,,,,,,,Sophie,Sophie,no,0
+18,31,4,64,1,5,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+18,32,4,5,3,3,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+18,33,4,18,5,4,6/17/2019,,no,no,25,31,31,,,,,,,,Sophie,Sophie,yes,1
+18,34,4,21,1,1,6/17/2019,,no,no,8,25,25,,,,,,,,Sophie,Sophie,no,0
+18,35,4,6,5,5,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+18,36,4,35,2,3,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+18,37,4,69,2,5,6/17/2019,,no,no,111,318,9,65,56,80,62,46,,,Sophie,Sophie,yes,1
+18,38,4,31,4,1,6/17/2019,,no,no,144,245,70,34,76,55,5,5,,,Sophie,Sophie,yes,1
+18,39,4,30,3,5,6/17/2019,,no,no,15,43,43,,,,,,,,Sophie,Sophie,no,0
+18,40,4,46,2,1,6/17/2019,,no,no,35,79,79,,,,,,,,Sophie,Sophie,no,0
+18,41,4,3,5,5,6/17/2019,,no,no,17,83,83,,,,,,,,Sophie,Sophie,no,0
+18,42,4,18,2,3,6/17/2019,,no,no,68,153,43,45,65,,,,,,Sophie,Sophie,no,0
+18,43,4,40,5,4,6/17/2019,,no,no,50,144,89,55,,,,,,,Sophie,Sophie,no,0
+18,44,4,20,3,1,6/17/2019,,no,no,18,51,51,,,,,,,,Sophie,Sophie,no,0
+18,45,4,3,1,1,6/17/2019,,no,no,21,78,11,15,52,,,,,,Sophie,Sophie,yes,1
+18,46,4,2,2,4,6/17/2019,,no,no,28,92,35,57,,,,,,,Sophie,Sophie,no,0
+19,1,3,2,2,1,6/16/2019,,no,no,67,374,120,137,117,,,,,,Sophie,Sophie,no,0
+19,2,3,31,3,1,6/16/2019,,maybe,no,0,36,29,7,,,,,,,Sophie,Sophie,no,0
+19,3,3,40,4,3,6/16/2019,,no,no,0,117,117,,,,,,,,Sophie,Sophie,no,0
+19,4,3,4,2,5,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+19,5,3,72,2,5,6/16/2019,,no,no,10,56,50,6,,,,,,,Sophie,Sophie,no,0
+19,6,3,64,5,5,6/16/2019,,no,no,6,51,51,,,,,,,,Sophie,Sophie,no,0
+19,7,3,69,2,2,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+19,8,3,26,1,3,6/16/2019,,no,no,29,232,153,79,,,,,,,Sophie,Sophie,no,0
+19,9,3,61,5,2,6/16/2019,,no,no,44,88,28,60,,,,,,,Sophie,Sophie,no,0
+19,10,3,45,1,3,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+19,11,3,72,4,1,6/16/2019,,no,no,6,13,13,,,,,,,,Sophie,Sophie,yes,1
+19,12,3,18,3,4,6/16/2019,,no,no,12,55,9,46,,,,,,,Sophie,Sophie,no,0
+19,13,3,19,2,1,6/16/2019,,no,no,15,22,17,5,,,,,,,Sophie,Sophie,yes,1
+19,14,3,64,3,1,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+19,15,3,47,1,2,6/16/2019,,no,no,38,113,85,28,,,,,,,Sophie,Sophie,no,0
+19,16,3,2,5,1,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+19,17,3,6,3,3,6/16/2019,,no,no,13,35,35,,,,,,,,Sophie,Sophie,no,0
+19,18,3,12,1,1,6/16/2019,,no,no,54,232,99,133,,,,,,,Sophie,Sophie,no,0
+19,19,3,46,2,4,6/16/2019,,no,no,65,118,118,,,,,,,,Sophie,Sophie,yes,1
+19,20,3,28,4,3,6/16/2019,,no,no,25,80,65,15,,,,,,,Sophie,Sophie,no,0
+19,21,3,74,1,4,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+19,22,3,46,3,1,6/16/2019,,no,no,28,113,60,53,,,,,,,Sophie,Sophie,yes,1
+19,23,3,6,1,4,6/16/2019,,no,no,31,43,7,31,5,,,,,,Sophie,Sophie,yes,1
+19,24,3,61,3,5,6/16/2019,,maybe,no,0,79,34,20,11,14,,,,,Sophie,Sophie,no,0
+19,25,3,15,2,2,6/16/2019,,no,no,16,149,41,60,48,,,,,,Sophie,Sophie,no,0
+19,26,4,8,1,5,6/17/2019,,no,no,32,78,72,6,,,,,,,Sophie,Sophie,no,0
+19,27,4,1,5,1,6/17/2019,,no,no,23,146,146,,,,,,,,Sophie,Sophie,no,0
+19,28,4,13,2,2,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+19,29,4,61,3,1,6/17/2019,,no,no,87,200,86,72,42,,,,,,Sophie,Sophie,no,0
+19,30,4,7,2,1,6/17/2019,,no,no,47,82,82,,,,,,,,Sophie,Sophie,no,0
+19,31,4,1,4,2,6/17/2019,,no,no,10,51,51,,,,,,,,Sophie,Sophie,no,0
+19,32,4,62,5,3,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+19,33,4,57,4,3,6/17/2019,,no,no,32,84,84,,,,,,,,Sophie,Sophie,no,0
+19,34,4,29,5,5,6/17/2019,,no,no,10,24,24,,,,,,,,Sophie,Sophie,no,0
+19,35,4,28,1,1,6/17/2019,,no,no,4,10,10,,,,,,,,Sophie,Sophie,no,0
+19,36,4,11,4,1,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+19,37,4,27,5,1,6/17/2019,,no,no,20,57,57,,,,,,,,Sophie,Sophie,no,0
+19,38,4,79,3,2,6/17/2019,,maybe,no,0,33,33,,,,,,,,Sophie,Sophie,no,0
+19,39,4,21,2,4,6/17/2019,,no,no,22,90,90,,,,,,,,Sophie,Sophie,no,0
+19,40,4,15,1,2,6/17/2019,,no,no,49,120,30,90,,,,,,,Sophie,Sophie,no,0
+19,41,4,19,2,5,6/17/2019,,no,no,11,91,30,61,,,,,,,Sophie,Sophie,no,0
+19,42,4,9,2,3,6/17/2019,,no,no,37,91,91,,,,,,,,Sophie,Sophie,no,0
+19,43,4,49,2,1,6/17/2019,,no,no,91,152,96,56,,,,,,,Sophie,Sophie,no,0
+19,44,4,20,3,3,6/17/2019,,no,no,68,213,111,66,36,,,,,,Sophie,Sophie,no,0
+19,45,4,15,3,2,6/17/2019,,no,no,68,130,60,44,26,,,,,,Sophie,Sophie,yes,1
+19,46,4,46,3,5,6/17/2019,,no,no,21,62,46,13,3,,,,,,Sophie,Sophie,yes,1
+20,1,3,2,3,4,6/16/2019,,no,no,65,189,64,65,60,,,,,,Sophie,Sophie,yes,1
+20,2,3,56,3,1,6/16/2019,,no,no,16,5,3,2,,,,,,,Sophie,Sophie,yes,1
+20,3,3,3,3,2,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+20,4,3,46,5,4,6/16/2019,,no,no,7,39,39,,,,,,,,Sophie,Sophie,yes,1
+20,5,3,29,1,1,6/16/2019,,no,yes,5,0,,,,,,,,,Sophie,Sophie,no,0
+20,6,3,19,5,3,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+20,7,3,49,1,3,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+20,8,3,27,2,2,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+20,9,3,36,5,4,6/16/2019,,no,no,5,56,56,,,,,,,,Sophie,Sophie,no,0
+20,10,3,21,5,2,6/16/2019,,no,no,112,244,130,114,,,,,,,Sophie,Sophie,yes,1
+20,11,3,1,5,4,6/16/2019,,no,no,42,126,126,,,,,,,,Sophie,Sophie,no,0
+20,12,3,67,5,2,6/16/2019,,maybe,no,0,25,11,14,,,,,,,Sophie,Sophie,no,0
+20,13,3,3,4,4,6/16/2019,,no,no,60,188,83,96,9,,,,,,Sophie,Sophie,yes,1
+20,14,3,30,4,1,6/16/2019,,no,no,104,173,72,84,9,8,,,,,Sophie,Sophie,no,0
+20,15,3,1,3,3,6/16/2019,,maybe,no,0,16,16,,,,,,,,Sophie,Sophie,no,0
+20,16,3,72,1,4,6/16/2019,,no,no,13,23,15,5,3,,,,,,Sophie,Sophie,yes,1
+20,17,3,6,1,5,6/16/2019,,no,no,57,178,89,65,24,,,,,,Sophie,Sophie,no,0
+20,18,3,67,3,3,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+20,19,3,5,3,1,6/16/2019,,no,no,53,98,98,,,,,,,,Sophie,Sophie,no,0
+20,20,3,11,2,2,6/16/2019,,no,no,28,135,50,56,13,5,7,4,,,Sophie,Sophie,yes,1
+20,21,3,18,1,3,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+20,22,3,57,2,2,6/16/2019,,no,no,15,42,42,,,,,,,,Sophie,Sophie,no,0
+20,23,3,18,4,4,6/16/2019,,no,no,21,51,44,7,,,,,,,Sophie,Sophie,yes,1
+20,24,3,8,3,4,6/16/2019,,no,no,25,65,60,5,,,,,,,Sophie,Sophie,no,0
+20,25,3,51,4,4,6/16/2019,,no,no,70,140,140,,,,,,,,Sophie,Sophie,yes,1
+20,26,4,31,4,5,6/17/2019,,no,no,21,74,26,48,,,,,,,Sophie,Sophie,no,0
+20,27,4,19,3,3,6/17/2019,,no,no,93,232,70,71,76,15,,,,,Sophie,Sophie,no,0
+20,28,4,5,2,5,6/17/2019,,no,no,18,44,44,,,,,,,,Sophie,Sophie,no,0
+20,29,4,36,2,3,6/17/2019,,no,no,33,84,28,56,,,,,,,Sophie,Sophie,no,0
+20,30,4,18,4,2,6/17/2019,,no,no,49,92,63,29,,,,,,,Sophie,Sophie,no,0
+20,31,4,30,2,3,6/17/2019,,no,no,79,195,5,44,48,98,,,,,Sophie,Sophie,no,0
+20,32,4,79,1,2,6/17/2019,,no,no,56,175,84,91,,,,,,,Sophie,Sophie,no,0
+20,33,4,36,1,3,6/17/2019,,no,no,37,82,8,74,,,,,,,Sophie,Sophie,no,0
+20,34,4,2,5,2,6/17/2019,,no,no,24,97,85,12,,,,,,,Sophie,Sophie,no,0
+20,35,4,28,4,1,6/17/2019,,no,no,114,268,75,78,115,,,,,,Sophie,Sophie,no,0
+20,36,4,77,1,3,6/17/2019,,no,no,9,19,4,7,8,,,,,,Sophie,Sophie,no,0
+20,37,4,40,2,3,6/17/2019,,no,no,109,238,68,82,88,,,,,,Sophie,Sophie,no,0
+20,38,4,15,4,3,6/17/2019,,no,no,46,187,113,74,,,,,,,Sophie,Sophie,no,0
+20,39,4,47,1,3,6/17/2019,,maybe,no,0,6,6,,,,,,,,Sophie,Sophie,no,0
+20,40,4,3,5,3,6/17/2019,,no,no,56,146,19,112,8,7,,,,,Sophie,Sophie,no,0
+20,41,4,30,5,1,6/17/2019,,no,no,179,449,36,65,76,70,86,74,15,27,Sophie,Sophie,yes,1
+20,42,4,27,4,4,6/17/2019,,no,no,76,186,80,96,4,6,,,,,Sophie,Sophie,yes,1
+20,43,4,18,5,5,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+20,44,4,2,3,5,6/17/2019,,no,no,115,259,135,29,95,,,,,,Sophie,Sophie,no,0
+20,45,4,36,3,2,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+20,46,4,35,3,4,6/17/2019,,no,no,15,63,55,8,,,,,,,Sophie,Sophie,no,0
+21,1,3,30,2,2,6/16/2019,,no,no,60,133,92,41,,,,,,,Sophie,Sophie,yes,1
+21,2,3,8,3,1,6/16/2019,,no,no,18,150,10,92,48,,,,,,Sophie,Sophie,no,0
+21,3,3,31,1,4,6/16/2019,,no,yes,18,0,,,,,,,,,Sophie,Sophie,no,0
+21,4,3,2,1,4,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+21,5,3,16,3,1,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+21,6,3,29,5,1,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,yes,1
+21,7,3,8,2,4,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,yes,1
+21,8,3,16,1,5,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,yes,1
+21,9,3,67,2,3,6/16/2019,,maybe,no,0,12,12,,,,,,,,Sophie,Sophie,yes,1
+21,10,3,46,1,4,6/16/2019,,no,no,34,139,72,67,,,,,,,Sophie,Sophie,no,0
+21,11,3,72,5,2,6/16/2019,,no,yes,3,0,,,,,,,,,Sophie,Sophie,no,0
+21,12,3,3,1,2,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+21,13,3,2,4,4,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+21,14,3,47,3,1,6/16/2019,,no,no,41,92,57,35,,,,,,,Sophie,Sophie,yes,1
+21,15,3,51,4,5,6/16/2019,,no,no,8,55,55,,,,,,,,Sophie,Sophie,no,0
+21,16,3,14,2,4,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+21,17,3,42,2,3,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+21,18,3,13,5,3,6/16/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+21,19,3,47,5,5,6/16/2019,,no,no,20,80,80,,,,,,,,Sophie,Sophie,no,0
+21,20,3,77,4,1,6/16/2019,,no,no,8,26,26,,,,,,,,Sophie,Sophie,yes,1
+21,21,3,30,3,4,6/16/2019,,no,no,9,88,39,17,32,,,,,,Sophie,Sophie,no,0
+21,22,3,6,5,1,6/16/2019,,no,no,14,75,75,,,,,,,,Sophie,Sophie,no,0
+21,23,3,18,4,1,6/16/2019,,no,no,14,58,58,,,,,,,,Sophie,Sophie,no,0
+21,24,3,35,5,4,6/16/2019,,no,no,12,128,61,67,,,,,,,Sophie,Sophie,no,0
+21,25,3,35,3,1,6/16/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+21,26,4,30,5,5,6/17/2019,,maybe,yes,0,0,,,,,,,,,Sophie,Sophie,no,0
+21,27,4,18,2,2,6/17/2019,,no,no,65,90,87,3,,,,,,,Sophie,Sophie,yes,1
+21,28,4,8,2,3,6/17/2019,,no,no,27,66,32,34,,,,,,,Sophie,Sophie,yes,1
+21,29,4,68,2,1,6/17/2019,,no,no,56,139,19,120,,,,,,,Sophie,Sophie,no,0
+21,30,4,6,4,1,6/17/2019,,no,no,27,102,37,65,,,,,,,Sophie,Sophie,no,0
+21,31,4,4,5,3,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+21,32,4,39,4,3,6/17/2019,,no,no,32,121,67,54,,,,,,,Sophie,Sophie,yes,1
+21,33,4,35,4,2,6/17/2019,,no,yes,2,0,,,,,,,,,Sophie,Sophie,yes,1
+21,34,4,7,1,4,6/17/2019,,no,no,53,119,119,,,,,,,,Sophie,Sophie,no,0
+21,35,4,19,5,4,6/17/2019,,no,no,31,51,42,9,,,,,,,Sophie,Sophie,yes,1
+21,36,4,27,3,5,6/17/2019,,no,no,19,121,50,71,,,,,,,Sophie,Sophie,no,0
+21,37,4,23,1,3,6/17/2019,,maybe,no,0,5,5,,,,,,,,Sophie,Sophie,no,0
+21,38,4,3,3,3,6/17/2019,,no,no,3,43,43,,,,,,,,Sophie,Sophie,no,0
+21,39,4,40,4,4,6/17/2019,,no,no,52,181,42,53,33,53,,,,,Sophie,Sophie,no,0
+21,40,4,27,1,3,6/17/2019,,nothing there,yes,0,0,,,,,,,,,Sophie,Sophie,,0
+21,41,4,12,3,3,6/17/2019,,no,no,63,207,80,127,,,,,,,Sophie,Sophie,no,0
+21,42,4,31,2,5,6/17/2019,,no,no,75,328,65,85,116,62,,,,,Sophie,Sophie,yes,1
+21,43,4,3,4,2,6/17/2019,,no,no,104,322,80,30,56,49,52,33,22,,Sophie,Sophie,yes,1
+21,44,4,56,2,5,6/17/2019,,no,no,52,175,30,30,115,,,,,,Sophie,Sophie,no,0
+21,45,4,11,3,3,6/17/2019,,no,no,147,470,82,76,54,83,56,119,,,Sophie,Sophie,yes,1
+21,46,4,47,2,5,6/17/2019,,no,yes,3,0,,,,,,,,,Sophie,Sophie,yes,1

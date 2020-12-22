@@ -1,0 +1,42 @@
+Model:
+(Mean_herbiv/100) ~ (1 | Family:Population) + (1 | Population)
+                        npar logLik     AIC LRT Df Pr(>Chisq)
+<none>                     4 434.81 -861.63                  
+(1 | Family:Population)    3 434.81 -863.63   0  1          1
+(1 | Population)           3 434.81 -863.63   0  1          1
+> ranova(lmer(Mean_height ~ (1|Population/Family), data=Alive_sum1))
+ANOVA-like table for random-effects: Single term deletions
+
+
+
+
+Model:
+Mean_height ~ (1 | Family:Population) + (1 | Population)
+                        npar  logLik    AIC    LRT Df Pr(>Chisq)
+<none>                     4 -2286.5 4581.1                     
+(1 | Family:Population)    3 -2287.3 4580.7 1.5985  1     0.2061
+(1 | Population)           3 -2287.2 4580.3 1.2664  1     0.2604
+
+
+
+
+Model:
+as.numeric(Dead_DC3) ~ (1 | Family:Population) + (1 | Population)
+                        npar  logLik    AIC    LRT Df Pr(>Chisq)   
+<none>                     4 -240.40 488.81                        
+(1 | Family:Population)    3 -243.74 493.48 6.6707  1   0.009801 **
+(1 | Population)           3 -242.07 490.13 3.3262  1   0.068182 . 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+
+
+
+Model:
+Alive_ram ~ (1 | Family:Population) + (1 | Population)
+                        npar  logLik  AIC   LRT Df Pr(>Chisq)   
+<none>                     4 -1191.5 2391                       
+(1 | Family:Population)    3 -1195.0 2396 6.986  1   0.008215 **
+(1 | Population)           3 -1191.5 2389 0.000  1   1.000000   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

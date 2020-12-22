@@ -1,0 +1,185 @@
+---
+title: "KSR_2020"
+author: "Sophie Breitbart"
+output:
+  html_document:
+    number_sections: true
+    df_print: paged
+    toc: yes
+    toc_depth: 6
+    toc_float:
+      collapsed: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
+editor_options: 
+  chunk_output_type: console
+---
+# Set up notebook
+## Load packages
+
+```{r}
+library(dplyr)
+library(reshape)
+library(reshape2)
+library(tidyr)
+library(ggplot2)
+library(ggExtra)
+library("ggpubr")
+library(devtools)
+library(rpart)
+library("tibble", lib.loc="~/R/win-library/3.5")
+library(ISLR)
+library(MASS)
+library(car)
+library(data.table)
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+library(Hmisc)
+library(lme4)
+library(nlme)
+library(reshape)
+library(lmerTest)
+library(tidyverse)
+library(vegan)
+library(lindia)
+library(e1071)
+library(ggpubr)
+library(forcats)
+library(car)
+library(multcomp)
+library(lsmeans)
+library(ggbiplot)
+library(ggplot2)
+require(MASS)
+require(scales)
+require(car)
+require(ggplot2)
+require(ggiraph)
+require(ggiraphExtra)
+library(geosphere)
+library(vctrs)
+```
+
+## Import data
+```{r, import}
+all_data <- read.csv("~/R_Projects/CommonGardenExperiment_2020Data/2020_Datacollection1_Full.csv",header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
+```
+
+## Set theme
+```{r}
+theme_set(theme_classic())
+```
+
+## Clean data
+### General
+```{r}
+# make all_data a dataframe
+all_data <- as.data.frame(all_data)
+
+
+# Remove rows without plants, empty columns
+# Though 46 holes were dug per 21 rows of the field plot, each hole was not filled with a plant- ex. Row 1 has empty holes until plot column 13. Removing those empty spreadsheet rows as well as empty spreadsheet columns.
+c <- is.na(all_data$Block) == TRUE
+c2 <- c(1:nrow(all_data))[c]
+all_data <- all_data[-c2,]
+names(all_data)[1]<-"Row"
+all_data <- all_data %>% filter(!is.na(Population)) #there was no plant in this pot anymore... may have been taken by raccoons
+
+
+
+## Make certain columns factors / check classes are correct
+all_data$Block <- factor(all_data$Block)
+all_data$Population <- factor(all_data$Population)
+all_data$Family <- factor(all_data$Family)
+all_data$Replicate <- factor(all_data$Replicate)
+all_data$Comment <- factor(all_data$Comment)
+
+str(all_data)
+
+```
+
+### Weevil damage columns
+```{r}
+# Make new column signifying if any ramets of plant experienced any weevil damage- 0 or 1
+## First, select columns pertaining to weevil damage
+w_cols <- all_data %>% dplyr::select(contains("Weevil"))
+w_colnames <- colnames(w_cols)
+
+## Next, add sums of weevil damage cols.
+all_data$Weevil_dam_total <- rowSums(all_data[w_colnames], na.rm = T)
+all_data$Weevil_dam_binary <- all_data$Weevil_dam_total
+
+
+## Now change all instances of >=1 to 1 (to signify simple 0/1 damage experienced). If >=1, then at least one ramet experienced weevil damage.
+all_data <- all_data %>% mutate(all_data, Weevil_dam_binary = ifelse(Weevil_dam_total == "0", "0", "1"))
+
+### make new binary weevil damage column factor
+all_data$Weevil_dam_binary <- as.factor(all_data$Weevil_dam_binary)
+
+# check appropriate columns are factors
+str(all_data)
+
+```
+
+### Make mortality column
+```{r}
+# Make new column signifying if pots contained zero alive plants, or at least one- 0 or 1
+## First, copy first height column associaed with first ramet (if 0, that means pot was empty/had no alive ramets)
+all_data$Mortality_binary <- all_data$Height_cm_ram1
+
+## Now change all instances of >0 to 1. If >=0, then at least one ramet present.
+all_data <- all_data %>% mutate(all_data, Mortality_binary = ifelse(Mortality_binary == "0", "0", "1"))
+
+
+### make new binary mortality column factor
+all_data$Mortality_binary <- as.factor(all_data$Mortality_binary)
+
+# check appropriate columns are factors
+str(all_data)
+```
+
+
+# Visualize spatial patterns
+## Weevil damage
+```{r}
+weevil_matrix_data <- all_data[,c("Row", "Column", "Weevil_dam_binary")]
+
+weevil_plot <- ggplot(data =  weevil_matrix_data, aes(x = Column, y = Row)) + 
+      geom_tile(aes(fill = Weevil_dam_binary), colour = "black") +
+      scale_fill_brewer(palette = "Reds") +
+      scale_y_reverse()
+
+png("weevil_matrix.png", width = 800, height = 400)
+print(weevil_plot)
+dev.off()
+```
+
+## Mortality
+```{r}
+mortality_matrix_data <- all_data[,c("Row", "Column", "Mortality_binary")]
+
+mortality_plot <- ggplot(data =  mortality_matrix_data, aes(x = Column, y = Row)) + 
+      geom_tile(aes(fill = Mortality_binary), colour = "black") +
+      scale_y_reverse() +
+      scale_fill_discrete(name = "Mortality", labels = c("Dead", "Alive"))
+
+
+png("mortality_matrix.png", width = 800, height = 400)
+print(mortality_plot)
+dev.off()
+```
+
+## Blocks in plot
+```{r}
+blocks <- ggplot(data =  all_data, aes(x = Column, y = Row)) + 
+      geom_tile(aes(fill = Block), colour = "black") +
+      scale_y_reverse() 
+
+png("blocks.png", width = 800, height = 400)
+print(blocks)
+dev.off()
+```
+

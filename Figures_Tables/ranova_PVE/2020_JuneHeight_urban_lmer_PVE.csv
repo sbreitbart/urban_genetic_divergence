@@ -1,0 +1,10 @@
+npar,logLik,AIC,LRT,Df,Pr(>Chisq),
+<none>,4,-2881.865603,5771.731207,NA,NA,NA
+(1 | Family:Population),3,-2887.314702,5780.629404,10.89819715,1,0.000962579
+(1 | Population),3,-2881.869166,5769.738331,0.007124067,1,0.932735077
+Group,Variance,PVE,,,,
+1,Family:Population,104.4719184,0.11687843,,,
+2,Population,1.558649424,0.001743746,,,
+3,Residual,787.8205772,0.881377824,,,
+,Chisq,Df,Pr(>Chisq),,,
+Transect_ID,0.741861093,1,0.389065355,,,

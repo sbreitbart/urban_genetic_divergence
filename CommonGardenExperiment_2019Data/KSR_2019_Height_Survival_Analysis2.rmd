@@ -1,0 +1,424 @@
+---
+title: "KSR_2019_Height_Survival_Analysis2"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapsed: yes
+
+---
+
+# 1.1 Load packages
+
+```{r}
+library(dplyr)
+library(reshape)
+library(reshape2)
+library(tidyr)
+library(ggplot2)
+library(ggExtra)
+library("ggpubr")
+```
+
+# 1.2 Import data
+
+```{r, import}
+Data <- read.table("~/R_Projects/CommonGardenExperiment_2019Data/DataAnalysis_SecondHeightSurvivalMeasurement_20190621.csv", na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",", quote="")
+
+Distances <- read.table("~/R_Projects/CommonGardenExperiment_2019Data/Transect_Milkweed_HaversineData_forjoining.csv", na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",")
+```
+
+# 1.2 Remove rows without plants, empty columns
+Though 46 holes were dug per 21 rows of the field plot, each hole was not filled with a plant- ex. Row 1 has empty holes until plot column 13. Removing those empty spreadsheet rows as well as empty spreadsheet columns.
+```{r}
+b <- is.na(Data$Block) == TRUE
+b2 <- c(1:nrow(Data))[b]
+Data <- Data[-b2,]
+# Data <- Data[,-(22:29)]
+names(Data)[1]<-"Row"
+```
+
+
+# 1.3 Make certain columns factors
+
+```{r message=FALSE, warning=FALSE}
+
+Data$Block <- factor(Data$Block)
+Data$Population <- factor(Data$Population)
+Data$Family <- factor(Data$Family)
+Data$Replicate <- factor(Data$Replicate)
+Data$Exp_rhiz_binary <- factor(Data$Exp_rhiz_binary)
+
+str(Data)
+```
+
+
+# 1.4 Create survival table
+Table (then, data frame) shows each population x family combination (up to 5 families per population), alongside how many plants per population's family is definitely alive (column "no") or is not alive because there was no plant found in the pot (column "no"). These 2 categories are answers to the question, "is the plant dead?". 
+```{r}
+#SURVIVAL TABLE FROM DATA COLLECTION 1 (June 3-7, 2019):
+
+tab1a <- table(Data$Population,Data$Family, Data$Dead_DC1)
+tab2a <- as.data.frame(tab1a)
+names(tab2a)[1]<-"Population"
+names(tab2a)[2]<-"Family"
+names(tab2a)[3]<-"Dead"
+
+DC1_survival <- spread(tab2a, Dead, Freq)
+
+#SURVIVAL TABLE FROM DATA COLLECTION 2 (June 16-19, 2019):
+
+tab1 <- table(Data$Population,Data$Family, Data$Dead_DC2)
+tab2 <- as.data.frame(tab1)
+names(tab2)[1]<-"Population"
+names(tab2)[2]<-"Family"
+names(tab2)[3]<-"Dead"
+
+a <- spread(tab2, Dead, Freq)
+
+```
+
+# 1.5 Edit table
+Adding a "Total" column showing the total number of plants per population family. If the "Total" column = 0, removing that row. Before planting, that family had not been represented with replicates in the first place.
+```{r}
+a$Total <- NA
+a$Total <- rowSums(a[3:4])
+
+a$yes <- as.numeric(a$yes)
+a$no <- as.numeric(a$no)
+
+a<-a[!(a$Total==0),] # removing rows corresponding to populations' a priori empty families
+
+```
+
+
+# 1.6 Find current survival percentages per family
+Adding two columns which indicate the percentage of plants per family that are definitely alive (all dead=no plants) or probably alive (all dead=no plants + half of dead=maybe plants).
+```{r}
+
+a$Pct_Survival_Definite <- NA
+a$Pct_Survival_Definite <- a$no/a$Total
+a$Pct_Survival_Definite <- signif(a$Pct_Survival_Definite, 2)*100
+
+a
+
+```
+
+
+# 1.7 Find current survival percentages per population
+Same idea as in section 1.6 (table e), except percentages are for each population (combining each populations' families). Table f shows the total number of plants categorized as dead=no and dead=yes.
+```{r}
+e <- a %>% group_by(Population) %>% summarise(sum_no = sum(no),
+                                              sum_yes = sum(yes),
+                                              sum_total = sum(Total))
+
+e$Pct_Survival_Definite <- NA
+e$Pct_Survival_Definite <- e$sum_no/e$sum_total
+e$Pct_Survival_Definite <- signif(e$Pct_Survival_Definite, 2)*100
+
+e
+
+
+f <- as.data.frame(table(Data$Dead_DC2)) # total plants for each mortality status
+names(f)[1]<-"Dead?"
+names(f)[2]<-"Count"
+f[1,2] + f[2,2]  # Total plants
+
+
+f
+```
+
+#1.8 Plot of survival per population vs. distance from city center
+
+```{r}
+# When population location is spread over a few sites (e.g. there are several AS identifiers and only 1 MW identifier), coordinates chosen correspond to first AS site. E.g. For MW003, there are two AS sites- AS003 & AS004. AS003 will be designated to show the location of MW003. Same practice for MW004, 005, 006, 007.
+
+Dist_merged <- merge(x = e, y = Distances, by = "Population", all.x = TRUE)
+
+e2 <- Dist_merged %>% group_by(Transect_ID) %>% summarise(alive = sum(sum_no),
+                                              dead = sum(sum_yes),
+                                              sum_total = sum(sum_total))
+
+e2$percent_alive <- NA
+e2$percent_alive <- 100*(e2$alive / e2$sum_total)
+e2$percent_of_total <- NA
+e2$percent_of_total <- (e2$alive / 954)*100
+
+e2
+
+# Plot and stats for percent survival vs. distance from city center (weighted by total plants per population)
+fig3 <- ggplot(Dist_merged, aes(x = Dist_city_center_km_Yonge_Bloor, y = Pct_Survival_Definite, weights=Dist_merged$sum_total)) +
+  labs(x = "Distance to urban center (km)", y = "Survival Rate (Definite)") +
+  geom_point(shape=21) +
+  geom_smooth(method = "lm", se = T, mapping = aes(weight = Dist_merged$sum_total*0.5)) +
+  scale_y_continuous(breaks=c(0,20, 40, 60,80,100), limits=c(0,100)) + 
+  ggtitle('Weighted Definite Population Survival Rate vs. Distance from City Center')
+fig3
+
+Fig3_stats <- lm(Pct_Survival_Definite ~ Dist_city_center_km_Yonge_Bloor, data=Dist_merged, weights=sqrt(Dist_merged$Pct_Survival_Definite))
+par(mfrow=c(2,2))
+plot(Fig3_stats)
+summary(Fig3_stats)
+
+
+# Plot and stats for definite percent survival vs. distance from city center
+fig4 <- ggplot(Dist_merged, aes(x = Dist_city_center_km_Yonge_Bloor, y = Pct_Survival_Definite)) +
+  labs(x = "Distance to urban center (km)", y = "Survival Rate (Definite)") +
+  geom_point(shape=21) +
+  geom_smooth(method = "lm", se = T) +
+  scale_y_continuous(breaks=c(0,20, 40, 60,80,100), limits=c(0,100)) + 
+  ggtitle('Definite Population Survival Rate vs. Distance from City Center')
+fig4
+
+Fig4_stats <- lm(Pct_Survival_Definite ~ Dist_city_center_km_Yonge_Bloor, data=Dist_merged)
+par(mfrow=c(2,2))
+plot(Fig4_stats)
+summary(Fig4_stats)
+
+```
+
+#1.9 Plot growth per population vs. distance from city center
+
+```{r}
+
+Data_Growth <- Data[,c(4:7, 11, 12)]
+Data_Growth$Total_Height_DC0 <- NA
+
+#DC means "data collection" episode. DC0 means the benchmark for all plants' heights when they were planted at KSR = 0mm tall.
+
+#DC1 means "data collection 1"- which took place from June 3-7, just about 2 weeks since all plants were in the ground (Wednesday, May 22, 2019).
+
+#DC2 means "data collection 2"- which took place from June 16-19, just about 4 weeks since all plants were in the ground (Wednesday, May 22, 2019).
+
+Data_Growth$Total_Height_DC0 <- 0
+Data_Growth<-Data_Growth[!(Data_Growth$Total_Height_DC2==0),] # removing rows corresponding to currently dead plants
+
+# g is a new data frame with new columns corresponding to each population's plants' total heights: each plant's ramet's heights, added, and totaled per population.
+g <- Data_Growth %>% group_by(Population) %>% summarise(DC0_total_pop_heights = sum(Total_Height_DC0),
+                                                        DC1_total_pop_heights  = sum(Total_Height_DC1),
+                                                        DC2_total_pop_heights  = sum(Total_Height_DC2))
+
+Data_Growth_Distances <- merge(x = g, y = Distances, by = "Population", all.x = TRUE)
+Data_Growth_Distances$Pop_Size <- Dist_merged$sum_total
+
+Data_Growth_Distances <- Data_Growth_Distances[,-(5:8)] #removing unnecessary cols
+
+Data_Growth_Distances$Avg_Height_DC0to1 <- NA 
+Data_Growth_Distances$Avg_Height_DC1to2  <- NA
+Data_Growth_Distances$Avg_Growth_Rate_DC0to1 <- NA
+Data_Growth_Distances$Avg_Growth_Rate_DC1to2 <- NA
+
+
+Data_Growth_Distances$Avg_Height_DC0to1  <- Data_Growth_Distances[3] / Data_Growth_Distances[7] #this col represents each population's average of all the combined heights of each plant's ramets for data collection 1.
+Data_Growth_Distances$Avg_Height_DC1to2 <- Data_Growth_Distances[4] / Data_Growth_Distances[7] #this col represents each population's average of all the combined heights of each plant's ramets for data collection 2.
+Data_Growth_Distances$Avg_Growth_Rate_DC0to1 <- Data_Growth_Distances[3]/ Data_Growth_Distances[7] #this col represents each population's average amount of mm of height grown by each ramet per plant per population from the first data collection event (when all plants were at height 0) to the actual first data collection event.
+Data_Growth_Distances$Avg_Growth_Rate_DC1to2 <- (Data_Growth_Distances[4] - Data_Growth_Distances[3])/ Data_Growth_Distances[7] #this col represents each population's average amount of mm of height grown by each ramet per plant per population from the actual first data collection event to the second data collection event.
+
+
+
+##### Converting Data_Growth_Distances df into one without nesting data frames (last 3 cols)
+
+  # Find all columns that are data.frame
+  # Assuming your data frame is stored in variable 'y'
+  data.frame.cols <- unname(sapply(Data_Growth_Distances, function(x) class(x) == "data.frame"))
+  z <- Data_Growth_Distances[, !data.frame.cols]
+
+  # All columns of class "data.frame"
+  dfs <- Data_Growth_Distances[, data.frame.cols]
+
+  # Recursively unnest each of these columns
+  unnest_dataframes <- function(x) {
+    Data_Growth_Distances <- do.call(data.frame, x)
+    if("data.frame" %in% sapply(Data_Growth_Distances, class)) {
+        unnest_dataframes(Data_Growth_Distances)
+    } else {
+        cat('Nested data.frames successfully unpacked\n')
+      }
+    Data_Growth_Distances
+  }
+
+  df2 <- unnest_dataframes(dfs)
+
+  # Combine with original data
+  Data_Growth_Distances2 <- cbind(z, df2)
+  
+#####
+  
+names(Data_Growth_Distances2)[8] <- "Avg_Height_DC0to1"
+names(Data_Growth_Distances2)[9] <- "Avg_Height_DC1to2"
+names(Data_Growth_Distances2)[10] <- "Avg_Growth_Rate_DC0to1"
+names(Data_Growth_Distances2)[11] <- "Avg_Growth_Rate_DC1to2"
+
+
+
+DGD2_sorted <- Data_Growth_Distances2 %>% arrange(Dist_city_center_km_Yonge_Bloor)
+# DGD2_sorted$Dist_city_center_km_Yonge_Bloor <- factor(DGD2_sorted$Dist_city_center_km_Yonge_Bloor, levels = DGD2_sorted$Dist_city_center_km_Yonge_Bloor[order(DGD2_sorted$Growth_Rate_DC12)])
+
+p1 <- ggplot(DGD2_sorted, aes(x=Dist_city_center_km_Yonge_Bloor, y=Avg_Growth_Rate_DC0to1, color=Transect_ID, shape=Transect_ID)) + 
+    labs(title="Average Amount Grown per Plant per Population", subtitle = "Between Start and Data Collection Event 1", x = "Population's distance to urban center (km)", y = "Amount Grown (mm)") +
+  geom_point(shape=21, size= 4) +
+  geom_smooth(method = "lm", se = T)
+p1
+
+p1_stats <- lm(Avg_Growth_Rate_DC0to1 ~ Dist_city_center_km_Yonge_Bloor, data=DGD2_sorted)
+par(mfrow=c(2,2))
+plot(p1_stats)
+summary(p1_stats)
+
+
+p2 <- ggplot(DGD2_sorted, aes(x=Dist_city_center_km_Yonge_Bloor, y=Avg_Growth_Rate_DC1to2, color=Transect_ID, shape=Transect_ID)) + 
+    labs(title="Average Amount Grown per Plant per Population", subtitle = "Between Data Collection Events 1-2", x = "Population's distance to urban center (km)", y = "Amount Grown (mm)") +
+  geom_point(shape=21, size= 4) +
+  geom_smooth(method = "lm", se = T) 
+p2
+
+p2_stats <- lm(Avg_Growth_Rate_DC1to2 ~ Dist_city_center_km_Yonge_Bloor, data=DGD2_sorted)
+par(mfrow=c(2,2))
+plot(p2_stats)
+summary(p2_stats)
+
+p3 <- ggplot(DGD2_sorted, aes(x=Dist_city_center_km_Yonge_Bloor, y=Avg_Height_DC0to1, color=Transect_ID, shape=Transect_ID)) + 
+    labs(title="Average Height per Plant per Population", subtitle = "At Data Collection Event 1", x = "Population's distance to urban center (km)", y = "Average Plant Height (mm)") +
+  geom_point(shape=21, size= 4) +
+  geom_smooth(method = "lm", se = T) 
+p3
+
+p3_stats <- lm(Avg_Height_DC0to1 ~ Dist_city_center_km_Yonge_Bloor, data=DGD2_sorted)
+par(mfrow=c(2,2))
+plot(p3_stats)
+summary(p3_stats)
+
+p4 <- ggplot(DGD2_sorted, aes(x=Dist_city_center_km_Yonge_Bloor, y=Avg_Height_DC1to2, color=Transect_ID, shape=Transect_ID)) + 
+    labs(title="Average Height per Plant per Population", subtitle = "At Data Collection Event 2", x = "Population's distance to urban center (km)", y = "Average Plant Height (mm)") +
+  geom_point(shape=21, size= 4) +
+  geom_smooth(method = "lm", se = T) 
+p4
+
+p4_stats <- lm(Avg_Growth_Rate_DC1to2 ~ Dist_city_center_km_Yonge_Bloor, data=DGD2_sorted)
+par(mfrow=c(2,2))
+plot(p4_stats)
+summary(p4_stats)
+
+
+
+library(ggpubr)
+ multi.page <- ggarrange(p1, p2, p3, p4, nrow = 2, ncol = 1)
+ ggexport(multi.page, filename = "multi.page.ggplot2.1.pdf")
+
+```
+
+## 1.91 Box plots for each growth period
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+
+
+ggboxplot(DGD2_sorted, x = "Transect_ID", y = "Avg_Height_DC0to1", 
+          color = "Transect_ID", palette = c("#00AFBB", "#E7B800", "#FC4E07"),
+          order = c("North", "South", "Rural"),
+          ylab = "Growth Rate- DC0 to 1", xlab = "Transect")
+
+ggboxplot(DGD2_sorted, x = "Transect_ID", y = "Avg_Height_DC1to2", 
+          color = "Transect_ID", palette = c("#00AFBB", "#E7B800", "#FC4E07"),
+          order = c("North", "South", "Rural"),
+          ylab = "Growth Rate- DC1 to 2", xlab = "Transect")
+
+ggboxplot(DGD2_sorted, x = "Transect_ID", y = "Avg_Growth_Rate_DC0to1", 
+          color = "Transect_ID", palette = c("#00AFBB", "#E7B800", "#FC4E07"),
+          order = c("North", "South", "Rural"),
+          ylab = "Growth Rate- DC0 to 2", xlab = "Transect")
+
+ggboxplot(DGD2_sorted, x = "Transect_ID", y = "Avg_Growth_Rate_DC1to2", 
+          color = "Transect_ID", palette = c("#00AFBB", "#E7B800", "#FC4E07"),
+          order = c("North", "South", "Rural"),
+          ylab = "Growth Rate- DC0 to 2", xlab = "Transect")
+
+```
+
+## Plotting all plants as individuals (I know this isn't statistically the best idea)
+
+```{r}
+test1 <- merge(x = Data_Growth, y = Distances, by = "Population", all.x = TRUE)
+
+ggplot(data = test1, aes(x=Dist_city_center_km_Yonge_Bloor, y=Total_Height_DC1, color=Transect_ID, shape=Transect_ID)) + geom_point() + geom_smooth(method="lm")
+
+
+ggplot(data = test1, aes(x=Dist_city_center_km_Yonge_Bloor, y=Total_Height_DC2,color=Transect_ID, shape=Transect_ID)) + geom_point() + geom_smooth(method="lm")
+
+```
+
+
+## ____
+
+```{r}
+
+growth_means <- aggregate(DGD2_sorted[, 9:11], list(DGD2_sorted$Transect_ID), mean)
+growth_means <- growth_means[,c(1,4,3,2)]
+names(growth_means)[1] <- "Transect"
+names(growth_means)[2] <- "Growth_0to1"
+names(growth_means)[3] <- "Growth_1to2"
+names(growth_means)[4] <- "Growth_0to2"
+
+
+
+```
+
+## 2.0 LMM
+
+```{r}
+
+## mostly copied from other project- not properly set up
+
+# library(car)
+# 
+# aov1 <- lm(Total_Height_DC2 ~ Row + Column + Block + Population + Family + Replicate, data = Data)
+# # Summary of the analysis
+# summary(aov1)
+# Anova(aov1)
+# 
+# library(lsmeans)
+# lsmeans1 <- lsmeans(aov1, ~Transect_ID)
+# lsmeans1
+# 
+# CLD = cld(lsmeans1,
+#           alpha=0.05,
+#           Letters=letters,
+#           adjust="tukey")
+# 
+# CLD
+# 
+# require(car)
+# require(MASS)
+# # This is so that distributions that must be non-zero can make sense of my data
+# Data$Total_Height_DC2.t <- Data$Total_Height_DC2  + 1
+# qqp(Data$Total_Height_DC2.t, "norm")
+# qqp(Data$Total_Height_DC2.t, "lnorm")
+# 
+# nbinom <- fitdistr(Data$Total_Height_DC2.t , "Negative Binomial")
+# qqp(Data$Total_Height_DC2.t , "nbinom", size = nbinom$estimate[[1]], mu = nbinom$estimate[[2]])
+# 
+# poisson <- fitdistr(Data$Total_Height_DC2.t, "Poisson")
+# qqp(Data$Total_Height_DC2.t, "pois", poisson$estimate)  ## not working
+# 
+# gamma <- fitdistr(Data$Total_Height_DC2.t, "gamma")
+# qqp(Data$Total_Height_DC2.t, "gamma", shape = gamma$estimate[[1]], rate = gamma$estimate[[2]])
+# 
+
+
+library(lme4)
+library(lmerTest)
+
+# m1 <- lmer(Data$Total_Height_DC2 ~ (1|Data$Population) + (1|Data$Family) + (1|Data$Block), Data=Data, REML = T)
+
+m1 <- lmer(Total_Height_DC2 ~ (1|Population) + (1|Family) + (1|Exp_rhiz_binary) + (1|Date_Measured) + (1|Measurer_DC1), data=Data, REML = T)
+summary(m1)
+ranova(m1)
+
+m2 <- lmer(Data$Total_Height_DC2 ~ (1|Data$Population) + (1|Data$Exp_rhiz_binary), data=Data, REML = T)
+summary(m2)
+ranova(m2)
+```
