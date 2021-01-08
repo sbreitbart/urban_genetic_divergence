@@ -21,6 +21,7 @@ Notes:
 ---
 # Set up notebook
 ## Load packages
+
 ```{r}
 library(dplyr)
 library(reshape)
@@ -100,12 +101,39 @@ Distances <- read.csv(here("./CommonGardenExperiment_2019Data/raw_data/Transect_
 data_clean_2019 <- read.csv(here("./CommonGardenExperiment_2019Data/clean_data/clean_data_2019KSR.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",")
 
 
+# 2020 data-----
 
-library(NCmisc)
-p <- NCmisc::list.functions.in.file("/Users/sbrei/Documents/R_Projects/chapter_two/scripts/cleaning_herbivory.R", alphabetic = T)
-summary(p)
+# Heights------
+# at start of season (Data Collection 1)
+heights_1 <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Height/2020_Datacollection1_Height.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
 
+# at end of season (DC 7)
+heights_2 <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Height/2020_Datacollection7_Height.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
 
+# Weevil damage------
+# at start of season (Data Collection 1)- BINARY
+weevil_1 <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Weevil_Damage/2020_Datacollection1_WeevilBinary.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
+
+# at start of season (Data Collection 1)- QUANTITATIVE
+weevil_2 <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Weevil_Damage/2020_Datacollection4_WeevilScarLength.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
+
+# Data about flowering, pollen removal, inflor and follicle count, + other reproductive traits (Data collection 2)-----
+reproductive <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Reproductive_Traits/2020_Datacollection2_20200911.csv"),header=T, na.strings=c("NO PLANT", "none", "", "NA"), blank.lines.skip=TRUE)
+
+# Herbivory-----
+# in middle of season (DC 3)
+herbivory_1 <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Herbivory/2020_Datacollection3_Herbivory.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
+
+# towards end of season (DC 7)
+herbivory_2 <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Herbivory/2020_Datacollection7_Herbivory.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
+
+# Survival-----
+# at end of season (DC 7)
+survival <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Survival/2020_Datacollection7_Survival.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
+
+# Herbivores-----
+# For both data collections (July & August)
+herbivores <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Herbivores/2020_Datacollection_Herbvivores2020_raw_formatted.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
 
 ```
 
@@ -135,6 +163,235 @@ Distances <- Distances[,-c(7:9)]
 
 
 ## Clean data
+### All datasets
+```{r}
+# make into dataframes-----
+dfs <- list(heights_1, heights_2, weevil_1, weevil_2, reproductive, herbivory_1, herbivory_2, survival, herbivores)
+
+for (x in dfs) {
+  x <- as.data.frame(x)
+}
+
+# Remove rows without plants, empty columns-----
+# Though 46 holes were dug per 21 rows of the field plot, each hole was not filled with a plant- ex. Row 1 has empty holes until plot column 13. Removing those empty spreadsheet rows as well as empty spreadsheet columns.
+
+# heights_1, heights_2, weevil_1, weevil_2, reproductive, herbivory_1, herbivory_2, survival, herbivores
+
+# heights_1-----
+  c <- is.na(heights_1$Block) == TRUE
+  c2 <- c(1:nrow(heights_1))[c]
+  heights_1 <- heights_1[-c2,]
+  names(heights_1)[1]<-"Row"
+  heights_1 <- heights_1[!is.na(heights_1$Population), ] # there was no plant in this pot anymore... may have been taken by raccoons
+  
+# heights_2-----
+  c <- is.na(heights_2$Block) == TRUE
+  c2 <- c(1:nrow(heights_2))[c]
+  heights_2 <- heights_2[-c2,]
+  names(heights_2)[1]<-"Row"
+  heights_2 <- heights_2[!is.na(heights_2$Population), ] 
+  
+# weevil_1-----
+  c <- is.na(weevil_1$Block) == TRUE
+  c2 <- c(1:nrow(weevil_1))[c]
+  weevil_1 <- weevil_1[-c2,]
+  names(weevil_1)[1]<-"Row"
+  weevil_1 <- weevil_1[!is.na(weevil_1$Population), ]
+  
+# weevil_2-----
+  c <- is.na(weevil_2$Block) == TRUE
+  c2 <- c(1:nrow(weevil_2))[c]
+  weevil_2 <- weevil_2[-c2,]
+  names(weevil_2)[1]<-"Row"
+  weevil_2 <- weevil_2[!is.na(weevil_2$Population), ]
+  
+# reproductive-----
+  c <- is.na(reproductive$Block) == TRUE
+  c2 <- c(1:nrow(reproductive))[c]
+  reproductive <- reproductive[-c2,]
+  names(reproductive)[1]<-"Row"
+  reproductive <- reproductive[!is.na(reproductive$Population), ]  
+  
+# herbivory_1-----
+  c <- is.na(herbivory_1$Block) == TRUE
+  c2 <- c(1:nrow(herbivory_1))[c]
+  herbivory_1 <- herbivory_1[-c2,]
+  names(herbivory_1)[1]<-"Row"
+  herbivory_1 <- herbivory_1[!is.na(herbivory_1$Population), ]  
+  
+# herbivory_2-----
+  c <- is.na(herbivory_2$Block) == TRUE
+  c2 <- c(1:nrow(herbivory_2))[c]
+  herbivory_2 <- herbivory_2[-c2,]
+  names(herbivory_2)[1]<-"Row"
+  herbivory_2 <- herbivory_2[!is.na(herbivory_2$Population), ] 
+  
+# survival-----
+  c <- is.na(survival$Block) == TRUE
+  c2 <- c(1:nrow(survival))[c]
+  survival <- survival[-c2,]
+  names(survival)[1]<-"Row"
+  survival <- survival[!is.na(survival$Population), ]
+  
+# herbivores-----
+  # no rows w/block listed as NA here
+  # c <- is.na(herbivores$Block) == TRUE
+  # c2 <- c(1:nrow(herbivores))[c]
+  # herbivores <- herbivores[-c2,]
+  names(herbivores)[1]<-"Row"
+  herbivores <- herbivores[!is.na(herbivores$Population), ]
+  
+
+# for (x in 1:length(dfs)) {
+#   names(x)[1]<-"Row"
+#   x <- x[!is.na(x$Population), ]
+# }
+#   
+# lapply(dfs, function(x) {
+#   c <- is.na(x$Block) == TRUE
+#   c2 <- c(1:nrow(x))[c]
+#   x <- x[-c2,]
+#   names(x)[1]<-"Row"
+#   x <- x[!is.na(x$Population), ]} )
+# 
+# 
+# clean_fun1 = function(x)
+# {
+#   names(x)[[1]]<-"Row"
+#   x <- x[!is.na(x$Population), ]
+# }
+# lapply(dfs, clean_fun1)
+
+
+# Make certain columns factors / check classes are correct-----
+## dfs: heights_1, heights_2, weevil_1, weevil_2, reproductive, herbivory_1, herbivory_2, survival
+## Heights_1----
+str(heights_1)
+  
+# make these columns into factors
+factor_cols <- c("Block", "Population", "Family", "Replicate", "Comment")
+heights_1[factor_cols] <- lapply(heights_1[factor_cols], factor)
+
+# add col for # of stems
+heights_1$Ramets <- rowSums(!is.na(heights_1[,c(10:23)]))
+str(heights_1)
+
+
+## Heights_2----
+str(heights_2)
+
+# make these columns into factors
+factor_cols <- c("Block", "Population", "Family", "Replicate", "Comment")
+heights_2[factor_cols] <- lapply(heights_2[factor_cols], factor)
+
+# make these columns into numeric
+heights_2[,9:17] <- sapply(heights_2[,9:17], as.character)
+heights_2[,9:17] <- sapply(heights_2[,9:17], as.numeric)
+
+
+# add col for # of stems
+heights_2$Ramets <- rowSums(!is.na(heights_2[,c(9:16)]))
+
+str(heights_2)
+
+## weevil_1----
+str(weevil_1)
+
+# remove empty columns
+weevil_1 <- weevil_1[,-c(25:29)]
+
+# make these columns into factors
+weevil_1[factor_cols] <- lapply(weevil_1[factor_cols], factor)
+str(weevil_1)
+
+## weevil_2----
+str(weevil_2)
+
+factor_cols_nocomment <- c("Block", "Population", "Family", "Replicate", "Weevil_dam_June", "Dead")
+# make these columns into factors
+weevil_2[factor_cols_nocomment] <- lapply(weevil_2[factor_cols_nocomment], factor)
+
+str(weevil_2)
+
+## reproductive----
+str(reproductive)
+
+# remove columns that were temporary
+reproductive <- reproductive[,-c(9:10, 13:14)]
+
+# make these columns into factors
+reproductive[factor_cols] <- lapply(reproductive[factor_cols], factor)
+
+# make these columns into numeric
+reproductive[,c(12:17, 19:24, 26:31, 33:39, 41:46, 48:53, 56:61, 63:68, 70:75)] <- sapply(reproductive[,c(12:17, 19:24, 26:31, 33:39, 41:46, 48:53, 56:61, 63:68, 70:75)], as.character)
+reproductive[,c(12:17, 19:24, 26:31, 33:39, 41:46, 48:53, 56:61, 63:68, 70:75)] <- sapply(reproductive[,c(12:17, 19:24, 26:31, 33:39, 41:46, 48:53, 56:61, 63:68, 70:75)], as.numeric)
+
+# make these columns into integers
+reproductive <- reproductive %>%
+  dplyr::mutate_at(vars(starts_with(c("Flower_count", "Poll_rem"))), dplyr::funs(as.character())) %>%
+  dplyr::mutate_at(vars(starts_with(c("Flower_count", "Poll_rem"))), dplyr::funs(as.integer()))
+str(reproductive)
+
+reproductive[,c('Poll_rem.I2F3', 'Poll_rem.I2F2', 'Poll_rem.I2F1')] <- sapply(reproductive[,c('Poll_rem.I2F3', 'Poll_rem.I2F2', 'Poll_rem.I2F1')], as.character)
+reproductive[,c('Poll_rem.I2F3', 'Poll_rem.I2F2', 'Poll_rem.I2F1')] <- sapply(reproductive[,c('Poll_rem.I2F3', 'Poll_rem.I2F2', 'Poll_rem.I2F1')], as.integer)
+str(reproductive)
+
+## herbivory_1----
+str(herbivory_1)
+
+# make these columns into factors
+herbivory_1[factor_cols] <- lapply(herbivory_1[factor_cols], factor)
+
+str(herbivory_1)
+
+## herbivory_2----
+str(herbivory_2)
+
+# make these columns into factors
+herbivory_2[factor_cols] <- lapply(herbivory_2[factor_cols], factor)
+
+str(herbivory_2)
+
+## survival----
+str(survival)
+
+# make these columns into factors
+survival[factor_cols] <- lapply(survival[factor_cols], factor)
+survival$Dead <- as.factor(survival$Dead)
+
+str(survival)
+
+
+
+## herbivores----
+str(herbivores)
+
+# make these columns into factors
+herbivores[factor_cols] <- lapply(herbivores[factor_cols], factor)
+herbivores$Dead <- as.factor(herbivores$Dead)
+
+# remove extra row and column cols
+herbivores <- herbivores[-c(8,9, 24:32)]
+str(herbivores)
+
+# remove dead plants
+herbivores <- herbivores %>% filter(., Dead == "0")
+
+# replace NAs with 0s for herbivore cols (9:10, 12:20)
+herbivores[,c(9:10, 12:20)][is.na(herbivores[,c(9:10, 12:20)])] <- 0
+
+# Add transect data via merge
+herbivores <- merge(herbivores, Distances, by = "Population", all.x = TRUE)
+
+# make new col to differentiate data collection events (July and Aug)
+July_herb_dates <- list("07/13/2020", "07/14/2020", "07/15/2020", "07/16/2020", "07/18/2020", "07/20/2020")
+herbivores$Sample <- ifelse(is.element(herbivores$Date, July_herb_dates),"July", "August")
+herbivores$Sample <- as.factor(herbivores$Sample)
+
+
+str(herbivores)
+```
+
 ### survival
 #### Find which plants had grown at season start --> make new survival_both df
 Isn't a foolproof method for assessing overwinter mortality, but will tell which plants had no visible growth during first data collection in June
@@ -167,6 +424,7 @@ survival_both <- survival_both[,-8]
 survival_both <- survival_both[, c(1:6, 9, 8, 7)]
 ```
 
+
 #### find plants deemed dead during both data collection assessments and years
 ```{r}
 dead_2020 <- survival_both %>% filter(., Dead_June == 1 & Dead_Sept == 1)
@@ -190,8 +448,100 @@ survival_2020 <- anti_join(survival_both, dead_bothyears, by = c("Row", "Column"
 ```
 
 
-#### Remove dead plants from heights dfs (do AFTER MODULARIZATION)
+
+### reproduction
 ```{r}
+
+# Add col to indicate if plant flowered
+reproductive$Flowered2020 <- reproductive$Flower_count_I1
+
+## Now change all instances of >0 to 1. If >=1, the plant flowered.
+reproductive <- reproductive %>% mutate(reproductive, Flowered2020 = ifelse(Flowered2020 == "0", "0", "1"))
+## Change NAs to 0's.
+reproductive$Flowered2020[is.na(reproductive$Flowered2020)] <- 0
+
+
+### make new binary flowering column factor
+reproductive$Flowered2020 <- as.factor(reproductive$Flowered2020)
+
+str(reproductive)
+
+
+# Add distances to city center
+reproductive <- merge(x = reproductive, y = Distances, by = "Population", all.x = TRUE)
+
+
+# add column combining both urban subtransects
+reproductive$Urb_Rur <- reproductive$Transect_ID
+reproductive$Urb_Rur <- revalue(reproductive$Urb_Rur, c("North"="Urban", "South"="Urban"))
+
+
+
+# Make subset of only flowering plants
+flowering_2020 <- reproductive %>% filter(!is.na(Flower_count_I1))
+
+# find mean flower size
+flowering_2020 <- flowering_2020 %>%
+  # start with hood size
+  dplyr::mutate(., Hood.I1F1 = Hood_L.I1F1 * Hood_W.I1F1,
+                Hood.I1F2 = Hood_L.I1F2 * Hood_W.I1F2,
+                Hood.I1F3 = Hood_L.I1F3 * Hood_W.I1F3,
+                Hood.I2F1 = Hood_L.I2F1 * Hood_W.I2F1,
+                Hood.I2F2 = Hood_L.I2F2 * Hood_W.I2F2,
+                Hood.I2F3 = Hood_L.I2F3 * Hood_W.I2F3,
+                Hood.I3F1 = Hood_L.I3F1 * Hood_W.I3F1,
+                Hood.I3F2 = Hood_L.I3F2 * Hood_W.I3F2,
+                Hood.I3F3 = Hood_L.I3F3 * Hood_W.I3F3) %>%
+  dplyr::mutate(., Hood.I1 = mean(c(Hood.I1F1, Hood.I1F2, Hood.I1F3), na.rm = T),
+                Hood.I2 = mean(c(Hood.I2F1, Hood.I2F2, Hood.I2F3), na.rm = T),
+                Hood.I3 = mean(c(Hood.I3F1, Hood.I3F2, Hood.I3F3), na.rm = T)) %>%
+  dplyr::mutate(., Hood_mean = mean(c(Hood.I1, Hood.I2, Hood.I3), na.rm = T)) %>%
+  # do same for corollas
+    dplyr::mutate(., Corolla.I1F1 = Corolla_L.I1F1 * Corolla_W.I1F1,
+                Corolla.I1F2 = Corolla_L.I1F2 * Corolla_W.I1F2,
+                Corolla.I1F3 = Corolla_L.I1F3 * Corolla_W.I1F3,
+                Corolla.I2F1 = Corolla_L.I2F1 * Corolla_W.I2F1,
+                Corolla.I2F2 = Corolla_L.I2F2 * Corolla_W.I2F2,
+                Corolla.I2F3 = Corolla_L.I2F3 * Corolla_W.I2F3,
+                Corolla.I3F1 = Corolla_L.I3F1 * Corolla_W.I3F1,
+                Corolla.I3F2 = Corolla_L.I3F2 * Corolla_W.I3F2,
+                Corolla.I3F3 = Corolla_L.I3F3 * Corolla_W.I3F3) %>%
+  dplyr::mutate(., Corolla.I1 = mean(c(Corolla.I1F1, Corolla.I1F2, Corolla.I1F3), na.rm = T),
+                Corolla.I2 = mean(c(Corolla.I2F1, Corolla.I2F2, Corolla.I2F3), na.rm = T),
+                Corolla.I3 = mean(c(Corolla.I3F1, Corolla.I3F2, Corolla.I3F3), na.rm = T)) %>%
+  dplyr::mutate(., Corolla_mean = mean(c(Corolla.I1, Corolla.I2, Corolla.I3), na.rm = T)) %>% 
+    # do same for total flower L, W
+    dplyr::mutate(., Flower.I1F1 = Flower_L.I1F1 * Flower_W.I1F1,
+                Flower.I1F2 = Flower_L.I1F2 * Flower_W.I1F2,
+                Flower.I1F3 = Flower_L.I1F3 * Flower_W.I1F3,
+                Flower.I2F1 = Flower_L.I2F1 * Flower_W.I2F1,
+                Flower.I2F2 = Flower_L.I2F2 * Flower_W.I2F2,
+                Flower.I2F3 = Flower_L.I2F3 * Flower_W.I2F3,
+                Flower.I3F1 = Flower_L.I3F1 * Flower_W.I3F1,
+                Flower.I3F2 = Flower_L.I3F2 * Flower_W.I3F2,
+                Flower.I3F3 = Flower_L.I3F3 * Flower_W.I3F3) %>%
+  dplyr::mutate(., Flower.I1 = mean(c(Flower.I1F1, Flower.I1F2, Flower.I1F3), na.rm = T),
+                Flower.I2 = mean(c(Flower.I2F1, Flower.I2F2, Flower.I2F3), na.rm = T),
+                Flower.I3 = mean(c(Flower.I3F1, Flower.I3F2, Flower.I3F3), na.rm = T)) %>%
+  dplyr::mutate(., Flower_mean = mean(c(Flower.I1, Flower.I2, Flower.I3), na.rm = T)) %>%
+  # multiply those 3 components for overall flower size identifier
+    dplyr::mutate(., Overall_mean = mean(c(Hood_mean, Corolla_mean, Flower_mean), na.rm = T)) 
+```
+
+
+### height
+```{r}
+# make new df with just row, col... replicate and heights
+heights_both <- left_join(heights_1, heights_2, by = c("Row", "Column", "Block", "Population", "Family", "Replicate"), suffix = c('_June', '_Sept'))
+heights_both <- heights_both[,-c(7:23, 27, 29:36, 38)]
+
+
+# add col for growth rate
+heights_both$date_diff <- as.Date(as.character(heights_both$Date_Sept), format="%m/%d/%Y") - as.Date(as.character(heights_both$Date_June), format="%m/%d/%Y")
+heights_both$date_diff <- as.numeric(heights_both$date_diff)
+
+
+heights_both <- as.data.frame(heights_both)
 
 # remove rows associated with plants that were dead
 heights_both <- anti_join(heights_both, dead_bothyears, by = c("Row", "Column"))
@@ -208,8 +558,37 @@ heights_both <- heights_both %>% dplyr::mutate(.,
 
 
 ```
-### weevil damage / june height- DO AFTER MODULARIZATION
+
+### weevil damage
+#### weevil_1 (Weevil damage- binary)
 ```{r}
+# Make new column signifying if any ramets of plant experienced any weevil damage- 0 or 1
+## First, select columns pertaining to weevil damage
+w_cols <- weevil_1 %>% dplyr::select(contains("Weevil"))
+w_colnames <- colnames(w_cols)
+
+## Next, add sums of weevil damage cols.
+weevil_1$Weevil_dam_total <- rowSums(weevil_1[w_colnames], na.rm = T)
+weevil_1$Weevil_dam_binary <- weevil_1$Weevil_dam_total
+
+
+## Now change all instances of >=1 to 1 (to signify simple 0/1 damage experienced). If >=1, then at least one ramet experienced weevil damage.
+weevil_1 <- weevil_1 %>% mutate(weevil_1, Weevil_dam_binary = ifelse(Weevil_dam_total == "0", "0", "1"))
+
+### make new binary weevil damage column factor
+weevil_1$Weevil_dam_binary <- as.factor(weevil_1$Weevil_dam_binary)
+
+# check appropriate columns are factors
+str(weevil_1)
+
+```
+
+#### combine both weevil damage assessment events into one df
+```{r}
+# make new df with just row, col... replicate and weevil damage cols
+weevil_both <- left_join(weevil_1, weevil_2, by = c("Row", "Column", "Block", "Population", "Family", "Replicate")) %>%
+  dplyr::select(.,-c(7:25, 27:28, 30:31)) %>%
+  
 # add June height so I can standardize weevil scar length by total height
   left_join(., heights_both[,-8], by = c("Row", "Column", "Block", "Population", "Family", "Replicate")) %>%
   mutate(Scar_length_cm = Scar_length_mm / 10) %>%
@@ -221,27 +600,19 @@ heights_both <- heights_both %>% dplyr::mutate(.,
 
 ```
 
-### reproductive (DO AFTER MOD)
+### herbivory
+#### combine both herbivory assessment events into one df
 ```{r}
-# Add distances to city center
-reproductive <- merge(x = reproductive, y = Distances, by = "Population", all.x = TRUE)
-
-
-# add column combining both urban subtransects
-reproductive$Urb_Rur <- reproductive$Transect_ID
-reproductive$Urb_Rur <- revalue(reproductive$Urb_Rur, c("North"="Urban", "South"="Urban"))
-
-
-
-```
-
-### herbivory (DO AFTER MOD)
-```{r}
+# make new df with just row, col... replicate and weevil damage cols
+herbivory_both <- left_join(herbivory_1, herbivory_2, by = c("Row", "Column", "Block", "Population", "Family", "Replicate"), suffix = c(".July", ".Sept"))
+  
 # remove rows associated with plants that were dead
 herbivory_both_alive <- anti_join(herbivory_both, dead_bothyears, by = c("Row", "Column"))
 
+```
 
-# Clean columns to get average herbivory
+#### Clean columns to get average herbivory
+```{r}
 # JULY------
 ### Replace non-numeric entries with NA and remove dashes (which symbolize no leaf) 
 herbivory_both_alive$Herbivory.July_mean <- herbivory_both_alive$Herbivory.July
@@ -281,12 +652,6 @@ library(stringi)
 herbivory_both_alive$Herbivory.Sept_mean <- sapply(strsplit(as.character(herbivory_both_alive$Herbivory.Sept_mean), ",", fixed=T), function(x) mean(as.numeric(x)))
 ```
 
-### herbivores (do FTER MOD)
-```{r}
-# Add transect data via merge
-herbivores <- merge(herbivores, Distances, by = "Population", all.x = TRUE)
-
-```
 
 # Find averages per family & population
 ## reproductive
