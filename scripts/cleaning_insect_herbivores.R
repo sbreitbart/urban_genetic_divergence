@@ -55,4 +55,5 @@ str(herbivores)
 #-------------------
 # Export to new csv
 #-------------------
-write.csv(herbivores, here("./CommonGardenExperiment_2020Data/clean_data/2020_insect_herbivores_clean.csv"))
+write.csv(herbivores,
+          here("./CommonGardenExperiment_2020Data/clean_data/2020_insect_herbivores_clean.csv"))

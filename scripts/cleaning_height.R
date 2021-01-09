@@ -59,7 +59,9 @@ heights_1[factor_cols] <- lapply(heights_1[factor_cols], factor)
 
 # add col for # of stems
 heights_1$Ramets <- rowSums(!is.na(heights_1[,c(10:23)]))
-str(heights_1)
+
+# if total height = 0, then change # stems to 0
+heights_1$Ramets[heights_1$Total_Height==0] = 0
 
 
 ## Heights_2----
@@ -81,7 +83,7 @@ str(heights_2)
 
 # make into one df----
 heights_both <- left_join(heights_1, heights_2, by = c("Row", "Column", "Block", "Population", "Family", "Replicate"), suffix = c('_June', '_Sept'))
-heights_both <- heights_both[,-c(7:23, 27, 29:36, 38)]
+heights_both <- heights_both[,-c(7:8, 10:23, 27, 29:36, 38)]
 
 
 # add col for growth rate
