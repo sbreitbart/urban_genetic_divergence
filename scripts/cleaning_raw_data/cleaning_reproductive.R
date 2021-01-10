@@ -172,6 +172,14 @@ flowering_2020 <- flowering_2020 %>%
                                               Flower_count_I3),
                                             na.rm = TRUE))
 
+# compute total flower count
+flowering_2020 <- flowering_2020 %>%
+  rowwise() %>% 
+  dplyr::mutate(., total_flower_count = sum(c(Flower_count_I1,
+                                              Flower_count_I2,
+                                              Flower_count_I3),
+                                            na.rm = TRUE))
+
 #-------------------
 # Export to new csv
 #-------------------
