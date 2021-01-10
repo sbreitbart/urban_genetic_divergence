@@ -112,6 +112,7 @@ herbivores <- read.csv(here("./CommonGardenExperiment_2020Data/clean_data/2020_i
 
 reproductive <- read.csv(here("./CommonGardenExperiment_2020Data/clean_data/2020_reproductive_clean.csv")) %>%
   dplyr::select(., -1)
+
 flowering_2020 <- read.csv(here("./CommonGardenExperiment_2020Data/clean_data/2020_floweringplants_clean.csv")) %>%
   dplyr::select(., -1)
 
@@ -293,7 +294,8 @@ Distances <- Distances[,-c(7:9)]
 #                 survival_2020,
 #                 weevil_both,
 #                 herbivores,
-#                 reproductive)
+#                 reproductive,
+#                 flowering_2020)
 # 
 # # Add distances to city center
 # df.list <- lapply(df.list, function(x)
@@ -306,6 +308,7 @@ survival_2020 <- merge(survival_2020, y = Distances, by = "Population", all.x = 
 weevil_both <- merge(weevil_both, y = Distances, by = "Population", all.x = TRUE)
 herbivores <- merge(herbivores, y = Distances, by = "Population", all.x = TRUE)
 reproductive <- merge(reproductive, y = Distances, by = "Population", all.x = TRUE)
+flowering_2020 <- merge(flowering_2020, y = Distances, by = "Population", all.x = TRUE)
 
 
 # recode North & South as urban (CAN'T MAKE THIS WORK SO DOING IT MANUALLY)
@@ -366,6 +369,12 @@ reproductive <- reproductive %>%
                                         'South' = "Urban",
                                         'Rural' = "Rural"))
 
+flowering_2020 <- flowering_2020 %>% 
+  dplyr::mutate(Urb_Rur = Transect_ID) %>%
+  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
+                                        'North' = "Urban",
+                                        'South' = "Urban",
+                                        'Rural' = "Rural"))
 
 
 ```
@@ -967,16 +976,6 @@ summary(glmer(Flowered2020 ~ Block + (1|Population/Family),
 ###### Sig difference along gradient?
 ####### lm
 ```{r}
-# compute mean flower count
-flowering_2020$mean_flower_count <- NA
-flowering_2020 <- flowering_2020 %>%
-  rowwise() %>% 
-  dplyr::mutate(., mean_flower_count = mean(c(Flower_count_I1,
-                                     Flower_count_I2,
-                                     Flower_count_I3),
-                                     na.rm = TRUE))
-
-
 # diagnostics: can I use a parametric test?
 # using lm instead of glm w/poisson bc these are means, not integers
 flowercount_2020_lm_gradient <- lm(mean_flower_count ~ City_dist, data = flowering_2020)
@@ -3669,78 +3668,139 @@ AIC(glmer(dead_2020  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_
 
 
 # Figures
+## make themes
+```{r}
+# Gradient
+theme_gradient_1_init <-  theme_bw() +
+  theme(text = element_text(size=12))
+
+theme_gradient_1 <-  list(theme_gradient_1_init,
+                          geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2),
+                          scale_shape(solid = F),
+                          geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black'),
+                          scale_shape_manual(values = c(1, 2, 5),
+                                             breaks = c("North", "South", "Rural"),
+                                             labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
+                                             name = "Sample Site Subtransect"),
+                          scale_color_manual(values = c("black", "#333333", "#666666"),
+                                             breaks = c("North", "South", "Rural"),
+                                             labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
+                                             name = "Sample Site Subtransect"))
+
+
+# Urban subtransects
+theme_urbansubs_1 <- list(theme_gradient_1_init,
+                          geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) ,
+                          scale_shape(solid = F),
+                          geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) ,
+                          scale_shape_manual(values = c(1, 2),
+                                             breaks = c("North", "South"),
+                                             labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                                             name = "Sample Site Subtransect") ,
+                          scale_color_manual(values = c("red", "blue"),
+                                             breaks = c("North", "South"),
+                                             labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                                             name = "Sample Site Subtransect") ,
+                          scale_linetype_manual(values = c("solid", "dashed"),
+                                             breaks = c("North", "South"),
+                                             labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                                             name = "Sample Site Subtransect") ,
+                          scale_fill_manual(values = c("red", "blue"),
+                                             breaks = c("North", "South"),
+                                             labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                                             name = "Sample Site Subtransect"))
+```
+
 ## reproductive
 ### Plants that flowered: Regressions
 #### Percent flowering plants/pop
 ##### Entire gradient
 ```{r}
+# ggplot(flowered2020_popmeans, aes(x = City_dist, y = percent_flowered)) + 
+#   labs(x = "Distance to urban center (km)", 
+#     y = "Percent Flowering Plants/Population") +
+#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
+#   scale_shape(solid = F)+
+#   geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
+#   theme_bw() +
+#   theme(text = element_text(size=12)) +
+#   scale_shape_manual(values = c(1, 2, 5),
+#                      breaks = c("North", "South", "Rural"),
+#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
+#                        name = "Sample Site Subtransect") +
+#   scale_color_manual(values = c("black", "#333333", "#666666"),
+#                      breaks = c("North", "South", "Rural"),
+#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
+#                        name = "Sample Site Subtransect") 
+
+
 ggplot(flowered2020_popmeans, aes(x = City_dist, y = percent_flowered)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Percent Flowering Plants/Population") +
-  geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-  scale_shape(solid = F)+
-  geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-  theme_bw() +
-  theme(text = element_text(size=12)) +
-  scale_shape_manual(values = c(1, 2, 5),
-                     breaks = c("North", "South", "Rural"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-                       name = "Sample Site Subtransect") +
-  scale_color_manual(values = c("black", "#333333", "#666666"),
-                     breaks = c("North", "South", "Rural"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-                       name = "Sample Site Subtransect") 
+  theme_gradient_1
 
 ```
 
 ##### Urban subtransects
 ```{r}
+# ggplot(flowered2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = percent_flowered)) +
+#   labs(x = "Distance to urban center (km)",
+#     y = "Percent Flowering Plants/Population") +
+#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
+#   scale_shape(solid = F)+
+#   geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
+#   theme_bw() +
+#   theme(text = element_text(size=12)) +
+#   scale_shape_manual(values = c(1, 2),
+#                      breaks = c("North", "South"),
+#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+#                        name = "Sample Site Subtransect") +
+#   scale_color_manual(values = c("red", "blue"),
+#                      breaks = c("North", "South"),
+#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+#                        name = "Sample Site Subtransect") +
+#   scale_linetype_manual(values = c("solid", "dashed"),
+#                      breaks = c("North", "South"),
+#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+#                        name = "Sample Site Subtransect") +
+#   scale_fill_manual(values = c("red", "blue"),
+#                      breaks = c("North", "South"),
+#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+#                        name = "Sample Site Subtransect")
+#                        
+
 ggplot(flowered2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = percent_flowered)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Percent Flowering Plants/Population") +
-  geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-  scale_shape(solid = F)+
-  geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
-  theme_bw() +
-  theme(text = element_text(size=12)) +
-  scale_shape_manual(values = c(1, 2),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect") +
-  scale_color_manual(values = c("red", "blue"),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect") +
-  scale_linetype_manual(values = c("solid", "dashed"),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect") +
-  scale_fill_manual(values = c("red", "blue"),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect")
+  theme_urbansubs_1
 ```
 
 
 #### Mean flower count
 ##### Entire gradient
 ```{r}
+# ggplot(flowering_2020, aes(x = City_dist, y = mean_flower_count)) + 
+#   labs(x = "Distance to urban center (km)", 
+#     y = "Mean flower count/inflorescence") +
+#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
+#   scale_shape(solid = F)+
+#   geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
+#   theme_bw() +
+#   theme(text = element_text(size=12)) +
+#   scale_shape_manual(values = c(1, 2, 5),
+#                      breaks = c("North", "South", "Rural"),
+#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
+#                        name = "Sample Site Subtransect") +
+#   scale_color_manual(values = c("black", "#333333", "#666666"),
+#                      breaks = c("North", "South", "Rural"),
+#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
+#                        name = "Sample Site Subtransect")
+
+
 ggplot(flowering_2020, aes(x = City_dist, y = mean_flower_count)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Mean flower count/inflorescence") +
-  geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-  scale_shape(solid = F)+
-  geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-  theme_bw() +
-  theme(text = element_text(size=12)) +
-  scale_shape_manual(values = c(1, 2, 5),
-                     breaks = c("North", "South", "Rural"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-                       name = "Sample Site Subtransect") +
-  scale_color_manual(values = c("black", "#333333", "#666666"),
-                     breaks = c("North", "South", "Rural"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-                       name = "Sample Site Subtransect") 
+  theme_gradient_1
 
 ```
 

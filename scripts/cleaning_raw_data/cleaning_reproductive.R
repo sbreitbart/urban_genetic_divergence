@@ -12,10 +12,12 @@ library(here)
 #-------------------
 # Data about flowering, pollen removal, inflor and follicle count, + other reproductive traits (Data collection 2)-----
 reproductive <- read.csv(here(
-  "./CommonGardenExperiment_2020Data/raw_data/Reproductive_Traits/2020_Datacollection2_20210110.csv"),header=T, na.strings=c("NO PLANT", "none", "", "NA"), blank.lines.skip=TRUE) %>%
+  "./CommonGardenExperiment_2020Data/raw_data/Reproductive_Traits/2020_Datacollection2_20210110.csv"),
+  header=T,
+  stringsAsFactors=FALSE,
+  na.strings=c("NO PLANT", "none", "", "NA"),
+  blank.lines.skip=TRUE) %>%
   as.data.frame()
-
-
 
 
 #-------------------
@@ -24,11 +26,11 @@ reproductive <- read.csv(here(
 # Remove rows without plants, empty columns-----
 # Though 46 holes were dug per 21 rows of the field plot, each hole was not filled with a plant- ex. Row 1 has empty holes until plot column 13. Removing those empty spreadsheet rows as well as empty spreadsheet columns.
 
-  c <- is.na(reproductive$Block) == TRUE
-  c2 <- c(1:nrow(reproductive))[c]
-  reproductive <- reproductive[-c2,]
-  names(reproductive)[1]<-"Row"
-  reproductive <- reproductive[!is.na(reproductive$Population), ]  
+c <- is.na(reproductive$Block) == TRUE
+c2 <- c(1:nrow(reproductive))[c]
+reproductive <- reproductive[-c2,]
+names(reproductive)[1]<-"Row"
+reproductive <- reproductive[!is.na(reproductive$Population), ]  
   
 rm(c, c2)
 
@@ -40,34 +42,11 @@ rm(c, c2)
 str(reproductive)
 
 # remove columns that were temporary
-reproductive <- reproductive[,-c(9:10, 13:14)]
+reproductive <- reproductive[,-c(9:10)]
 
 # make these columns into factors
 factor_cols <- c("Block", "Population", "Family", "Replicate", "Comment")
 reproductive[factor_cols] <- lapply(reproductive[factor_cols], factor)
-
-# make these columns into numeric
-reproductive[,c(12:17, 19:24, 26:31, 33:39, 41:46, 48:53, 56:61, 63:68, 70:75)] <- sapply(
-  reproductive[,c(12:17, 19:24, 26:31, 33:39, 41:46, 48:53, 56:61, 63:68, 70:75)], as.character)
-reproductive[,c(12:17, 19:24, 26:31, 33:39, 41:46, 48:53, 56:61, 63:68, 70:75)] <- sapply(
-  reproductive[,c(12:17, 19:24, 26:31, 33:39, 41:46, 48:53, 56:61, 63:68, 70:75)], as.numeric)
-
-# make these columns into integers
-reproductive <- reproductive %>%
-  dplyr::mutate_at(vars(starts_with(c("Flower_count", "Poll_rem"))),
-                   dplyr::funs(as.character())) %>%
-  dplyr::mutate_at(vars(starts_with(c("Flower_count", "Poll_rem"))),
-                   dplyr::funs(as.integer()))
-
-str(reproductive)
-
-reproductive[,c('Poll_rem.I2F3', 'Poll_rem.I2F2', 'Poll_rem.I2F1')] <- sapply(
-  reproductive[,c('Poll_rem.I2F3', 'Poll_rem.I2F2', 'Poll_rem.I2F1')], as.character)
-
-reproductive[,c('Poll_rem.I2F3', 'Poll_rem.I2F2', 'Poll_rem.I2F1')] <- sapply(
-  reproductive[,c('Poll_rem.I2F3', 'Poll_rem.I2F2', 'Poll_rem.I2F1')], as.integer)
-
-str(reproductive)
 
 
 
@@ -83,16 +62,59 @@ reproductive <- reproductive %>% mutate(reproductive,
 ## Change NAs to 0's.
 reproductive$Flowered2020[is.na(reproductive$Flowered2020)] <- 0
 
-
 ### make new binary flowering column factor
 reproductive$Flowered2020 <- as.factor(reproductive$Flowered2020)
 
-str(reproductive)
-
-
-
 # Make subset of only flowering plants
 flowering_2020 <- reproductive %>% filter(!is.na(Flower_count_I1))
+
+# Remove flowering data from df of all plants
+reproductive <- reproductive[,-c(9:81)]
+
+
+
+
+# Make certain columns factors / check classes are correct
+# THIS ISN'T WORKING, SO DOING IT MANUALLY
+# # make these columns into numeric
+# flowering_2020 <- flowering_2020 %>%
+#   dplyr::mutate_at(vars(contains(c("Hood", "Corolla", "Flower"))),
+#                    funs(as.character()))
+#                     %>%
+#   dplyr::mutate_at(vars(starts_with(c("Hood", "Corolla", "Flower"))),
+#                    funs(as.numeric())) %>%
+#   
+#   # make these columns into integers
+#   dplyr::mutate_at(vars(starts_with(c("Flower_count", "Poll_rem", "Pods", "Peduncles"))),
+#                    dplyr::funs(as.character())) %>%
+#   dplyr::mutate_at(vars(starts_with(c("Flower_count", "Poll_rem", "Pods", "Peduncles"))),
+#                    dplyr::funs(as.integer()))
+
+
+
+# Pods, Peduncles, Flower_count, Poll_rem: int
+# Hood, Corolla, Flower width/length:      numeric
+
+# Convert appropriate column types to integer.
+to_int <- c(14:15, # pods, peduncles
+            16, 38, 60, # flower count
+            23, 30, 37, 45, 52, 59, 67, 74, 81) # pollinaria removed)
+flowering_2020[to_int] <- lapply(flowering_2020[to_int], as.integer)
+str(flowering_2020)
+
+# Convert appropriate column types to character and then numeric.
+to_char_num <- c(17:22, 24:29, 31:36, 39:44, 46:51, 53:58, 61:66, 68:73, 75:80)
+flowering_2020[to_char_num] <- lapply(flowering_2020[to_char_num], as.character)
+flowering_2020[to_char_num] <- lapply(flowering_2020[to_char_num], as.numeric)
+str(flowering_2020)
+
+
+
+
+
+
+
+
 
 # find mean flower size
 flowering_2020 <- flowering_2020 %>%
@@ -141,6 +163,14 @@ flowering_2020 <- flowering_2020 %>%
   # multiply those 3 components for overall flower size identifier
     dplyr::mutate(., Overall_mean = mean(c(Hood_mean, Corolla_mean, Flower_mean), na.rm = T)) 
 
+# compute mean flower count
+flowering_2020$mean_flower_count <- NA
+flowering_2020 <- flowering_2020 %>%
+  rowwise() %>% 
+  dplyr::mutate(., mean_flower_count = mean(c(Flower_count_I1,
+                                              Flower_count_I2,
+                                              Flower_count_I3),
+                                            na.rm = TRUE))
 
 #-------------------
 # Export to new csv
