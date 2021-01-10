@@ -11,7 +11,8 @@ library(here)
 # Import data
 #-------------------
 # Data about flowering, pollen removal, inflor and follicle count, + other reproductive traits (Data collection 2)-----
-reproductive <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Reproductive_Traits/2020_Datacollection2_20200911.csv"),header=T, na.strings=c("NO PLANT", "none", "", "NA"), blank.lines.skip=TRUE) %>%
+reproductive <- read.csv(here(
+  "./CommonGardenExperiment_2020Data/raw_data/Reproductive_Traits/2020_Datacollection2_20210110.csv"),header=T, na.strings=c("NO PLANT", "none", "", "NA"), blank.lines.skip=TRUE) %>%
   as.data.frame()
 
 

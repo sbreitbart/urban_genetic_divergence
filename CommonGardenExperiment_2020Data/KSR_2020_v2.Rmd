@@ -220,7 +220,7 @@ weevil_both <- weevil_both %>%
 # Clean columns to get average herbivory
 # JULY------
 ### Replace non-numeric entries with NA and remove dashes (which symbolize no leaf) 
-herbivory_both$Herbivory.July_mean <- herbivory_both_alive$Herbivory.July
+herbivory_both$Herbivory.July_mean <- herbivory_both$Herbivory.July
 
 herbivory_both$Herbivory.July_mean <- gsub('too small', NA, herbivory_both$Herbivory.July_mean)
 
@@ -376,7 +376,7 @@ reproductive <- reproductive %>%
 ```{r}
 
 # Find family means
-flowered2020_familymeans <- reproductive_alive2020 %>%
+flowered2020_familymeans <- reproductive %>%
   dplyr::select(., c(1:6, 78:86)) %>%
   group_by(Population, Family) %>%
     dplyr::summarise(
@@ -385,15 +385,6 @@ flowered2020_familymeans <- reproductive_alive2020 %>%
       City_dist = first(City_dist),
       Transect_ID = first(Transect_ID),
       nPlants=n())
-
-# for some reason, sum_flowered_indivs isn't outputting what I want, so doing this
-flowered2020_familymeans <- as.data.frame(flowered2020_familymeans) %>% 
-  mutate(.,sum_flowered_indivs2 = sum_flowered_indivs - sum_replicates ) %>%
-  dplyr::select(., -sum_flowered_indivs) %>%
-  dplyr::rename(., sum_flowered_indivs = sum_flowered_indivs2)
-flowered2020_familymeans
-  
-    
 
 
 # Find population means
@@ -489,7 +480,7 @@ ramets_2020_familymeans_stats <- merge(ramets_2020_familymeans_stats, Distances,
 
 
 
-SSE_pops_height_2020 <- summarySE(intermediates, measurevar="Total_Height", groupvars=c("Population"), na.rm=TRUE)
+# SSE_pops_height_2020 <- summarySE(intermediates, measurevar="Total_Height", groupvars=c("Population"), na.rm=TRUE)
 
 ```
 
@@ -600,11 +591,8 @@ herbivores2020_popmeans <- as.data.frame(herbivores2020_popmeans)
 
 ## Herbivory
 ```{r}
-# Add transect data via merge
-herbivory_both_alive <- merge(herbivory_both_alive, Distances, by = "Population", all.x = TRUE)
-
 # Find family means
-herbivory2020_familymeans <- herbivory_both_alive %>%
+herbivory2020_familymeans <- herbivory_both %>%
   group_by(Population, Family) %>%
     dplyr::summarise(
       sum_replicates = n_distinct(Replicate),
