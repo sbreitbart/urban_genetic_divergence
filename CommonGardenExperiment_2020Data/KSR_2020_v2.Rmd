@@ -117,9 +117,9 @@ flowering_2020 <- read.csv(here("./CommonGardenExperiment_2020Data/clean_data/20
 
 ```
 
-## Clean data
-### survival
-#### Find which plants had grown at season start --> make new survival_both df
+# Clean data
+## survival
+### Find which plants had grown at season start --> make new survival_both df
 Isn't a foolproof method for assessing overwinter mortality, but will tell which plants had no visible growth during first data collection in June
 ```{r}
 # Make new column signifying if pots contained zero alive plants, or at least one- 0 or 1
@@ -151,7 +151,7 @@ survival_both <- survival_both[,-c(8, 11:13)]
 survival_both <- survival_both[, c(1:6, 10,9,8,7)]
 ```
 
-#### find plants deemed dead during both data collection assessments and years
+### find plants deemed dead during both data collection assessments and years
 ```{r}
 # these plants were DEAD for all data collections in 2020
 dead_2020 <- survival_both %>% filter(., Dead_June == 1 & Dead_Sept == 1)
@@ -163,8 +163,7 @@ survival_both <- transform(survival_both, dead_2020 = ifelse(Dead_June == 1 & De
 dead_2019 <- data_clean_2019 %>% filter(., (Dead_DC1 == 'yes' | Dead_DC1 == 'maybe' | Dead_DC1 == 'nothing there') & Dead_DC2 == 1 & Dead_DC3 == 1)
 
 # these plants were dead either throughout 2019 OR 2020
-dead_either_2019or2020_fullyear <- full_join(dead_2019[,c(1:6, 9:11)], dead_2020, by = c("Row", "Column", "Block", "Population", "Family", "Replicate")) %>%
-  dplyr::select( 2,3,7:9, 14:16)
+dead_either_2019or2020_fullyear <- full_join(dead_2019[,c(1:6, 9:11)], dead_2020, by = c("Row", "Column", "Block", "Population", "Family", "Replicate"))
 
 # these plants were dead throughout 2019 AND 2020
 # # THESE ARE THE PLANTS THAT HAVE BEEN DEAD FROM THE START, PRESUMABLY
@@ -176,7 +175,7 @@ zombies <- anti_join(dead_2019, dead_2020, by = c("Row", "Column"))
 
 ```
 
-#### Remove plants that were dead since early 2019 from ALL dfs
+### Remove plants that were dead since early 2019 from ALL dfs
 ```{r}
 # remove dead_bothyears plants from 2020 dataset
 heights_both <- anti_join(heights_both, dead_bothyears, by = c("Row", "Column"))
@@ -187,7 +186,7 @@ herbivores <- anti_join(herbivores, dead_bothyears, by = c("Row", "Column"))
 reproductive <- anti_join(reproductive, dead_bothyears, by = c("Row", "Column"))
 ```
 
-### heights: Calculate relative growth rate
+## heights: Calculate relative growth rate
 ```{r}
 
 # some plants had heights of 0 in June, Sept, or both:
@@ -202,7 +201,7 @@ heights_both <- heights_both %>% dplyr::mutate(.,
 
 
 ```
-### weevil damage: standardize weevil scar length by total height
+## weevil damage: standardize weevil scar length by total height
 ```{r}
 # add June height so I can standardize weevil scar length by total height
 weevil_both <- weevil_both %>%
@@ -216,7 +215,7 @@ weevil_both <- weevil_both %>%
 
 ```
 
-### herbivory: calculate average herbivory
+## herbivory: calculate average herbivory
 ```{r}
 # Clean columns to get average herbivory
 # JULY------
@@ -287,22 +286,86 @@ Distances <- Distances[,-c(7:9)]
 
 ### Add transect data to all dfs via merge
 ```{r}
-# Add distances to city center
-heights_both <- merge(x = heights_both, y = Distances, by = "Population", all.x = TRUE)
-herbivory_both <- merge(x = herbivory_both, y = Distances, by = "Population", all.x = TRUE)
-survival_2020 <- merge(x = survival_2020, y = Distances, by = "Population", all.x = TRUE)
-weevil_both <- merge(x = weevil_both, y = Distances, by = "Population", all.x = TRUE)
-herbivores <- merge(herbivores, Distances, by = "Population", all.x = TRUE)
-reproductive <- merge(x = reproductive, y = Distances, by = "Population", all.x = TRUE)
- 
+# TRIED TO AUTOMATE WITH LAPPLY AND PURRR BUT NOT WORKING YET
+# # make list of dfs
+# df.list <- list(heights_both,
+#                 herbivory_both,
+#                 survival_2020,
+#                 weevil_both,
+#                 herbivores,
+#                 reproductive)
+# 
+# # Add distances to city center
+# df.list <- lapply(df.list, function(x)
+#   x <- merge(x, y = Distances, by = "Population", all.x = TRUE))
+
+# doing it manually
+heights_both <- merge(heights_both, y = Distances, by = "Population", all.x = TRUE)
+herbivory_both <- merge(herbivory_both, y = Distances, by = "Population", all.x = TRUE)
+survival_2020 <- merge(survival_2020, y = Distances, by = "Population", all.x = TRUE)
+weevil_both <- merge(weevil_both, y = Distances, by = "Population", all.x = TRUE)
+herbivores <- merge(herbivores, y = Distances, by = "Population", all.x = TRUE)
+reproductive <- merge(reproductive, y = Distances, by = "Population", all.x = TRUE)
 
 
+# recode North & South as urban (CAN'T MAKE THIS WORK SO DOING IT MANUALLY)
+# df.list <- purrr::lmap(df.list, function(x) 
+#   x$Urb_Rur <- x$Transect_ID %>%
+#     dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
+#                                           'North' = "Urban",
+#                                           'South' = "Urban",
+#                                           'Rural' = "Rural")))
+#                                           
+# lapply(df.list, function(x)
+# dplyr::mutate(Urb_Rur = Transect_ID) %>%
+# dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
+#                                       'North' = "Urban",
+#                                       'South' = "Urban",
+#                                       'Rural' = "Rural")))
 
 
+heights_both <- heights_both %>% 
+  dplyr::mutate(Urb_Rur = Transect_ID) %>%
+  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
+                                        'North' = "Urban",
+                                        'South' = "Urban",
+                                        'Rural' = "Rural"))
 
-# add column combining both urban subtransects
-reproductive$Urb_Rur <- reproductive$Transect_ID
-reproductive$Urb_Rur <- revalue(reproductive$Urb_Rur, c("North"="Urban", "South"="Urban"))
+herbivory_both <- herbivory_both %>% 
+  dplyr::mutate(Urb_Rur = Transect_ID) %>%
+  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
+                                        'North' = "Urban",
+                                        'South' = "Urban",
+                                        'Rural' = "Rural"))
+
+survival_2020 <- survival_2020 %>% 
+  dplyr::mutate(Urb_Rur = Transect_ID) %>%
+  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
+                                        'North' = "Urban",
+                                        'South' = "Urban",
+                                        'Rural' = "Rural"))
+
+weevil_both <- weevil_both %>% 
+  dplyr::mutate(Urb_Rur = Transect_ID) %>%
+  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
+                                        'North' = "Urban",
+                                        'South' = "Urban",
+                                        'Rural' = "Rural"))
+
+herbivores <- herbivores %>% 
+  dplyr::mutate(Urb_Rur = Transect_ID) %>%
+  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
+                                        'North' = "Urban",
+                                        'South' = "Urban",
+                                        'Rural' = "Rural"))
+
+reproductive <- reproductive %>% 
+  dplyr::mutate(Urb_Rur = Transect_ID) %>%
+  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
+                                        'North' = "Urban",
+                                        'South' = "Urban",
+                                        'Rural' = "Rural"))
+
 
 
 ```
@@ -322,6 +385,7 @@ flowered2020_familymeans <- reproductive_alive2020 %>%
       City_dist = first(City_dist),
       Transect_ID = first(Transect_ID),
       nPlants=n())
+
 # for some reason, sum_flowered_indivs isn't outputting what I want, so doing this
 flowered2020_familymeans <- as.data.frame(flowered2020_familymeans) %>% 
   mutate(.,sum_flowered_indivs2 = sum_flowered_indivs - sum_replicates ) %>%
@@ -366,10 +430,6 @@ flowered2020_popmeans <- flowered2020_familymeans %>%
 
 ## Height
 ```{r}
-
-# Add transect data via merge
-heights_both <- merge(heights_both, Distances, by = "Population", all.x = TRUE)
-
 
 # Find family means
 heights_both2020_familymeans <- heights_both %>%
@@ -2415,9 +2475,11 @@ herbivores2020_popmeansJuly <- herbivores2020_popmeans %>%
 rda_herb_July <- rda(herbivores2020_popmeansJuly %>%
                         dplyr::select(, c(4:14)) ~ herbivores2020_popmeansJuly$City_dist,
                 na.action = "na.omit",
-                scale = TRUE)
+                scale = T)
 
 summary(rda_herb_July)
+anova(rda_herb_July)
+screeplot(rda_herb_July)
 
 RsquareAdj(rda_herb_July)
 
@@ -2432,7 +2494,6 @@ text(rda_herb_July, display='cn', col='red')
 
 
 # AUGUST
-
 herbivores2020_popmeansAug <- herbivores2020_popmeans %>%
   dplyr::filter(., Sample == 'August')
 
