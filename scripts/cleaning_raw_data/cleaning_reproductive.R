@@ -117,7 +117,7 @@ str(flowering_2020)
 
 
 # find mean flower size
-flowering_2020 <- flowering_2020 %>%
+flowering_2020 <- flowering_2020 %>% rowwise() %>%
   # start with hood size
   dplyr::mutate(., Hood.I1F1 = Hood_L.I1F1 * Hood_W.I1F1,
                 Hood.I1F2 = Hood_L.I1F2 * Hood_W.I1F2,
