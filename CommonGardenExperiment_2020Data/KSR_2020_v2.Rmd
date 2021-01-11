@@ -379,20 +379,43 @@ flowering_2020 <- flowering_2020 %>%
 
 ```
 
+### Add urb_score data
+```{r}
+# Import urb_index values for each of these rows
+urb_scores <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Urbanization_Score/Urbanization_Scores_Table.csv"),  header=T, na.strings=c("","NA"))
+
+# get rid of unnecessary cols, rename Patch ID to Pop_ID for joins
+urb_scores <- urb_scores[,c(2,8)]
+names(urb_scores)[1] <- "Pop_ID"
+
+urb_scores <- dplyr::inner_join(urb_scores, urb_scores, by = "Pop_ID") 
+
+# doing it manually
+heights_both <- merge(heights_both, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+herbivory_both <- merge(herbivory_both, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+survival_2020 <- merge(survival_2020, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+weevil_both <- merge(weevil_both, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+herbivores <- merge(herbivores, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+reproductive <- merge(reproductive, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+flowering_2020 <- merge(flowering_2020, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+
+```
+
 # Find averages per family & population
 ## reproductive
 ### Binary: flowering success
 ```{r}
 
 # Find family means
-flowered2020_familymeans <- reproductive %>%
-  dplyr::select(., c(1:6, 78:86)) %>%
+flowered2020_familymeans <- flowering_2020  %>%
+  dplyr::select(., c(2:7, 83, 129, 131:133)) %>%
   group_by(Population, Family) %>%
     dplyr::summarise(
       sum_replicates = n_distinct(Replicate),
       sum_flowered_indivs = sum(as.integer(Flowered2020)),
       City_dist = first(City_dist),
       Transect_ID = first(Transect_ID),
+      Urb_score = first(Urb_score),
       nPlants=n())
 
 
@@ -403,11 +426,12 @@ flowered2020_popmeans <- flowered2020_familymeans %>%
       sum_replicates = sum(sum_replicates),
       sum_flowered_indivs = sum(as.integer(sum_flowered_indivs)),
       City_dist = first(City_dist),
-      Transect_ID = first(Transect_ID)) %>%
+      Transect_ID = first(Transect_ID),
+      Urb_score = first(Urb_score)) %>%
   as.data.frame(flowered2020_popmeans) %>%
   
 # add percent flowered column
-  mutate(., percent_flowered = sum_flowered_indivs / sum_replicates)
+  dplyr::mutate(., percent_flowered = sum_flowered_indivs / sum_replicates)
 
 # remove pops with only 1 rep?
 
@@ -443,6 +467,7 @@ heights_both2020_familymeans <- heights_both %>%
       City_dist = first(City_dist),
       Transect_ID = first(Transect_ID),
       mean_rel_growth_rate = mean(rel_growth_rate),
+      Urb_score = first(Urb_score),
       nPlants=n())
 ## divide total height by num. plants/pop
 heights_both2020_familymeans$mean_height_June <- heights_both2020_familymeans$sum_height_June / heights_both2020_familymeans$sum_replicates
@@ -463,44 +488,40 @@ heights_both2020_popmeans <- heights_both2020_familymeans %>%
       mean_height_Sept = mean(mean_height_Sept),
       City_dist = first(City_dist),
       Transect_ID = first(Transect_ID),
+      Urb_score = first(Urb_score),
       mean_rel_growth_rate = mean(mean_rel_growth_rate))
 
 
 
-# Use SummarySE to get stats per family & population
-## HEIGHTS
-intermediate1 <- summarySE(heights_both, measurevar="Total_Height_June", groupvars=c("Population", "Family"), na.rm=TRUE)
-
-intermediate2 <- summarySE(heights_both, measurevar="Total_Height_Sept", groupvars=c("Population", "Family"), na.rm=TRUE)
-
-heights_2020_familymeans_stats <- left_join(intermediate1, intermediate2, by = c("Population", "Family"), suffix = c(".July", ".Sept"))
-
-
-# Use SummarySE to get stats per family & population
-## no. ramets
-intermediate1 <- summarySE(heights_both, measurevar="Ramets_June", groupvars=c("Population", "Family"), na.rm=TRUE)
-
-intermediate2 <- summarySE(heights_both, measurevar="Ramets_Sept", groupvars=c("Population", "Family"), na.rm=TRUE)
-
-ramets_2020_familymeans_stats <- left_join(intermediate1, intermediate2, by = c("Population", "Family"), suffix = c(".June", ".Sept"))
-
-# Add transect data via merge
-ramets_2020_familymeans_stats <- merge(ramets_2020_familymeans_stats, Distances, by = "Population", all.x = TRUE)
-
-
-
-# SSE_pops_height_2020 <- summarySE(intermediates, measurevar="Total_Height", groupvars=c("Population"), na.rm=TRUE)
+# # Use SummarySE to get stats per family & population
+# ## HEIGHTS
+# intermediate1 <- summarySE(heights_both, measurevar="Total_Height_June", groupvars=c("Population", "Family"), na.rm=TRUE)
+# 
+# intermediate2 <- summarySE(heights_both, measurevar="Total_Height_Sept", groupvars=c("Population", "Family"), na.rm=TRUE)
+# 
+# heights_2020_familymeans_stats <- left_join(intermediate1, intermediate2, by = c("Population", "Family"), suffix = c(".July", ".Sept"))
+# 
+# 
+# # Use SummarySE to get stats per family & population
+# ## no. ramets
+# intermediate1 <- summarySE(heights_both, measurevar="Ramets_June", groupvars=c("Population", "Family"), na.rm=TRUE)
+# 
+# intermediate2 <- summarySE(heights_both, measurevar="Ramets_Sept", groupvars=c("Population", "Family"), na.rm=TRUE)
+# 
+# ramets_2020_familymeans_stats <- left_join(intermediate1, intermediate2, by = c("Population", "Family"), suffix = c(".June", ".Sept"))
+# 
+# # Add transect data via merge
+# ramets_2020_familymeans_stats <- merge(ramets_2020_familymeans_stats, Distances, by = "Population", all.x = TRUE)
+# 
+# 
+# 
+# # SSE_pops_height_2020 <- summarySE(intermediates, measurevar="Total_Height", groupvars=c("Population"), na.rm=TRUE)
 
 ```
 
 
 ## Weevil scar lengths
 ```{r}
-
-# Add transect data via merge
-weevil_both <- merge(weevil_both, Distances, by = "Population", all.x = TRUE)
-
-
 # Find family means
 weevil_both2020_familymeans <- weevil_both %>%
   group_by(Population, Family) %>%
@@ -510,6 +531,7 @@ weevil_both2020_familymeans <- weevil_both %>%
       mean_scar = mean(Scar_length_cm),
       City_dist = first(City_dist),
       Transect_ID = first(Transect_ID),
+      Urb_score = first(Urb_score),
       nPlants=n())
 
 
@@ -521,7 +543,8 @@ weevil_both2020_popmeans <- weevil_both2020_familymeans %>%
       mean_scar_div_Juneheight = mean(mean_scar_div_Juneheight, na.rm = TRUE),
       mean_scar = mean(mean_scar),
       City_dist = first(City_dist),
-      Transect_ID = first(Transect_ID))
+      Transect_ID = first(Transect_ID),
+      Urb_score = first(Urb_score))
 
 
 
@@ -558,6 +581,7 @@ herbivores2020_familymeans <- herbivores %>%
       mean_Rhyssomatus_lineaticollis = mean(Rhyssomatus_lineaticollis),
       City_dist = first(City_dist),
       Transect_ID = first(Transect_ID),
+      Urb_score = first(Urb_score),
       nPlants=n())
 herbivores2020_familymeans <- as.data.frame(herbivores2020_familymeans)
 
@@ -579,7 +603,8 @@ herbivores2020_popmeans <- herbivores2020_familymeans %>%
       mean_Labidomera_clivicollis = mean(mean_Labidomera_clivicollis),
       mean_Rhyssomatus_lineaticollis = mean(mean_Rhyssomatus_lineaticollis),
       City_dist = first(City_dist),
-      Transect_ID = first(Transect_ID))
+      Transect_ID = first(Transect_ID),
+      Urb_score = first(Urb_score))
 herbivores2020_popmeans <- as.data.frame(herbivores2020_popmeans)
 
 
@@ -608,6 +633,7 @@ herbivory2020_familymeans <- herbivory_both %>%
       Herbivory.Sept_mean = mean(Herbivory.Sept_mean, na.rm = T),
       City_dist = first(City_dist),
       Transect_ID = first(Transect_ID),
+      Urb_score = first(Urb_score),
       nPlants=n())
 herbivory2020_familymeans <- as.data.frame(herbivory2020_familymeans)
 
@@ -620,7 +646,8 @@ herbivory2020_popmeans <- herbivory2020_familymeans %>%
       Herbivory.July_mean = mean(Herbivory.July_mean, na.rm = T),
       Herbivory.Sept_mean = mean(Herbivory.Sept_mean, na.rm = T),
       City_dist = first(City_dist),
-      Transect_ID = first(Transect_ID))
+      Transect_ID = first(Transect_ID),
+      Urb_score = first(Urb_score))
 herbivory2020_popmeans <- as.data.frame(herbivory2020_popmeans)
 
 
@@ -641,9 +668,6 @@ herbivory2020_popmeans <- as.data.frame(herbivory2020_popmeans)
 
 ## Survival
 ```{r}
-# Add transect data via merge
-survival_2020 <- merge(survival_2020, Distances, by = "Population", all.x = TRUE)
-
 # Find family means
 survival2020_familymeans <- survival_2020 %>%
   group_by(Population, Family) %>%
@@ -652,6 +676,7 @@ survival2020_familymeans <- survival_2020 %>%
       survival_mean = mean(dead_2020, na.rm = T),
       City_dist = first(City_dist),
       Transect_ID = first(Transect_ID),
+      Urb_score = first(Urb_score),
       nPlants=n())
 survival2020_familymeans <- as.data.frame(survival2020_familymeans)
 
@@ -663,7 +688,8 @@ survival2020_popmeans <- survival2020_familymeans %>%
       sum_replicates = sum(sum_replicates),
       survival_mean = mean(survival_mean, na.rm = T),
       City_dist = first(City_dist),
-      Transect_ID = first(Transect_ID))
+      Transect_ID = first(Transect_ID),
+      Urb_score = first(Urb_score))
 survival2020_popmeans <- as.data.frame(survival2020_popmeans)
 
 
@@ -802,9 +828,9 @@ dev.off()
 
 
 # How many plants flowered per subtransect? using 2020 alive plants
-reproductive_alive2020 <- anti_join(reproductive, dead_2020, by = c("Row", "Column"))
+reproductive <- anti_join(reproductive, dead_2020, by = c("Row", "Column"))
 
-tib2 <- reproductive_alive2020 %>%
+tib2 <- reproductive %>%
   group_by(Flowered2020, Urb_Rur) %>%
   tally()
 tib2
@@ -833,9 +859,9 @@ chisq.test(Flowered_ttest2)
 
 
 # How many populations had at least one plant flower per subtransect? using 2020 alive plants
-reproductive_alive2020 <- anti_join(reproductive, dead_2020, by = c("Row", "Column"))
+reproductive <- anti_join(reproductive, dead_2020, by = c("Row", "Column"))
 
-tib3 <- reproductive_alive2020[,c(1:6, 78:86)] %>%
+tib3 <- reproductive[,c(1:6, 78:86)] %>%
   group_by(Population, Flowered2020, Urb_Rur) %>%
   dplyr::summarise(Pops = n_distinct(Population),
                    Urb_Rur = first(Urb_Rur)) %>%
@@ -876,9 +902,9 @@ chisq.test(Flowered_ttest3)
 ##### Sig difference between urb:north vs urb:south? (Odds ratio)
 ```{r}
 # How many plants flowered per subtransect? using 2020 alive plants
-reproductive_alive2020 <- anti_join(reproductive, dead_2020, by = c("Row", "Column"))
+reproductive <- anti_join(reproductive, dead_2020, by = c("Row", "Column"))
 
-tib4 <- reproductive_alive2020 %>%
+tib4 <- reproductive %>%
   filter(., Transect_ID != 'Rural') %>%
   group_by(Flowered2020, Transect_ID) %>%
   tally()
@@ -909,9 +935,9 @@ chisq.test(Flowered_ttest4)
 
 
 # How many populations had at least one plant flower per subtransect? using 2020 alive plants
-reproductive_alive2020 <- anti_join(reproductive, dead_2020, by = c("Row", "Column"))
+reproductive <- anti_join(reproductive, dead_2020, by = c("Row", "Column"))
 
-tib5 <- reproductive_alive2020[,c(1:6, 78:86)] %>%
+tib5 <- reproductive[,c(1:6, 78:86)] %>%
   filter(., Transect_ID != "Rural") %>%
   group_by(Population, Flowered2020, Transect_ID) %>%
   dplyr::summarise(Pops = n_distinct(Population),
@@ -951,21 +977,21 @@ chisq.test(Flowered_ttest5)
 ##### Block effect?
 ```{r}
 glmer(Flowered2020 ~ Block + (1|Population/Family),
-  data = reproductive_alive2020,
-  family = binomial,
+  data = reproductive,
+  family = binomial(link = "logit"),
   nAGQ=1,
   glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000)))
 
 car::Anova(glmer(Flowered2020 ~ Block + (1|Population/Family),
-  data = reproductive_alive2020,
-  family = binomial,
+  data = reproductive,
+  family = binomial(link = "logit"),
   nAGQ=1,
   glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000))))
 # Block is significant, so yes, the number of plants that flowered DID significantly vary by block.
 
 summary(glmer(Flowered2020 ~ Block + (1|Population/Family),
-  data = reproductive_alive2020,
-  family = binomial,
+  data = reproductive,
+  family = binomial(link = "logit"),
   nAGQ=1,
   glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000))))
 ```
@@ -1467,13 +1493,13 @@ AIC(lm(percent_flowered^0.5 ~ City_dist + Transect_ID, data = flowered2020_popme
 
 ### NESTED RANDOM EFFECTS-----
 glmer(Flowered2020 ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = reproductive_alive2020,
-  family = binomial,
+  data = reproductive,
+  family = binomial(link = "logit"),
   nAGQ=0)
 
 car::Anova(glmer(Flowered2020 ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = reproductive_alive2020,
-  family = binomial,
+  data = reproductive,
+  family = binomial(link = "logit"),
   nAGQ=0))
 # nothing significant
 
@@ -1481,20 +1507,20 @@ car::Anova(glmer(Flowered2020 ~ (1|Block) + (1|Population/Family) + City_dist,
 
 ### CROSSED RANDOM EFFECTS-----
 glmer(Flowered2020 ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = reproductive_alive2020,
-  family = binomial,
+  data = reproductive,
+  family = binomial(link = "logit"),
   nAGQ=0)
 
 car::Anova(glmer(Flowered2020 ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = reproductive_alive2020,
-  family = binomial,
+  data = reproductive,
+  family = binomial(link = "logit"),
   nAGQ=0))
 # nothing significant
 
 
-# ranova(glmer(Flowered2020 ~ (1|Population/Family), data = reproductive_alive2020, REML = T, family = binomial))
+# ranova(glmer(Flowered2020 ~ (1|Population/Family), data = reproductive, REML = T, family = binomial(link = "logit")))
 
-# ranova(lmer(Flowered2020 ~ (1|Population/Family), data = reproductive_alive2020, REML = T))
+# ranova(lmer(Flowered2020 ~ (1|Population/Family), data = reproductive, REML = T))
 ```
 
 ###### Urban subtransects: ANOVA
@@ -1505,15 +1531,15 @@ car::Anova(glmer(Flowered2020 ~ (1|Block) + (1|Population:Family) + City_dist,
 ### NESTED RANDOM EFFECTS-----
 # Full model
 glmer(Flowered2020  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-  data = reproductive_alive2020 %>% dplyr::filter(., Transect_ID != "Rural"),
-  family = binomial,
+  data = reproductive %>% dplyr::filter(., Transect_ID != "Rural"),
+  family = binomial(link = "logit"),
   nAGQ=0,
   glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000)))
 # is singular w/the glmerControl added; doesn't converge without it!
 
 car::Anova(glmer(Flowered2020  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-  data = reproductive_alive2020 %>% dplyr::filter(., Transect_ID != "Rural"),
-  family = binomial,
+  data = reproductive %>% dplyr::filter(., Transect_ID != "Rural"),
+  family = binomial(link = "logit"),
   nAGQ=0,
   glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000))))
 # nothing significant
@@ -1521,8 +1547,8 @@ car::Anova(glmer(Flowered2020  ~ (1|Block) + (1|Population/Family) + City_dist *
 
 # Just main effects
 car::Anova(glmer(Flowered2020  ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
-  data = reproductive_alive2020 %>% dplyr::filter(., Transect_ID != "Rural"),
-  family = binomial,
+  data = reproductive %>% dplyr::filter(., Transect_ID != "Rural"),
+  family = binomial(link = "logit"),
   nAGQ=0,
   glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000))))
 # nothing significant
@@ -1532,15 +1558,15 @@ car::Anova(glmer(Flowered2020  ~ (1|Block) + (1|Population/Family) + City_dist +
 ### CROSSED RANDOM EFFECTS-----
 # Full model
 glmer(Flowered2020  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-  data = reproductive_alive2020 %>% dplyr::filter(., Transect_ID != "Rural"),
-  family = binomial,
+  data = reproductive %>% dplyr::filter(., Transect_ID != "Rural"),
+  family = binomial(link = "logit"),
   nAGQ=0,
   glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000)))
 # No warnings!!
 
 car::Anova(glmer(Flowered2020  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-  data = reproductive_alive2020 %>% dplyr::filter(., Transect_ID != "Rural"),
-  family = binomial,
+  data = reproductive %>% dplyr::filter(., Transect_ID != "Rural"),
+  family = binomial(link = "logit"),
   nAGQ=0,
   glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000))))
 # nothing significant
@@ -1548,20 +1574,20 @@ car::Anova(glmer(Flowered2020  ~ (1|Block) + (1|Population:Family) + City_dist *
 
 # Just main effects
 car::Anova(glmer(Flowered2020  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
-                 data = reproductive_alive2020 %>% dplyr::filter(., Transect_ID != "Rural"),
-                 family = binomial,
+                 data = reproductive %>% dplyr::filter(., Transect_ID != "Rural"),
+                 family = binomial(link = "logit"),
                  nAGQ=0,
                  glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000))))
 # nothing significant
 
 
 AIC(glmer(Flowered2020  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-                 data = reproductive_alive2020 %>% dplyr::filter(., Transect_ID != "Rural"),        family = binomial,
+                 data = reproductive %>% dplyr::filter(., Transect_ID != "Rural"),        family = binomial(link = "logit"),
                  nAGQ=0,
                  glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000))))
 
 AIC(glmer(Flowered2020  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
-                 data = reproductive_alive2020 %>% dplyr::filter(., Transect_ID != "Rural"),        family = binomial,
+                 data = reproductive %>% dplyr::filter(., Transect_ID != "Rural"),        family = binomial(link = "logit"),
                  nAGQ=0,
                  glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000))))
 # AIC <2 apart; both "best models" though just main effects lower AIC
@@ -3544,7 +3570,7 @@ write.table(car::Anova(m.2), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PV
 ### NESTED RANDOM EFFECTS-----
 glmer(dead_2020 ~ (1|Block) + (1|Population/Family) + City_dist,
   data = survival_2020,
-  family = binomial,
+  family = binomial(link = "logit")(link = "logit"),
   nAGQ=0,
   control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5)))
@@ -3552,7 +3578,7 @@ glmer(dead_2020 ~ (1|Block) + (1|Population/Family) + City_dist,
 
 car::Anova(glmer(dead_2020 ~ (1|Block) + (1|Population/Family) + City_dist,
   data = survival_2020,
-  family = binomial,
+  family = binomial(link = "logit")(link = "logit"),
   nAGQ=0,
   control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5))))
@@ -3563,7 +3589,7 @@ car::Anova(glmer(dead_2020 ~ (1|Block) + (1|Population/Family) + City_dist,
 ### CROSSED RANDOM EFFECTS-----
 glmer(dead_2020 ~ (1|Block) + (1|Population:Family) + City_dist,
   data = survival_2020,
-  family = binomial,
+  family = binomial(link = "logit"),
   nAGQ=0,
   control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5)))
@@ -3572,7 +3598,7 @@ glmer(dead_2020 ~ (1|Block) + (1|Population:Family) + City_dist,
 
 car::Anova(glmer(dead_2020 ~ (1|Block) + (1|Population:Family) + City_dist,
   data = survival_2020,
-  family = binomial,
+  family = binomial(link = "logit"),
   nAGQ=0,
   control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5))))
@@ -3581,9 +3607,9 @@ car::Anova(glmer(dead_2020 ~ (1|Block) + (1|Population:Family) + City_dist,
 
 
 
-# ranova(glmer(Flowered2020 ~ (1|Population/Family), data = reproductive_alive2020, REML = T, family = binomial))
+# ranova(glmer(Flowered2020 ~ (1|Population/Family), data = reproductive, REML = T, family = binomial(link = "logit")))
 
-# ranova(lmer(Flowered2020 ~ (1|Population/Family), data = reproductive_alive2020, REML = T))
+# ranova(lmer(Flowered2020 ~ (1|Population/Family), data = reproductive, REML = T))
 ```
 
 #### Urban subtransects: ANOVA
@@ -3595,14 +3621,14 @@ car::Anova(glmer(dead_2020 ~ (1|Block) + (1|Population:Family) + City_dist,
 # Full model
 glmer(dead_2020  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
   data = survival_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
-  family = binomial,
+  family = binomial(link = "logit"),
   nAGQ=0,
   glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000)))
 # no problems!
 
 car::Anova(glmer(dead_2020  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
   data = survival_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
-  family = binomial,
+  family = binomial(link = "logit"),
   nAGQ=0,
   glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000))))
 # nothing significant
@@ -3611,7 +3637,7 @@ car::Anova(glmer(dead_2020  ~ (1|Block) + (1|Population/Family) + City_dist * Tr
 # Just main effects
 car::Anova(glmer(dead_2020  ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
   data = survival_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
-  family = binomial,
+  family = binomial(link = "logit"),
   nAGQ=0,
   glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000))))
 # nothing significant
@@ -3622,14 +3648,14 @@ car::Anova(glmer(dead_2020  ~ (1|Block) + (1|Population/Family) + City_dist + Tr
 # Full model
 glmer(dead_2020  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
   data = survival_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
-  family = binomial,
+  family = binomial(link = "logit"),
   nAGQ=0,
   glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000)))
 # No warnings
 
 car::Anova(glmer(dead_2020  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
   data = survival_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
-  family = binomial,
+  family = binomial(link = "logit"),
   nAGQ=0,
   glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000))))
 # nothing significant
@@ -3638,19 +3664,19 @@ car::Anova(glmer(dead_2020  ~ (1|Block) + (1|Population:Family) + City_dist * Tr
 # Just main effects
 car::Anova(glmer(dead_2020  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
                  data = survival_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
-                 family = binomial,
+                 family = binomial(link = "logit"),
                  nAGQ=0,
                  glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000))))
 # nothing significant
 
 
 AIC(glmer(dead_2020  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-                 data = survival_2020 %>% dplyr::filter(., Transect_ID != "Rural"),        family = binomial,
+                 data = survival_2020 %>% dplyr::filter(., Transect_ID != "Rural"),        family = binomial(link = "logit"),
                  nAGQ=0,
                  glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000))))
 
 AIC(glmer(dead_2020  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
-                 data = survival_2020 %>% dplyr::filter(., Transect_ID != "Rural"),        family = binomial,
+                 data = survival_2020 %>% dplyr::filter(., Transect_ID != "Rural"),        family = binomial(link = "logit"),
                  nAGQ=0,
                  glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000))))
 # AIC <2 apart; both "best models" though just main effects lower AIC
@@ -3665,40 +3691,42 @@ theme_gradient_1_init <-  theme_bw() +
   theme(text = element_text(size=12))
 
 theme_gradient_1 <-  list(theme_gradient_1_init,
-                          geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2),
-                          scale_shape(solid = F),
-                          geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black'),
-                          scale_shape_manual(values = c(1, 2, 5),
-                                             breaks = c("North", "South", "Rural"),
-                                             labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-                                             name = "Sample Site Subtransect"),
-                          scale_color_manual(values = c("black", "#333333", "#666666"),
-                                             breaks = c("North", "South", "Rural"),
-                                             labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-                                             name = "Sample Site Subtransect"))
+        geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2),
+        scale_shape(solid = F),
+        geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black'),
+        scale_shape_manual(values = c(1, 2, 5),
+                           breaks = c("North", "South", "Rural"),
+                           labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
+                           name = "Sample Site Subtransect"),
+        scale_color_manual(values = c("black", "#333333", "#666666"),
+                           breaks = c("North", "South", "Rural"),
+                           labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
+                           name = "Sample Site Subtransect"))
 
 
 # Urban subtransects
 theme_urbansubs_1 <- list(theme_gradient_1_init,
-                          geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) ,
-                          scale_shape(solid = F),
-                          geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) ,
-                          scale_shape_manual(values = c(1, 2),
-                                             breaks = c("North", "South"),
-                                             labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                                             name = "Sample Site Subtransect") ,
-                          scale_color_manual(values = c("red", "blue"),
-                                             breaks = c("North", "South"),
-                                             labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                                             name = "Sample Site Subtransect") ,
-                          scale_linetype_manual(values = c("solid", "dashed"),
-                                             breaks = c("North", "South"),
-                                             labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                                             name = "Sample Site Subtransect") ,
-                          scale_fill_manual(values = c("red", "blue"),
-                                             breaks = c("North", "South"),
-                                             labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                                             name = "Sample Site Subtransect"))
+                geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) ,
+                scale_shape(solid = F),
+                geom_smooth(aes(linetype = Transect_ID,
+                                color = Transect_ID, fill = Transect_ID),
+                            size=0.75, method = lm, alpha=.15, se = T) ,
+                scale_shape_manual(values = c(1, 2),
+                                   breaks = c("North", "South"),
+                                   labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                                   name = "Sample Site Subtransect") ,
+                scale_color_manual(values = c("red", "blue"),
+                                   breaks = c("North", "South"),
+                                   labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                                   name = "Sample Site Subtransect") ,
+                scale_linetype_manual(values = c("solid", "dashed"),
+                                   breaks = c("North", "South"),
+                                   labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                                   name = "Sample Site Subtransect") ,
+                scale_fill_manual(values = c("red", "blue"),
+                                   breaks = c("North", "South"),
+                                   labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                                   name = "Sample Site Subtransect"))
 ```
 
 ## reproductive
