@@ -3706,24 +3706,6 @@ theme_urbansubs_1 <- list(theme_gradient_1_init,
 #### Percent flowering plants/pop
 ##### Entire gradient
 ```{r}
-# ggplot(flowered2020_popmeans, aes(x = City_dist, y = percent_flowered)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Percent Flowering Plants/Population") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2, 5),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("black", "#333333", "#666666"),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") 
-
-
 ggplot(flowered2020_popmeans, aes(x = City_dist, y = percent_flowered)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Percent Flowering Plants/Population") +
@@ -3733,31 +3715,6 @@ ggplot(flowered2020_popmeans, aes(x = City_dist, y = percent_flowered)) +
 
 ##### Urban subtransects
 ```{r}
-# ggplot(flowered2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = percent_flowered)) +
-#   labs(x = "Distance to urban center (km)",
-#     y = "Percent Flowering Plants/Population") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_linetype_manual(values = c("solid", "dashed"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_fill_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect")
-#                        
 
 ggplot(flowered2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = percent_flowered)) + 
   labs(x = "Distance to urban center (km)", 
@@ -3769,24 +3726,6 @@ ggplot(flowered2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_di
 #### Mean flower count
 ##### Entire gradient
 ```{r}
-# ggplot(flowering_2020, aes(x = City_dist, y = mean_flower_count)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Mean flower count/inflorescence") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2, 5),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("black", "#333333", "#666666"),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect")
-
-
 ggplot(flowering_2020, aes(x = City_dist, y = mean_flower_count)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Mean flower count/inflorescence") +
@@ -3797,32 +3736,7 @@ ggplot(flowering_2020, aes(x = City_dist, y = mean_flower_count)) +
 
 ##### Urban subtransects
 ```{r}
-# ggplot(flowering_2020 %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_flower_count)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Mean flower count/inflorescence") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_linetype_manual(values = c("solid", "dashed"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_fill_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect")
-#                        
-#                        
+ 
 ggplot(flowering_2020 %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_flower_count)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Mean flower count/inflorescence") +
@@ -3833,23 +3747,6 @@ ggplot(flowering_2020 %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y =
 #### Total flower count
 ##### Entire gradient
 ```{r}
-# ggplot(flowering_2020, aes(x = City_dist, y = total_flower_count)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Total flower count") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2, 5),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("black", "#333333", "#666666"),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") 
-
 
 ggplot(flowering_2020, aes(x = City_dist, y = total_flower_count)) + 
   labs(x = "Distance to urban center (km)", 
@@ -3860,31 +3757,6 @@ ggplot(flowering_2020, aes(x = City_dist, y = total_flower_count)) +
 
 ##### Urban subtransects
 ```{r}
-# ggplot(flowering_2020 %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = total_flower_count)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Total flower count") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_linetype_manual(values = c("solid", "dashed"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_fill_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect")
-
 ggplot(flowering_2020 %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = total_flower_count)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Total flower count") +
@@ -4032,25 +3904,6 @@ ggplot(DC2_flowering_2020, aes(x=Urb_Rur, fill=Transect_ID )) +
 ```{r}
 # JUNE HEIGHT
 ## Multiple R-squared:  0.05561
-# ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_height_June)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "June: Mean height (cm)") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   xlim(0, 71) +
-#   ylim(0, 60) +
-#   geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2, 5),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("black", "#333333", "#666666"),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") 
-
 ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_height_June)) + 
   labs(x = "Distance to urban center (km)", 
     y = "June: Mean height (cm)") +
@@ -4059,30 +3912,8 @@ ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_height_June)) +
   ylim(0, 60) 
 
 
-
-
-
 # SEPT HEIGHT
 # Multiple R-squared:  0.05979
-# ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_height_Sept)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "September: Mean height (cm)") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   xlim(0, 71) +
-#   ylim(0, 120) +
-#   geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2, 5),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("black", "#333333", "#666666"),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect")
-
 ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_height_Sept)) + 
   labs(x = "Distance to urban center (km)", 
     y = "September: Mean height (cm)") +
@@ -4122,34 +3953,6 @@ ggplot() +
 ##### Urban subtransects
 ```{r}
 # JUNE HEIGHT
-# ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_height_June)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "June: Mean height (cm)") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
-#   xlim(0, 35) +
-#   ylim(0, 60) +
-#   theme_bw() +
-#   theme(text = element_text(size=12),
-#         legend.position = 'none') +
-#   scale_shape_manual(values = c(1, 2),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_linetype_manual(values = c("solid", "dashed"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_fill_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect")
-
 ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_height_June)) + 
   labs(x = "Distance to urban center (km)", 
     y = "June: Mean height (cm)") +
@@ -4160,34 +3963,6 @@ ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Cit
 
 
 # sept HEIGHT
-# ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_height_Sept)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Sept: Mean height (cm)") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
-#   xlim(0, 35) +
-#   ylim(0, 120) +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_linetype_manual(values = c("solid", "dashed"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_fill_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect")
-
-
 ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_height_Sept)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Sept: Mean height (cm)") +
@@ -4347,23 +4122,6 @@ ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Cit
 ##### Entire gradient
 ```{r}
 # Multiple R-squared: 0.0008
-# ggplot(weevil_both2020_popmeans, aes(x = City_dist, y = mean_scar_div_Juneheight)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Weevil scar length/cm") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2, 5),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("black", "#333333", "#666666"),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect")
-
 ggplot(weevil_both2020_popmeans, aes(x = City_dist, y = mean_scar_div_Juneheight)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Weevil scar length/cm") +
@@ -4375,33 +4133,6 @@ ggplot(weevil_both2020_popmeans, aes(x = City_dist, y = mean_scar_div_Juneheight
 ```{r}
 
 # R-squared = 0.04079
-# ggplot(weevil_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_scar_div_Juneheight)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Weevil scar length/cm") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
-#   ylim(0, 0.2) +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_linetype_manual(values = c("solid", "dashed"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_fill_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect")
-
-
 ggplot(weevil_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_scar_div_Juneheight)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Weevil scar length/cm") +
@@ -4414,23 +4145,6 @@ ggplot(weevil_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City
 ##### Entire gradient
 ```{r}
 # Multiple R-squared: 0.003591
-# ggplot(weevil_both2020_popmeans, aes(x = City_dist, y = mean_scar)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Total weevil scar length") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2, 5),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("black", "#333333", "#666666"),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect")
-
 ggplot(weevil_both2020_popmeans, aes(x = City_dist, y = mean_scar)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Total weevil scar length") +
@@ -4439,31 +4153,6 @@ ggplot(weevil_both2020_popmeans, aes(x = City_dist, y = mean_scar)) +
 
 ##### Urban subtransects
 ```{r}
-# ggplot(weevil_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_scar)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Total weevil scar length") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_linetype_manual(values = c("solid", "dashed"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_fill_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect")
-
 ggplot(weevil_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_scar)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Total weevil scar length") +
@@ -4477,25 +4166,6 @@ ggplot(weevil_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City
 # JULY HERBIVORY
 ## NO TRANSFORMATIONS OR OUTLIERS REMOVED-----
 ## Multiple R-squared: 0.08834
-# ggplot(herbivory2020_popmeans, aes(x = City_dist, y = Herbivory.July_mean)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Mean Herbivory") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   xlim(0, 71) +
-#   ylim(0, 15) +
-#   geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2, 5),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("black", "#333333", "#666666"),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") 
-
 ggplot(herbivory2020_popmeans, aes(x = City_dist, y = Herbivory.July_mean)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Mean Herbivory") +
@@ -4507,25 +4177,6 @@ ggplot(herbivory2020_popmeans, aes(x = City_dist, y = Herbivory.July_mean)) +
 
 # SEPT HEIGHT-----
 # Multiple R-squared:  0.01975
-# ggplot(herbivory2020_popmeans, aes(x = City_dist, y = Herbivory.Sept_mean)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Mean Herbivory") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   xlim(0, 71) +
-#   # ylim(0, 120) +
-#   geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2, 5),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("black", "#333333", "#666666"),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect")
-
 ggplot(herbivory2020_popmeans, aes(x = City_dist, y = Herbivory.Sept_mean)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Mean Herbivory") +
@@ -4564,34 +4215,6 @@ ggplot() +
 #### Urban subtransects
 ```{r}
 # JULY HERBIVORY
-
-# ggplot(herbivory2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = Herbivory.July_mean)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Mean Herbivory") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
-#   xlim(0, 35) +
-#   ylim(0, 15) +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_linetype_manual(values = c("solid", "dashed"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_fill_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect")
-
 ggplot(herbivory2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = Herbivory.July_mean)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Mean Herbivory") +
@@ -4601,32 +4224,6 @@ ggplot(herbivory2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_d
 
 
 # sept herbivory
-# ggplot(herbivory2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = Herbivory.Sept_mean)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Mean Herbivory") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
-#   xlim(0, 35) +
-#   ylim(0, 40) +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_linetype_manual(values = c("solid", "dashed"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_fill_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect")
 ggplot(herbivory2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = Herbivory.Sept_mean)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Mean Herbivory") +
@@ -4642,25 +4239,6 @@ ggplot(herbivory2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_d
 ##### Entire gradient
 ```{r}
 # JUNE RAMETS
-# ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_Ramets_June)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "June: Mean No. Ramets") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=1.5) +
-#   scale_shape(solid = F)+
-#   xlim(0, 71) +
-#   ylim(0, 5) +
-#   geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2, 5),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("black", "#333333", "#666666"),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") 
-
 ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_Ramets_June)) + 
   labs(x = "Distance to urban center (km)", 
     y = "June: Mean No. Ramets") +
@@ -4669,25 +4247,6 @@ ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_Ramets_June)) +
   ylim(0, 5)
 
 # SEPT ramets
-# ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_Ramets_Sept)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "September: Mean No. Ramets") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   xlim(0, 71) +
-#   ylim(0, 4) +
-#   geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2, 5),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("black", "#333333", "#666666"),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect")
-
 ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_Ramets_Sept)) + 
   labs(x = "Distance to urban center (km)", 
     y = "September: Mean No. Ramets") +
@@ -4727,34 +4286,6 @@ ggplot() +
 ##### Urban subtransects
 ```{r}
 # JUNE ramets
-# p1 <- ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_Ramets_June)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "June: Mean No. Ramets") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
-#   xlim(0, 35) +
-#   ylim(0, 4.2) +
-#   theme_bw() +
-#   theme(text = element_text(size=12),
-#         legend.position = 'none') +
-#   scale_shape_manual(values = c(1, 2),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_linetype_manual(values = c("solid", "dashed"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_fill_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect")
-
 p1 <- ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_Ramets_June)) + 
   labs(x = "Distance to urban center (km)", 
     y = "June: Mean No. Ramets") +
@@ -4764,33 +4295,6 @@ p1 <- ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x
 
 
 # sept ramets
-# p2 <- ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_Ramets_Sept)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Sept: Mean No. Ramets") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
-#   xlim(0, 35) +
-#   ylim(0, 4) +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_linetype_manual(values = c("solid", "dashed"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_fill_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect")
-
 p2 <- ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_Ramets_Sept)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Sept: Mean No. Ramets") +
@@ -4921,25 +4425,6 @@ ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Cit
 ### Regressions
 #### Entire gradient
 ```{r}
-# ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_rel_growth_rate)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Relative Growth Rate") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   xlim(0, 71) +
-#   ylim(-0.01, 0.015) +
-#   geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2, 5),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("black", "#333333", "#666666"),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") 
-
 ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_rel_growth_rate)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Relative Growth Rate") +
@@ -4950,34 +4435,6 @@ ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_rel_growth_rate)) 
 
 #### Urban subtransects
 ```{r}
-
-# ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_rel_growth_rate)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Relative Growth Rate") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
-#   xlim(0, 35) +
-#   # ylim(0, 15) +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_linetype_manual(values = c("solid", "dashed"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_fill_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect")
-
 ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_rel_growth_rate)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Relative Growth Rate") +
@@ -4990,24 +4447,6 @@ ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Cit
 ### Regressions
 #### Entire gradient
 ```{r}
-# ggplot(survival2020_popmeans, aes(x = City_dist, y = survival_mean)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Mortality") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   xlim(0, 71) +
-#   geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2, 5),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("black", "#333333", "#666666"),
-#                      breaks = c("North", "South", "Rural"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-#                        name = "Sample Site Subtransect") 
-
 ggplot(survival2020_popmeans, aes(x = City_dist, y = survival_mean)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Mortality") +
@@ -5017,33 +4456,6 @@ ggplot(survival2020_popmeans, aes(x = City_dist, y = survival_mean)) +
 
 #### Urban subtransects
 ```{r}
-
-# ggplot(survival2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = survival_mean)) + 
-#   labs(x = "Distance to urban center (km)", 
-#     y = "Mortality") +
-#   geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-#   scale_shape(solid = F)+
-#   geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
-#   xlim(0, 35) +
-#   theme_bw() +
-#   theme(text = element_text(size=12)) +
-#   scale_shape_manual(values = c(1, 2),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_color_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_linetype_manual(values = c("solid", "dashed"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect") +
-#   scale_fill_manual(values = c("red", "blue"),
-#                      breaks = c("North", "South"),
-#                        labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-#                        name = "Sample Site Subtransect")
-
 ggplot(survival2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = survival_mean)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Mortality") +
