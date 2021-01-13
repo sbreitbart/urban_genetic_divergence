@@ -184,6 +184,6 @@ flowering_2020 <- flowering_2020 %>%
 # Export to new csv
 #-------------------
 write.csv(reproductive,
-          here("./CommonGardenExperiment_2020Data/clean_data/2020_reproductive_clean.csv"))
+          here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_reproductive_partialclean.csv"))
 write.csv(flowering_2020,
-          here("./CommonGardenExperiment_2020Data/clean_data/2020_floweringplants_clean.csv"))
+          here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_floweringplants_partialclean.csv"))

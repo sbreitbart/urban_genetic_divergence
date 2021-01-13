@@ -11,11 +11,13 @@ library(here)
 # Import data
 #-------------------
 # at start of season (Data Collection 1)- BINARY
-weevil_1 <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Weevil_Damage/2020_Datacollection1_WeevilBinary.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>%
+weevil_1 <- read.csv(
+  here("./CommonGardenExperiment_2020Data/raw_data/Weevil_Damage/2020_Datacollection1_WeevilBinary.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>%
   as.data.frame()
 
 # at start of season (Data Collection 1)- QUANTITATIVE
-weevil_2 <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Weevil_Damage/2020_Datacollection4_WeevilScarLength.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>% as.data.frame()
+weevil_2 <- read.csv(
+  here("./CommonGardenExperiment_2020Data/raw_data/Weevil_Damage/2020_Datacollection4_WeevilScarLength.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>% as.data.frame()
 
 
 
@@ -109,4 +111,4 @@ weevil_both <- left_join(weevil_1, weevil_2,
 # Export to new csv
 #-------------------
 write.csv(weevil_both,
-          here("./CommonGardenExperiment_2020Data/clean_data/2020_weevil_damage_clean.csv"))
+          here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_weevil_damage_partialclean.csv"))

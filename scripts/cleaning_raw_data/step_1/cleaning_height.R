@@ -98,4 +98,5 @@ heights_both <- as.data.frame(heights_both)
 #-------------------
 # Export to new csv
 #-------------------
-write.csv(heights_both, here("./CommonGardenExperiment_2020Data/clean_data/2020_heights_clean.csv"))
+write.csv(heights_both,
+          here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_heights_partialclean.csv"))

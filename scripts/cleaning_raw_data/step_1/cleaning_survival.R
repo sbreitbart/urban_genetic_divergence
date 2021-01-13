@@ -46,4 +46,5 @@ str(survival)
 #-------------------
 # Export to new csv
 #-------------------
-write.csv(survival, here("./CommonGardenExperiment_2020Data/clean_data/2020_survival_clean.csv"))
+write.csv(survival,
+          here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_survival_partialclean.csv"))
