@@ -315,7 +315,7 @@ urb_scores <- read.csv(
 urb_scores <- urb_scores[,c(2,8)]
 names(urb_scores)[1] <- "Pop_ID"
 
-urb_scores <- dplyr::inner_join(urb_scores, urb_scores, by = "Pop_ID") 
+# urb_scores <- dplyr::inner_join(urb_scores, urb_scores, by = "Pop_ID") 
 
 # doing it manually
 heights_both <- merge(heights_both, y = urb_scores, by = "Pop_ID", all.x = TRUE)
