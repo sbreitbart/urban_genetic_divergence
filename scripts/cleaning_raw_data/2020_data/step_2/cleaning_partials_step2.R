@@ -148,10 +148,10 @@ dplyr::select(., -Scar_length_mm)
 # JULY------
 ### Replace non-numeric entries with NA and remove dashes (which symbolize no leaf) 
 herbivory_both$Herbivory.July_mean <- herbivory_both$Herbivory.July
-
 herbivory_both$Herbivory.July_mean <- gsub('too small', NA, herbivory_both$Herbivory.July_mean)
 
-# converts plants we weren't able to assess to NA (from 0)- represents either a lack of plant or no leaves
+# converts plants we weren't able to assess to NA (from 0)- represents either a lack of plant 
+# or no leaves
 herbivory_both <- herbivory_both %>%
   mutate(Herbivory.July_mean = na_if(Herbivory.July_mean, "0"))
 
@@ -159,12 +159,13 @@ herbivory_both$Herbivory.July_mean <- gsub('-', "", herbivory_both$Herbivory.Jul
 herbivory_both$Herbivory.July_mean <- gsub(' ', "", herbivory_both$Herbivory.July_mean)
 
 ### Calculate mean herbivory for ramet 1 in new column
-herbivory_both$Herbivory.July_mean <- sapply(strsplit(as.character(herbivory_both$Herbivory.July_mean), ",", fixed=T), function(x) mean(as.numeric(x)))
+herbivory_both$Herbivory.July_mean <- sapply(strsplit(
+  as.character(herbivory_both$Herbivory.July_mean), ",", fixed=T),
+  function(x) mean(as.numeric(x)))
 
 # SEPT------
 ### Replace non-numeric entries with NA and remove dashes (which symbolize no leaf) 
 herbivory_both$Herbivory.Sept_mean <- herbivory_both$Herbivory.Sept
-
 herbivory_both$Herbivory.Sept_mean <- gsub('too small', NA, herbivory_both$Herbivory.Sept_mean)
 
 # converts plants we weren't able to assess to NA (from 0)- represents either a lack of plant or no leaves
@@ -172,7 +173,6 @@ herbivory_both <- herbivory_both %>%
   mutate(Herbivory.Sept_mean = na_if(Herbivory.Sept_mean, "0"))
 
 herbivory_both$Herbivory.Sept_mean <- gsub('-', "", herbivory_both$Herbivory.Sept_mean)
-
 herbivory_both$Herbivory.Sept_mean <- gsub(' ', "", herbivory_both$Herbivory.Sept_mean)
 
 ### Calculate mean herbivory for ramet 1 in new column
@@ -188,29 +188,9 @@ herbivory_both$Herbivory.Sept_mean <- sapply(strsplit(as.character(herbivory_bot
 ### Add City_dist values with Haversine formula
 
 # import data
-Distances <- read.csv(
-  here::here("./CommonGardenExperiment_2019Data/raw_data/Transect_Milkweed_HaversineData_forjoining.csv"),
+Distances <- read.csv(here::here(
+  "./CommonGardenExperiment_2019Data/clean_data/clean_haversine_Distances.csv"),
   na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",")
-
-# Ref lat and longs are for Yonge & Dundas intersection in downtown Toronto
-Distances$Ref_Lat <- "43.656327"
-Distances$Ref_Long <- "-79.380904"
-
-# Make lat/long cols numeric
-Distances$Latitude <- as.numeric(as.character(Distances$Latitude))
-Distances$Longitude <- as.numeric(as.character(Distances$Longitude))
-Distances$Ref_Lat <- as.numeric(as.character(Distances$Ref_Lat))
-Distances$Ref_Long <- as.numeric(as.character(Distances$Ref_Long))
-
-# Find distances from Yonge/Dundas to sample sites (in meters)
-Distances <- Distances %>% mutate(CTD_m = distHaversine(cbind(Longitude, Latitude), cbind(Ref_Long, Ref_Lat)))
-
-# conver to km
-Distances$City_dist <- Distances$CTD / 1000
-
-# drop ref lat, long, and city_dist (in m) cols
-Distances <- Distances[,-c(7:9)]
-
 
 
 ### Add transect data to all dfs via merge

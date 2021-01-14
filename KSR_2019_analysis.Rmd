@@ -67,115 +67,12 @@ library(geosphere)
 
 ## Import data
 ```{r, import}
-Data <- read.csv("~/R_Projects/chapter_two/CommonGardenExperiment_2019Data/raw_data/FINAL_3rdmeasuredheight_survival.csv",header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
-
-
-Distances <- read.csv("~/R_Projects/chapter_two/CommonGardenExperiment_2019Data/raw_data/Transect_Milkweed_HaversineData_forjoining.csv", na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",")
-```
-
-## Set theme
-```{r}
-theme_set(theme_classic())
-```
-
-### Add City_dist values with Haversine formula
-```{r}
-# Ref lat and longs are for Yonge & Dundas intersection in downtown Toronto
-Distances$Ref_Lat <- "43.656327"
-Distances$Ref_Long <- "-79.380904"
-
-# Make lat/long cols numeric
-Distances$Latitude <- as.numeric(as.character(Distances$Latitude))
-Distances$Longitude <- as.numeric(as.character(Distances$Longitude))
-Distances$Ref_Lat <- as.numeric(as.character(Distances$Ref_Lat))
-Distances$Ref_Long <- as.numeric(as.character(Distances$Ref_Long))
-
-# Find distances from Yonge/Dundas to sample sites (in meters)
-Distances <- Distances %>% mutate(CTD_m = distHaversine(cbind(Longitude, Latitude), cbind(Ref_Long, Ref_Lat)))
-
-# conver to km
-Distances$City_dist <- Distances$CTD / 1000
-
-# drop ref lat, long, and city_dist (in m) cols
-Distances <- Distances[,-c(7:9)]
-
-```
-
-## Clean data
-```{r}
-# Remove rows without plants, empty columns
-# Though 46 holes were dug per 21 rows of the field plot, each hole was not filled with a plant- ex. Row 1 has empty holes until plot column 13. Removing those empty spreadsheet rows as well as empty spreadsheet columns.
-b <- is.na(Data$Block) == TRUE
-b2 <- c(1:nrow(Data))[b]
-Data <- Data[-b2,]
-names(Data)[1]<-"Row"
-Data <- Data %>% filter(!is.na(Population)) #there was no plant in this pot anymore... may have been taken by raccoons
-
-
-
-## Make certain columns factors / check classes are correct
-Data$Block <- factor(Data$Block)
-Data$Population <- factor(Data$Population)
-Data$Family <- factor(Data$Family)
-Data$Replicate <- factor(Data$Replicate)
-Data$Comment <- factor(Data$Comment)
-Data$Dead_DC1 <- factor(Data$Dead_DC1)
-Data$Dead_DC2 <- factor(Data$Dead_DC2)
-Data$Dead_DC3 <- factor(Data$Dead_DC3)
-Data$Exp_rhiz_binary <- factor(Data$Exp_rhiz_binary)
-
-# str(Data)
-
-
-
-## Reclassify Monarch damage & deer damage entries
-# Raw data included several indications of damage- "yes", "1,2" (signifying ramets 1 & 2 experienced damage but, for example, ramet 3 didn't)... so this chunk is about converting those indicators of damage into simple yes' and no's.
-
-# MONARCH DAMAGE
-# Remove all specific indicators
-Data$Monarch_dam <- gsub('all', '1', Data$Monarch_dam)
-Data$Monarch_dam <- gsub('no', '0', Data$Monarch_dam)
-Data$Monarch_dam <- gsub('yes', '1', Data$Monarch_dam)
-Data$Monarch_dam <- gsub('0', '0', Data$Monarch_dam)
-Data$Monarch_dam <- gsub('1, 1', '1', Data$Monarch_dam)
-Data$Monarch_dam <- gsub('1, 2', '1', Data$Monarch_dam)
-Data$Monarch_dam <- gsub('2', '1', Data$Monarch_dam)
-Data$Monarch_dam <- gsub('3', '1', Data$Monarch_dam)
-Data$Monarch_dam <- gsub('5', '1', Data$Monarch_dam)
-
-# Make column factor
-Data$Monarch_dam <- factor(Data$Monarch_dam)
-
-
-# DEER DAMAGE
-Data$Deer_dam <- gsub('yes', '1', Data$Deer_dam)
-Data$Deer_dam <- gsub('no', '0', Data$Deer_dam)
-Data$Deer_dam <- gsub('8', '1', Data$Deer_dam)
-Data$Deer_dam <- gsub('y', '1', Data$Deer_dam)
-Data$Deer_dam <- gsub('n', '0', Data$Deer_dam)
-Data$Deer_dam <- gsub('0o', '0', Data$Deer_dam)
-Data$Deer_dam <- gsub('1es', '1', Data$Deer_dam)
-
-
-# Make column factor
-Data$Deer_dam <- factor(Data$Deer_dam)
-
-# str(Data)
-
-
-
-## Remove empty columns
-# These columns are empty (all NA's) as seen from str(Data)
-Data <- Data[,-c(32:38)]
-
-# Join city_dist to Data
-Data <- merge(x = Data, y = Distances, by = "Population", all.x = TRUE)
-
-# Make urban subset of Data
-Data_urban <- Data %>% filter(Transect_ID != 'Rural')
-
-# export cleaned data
-write.csv(Data,"~/R_Projects/Chapter2_KSR/CommonGardenExperiment_2019Data/clean_data/clean_data_2019KSR.csv", row.names = FALSE)
+Data <- read.csv(
+  here::here("./CommonGardenExperiment_2019Data/clean_data/2019_allvars_clean.csv"), 
+  header=T,
+  na.strings=c("NO PLANT", "none"),
+  blank.lines.skip=TRUE) %>%
+  as.data.frame()
 
 ```
 
@@ -233,142 +130,6 @@ Alive$Ramets_measured_height <- rowSums(!is.na(Alive[,c(16,18,20,22,24,26,28,30)
 
 ```
 
-## Find average herbivory per plant - find out how I could've used lapply here
-```{r}
-# Mean herbivory per plant
-## Ramet 1
-### Replace non-numeric entries with NA and remove dashes (which symbolize no leaf) 
-Alive$Herbiv_ram1 <- gsub('too small', NA, Alive$Herbiv_ram1)
-Alive$Herbiv_ram1 <- gsub('too', NA, Alive$Herbiv_ram1)
-Alive$Herbiv_ram1 <- gsub('no leaves', NA, Alive$Herbiv_ram1)
-Alive$Herbiv_ram1 <- gsub('-', "", Alive$Herbiv_ram1)
-Alive$Herbiv_ram1 <- gsub(' ', ",", Alive$Herbiv_ram1)
-
-library(stringi)
-### Calculate mean herbivory for ramet 1 in new column
-Alive$Herbiv_ram1_pct <- sapply(strsplit(as.character(Alive$Herbiv_ram1), ",", fixed=T), function(x) mean(as.numeric(x)))
-
-
-
-## Ramet 2
-### Replace non-numeric entries with NA and remove dashes (which symbolize no leaf) 
-Alive$Herbiv_ram2 <- gsub('too small', NA, Alive$Herbiv_ram2)
-Alive$Herbiv_ram2 <- gsub('too', NA, Alive$Herbiv_ram2)
-Alive$Herbiv_ram2 <- gsub('no leaves', NA, Alive$Herbiv_ram2)
-Alive$Herbiv_ram2 <- gsub('-', "", Alive$Herbiv_ram2)
-Alive$Herbiv_ram2 <- gsub(' ', ",", Alive$Herbiv_ram2)
-
-### Calculate mean herbivory for ramet 2 in new column
-Alive$Herbiv_ram2_pct <- sapply(strsplit(as.character(Alive$Herbiv_ram2), ",", fixed=T), function(x) mean(as.numeric(x)))
-
-
-
-## Ramet 3
-### Replace non-numeric entries with NA and remove dashes (which symbolize no leaf) 
-Alive$Herbiv_ram3 <- gsub('too small', NA, Alive$Herbiv_ram3)
-Alive$Herbiv_ram3 <- gsub('too', NA, Alive$Herbiv_ram3)
-Alive$Herbiv_ram3 <- gsub('no leaves', NA, Alive$Herbiv_ram3)
-Alive$Herbiv_ram3 <- gsub('-', "", Alive$Herbiv_ram3)
-Alive$Herbiv_ram3 <- gsub(' ', ",", Alive$Herbiv_ram3)
-
-### Calculate mean herbivory for ramet 3in new column
-Alive$Herbiv_ram3_pct <- sapply(strsplit(as.character(Alive$Herbiv_ram3), ",", fixed=T), function(x) mean(as.numeric(x)))
-
-
-
-## Ramet 4
-### Replace non-numeric entries with NA and remove dashes (which symbolize no leaf) 
-Alive$Herbiv_ram4 <- gsub('too small', NA, Alive$Herbiv_ram4)
-Alive$Herbiv_ram4 <- gsub('too', NA, Alive$Herbiv_ram4)
-Alive$Herbiv_ram4 <- gsub('no leaves', NA, Alive$Herbiv_ram4)
-Alive$Herbiv_ram4 <- gsub('-', "", Alive$Herbiv_ram4)
-Alive$Herbiv_ram4 <- gsub(' ', ",", Alive$Herbiv_ram4)
-
-### Calculate mean herbivory for ramet 4 in new column
-Alive$Herbiv_ram4_pct <- sapply(strsplit(as.character(Alive$Herbiv_ram4), ",", fixed=T), function(x) mean(as.numeric(x)))
-
-
-
-
-## Ramet 5
-### Replace non-numeric entries with NA and remove dashes (which symbolize no leaf) 
-Alive$Herbiv_ram5 <- gsub('too small', NA, Alive$Herbiv_ram5)
-Alive$Herbiv_ram5 <- gsub('too', NA, Alive$Herbiv_ram5)
-Alive$Herbiv_ram5 <- gsub('no leaves', NA, Alive$Herbiv_ram5)
-Alive$Herbiv_ram5 <- gsub('-', "", Alive$Herbiv_ram5)
-Alive$Herbiv_ram5 <- gsub(' ', ",", Alive$Herbiv_ram5)
-
-### Calculate mean herbivory for ramet 5 in new column
-Alive$Herbiv_ram5_pct <- sapply(strsplit(as.character(Alive$Herbiv_ram5), ",", fixed=T), function(x) mean(as.numeric(x)))
-
-
-
-
-## Ramet 6
-### Replace non-numeric entries with NA and remove dashes (which symbolize no leaf) 
-Alive$herbiv_Ram6 <- gsub('too small', NA, Alive$herbiv_Ram6)
-Alive$herbiv_Ram6 <- gsub('too', NA, Alive$herbiv_Ram6)
-Alive$herbiv_Ram6 <- gsub('no leaves', NA, Alive$herbiv_Ram6)
-Alive$herbiv_Ram6 <- gsub('-', "", Alive$herbiv_Ram6)
-Alive$herbiv_Ram6 <- gsub(' ', ",", Alive$herbiv_Ram6)
-
-### Calculate mean herbivory for ramet 6 in new column
-Alive$herbiv_Ram6_pct <- sapply(strsplit(as.character(Alive$herbiv_Ram6), ",", fixed=T), function(x) mean(as.numeric(x)))
-
-
-
-## Ramet 7
-### Replace non-numeric entries with NA and remove dashes (which symbolize no leaf) 
-Alive$herbiv_Ram7 <- gsub('too small', NA, Alive$herbiv_Ram7)
-Alive$herbiv_Ram7 <- gsub('too', NA, Alive$herbiv_Ram7)
-Alive$herbiv_Ram7 <- gsub('no leaves', NA, Alive$herbiv_Ram7)
-Alive$herbiv_Ram7 <- gsub('-', "", Alive$herbiv_Ram7)
-Alive$herbiv_Ram7 <- gsub(' ', ",", Alive$herbiv_Ram7)
-
-### Calculate mean herbivory for ramet 7 in new column
-Alive$herbiv_Ram7_pct <- sapply(strsplit(as.character(Alive$herbiv_Ram7), ",", fixed=T), function(x) mean(as.numeric(x)))
-
-
-
-
-## Ramet 8
-### Replace non-numeric entries with NA and remove dashes (which symbolize no leaf) 
-Alive$herbiv_Ram8 <- gsub('too small', NA, Alive$herbiv_Ram8)
-Alive$herbiv_Ram8 <- gsub('too', NA, Alive$herbiv_Ram8)
-Alive$herbiv_Ram8 <- gsub('no leaves', NA, Alive$herbiv_Ram8)
-Alive$herbiv_Ram8 <- gsub('-', "", Alive$herbiv_Ram8)
-Alive$herbiv_Ram8 <- gsub(' ', ",", Alive$herbiv_Ram8)
-
-### Calculate mean herbivory for ramet 8 in new column
-Alive$herbiv_Ram8_pct <- sapply(strsplit(as.character(Alive$herbiv_Ram8), ",", fixed=T), function(x) mean(as.numeric(x)))
-
-
-
-# ALL RAMETS
-# Mean height and number of ramets used to calculate mean height
-Alive$Mean_herbiv <- rowMeans(Alive[,c(44:51)], na.rm = T)
-Alive$Ramets_measured_herbiv <- rowSums(!is.na(Alive[,c(44:51)]))
-
-
-```
-
-
-
-
-## Make new df that removes heights, herbivory measurements per indiv (Alive_sum)
-```{r}
-Alive_sum <- Alive[,c(1, 4:6,11:15, 32:34, 42:53)]
-
-# add transect and location data
-Alive_sum1 <- merge(x = Alive_sum, y = Distances, by = "Population", all.x = TRUE)
-# names(Alive_sum1)[24] <- "City_dist"
-
-# Only urban entries:
-Alive_sum1_urban <- Alive_sum1 %>% filter(Transect_ID != 'Rural')
-
-```
-
-
 # Analyze herbivory & height
 ## Find average herbivory & height per family & population
 ```{r}
@@ -422,16 +183,6 @@ SSE_fams_height <- merge(x = SSE_fams_height, y = Distances, by = "Population", 
 
 SSE_pops_height <- summarySE(Herbiv_df, measurevar="Mean_height", groupvars=c("Population"), na.rm=TRUE)
 SSE_pops_height <- merge(x = SSE_pops_height, y = Distances, by = "Population", all.x = TRUE)
-
-
-### TRANSFORMED- DON'T USE THIS
-# SSE_fams_height_sqrt <- summarySE(Herbiv_df, measurevar="Mean_height_sqrt", groupvars=c("Population", "Family"), na.rm=TRUE)
-# SSE_fams_height_sqrt <- merge(x = SSE_fams_height_sqrt, y = Distances, by = "Population", all.x = TRUE)
-# 
-# SSE_pops_height_sqrt <- summarySE(Herbiv_df, measurevar="Mean_height_sqrt", groupvars=c("Population"), na.rm=TRUE)
-# SSE_pops_height_sqrt <- merge(x = SSE_pops_height_sqrt, y = Distances, by = "Population", all.x = TRUE)
-# 
-
 ```
 
 
@@ -614,195 +365,6 @@ SSE_fams_rams <- merge(x = SSE_fams_rams, y = Distances, by = "Population", all.
 
 SSE_pops_rams <- summarySE(Herbiv_df, measurevar="Ramets_measured_height", groupvars=c("Population"), na.rm=TRUE)
 SSE_pops_rams <- merge(x = SSE_pops_rams, y = Distances, by = "Population", all.x = TRUE)
-
-```
-
-# Analyze growth- IGNORE FOR NOW. MAY BE MOOT. TOTAL HEIGHTS ACCOMPLISH SAME GOAL
-## Plot growth per population vs. distance from city center
-
-```{r}
-
-Data_Growth <- Data[,c(4:7, 11, 12)]
-Data_Growth$Total_Height_DC0 <- NA
-
-#DC means "data collection" episode. DC0 means the benchmark for all plants' heights when they were planted at KSR = 0mm tall.
-
-#DC1 means "data collection 1"- which took place from June 3-7, just about 2 weeks since all plants were in the ground (Wednesday, May 22, 2019).
-
-#DC2 means "data collection 2"- which took place from June 16-19, just about 4 weeks since all plants were in the ground (Wednesday, May 22, 2019).
-
-Data_Growth$Total_Height_DC0 <- 0
-- DON'T USEData_Growth<-Data_Growth[!(Data_Growth$Total_Height_DC2==0),] # removing rows corresponding to currently dead plants
-
-# g is a new data frame with new columns corresponding to each population's plants' total heights: each plant's ramet's heights, added, and totaled per population.
-g <- Data_Growth %>% group_by(Population) %>% summarise(DC0_total_pop_heights = sum(Total_Height_DC0),
-                                                        DC1_total_pop_heights  = sum(Total_Height_DC1),
-                                                        DC2_total_pop_heights  = sum(Total_Height_DC2))
-
-Data_Growth_Distances <- merge(x = g, y = Distances, by = "Population", all.x = TRUE)
-Data_Growth_Distances$Pop_Size <- Dist_merged$sum_total
-
-Data_Growth_Distances <- Data_Growth_Distances[,-(5:8)] #removing unnecessary cols
-
-Data_Growth_Distances$Avg_Height_DC0to1 <- NA 
-Data_Growth_Distances$Avg_Height_DC1to2  <- NA
-Data_Growth_Distances$Avg_Growth_Rate_DC0to1 <- NA
-Data_Growth_Distances$Avg_Growth_Rate_DC1to2 <- NA
-
-
-Data_Growth_Distances$Avg_Height_DC0to1  <- Data_Growth_Distances[3] / Data_Growth_Distances[7] #this col represents each population's average of all the combined heights of each plant's ramets for data collection 1.
-Data_Growth_Distances$Avg_Height_DC1to2 <- Data_Growth_Distances[4] / Data_Growth_Distances[7] #this col represents each population's average of all the combined heights of each plant's ramets for data collection 2.
-Data_Growth_Distances$Avg_Growth_Rate_DC0to1 <- Data_Growth_Distances[3]/ Data_Growth_Distances[7] #this col represents each population's average amount of mm of height grown by each ramet per plant per population from the first data collection event (when all plants were at height 0) to the actual first data collection event.
-Data_Growth_Distances$Avg_Growth_Rate_DC1to2 <- (Data_Growth_Distances[4] - Data_Growth_Distances[3])/ Data_Growth_Distances[7] #this col represents each population's average amount of mm of height grown by each ramet per plant per population from the actual first data collection event to the second data collection event.
-
-
-
-##### Converting Data_Growth_Distances df into one without nesting data frames (last 3 cols)
-
-  # Find all columns that are data.frame
-  # Assuming your data frame is stored in variable 'y'
-  data.frame.cols <- unname(sapply(Data_Growth_Distances, function(x) class(x) == "data.frame"))
-  z <- Data_Growth_Distances[, !data.frame.cols]
-
-  # All columns of class "data.frame"
-  dfs <- Data_Growth_Distances[, data.frame.cols]
-
-  # Recursively unnest each of these columns
-  unnest_dataframes <- function(x) {
-    Data_Growth_Distances <- do.call(data.frame, x)
-    if("data.frame" %in% sapply(Data_Growth_Distances, class)) {
-        unnest_dataframes(Data_Growth_Distances)
-    } else {
-        cat('Nested data.frames successfully unpacked\n')
-      }
-    Data_Growth_Distances
-  }
-
-  df2 <- unnest_dataframes(dfs)
-
-  # Combine with original data
-  Data_Growth_Distances2 <- cbind(z, df2)
-  
-#####
-  
-names(Data_Growth_Distances2)[8] <- "Avg_Height_DC0to1"
-names(Data_Growth_Distances2)[9] <- "Avg_Height_DC1to2"
-names(Data_Growth_Distances2)[10] <- "Avg_Growth_Rate_DC0to1"
-names(Data_Growth_Distances2)[11] <- "Avg_Growth_Rate_DC1to2"
-
-
-
-DGD2_sorted <- Data_Growth_Distances2 %>% arrange(City_dist)
-# DGD2_sorted$City_dist <- factor(DGD2_sorted$City_dist, levels = DGD2_sorted$City_dist[order(DGD2_sorted$Growth_Rate_DC12)])
-
-p1 <- ggplot(DGD2_sorted, aes(x=City_dist, y=Avg_Growth_Rate_DC0to1, color=Transect_ID, shape=Transect_ID)) + 
-    labs(title="Average Amount Grown per Plant per Population", subtitle = "Between Start and Data Collection Event 1", x = "Population's distance to urban center (km)", y = "Amount Grown (mm)") +
-  geom_point(shape=21, size= 4) +
-  geom_smooth(method = "lm", se = T)
-p1
-
-p1_stats <- lm(Avg_Growth_Rate_DC0to1 ~ City_dist, data=DGD2_sorted)
-par(mfrow=c(2,2))
-plot(p1_stats)
-summary(p1_stats)
-
-
-p2 <- ggplot(DGD2_sorted, aes(x=City_dist, y=Avg_Growth_Rate_DC1to2, color=Transect_ID, shape=Transect_ID)) + 
-    labs(title="Average Amount Grown per Plant per Population", subtitle = "Between Data Collection Events 1-2", x = "Population's distance to urban center (km)", y = "Amount Grown (mm)") +
-  geom_point(shape=21, size= 4) +
-  geom_smooth(method = "lm", se = T) 
-p2
-
-p2_stats <- lm(Avg_Growth_Rate_DC1to2 ~ City_dist, data=DGD2_sorted)
-par(mfrow=c(2,2))
-plot(p2_stats)
-summary(p2_stats)
-
-p3 <- ggplot(DGD2_sorted, aes(x=City_dist, y=Avg_Height_DC0to1, color=Transect_ID, shape=Transect_ID)) + 
-    labs(title="Average Height per Plant per Population", subtitle = "At Data Collection Event 1", x = "Population's distance to urban center (km)", y = "Average Plant Height (mm)") +
-  geom_point(shape=21, size= 4) +
-  geom_smooth(method = "lm", se = T) 
-p3
-
-p3_stats <- lm(Avg_Height_DC0to1 ~ City_dist, data=DGD2_sorted)
-par(mfrow=c(2,2))
-plot(p3_stats)
-summary(p3_stats)
-
-p4 <- ggplot(DGD2_sorted, aes(x=City_dist, y=Avg_Height_DC1to2, color=Transect_ID, shape=Transect_ID)) + 
-    labs(title="Average Height per Plant per Population", subtitle = "At Data Collection Event 2", x = "Population's distance to urban center (km)", y = "Average Plant Height (mm)") +
-  geom_point(shape=21, size= 4) +
-  geom_smooth(method = "lm", se = T) 
-p4
-
-p4_stats <- lm(Avg_Growth_Rate_DC1to2 ~ City_dist, data=DGD2_sorted)
-par(mfrow=c(2,2))
-plot(p4_stats)
-summary(p4_stats)
-
-
-
-library(ggpubr)
- multi.page <- ggarrange(p1, p2, p3, p4, nrow = 2, ncol = 1)
- ggexport(multi.page, filename = "multi.page.ggplot2.1.pdf")
-
-```
-
-## Box plots for each growth period
-
-```{r}
-library(dplyr)
-library(ggplot2)
-
-
-
-ggboxplot(DGD2_sorted, x = "Transect_ID", y = "Avg_Height_DC0to1", 
-          color = "Transect_ID", palette = c("#00AFBB", "#E7B800", "#FC4E07"),
-          order = c("North", "South", "Rural"),
-          ylab = "Growth Rate- DC0 to 1", xlab = "Transect")
-
-ggboxplot(DGD2_sorted, x = "Transect_ID", y = "Avg_Height_DC1to2", 
-          color = "Transect_ID", palette = c("#00AFBB", "#E7B800", "#FC4E07"),
-          order = c("North", "South", "Rural"),
-          ylab = "Growth Rate- DC1 to 2", xlab = "Transect")
-
-ggboxplot(DGD2_sorted, x = "Transect_ID", y = "Avg_Growth_Rate_DC0to1", 
-          color = "Transect_ID", palette = c("#00AFBB", "#E7B800", "#FC4E07"),
-          order = c("North", "South", "Rural"),
-          ylab = "Growth Rate- DC0 to 2", xlab = "Transect")
-
-ggboxplot(DGD2_sorted, x = "Transect_ID", y = "Avg_Growth_Rate_DC1to2", 
-          color = "Transect_ID", palette = c("#00AFBB", "#E7B800", "#FC4E07"),
-          order = c("North", "South", "Rural"),
-          ylab = "Growth Rate- DC0 to 2", xlab = "Transect")
-
-```
-
-## Plotting all plants as individuals (I know this isn't statistically the best idea)
-
-```{r}
-test1 <- merge(x = Data_Growth, y = Distances, by = "Population", all.x = TRUE)
-
-ggplot(data = test1, aes(x=City_dist, y=Total_Height_DC1, color=Transect_ID, shape=Transect_ID)) + geom_point() + geom_smooth(method="lm")
-
-
-ggplot(data = test1, aes(x=City_dist, y=Total_Height_DC2,color=Transect_ID, shape=Transect_ID)) + geom_point() + geom_smooth(method="lm")
-
-```
-
-
-## ____
-
-```{r}
-
-growth_means <- aggregate(DGD2_sorted[, 9:11], list(DGD2_sorted$Transect_ID), mean)
-growth_means <- growth_means[,c(1,4,3,2)]
-names(growth_means)[1] <- "Transect"
-names(growth_means)[2] <- "Growth_0to1"
-names(growth_means)[3] <- "Growth_1to2"
-names(growth_means)[4] <- "Growth_0to2"
-
-
 
 ```
 
@@ -1162,7 +724,7 @@ Q2_regressions
 ```
 
 
-# Diagnostics (check normality, etc.)
+# Diagnostics
 ## Herbivory- can't fit a normal distr.
 ```{r}
 
@@ -1348,34 +910,6 @@ lsmeans_survival
 # North has (2.08-2.03)/((2.08+2.03)/2) = 2% higher survival, on average, than South transect
 
 ```
-
-#### OLD- used lm instead of glm
-```{r}
-# Q1:
-# summary(lm(Pct_Survival_Definite ~ City_dist, data = SSE_pops_surv ))
-# bb <- car::Anova(lm(Pct_Survival_Definite ~ City_dist, data = SSE_pops_surv))
-# ## Just dist_city term: not significant
-# 
-# 
-# # Q2:
-# summary(lm(Pct_Survival_Definite ~ City_dist * Transect_ID, data = SSE_pops_surv_urban))
-# bc <- car::Anova(lm(Pct_Survival_Definite ~ City_dist * Transect_ID, data = SSE_pops_surv_urban))
-# # A & B plus AxB are not significant, so removing
-# 
-# summary(lm(Pct_Survival_Definite ~ City_dist + Transect_ID, data = SSE_pops_surv_urban))
-# car::Anova(lm(Pct_Survival_Definite ~ City_dist + Transect_ID, data = SSE_pops_surv_urban))
-# ## Neither term significant
-# 
-# summary(lm(Pct_Survival_Definite ~ Transect_ID, data = SSE_pops_surv_urban))
-# bd <- car::Anova(lm(Pct_Survival_Definite ~ Transect_ID, data = SSE_pops_surv_urban))
-# ## Just transect term: not significant
-# 
-# summary(lm(Pct_Survival_Definite ~ City_dist, data = SSE_pops_surv_urban))
-# be <- car::Anova(lm(Pct_Survival_Definite ~ City_dist, data = SSE_pops_surv_urban))
-# ## Just city_dist term: not significant
-
-```
-
 
 
 ### Number of ramets
@@ -2093,18 +1627,5 @@ cat(out,file="lmer_numramets.txt",sep="\n",append=TRUE)
 # Q2: ce (no. ram  ~  subtransect)
 # Q2: cf (no. ram  ~ Dist_city)
 # write.csv(rbind(cc, cd, ce, cf), "ANOVAs_numberoframets.csv")
-
-```
-
-# Unused code- stepAIC
-```{r}
-# make df with only variables relevant to model selection, then try stepAIC
-## THE PROBLEM IS that stepAIC can't analyze random effects, so this seems moot
-# relevant_vars <- Alive_sum1[,c(1,4,5,12:18,23,24)]
-# sum(is.na(relevant_vars))
-# relevant_vars = na.omit(relevant_vars)
-# relvars.lm <- lm(Mean_herbiv ~., data = relevant_vars)
-# step <- stepAIC(relvars.lm, direction = "both")
-# step
 
 ```
