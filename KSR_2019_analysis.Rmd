@@ -67,10 +67,10 @@ library(geosphere)
 
 ## Import data
 ```{r, import}
-Data <- read.csv("~/R_Projects/Chapter2_KSR/CommonGardenExperiment_2019Data/FINAL_3rdmeasuredheight_survival.csv",header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
+Data <- read.csv("~/R_Projects/chapter_two/CommonGardenExperiment_2019Data/raw_data/FINAL_3rdmeasuredheight_survival.csv",header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE)
 
 
-Distances <- read.csv("~/R_Projects/Chapter2_KSR/CommonGardenExperiment_2019Data/Transect_Milkweed_HaversineData_forjoining.csv", na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",")
+Distances <- read.csv("~/R_Projects/chapter_two/CommonGardenExperiment_2019Data/raw_data/Transect_Milkweed_HaversineData_forjoining.csv", na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",")
 ```
 
 ## Set theme

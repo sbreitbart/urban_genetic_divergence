@@ -20,8 +20,13 @@ NOTES:
   -Still to do--
     -figure out if I did the herbivore RDA correctly
     -Verify which analyses had significant results --> will want to repeat those this year, probably
+    --also do next year; what I couldn't in 2020;
+    ---(look at KSR notes) but, e.g. leaf water content
     -try to do an RDA (or PCA?) with all the traits
-    -make a ReadMe file for each level 
+    -make a ReadMe file for each level
+    -renv::snapshot() to update packages
+    -export stats w/flextable ?
+    -calculate heritability coefficients
 
 ---
 # Set up notebook
@@ -4062,37 +4067,6 @@ flowering_2020 %>%
       plot.title = element_text(size=11)
     ) +
     xlab("")
-```
-
-#### Plants that flowered: Older figures (may not want to use)
-```{r}
-
-# Basic scatterplot 
-ggplot(DC2_2020, aes(x=City_dist, y=Flowered2020)) +
-  geom_jitter(aes(colour = Transect_ID, shape = Flowered2020))
-
-# Basic bar graph
-ggplot(DC2_flowering_2020, aes(x=Urb_Rur)) + 
-  geom_bar(color = 'black', fill = 'grey' ) +
-  ylim(0,24) +
-  labs(x = "Sample Site Environment",
-       y = "2020 Flowering Plants") +
-  theme(legend.position = 'None',
-        text = element_text(size=14),
-        axis.text = element_text(size = 13)) 
-# +  geom_text(aes(label=unique(Urb_Rur)), position=position_dodge(width=0.9))
-
-## splitting subtransect
-ggplot(DC2_flowering_2020, aes(x=Urb_Rur, fill=Transect_ID )) + 
-  geom_bar( ) +
-  ylim(0,24) +
-  labs(x = "Sample Site Environment",
-       y = "2020 Flowering Plants") +
-  scale_fill_discrete(name  ="Sample Site Subtransect",
-                      breaks = c("North", "South", "Rural"),
-                      labels=c("Urban: Non-Corridor", "Urban: Corridor", "Rural"))
-
-
 ```
 
 ## Height
