@@ -17,6 +17,7 @@ editor_options:
 ---
 
 NOTES:
+-Jan 2020: Revamped data (imported as "Data") to include all 2019 data. Haven't adapted code in this notebook for it because it might be moot... planning on just importing it into the 2020 rmd and combining it with 2020 so I can compare each year's data.
 
 # Set up notebook
 ## Load packages
@@ -118,29 +119,9 @@ min(garden_summary3$`n()`)
 max(garden_summary3$`n()`)
 ```
 
-## Find average height per plant
-```{r}
-# Selecting rows (plants) that aren't dead and have at least 1 ramet whose height was recorded
-Alive <- Data[!(Data$Dead_DC3=="1"),]
-Alive <- Alive[!(is.na(Alive$Height_ram1_cm)),]
-
-# Mean height and number of ramets used to calculate mean height
-Alive$Mean_height <- rowMeans(Alive[,c(16,18,20,22,24,26,28,30)], na.rm = T)
-Alive$Ramets_measured_height <- rowSums(!is.na(Alive[,c(16,18,20,22,24,26,28,30)]))
-
-```
-
 # Analyze herbivory & height
-## Find average herbivory & height per family & population
 ```{r}
-# Create new data table with only pertinent columns
-Herbiv_df <- Alive[,c(1, 4:6, 12:34, 42:53)]
-
-# Add transect data via merge
-Herbiv_df <- merge(x = Herbiv_df, y = Distances, by = "Population", all.x = TRUE)
-
-# Add column for sqrt(height) as per diagnostic testing
-Herbiv_df$Mean_height_sqrt <- Herbiv_df$Mean_height^(1/2)
+## Find average herbivory & height per family & population
 
 # Find family means
 fams_herbiv <- ddply(Herbiv_df, .(Population, Family), summarise,
@@ -184,7 +165,6 @@ SSE_fams_height <- merge(x = SSE_fams_height, y = Distances, by = "Population", 
 SSE_pops_height <- summarySE(Herbiv_df, measurevar="Mean_height", groupvars=c("Population"), na.rm=TRUE)
 SSE_pops_height <- merge(x = SSE_pops_height, y = Distances, by = "Population", all.x = TRUE)
 ```
-
 
 # Analyze survival
 ## Create survival table
@@ -312,9 +292,6 @@ SSE_pops_surv <- merge(x = SSE_pops_surv, y = Distances, by = "Population", all.
 ## OLD: Plots of survival per population vs. distance from city center
 ```{r}
 # When population location is spread over a few sites (e.g. there are several AS identifiers and only 1 MW identifier), coordinates chosen correspond to first AS site. E.g. For MW003, there are two AS sites- AS003 & AS004. AS003 will be designated to show the location of MW003. Same practice for MW004, 005, 006, 007.
-
-Dist_merged <- merge(x = DC3_survival_pops, y = Distances, by = "Population", all.x = TRUE)
-
 
 # Plot and stats for percent survival vs. distance from city center (weighted by total plants per population)
 ggplot(Dist_merged, aes(x = City_dist, y = Pct_Survival_Definite, weights=Dist_merged$sum_total)) +
