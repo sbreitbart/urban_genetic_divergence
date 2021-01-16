@@ -243,6 +243,21 @@ DC_all_2019 <- DC_all_2019 %>%
 DC_all_2019 <- DC_all_2019[, c(27,3, 2, 25, 16, 26, 1, 4:15, 17:24, 28:30)]
 
 
+#----------------------------------------------------------
+# Find which plants were dead throughout season (all 3 DCs)
+#-----------------------------------------------------------
+DC_all_2019$Dead_2019 <- NA
+
+DC_all_2019 <- transform(DC_all_2019,
+                  Dead_2019 = ifelse(
+                    (Dead_DC1 == 'yes' | Dead_DC1 == 'maybe' | Dead_DC1 == 'nothing there') &
+                      Dead_DC2 == 1 &
+                      Dead_DC3 == 1 &
+                      Total_Height_DC1 == 0 &
+                      Total_Height_DC2 == 0 &
+                      Total_height_DC3 == 0,
+                    1,0))
+
 #-----------------------------------------------------------------------------------
 # Add urbanization data (Distance from city center, transect IDs, urbanization score, etc.)
 #-----------------------------------------------------------------------------------
@@ -272,7 +287,7 @@ names(urb_scores)[1] <- "Pop_ID"
 DC_all_2019 <- merge(DC_all_2019, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 
 # remove "X" column
-DC_all_2019 <- DC_all_2019[,-32]
+DC_all_2019 <- DC_all_2019[,-33]
 
 
 #-------------------

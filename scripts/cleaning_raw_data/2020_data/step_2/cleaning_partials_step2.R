@@ -4,7 +4,8 @@
 
 # 2019 data-----
 data_clean_2019 <- read.csv(here::here("./CommonGardenExperiment_2019Data/clean_data/clean_data_2019KSR.csv"),
-                            na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",")
+                            na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::select(., -c(1:2))
 
 # 2020 data-----
 heights_both <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_heights_partialclean.csv")) %>%
@@ -76,17 +77,22 @@ survival_both <- survival_both[, c(1:6, 10,9,8,7)]
 dead_2020 <- survival_both %>% filter(., Dead_June == 1 & Dead_Sept == 1)
 
 # shows which plants were dead or alive throughout all data collections in 2020
-survival_both <- transform(survival_both, dead_2020 = ifelse(Dead_June == 1 & Dead_Sept == 1, 1,0))
+survival_both <- transform(survival_both,
+                           dead_2020 = ifelse(Dead_June == 1 & Dead_Sept == 1, 1,0))
 
 # these plants were dead for all data collections in 2019
-dead_2019 <- data_clean_2019 %>% filter(., (Dead_DC1 == 'yes' | Dead_DC1 == 'maybe' | Dead_DC1 == 'nothing there') & Dead_DC2 == 1 & Dead_DC3 == 1)
+dead_2019 <- data_clean_2019 %>%
+  dplyr::filter(., Dead_2019 == 1)
 
 # these plants were dead either throughout 2019 OR 2020
-dead_either_2019or2020_fullyear <- full_join(dead_2019[,c(1:6, 9:11)], dead_2020, by = c("Row", "Column", "Block", "Population", "Family", "Replicate"))
+dead_either_2019or2020_fullyear <- full_join(dead_2019[,c(1:6, 31)],
+                                             dead_2020,
+                                             by = c("Row", "Column", "Block", "Population", "Family", "Replicate"))
 
 # these plants were dead throughout 2019 AND 2020
 # # THESE ARE THE PLANTS THAT HAVE BEEN DEAD FROM THE START, PRESUMABLY
-dead_bothyears <- inner_join(dead_2019[,c(1:6, 9:11)], dead_2020[,c(1:7,9)],  by = c("Row", "Column", "Block", "Population", "Family", "Replicate")) 
+dead_bothyears <- inner_join(dead_2019[,c(1:6, 31)], dead_2020[,c(1:7,9)],
+                             by = c("Row", "Column", "Block", "Population", "Family", "Replicate")) 
 
 # new df to see which plants I thought were dead in 2019 but really weren't in 2020
 # SO: should be in dead2019 but NOT in dead2020
