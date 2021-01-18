@@ -80,12 +80,12 @@ DC2 <- DC2[,-c(13:20, 23:24)]
 names(DC1)[8]<-"Comment"
 
 # get DC2 measuerer and num ramets for both DCs
-DC1_2 <- merge(x = DC1[,c(1:9)], y = DC2[,-c(9:10,15)],
+DC1_2 <- merge(x = DC1[,c(1:9)], y = DC2[,-c(9:10)],
                by = c("Row", "Column", "Block", "Population", "Family", "Replicate"),
                all.x = TRUE,
                suffix = c('_DC1', '_DC2'))
 # reorder cols
-DC1_2 <- DC1_2[, c(1:9, 12, 15, 10:11, 13, 14)]
+DC1_2 <- DC1_2[, c(1:9, 12, 15, 10:11, 13, 16, 14)]
 
 
 
@@ -236,11 +236,12 @@ names(DC3)[18]<-"Exposed_rhizome_DC1"
 DC_all_2019 <- merge(x = DC1_2, y = DC3,
                by = c("Row", "Column", "Block", "Population", "Family", "Replicate"),
                all.x = TRUE)
+
 # reorder cols
 DC_all_2019 <- DC_all_2019 %>% 
   dplyr::select(sort(names(.)))
 
-DC_all_2019 <- DC_all_2019[, c(27,3, 2, 25, 16, 26, 1, 4:15, 17:24, 28:30)]
+DC_all_2019 <- DC_all_2019[, c(28,3, 2, 26, 16, 27, 1, 4:15, 17:25, 29:31)]
 
 
 #----------------------------------------------------------
@@ -257,6 +258,28 @@ DC_all_2019 <- transform(DC_all_2019,
                       Total_Height_DC2 == 0 &
                       Total_height_DC3 == 0,
                     1,0))
+
+
+
+
+
+## Calculate relative growth rate
+## ---------------------------------------------
+# First, find # days between DC1 and DC3
+DC_all_2019$date_diff <- as.Date(as.character(DC_all_2019$Date_Measured_DC3), format="%m/%d/%Y") -
+  as.Date(as.character(DC_all_2019$Date_Measured_DC1), format="%m/%d/%Y")
+DC_all_2019$date_diff <- as.numeric(DC_all_2019$date_diff)
+
+# some plants had heights of 0 in DC1, DC3, or both:
+# If they were 0 in DC1 but >0 in DC3: DC1 = 1, since ln(1)=0.
+# If they were >0 in DC1 but 0 in DC3: DC3 = 1.
+# If DC1 = 0 and DC3 = 0, it will be NA.
+DC_all_2019 <- DC_all_2019 %>%
+  dplyr::mutate(.,
+                rel_growth_rate = case_when(
+                  Total_Height_DC1 > 0 & Total_height_DC3 > 0 ~ (log(Total_height_DC3) - log(Total_Height_DC1))/ date_diff,
+                  Total_Height_DC1 > 0 & Total_height_DC3 == 0  ~ (1 - log(Total_Height_DC1)) / date_diff,
+                  Total_Height_DC1 == 0 & Total_height_DC3 > 0  ~ (log(Total_height_DC3) - 1) / date_diff))
 
 #-----------------------------------------------------------------------------------
 # Add urbanization data (Distance from city center, transect IDs, urbanization score, etc.)
@@ -287,7 +310,7 @@ names(urb_scores)[1] <- "Pop_ID"
 DC_all_2019 <- merge(DC_all_2019, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 
 # remove "X" column
-DC_all_2019 <- DC_all_2019[,-33]
+DC_all_2019 <- DC_all_2019[,-36]
 
 
 #-------------------
