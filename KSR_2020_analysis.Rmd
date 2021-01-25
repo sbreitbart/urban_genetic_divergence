@@ -163,6 +163,9 @@ heights_19_20$rel_growth_rate <- as.numeric(heights_19_20$rel_growth_rate)
 
 # rm(heights_2019, heights_2020)
 
+heights_19_20$Population <- as.factor(heights_19_20$Population)
+heights_19_20$Family <- as.factor(heights_19_20$Family)
+
 
 
 
@@ -190,6 +193,9 @@ herbivory_19_20 <- rbind.fill(herb_2019, herb_2020)
 
 # rm(herb_2019, herb_2020)
 
+herbivory_19_20$Population <- as.factor(herbivory_19_20$Population)
+herbivory_19_20$Family <- as.factor(herbivory_19_20$Family)
+
 
 
 
@@ -213,6 +219,10 @@ surv_2020$Year = 2020
 survival_19_20 <- rbind.fill(surv_2019, surv_2020)
 
 # rm(surv_2019, surv_2020)
+
+survival_19_20$Population <- as.factor(survival_19_20$Population)
+survival_19_20$Family <- as.factor(survival_19_20$Family)
+
 
 ```
 
@@ -2219,13 +2229,16 @@ AIC(lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect
 
 ## Herbivory
 ### Sept
-#### lmer
+#### glmer w/binomial distr.
+NOTE: I originally fit these models w/herbivory scores ranging from 0 to 100 and used lmer. Then I switched to herbivory percents (dividing by 100) and using binomial distr. I would've used quasi-binomial but glmer can't handle that, only glm.
+-The story didn't change when analyzing the entire gradient NOR urban subtransects: i.e. herbivory didn't change with urbanization when quantified with city_dist nor urb_score.
 ##### Entire gradient: *Not sig for either
 ###### City_dist
 ```{r}
 # NO DIFFERENCE BETWEEN MODELS W/ CROSSED VS NESTED RANDOM EFFECTS #
 ###################################################################
 
+# Using a binomial distribution bc glmer can't handle quasi-binomial, which is what the optimal model would be here.
 
 ### NESTED RANDOM EFFECTS-----
 glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
@@ -2233,49 +2246,27 @@ glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
   family = binomial(link = logit))
 # is singular...
 
-car::Anova(lmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = herb_2019, REML = F))
+car::Anova(glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = herb_2019,
+  family = binomial(link = logit)))
 # nothing is significant
 
-r.squaredGLMM(lmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = herb_2019, REML = F))
-  
+r.squaredGLMM(glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = herb_2019,
+  family = binomial(link = logit)))  
 
 ### CROSSED RANDOM EFFECTS-----
-lmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = herb_2019, REML = F,
-     control=lmerControl(optimizer="bobyqa",
-                                 optCtrl=list(maxfun=2e5)))
+glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population:Family) + City_dist,
+  data = herb_2019,
+  family = binomial(link = logit))
 #  singular
 
-car::Anova(lmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = herb_2019, REML = F,
-     control=lmerControl(optimizer="bobyqa",
-                                 optCtrl=list(maxfun=2e5))))
+car::Anova(glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population:Family) + City_dist,
+  data = herb_2019,
+  family = binomial(link = logit)))
 # distance not significant
 
 
-
-# ANy variation within families or populations?
-m.1 <- lmer(Herbivory_mean_Sept ~ (1|Population/Family), data = herb_2019, REML = T,
-     control=lmerControl(optimizer="bobyqa",
-                                 optCtrl=list(maxfun=2e5)))
-
-ranova(m.1)
-# nope
-sum.1 <- summary(m.1)
-
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
-  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
-  dplyr::select(., c(grp, vcov, PVE)) %>%
-  dplyr::rename(., Group = grp,
-                Variance = vcov)
-
-
-write.table(ranova(m.1), "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_HerbivorySept_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_HerbivorySept_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
 ```
 
 ###### Urb_score
@@ -2285,25 +2276,30 @@ write.table(variances1, "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = herb_2019, REML = F)
+glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = herb_2019,
+  family = binomial(link = logit))
 # is singular...
 
-car::Anova(lmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = herb_2019, REML = F))
+car::Anova(glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = herb_2019,
+  family = binomial(link = logit)))
 # nothing is significant
 
-r.squaredGLMM(lmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = herb_2019, REML = F))
+r.squaredGLMM(glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = herb_2019,
+  family = binomial(link = logit)))
   
 
 ### CROSSED RANDOM EFFECTS-----
-lmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = herb_2019, REML = F)
+glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
+  data = herb_2019,
+  family = binomial(link = logit))
 #  singular
 
-car::Anova(lmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = herb_2019, REML = F))
+car::Anova(glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
+  data = herb_2019,
+  family = binomial(link = logit)))
 #  not significant
 
 
@@ -2318,79 +2314,53 @@ car::Anova(lmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population:Family) + Urb_sc
 
 ### NESTED RANDOM EFFECTS-----
 # Full model
-lmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"),
+  family = binomial(link = logit))
 # singular...
 
-car::Anova(lmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"),
+       family = binomial(link = logit)))
 # nothingsignificant
 
 
 # Just main effects
-car::Anova(lmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
-     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"),
+  family = binomial(link = logit)))
 # singular... nothing is significant
 
 
 
 ### CROSSED RANDOM EFFECTS-----
 # Full model
-lmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-# NOT singular...
+glmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"),
+       family = binomial(link = logit))
+#  singular...
 
-car::Anova(lmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"),
+      family = binomial(link = logit)))
 # nothing is significant
 
 
 # Just main effects
-car::Anova(lmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
-     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
+     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"),
+       family = binomial(link = logit)))
 # singular... nothing is significant
 
 
-AIC(lmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"),   family = binomial(link = logit))
+)
 
-AIC(lmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
-     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
+     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"),  family = binomial(link = logit))
+)
 # AIC <2 apart; both "best models" though main effects model has lower AIC
-
-
-# ANy variation among families or populations?
-m.1 <- lmer(Herbivory_mean_Sept ~ (1|Population/Family), data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
-ranova(m.1)
-# no
-
-m.2 <- lmer(Herbivory_mean_Sept ~ (1|Population/Family) + Transect_ID, data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-car::Anova(m.2)
-# not among transects either
-
-
-m.3 <- lmer(Herbivory_mean_Sept ~ (1|Population/Family) + Transect_ID, data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
-car::Anova(m.3)
-# not sig in this or m.2
-
-
-sum.1 <- summary(m.1)
-
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
-  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
-  dplyr::select(., c(grp, vcov, PVE)) %>%
-  dplyr::rename(., Group = grp,
-                Variance = vcov)
-
-
-write.table(ranova(m.1),
-            "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_HerbivorySept_urban_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1,
-            "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_HerbivorySept_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
-write.table(car::Anova(m.2),
-            "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_HerbivorySept_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
 
 ```
 
@@ -2401,44 +2371,55 @@ write.table(car::Anova(m.2),
 
 ### NESTED RANDOM EFFECTS-----
 # Full model
-lmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"),
+     family = binomial(link = logit))
 # singular...
 
-car::Anova(lmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"),
+     family = binomial(link = logit))
+)
 # nothing significant
 
 
 # Just main effects
-car::Anova(lmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
-     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"),
+     family = binomial(link = logit)))
 # singular... nothing significant
 
 
 
 ### CROSSED RANDOM EFFECTS-----
 # Full model
-lmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-# NOT singular...
+glmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"),
+       family = binomial(link = logit))
+#  singular...
 
-car::Anova(lmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"),
+       family = binomial(link = logit)))
 # nothing significant
 
 
 # Just main effects
-car::Anova(lmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
-     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
+     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"),
+       family = binomial(link = logit)))
 # singular... nothing significant
 
 
-AIC(lmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"),
+     family = binomial(link = logit))
+)
 
-AIC(lmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
-     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Herbivory_mean_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
+     data = herb_2019 %>% dplyr::filter(., Transect_ID != "Rural"),
+     family = binomial(link = logit))
+)
 # AIC <2 apart; both "best models" though main effects model has lower AIC
 
 ```
@@ -4821,9 +4802,16 @@ text(rda_herb_August, display='cn', col='red')
 ```
 
 ## Herbivory
+NOTE: I originally fit these models w/herbivory scores ranging from 0 to 100 and used lmer. Then I switched to herbivory percents (dividing by 100) and using binomial distr. I would've used quasi-binomial but glmer can't handle that, only glm.
+-The story DID change when analyzing the
+ -JULY
+  -Entire gradient w/city_dist (NOT urb_score):
+   -With lmer, herbivory DID change with urbanization when quantified with city_dist. With glmer, it's not significant.
+  -Urban subs w/city_dist:
+   -With lmer, herbivory DID change with urb when quantified w/city_dist. With glmer, it's not sig.
 ### July
-#### lmer
-##### Entire gradient: *Sig for City_dist, not urb_score
+#### glmer
+##### Entire gradient: *Not sig for either
 ###### City_dist
 ```{r}
 # NO DIFFERENCE BETWEEN MODELS W/ CROSSED VS NESTED RANDOM EFFECTS #
@@ -4831,51 +4819,38 @@ text(rda_herb_August, display='cn', col='red')
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Herbivory.July_mean ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = herbivory_both_2020, REML = F)
+glmer(Herbivory.July_mean ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = herbivory_both_2020,
+    family = binomial(link = logit))
 # is singular...
 
-car::Anova(lmer(Herbivory.July_mean ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = herbivory_both_2020, REML = F))
-# distance is significant
+car::Anova(glmer(Herbivory.July_mean ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = herbivory_both_2020,
+      family = binomial(link = logit)))
+# distance is NOT significant anymore... was with lmer
 
 
 ### CROSSED RANDOM EFFECTS-----
-lmer(Herbivory.July_mean ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = herbivory_both_2020, REML = F)
-# NOT singular!
+glmer(Herbivory.July_mean ~ (1|Block) + (1|Population:Family) + City_dist,
+  data = herbivory_both_2020,
+      family = binomial(link = logit))
+#  singular
 
-car::Anova(lmer(Herbivory.July_mean ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = herbivory_both_2020, REML = F))
-# distance is significant
+car::Anova(glmer(Herbivory.July_mean ~ (1|Block) + (1|Population:Family) + City_dist,
+  data = herbivory_both_2020,
+      family = binomial(link = logit)))
+# distance is NOT significant... was with lmer
 
-summary(lmer(Herbivory.July_mean ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = herbivory_both_2020, REML = F))
-
-
-r.squaredGLMM(lmer(Herbivory.July_mean ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = herbivory_both_2020, REML = F))
-
+summary(glmer(Herbivory.July_mean ~ (1|Block) + (1|Population:Family) + City_dist,
+  data = herbivory_both_2020,
+      family = binomial(link = logit)))
 
 
-# ANy variation within families or populations?
-m.1 <- lmer(Herbivory.July_mean ~ (1|Population/Family), data = herbivory_both_2020, REML = T)
-
-ranova(m.1)
-# nope
-sum.1 <- summary(m.1)
-
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
-  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
-  dplyr::select(., c(grp, vcov, PVE)) %>%
-  dplyr::rename(., Group = grp,
-                Variance = vcov)
+r.squaredGLMM(glmer(Herbivory.July_mean ~ (1|Block) + (1|Population:Family) + City_dist,
+  data = herbivory_both_2020,
+      family = binomial(link = logit)))
 
 
-write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_HerbivoryJuly_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_HerbivoryJuly_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
 ```
 
 ###### Urb_score
@@ -4885,30 +4860,36 @@ write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/202
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Herbivory.July_mean ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = herbivory_both_2020, REML = F)
+glmer(Herbivory.July_mean ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = herbivory_both_2020,
+      family = binomial(link = logit))
 # is singular...
 
-car::Anova(lmer(Herbivory.July_mean ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = herbivory_both_2020, REML = F))
+car::Anova(glmer(Herbivory.July_mean ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = herbivory_both_2020, 
+        family = binomial(link = logit)))
 # not significant
 
 
 ### CROSSED RANDOM EFFECTS-----
-lmer(Herbivory.July_mean ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = herbivory_both_2020, REML = F)
+glmer(Herbivory.July_mean ~ (1|Block) + (1|Population:Family) + Urb_score,
+  data = herbivory_both_2020,
+        family = binomial(link = logit))
 #  singular
 
-car::Anova(lmer(Herbivory.July_mean ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = herbivory_both_2020, REML = F))
+car::Anova(glmer(Herbivory.July_mean ~ (1|Block) + (1|Population:Family) + Urb_score,
+  data = herbivory_both_2020,
+        family = binomial(link = logit)))
 # not significant
 
-summary(lmer(Herbivory.July_mean ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = herbivory_both_2020, REML = F))
+summary(glmer(Herbivory.July_mean ~ (1|Block) + (1|Population:Family) + Urb_score,
+  data = herbivory_both_2020,
+        family = binomial(link = logit)))
 
 
-r.squaredGLMM(lmer(Herbivory.July_mean ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = herbivory_both_2020, REML = F))
+r.squaredGLMM(glmer(Herbivory.July_mean ~ (1|Block) + (1|Population:Family) + Urb_score,
+  data = herbivory_both_2020,
+        family = binomial(link = logit)))
 
 ```
 
@@ -4921,97 +4902,65 @@ r.squaredGLMM(lmer(Herbivory.July_mean ~ (1|Block) + (1|Population:Family) + Urb
 
 ### NESTED RANDOM EFFECTS-----
 # Full model
-lmer(Herbivory.July_mean  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Herbivory.July_mean  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+     family = binomial(link = logit))
+
 # singular...
 
-car::Anova(lmer(Herbivory.July_mean  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# distance is significant
+car::Anova(glmer(Herbivory.July_mean  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+           family = binomial(link = logit)))
+# distance WAS significant in lmer model but now I get an error message... 
+## "Error in length(value <- as.numeric(value)) == 1L :  Downdated VtV is not positive definite"
 
 
 # Just main effects
-car::Anova(lmer(Herbivory.July_mean  ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
-     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# singular... distance is significant
+car::Anova(glmer(Herbivory.July_mean  ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+           family = binomial(link = logit)))
+# singular... distance is NOT significant anymore, nothing is
 
 
 
 ### CROSSED RANDOM EFFECTS-----
 # Full model
-lmer(Herbivory.July_mean  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Herbivory.July_mean  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+                family = binomial(link = logit))
+# singular... & Downdated VtV message as above
+
+glmer(Herbivory.July_mean  ~ (1|Population:Family) + City_dist * Transect_ID,
+     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+                family = binomial(link = logit))
 # singular...
 
-lmer(Herbivory.July_mean  ~ (1|Population:Family) + City_dist * Transect_ID,
-     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Herbivory.July_mean  ~ (1|Population:Family) + Block + City_dist * Transect_ID,
+     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),                family = binomial(link = logit))
+
 # singular...
 
-lmer(Herbivory.July_mean  ~ (1|Population:Family) + Block + City_dist * Transect_ID,
-     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-# singular...
 
-# try making a unique family identifier and removing pop
-trial1 <- herbivory_both_2020 %>%
-  dplyr::filter(., Transect_ID != "Rural") %>%
-  unite("Family_Unique", c(Population,Family), remove = FALSE)
-
-lmer(Herbivory.July_mean  ~ (1|Family_Unique) + Transect_ID,
-     data = trial1, REML = F)
-# still singular, even with block and distance removed...
-
-
-
-car::Anova(lmer(Herbivory.July_mean  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Herbivory.July_mean  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),                family = binomial(link = logit)))
 # distance is significant
 
 
 # Just main effects
-car::Anova(lmer(Herbivory.July_mean  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
-     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Herbivory.July_mean  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
+     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),                family = binomial(link = logit)))
 # singular... distance is significant
 
 
-AIC(lmer(Herbivory.July_mean  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
 
-AIC(lmer(Herbivory.July_mean  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
-     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Herbivory.July_mean  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),                family = binomial(link = logit)))
+
+AIC(glmer(Herbivory.July_mean  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
+     data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),                family = binomial(link = logit)))
 # AIC <2 apart; both "best models" though full model has lower AIC
 
 
-
-
-# ANy variation among families or populations?
-m.1 <- lmer(Herbivory.July_mean ~ (1|Population/Family), data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
-ranova(m.1)
-# no
-
-m.2 <- lmer(Herbivory.July_mean ~ (1|Population/Family) + Transect_ID, data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-car::Anova(m.2)
-# not among transects either
-
-
-m.3 <- lmer(Herbivory.July_mean ~ (1|Population/Family) + Transect_ID, data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
-car::Anova(m.3)
-# not sig in this or m.2
-
-
-sum.1 <- summary(m.1)
-
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
-  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
-  dplyr::select(., c(grp, vcov, PVE)) %>%
-  dplyr::rename(., Group = grp,
-                Variance = vcov)
-
-
-write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_HerbivoryJuly_urban_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_HerbivoryJuly_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
-write.table(car::Anova(m.2), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_HerbivoryJuly_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
 ```
 
 ###### Urb_score
