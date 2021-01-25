@@ -185,6 +185,10 @@ herbivory_both$Herbivory.Sept_mean <- gsub(' ', "", herbivory_both$Herbivory.Sep
 herbivory_both$Herbivory.Sept_mean <- sapply(strsplit(as.character(herbivory_both$Herbivory.Sept_mean), ",", fixed=T), function(x) mean(as.numeric(x)))
 
 
+# Divide herbivory values by 100 to get percentage to use in glmers later w/binomial distr.
+herbivory_both$Herbivory.July_mean <- herbivory_both$Herbivory.July_mean/100
+herbivory_both$Herbivory.Sept_mean <- herbivory_both$Herbivory.Sept_mean/100
+
 
 
 #-----------------------------------------------------------------------------------

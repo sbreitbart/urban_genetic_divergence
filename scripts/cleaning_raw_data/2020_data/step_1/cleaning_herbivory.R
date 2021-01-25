@@ -75,6 +75,8 @@ herbivory_both <- left_join(herbivory_1, herbivory_2,
                             by = c("Row", "Column", "Block", "Population", "Family", "Replicate"),
                             suffix = c(".July", ".Sept"))
 
+
+
 #-------------------
 # Export to new csv
 #-------------------

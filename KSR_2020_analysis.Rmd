@@ -2228,8 +2228,9 @@ AIC(lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = herb_2019, REML = F)
+glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = herb_2019,
+  family = binomial(link = logit))
 # is singular...
 
 car::Anova(lmer(Herbivory_mean_Sept ~ (1|Block) + (1|Population/Family) + City_dist,

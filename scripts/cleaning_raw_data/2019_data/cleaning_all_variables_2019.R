@@ -196,7 +196,8 @@ DC3$Herbivory_mean_DC3 <- sapply(strsplit(as.character(DC3$Herbiv_ram1), ",", fi
 
 DC3 <- DC3[,-c(19,21,23,25,27,29,31)]
 
-
+# Divide herbivory column by 100 to get percent to use binomial distribution later in glmer
+DC3$Herbivory_mean_DC3 <- DC3$Herbivory_mean_DC3/100
 
 
 
