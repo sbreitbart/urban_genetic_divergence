@@ -1534,7 +1534,10 @@ AIC(lmer(rel_growth_rate  ~ (1|Block) + (1|Population:Family) + Urb_score + Tran
 
 ## No. Ramets
 ### Early June ramets
-#### lmer
+NOTE: Originally used lmer but then switched to glmer w/poisson bc it's count data.
+-This didn't change the story for gradient (city_dist nor urb_score)
+-This DID change story for urb subs (urb_score: interaxn became sig)
+#### glmer
 ##### Entire gradient: *Not sig for city_dis or urb_score
 ###### City_dist
 ```{r}
@@ -1543,49 +1546,28 @@ AIC(lmer(rel_growth_rate  ~ (1|Block) + (1|Population:Family) + Urb_score + Tran
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_2019, REML = F)
+glmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_2019, family = poisson)
 # NOT singular
 
-car::Anova(lmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_2019, REML = F))
+car::Anova(glmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_2019, family = poisson))
 # distance NOT significant
 
 
-r.squaredGLMM(lmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_2019, REML = F))
+r.squaredGLMM(glmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_2019, family = poisson))
 
 ### CROSSED RANDOM EFFECTS-----
-lmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = heights_2019, REML = F)
+glmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population:Family) + City_dist,
+  data = heights_2019, family = poisson)
 # NOT singular
 
-car::Anova(lmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = heights_2019, REML = F))
+car::Anova(glmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population:Family) + City_dist,
+  data = heights_2019, family = poisson))
 # distance NOT significant
 
 
-
-
-# ANy variation within families or populations?
-m.1 <- lmer(Num_Ramets_DC1 ~ (1|Population/Family), data = heights_2019, REML = T)
-
-ranova(m.1)
-# YES for within families
-# 
-sum.1 <- summary(m.1)
-
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
-  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
-  dplyr::select(., c(grp, vcov, PVE)) %>%
-  dplyr::rename(., Group = grp,
-                Variance = vcov)
-
-
-write.table(ranova(m.1), "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_EarlyJuneRamets_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_EarlyJuneRamets_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
 ```
 
 ###### Urb_score
@@ -1595,30 +1577,30 @@ write.table(variances1, "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_2019, REML = F)
+glmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_2019, family = poisson)
 # not singular...
 
-car::Anova(lmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_2019, REML = F))
+car::Anova(glmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_2019, family = poisson))
 # nothing significant
 
 
-r.squaredGLMM(lmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population/Family) + Urb_score,
+r.squaredGLMM(glmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population/Family) + Urb_score,
   data = heights_2019, REML = F))
 
 ### CROSSED RANDOM EFFECTS-----
-lmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = heights_2019, REML = F)
+glmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population:Family) + Urb_score,
+  data = heights_2019, family = poisson)
 # NOT singular!
 
-car::Anova(lmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = heights_2019, REML = F))
+car::Anova(glmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population:Family) + Urb_score,
+  data = heights_2019, family = poisson))
 # nothing significant
 
 ```
 
-##### Urban subtransects: *transect sig for both
+##### Urban subtransects: *transect sig for both AND interaxn sig for urb_score
 ###### City_dist
 ```{r}
 # NO DIFFERENCE BETWEEN MODELS W/ CROSSED VS NESTED RANDOM EFFECTS #
@@ -1626,78 +1608,57 @@ car::Anova(lmer(Num_Ramets_DC1 ~ (1|Block) + (1|Population:Family) + Urb_score,
 
 ### NESTED RANDOM EFFECTS-----
 # Full model
-lmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5)))
+# singular
 
-
-car::Anova(lmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
 # transect significant
 
 
 # Just main effects
-car::Anova(lmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
 # transect significant
 
 
 
 ### CROSSED RANDOM EFFECTS-----
 # Full model
-lmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5)))
 # No warnings!!
 
-car::Anova(lmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
 # transect significant
 
 
 # Just main effects
-car::Anova(lmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID, 
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
 # transect significant
 
 
-AIC(lmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
 
-AIC(lmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
 # AIC <2 apart; both "best models" though just main effects lower AIC
 
-
-
-
-# ANy variation among families or populations?
-m.1 <- lmer(Num_Ramets_DC1 ~ (1|Population/Family), data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
-ranova(m.1)
-# YES for within families
-
-m.2 <- lmer(Num_Ramets_DC1 ~ (1|Population/Family) + Transect_ID, data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-car::Anova(m.2)
-# YES among transects
-
-
-m.3 <- lmer(Num_Ramets_DC1 ~ (1|Population/Family) + Transect_ID, data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
-car::Anova(m.3)
-# YES among transects (still)
-
-
-sum.1 <- summary(m.1)
-
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
-  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
-  dplyr::select(., c(grp, vcov, PVE)) %>%
-  dplyr::rename(., Group = grp,
-                Variance = vcov)
-
-
-write.table(ranova(m.1), "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_earlyJuneRamets_urban_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_earlyJuneRamets_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
-write.table(car::Anova(m.2), "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_earlyJuneRamets_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
 ```
 
 ###### Urb_score
@@ -1707,67 +1668,51 @@ write.table(car::Anova(m.2), "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE
 
 ### NESTED RANDOM EFFECTS-----
 # Full model
-lmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F,
-     control=lmerControl(optimizer="bobyqa",
+glmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5)))
 # singular
 
-car::Anova(lmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F,
-     control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5))))
-# transect significant
+# transect significant and so is interaxn
 
-
-# Just main effects
-car::Anova(lmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F,
-     control=lmerControl(optimizer="bobyqa",
-                                 optCtrl=list(maxfun=2e5))))
-# transect significant
 
 
 
 ### CROSSED RANDOM EFFECTS-----
 # Full model
-lmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F,
-     control=lmerControl(optimizer="bobyqa",
+glmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5)))
 # No warnings!!
 
-car::Anova(lmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F,
-     control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5))))
-# transect significant
+# transect significant AND interaxn
 
 
-# Just main effects
-car::Anova(lmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID, 
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F,
-     control=lmerControl(optimizer="bobyqa",
-                                 optCtrl=list(maxfun=2e5))))
-# transect significant
 
-
-AIC(lmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F,
-     control=lmerControl(optimizer="bobyqa",
+AIC(glmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5))))
 
-AIC(lmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F,
-     control=lmerControl(optimizer="bobyqa",
-                                 optCtrl=list(maxfun=2e5))))
-# AIC <2 apart; both "best models" though just main effects lower AIC
 
 ```
 
 
 ### Mid June ramets
-#### lmer
+NOTE: Originally used lmer but then switched to glmer w/poisson bc it's count data.
+-This didn't change the story for gradient (city_dist nor urb_score)
+-This DID change story for urb subs (urb_score: transect became marg sig)
+#### glmer
 ##### Entire gradient: *NOT sig for city_dist or urb_score
 ###### City_dist
 ```{r}
@@ -1776,53 +1721,36 @@ AIC(lmer(Num_Ramets_DC1  ~ (1|Block) + (1|Population:Family) + Urb_score + Trans
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Ramets_midJune ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_2019, REML = F,
-     control=lmerControl(optimizer="bobyqa",
+glmer(Ramets_midJune ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_2019, family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5)))
 
-car::Anova(lmer(Ramets_midJune ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_2019, REML = F,
-     control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_midJune ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_2019, family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5))))
 # distance NOT significant
 
 
-r.squaredGLMM(lmer(Ramets_midJune ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_2019, REML = F,
-     control=lmerControl(optimizer="bobyqa",
+r.squaredGLMM(glmer(Ramets_midJune ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_2019, family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5))))
 
 ### CROSSED RANDOM EFFECTS-----
-lmer(Ramets_midJune ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = heights_2019, REML = F)
+glmer(Ramets_midJune ~ (1|Block) + (1|Population:Family) + City_dist,
+  data = heights_2019, family = poisson,
+     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5)))
 # NOT singular!
 
-car::Anova(lmer(Ramets_midJune ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = heights_2019, REML = F))
+car::Anova(glmer(Ramets_midJune ~ (1|Block) + (1|Population:Family) + City_dist,
+  data = heights_2019, family = poisson,
+     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
 # distance NOT significant
 
-
-
-
-# ANy variation within families or populations?
-m.1 <- lmer(Ramets_midJune ~ (1|Population/Family), data = heights_2019, REML = T)
-
-ranova(m.1)
-# YES for within families
-sum.1 <- summary(m.1)
-
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
-  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
-  dplyr::select(., c(grp, vcov, PVE)) %>%
-  dplyr::rename(., Group = grp,
-                Variance = vcov)
-
-
-write.table(ranova(m.1), "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_midJuneRamets_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_midJuneRamets_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
 ```
 
 ###### Urb_score
@@ -1832,24 +1760,24 @@ write.table(variances1, "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Ramets_midJune ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_2019, REML = F)
+glmer(Ramets_midJune ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_2019, family = poisson)
 
-car::Anova(lmer(Ramets_midJune ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_2019, REML = F))
+car::Anova(glmer(Ramets_midJune ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_2019, family = poisson))
 # nothing significant
 
 
-r.squaredGLMM(lmer(Ramets_midJune ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_2019, REML = F))
+r.squaredGLMM(glmer(Ramets_midJune ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_2019, family = poisson))
 
 ### CROSSED RANDOM EFFECTS-----
-lmer(Ramets_midJune ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = heights_2019, REML = F)
+glmer(Ramets_midJune ~ (1|Block) + (1|Population:Family) + Urb_score,
+  data = heights_2019, family = poisson)
 # NOT singular
 
-car::Anova(lmer(Ramets_midJune ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = heights_2019, REML = F))
+car::Anova(glmer(Ramets_midJune ~ (1|Block) + (1|Population:Family) + Urb_score,
+  data = heights_2019, family = poisson))
 # nothing significant
 
 ```
@@ -1862,86 +1790,56 @@ car::Anova(lmer(Ramets_midJune ~ (1|Block) + (1|Population:Family) + Urb_score,
 
 ### NESTED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_midJune  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Ramets_midJune  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson)
 # singular
 
-car::Anova(lmer(Ramets_midJune  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_midJune  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # transect marg significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_midJune  ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_midJune  ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # singular, transect marg significant
 
 
 
 ### CROSSED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-# No warnings!!
+glmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5)))
+# model not converging...
 
-car::Anova(lmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
 # transect marg significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID, 
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID, 
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
 # transect marg significant
 
 
-AIC(lmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
 
-AIC(lmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
 # AIC <2 apart; both "best models" though just main effects lower AIC
 
-
-
-
-# ANy variation among families or populations?
-m.1 <- lmer(Ramets_midJune ~ (1|Population/Family), data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
-ranova(m.1)
-# YES for among families
-
-m.2 <- lmer(Ramets_midJune ~ (1|Population/Family) + Transect_ID, data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-car::Anova(m.2)
-# YES among transects (marginally sig)
-
-
-m.3 <- lmer(Ramets_midJune ~ (1|Population/Family) + Transect_ID, data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T,
-     control=lmerControl(optimizer="bobyqa",
-                                 optCtrl=list(maxfun=2e5)))
-car::Anova(m.3)
-# YES amnog transects (marginally sig)
-
-
-sum.1 <- summary(m.1)
-
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
-  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
-  dplyr::select(., c(grp, vcov, PVE)) %>%
-  dplyr::rename(., Group = grp,
-                Variance = vcov)
-
-
-write.table(ranova(m.1),
-            "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_midJuneRamets_urban_lmer_PVE.csv",
-            col.names=TRUE, sep=",")
-write.table(variances1,
-            "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_midJuneRamets_urban_lmer_PVE.csv", 
-            col.names=TRUE, sep=",", append=TRUE)
-write.table(car::Anova(m.2),
-            "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_midJuneRamets_urban_lmer_PVE.csv", 
-            col.names=TRUE, sep=",", append=TRUE)
 ```
 
 ###### Urb_score
@@ -1951,51 +1849,53 @@ write.table(car::Anova(m.2),
 
 ### NESTED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_midJune  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Ramets_midJune  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson)
 # singular
 
-car::Anova(lmer(Ramets_midJune  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
+car::Anova(glmer(Ramets_midJune  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
+# transect marg significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_midJune  ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
+car::Anova(glmer(Ramets_midJune  ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
+# transect marg significant
 
 
 
 ### CROSSED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson)
 # No warnings!!
 
-car::Anova(lmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
+car::Anova(glmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
+# transect marg significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID, 
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
+car::Anova(glmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID, 
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
+# transect marg significant
 
 
-AIC(lmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 
-AIC(lmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # AIC <2 apart; both "best models" though just main effects lower AIC
 
 ```
 
 
 ### Sept ramets
-#### lmer
+NOTE: Originally used lmer but then switched to glmer w/poisson bc it's count data.
+-This didn't change the story for gradient OR urb subs (city_dist nor urb_score)
+#### glmer
 ##### Entire gradient: *Not sig for either
 ###### City_dist
 ```{r}
@@ -2004,46 +1904,33 @@ AIC(lmer(Ramets_midJune  ~ (1|Block) + (1|Population:Family) + Urb_score + Trans
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_2019, REML = F)
+glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_2019, family = poisson)
 #  singular
 
-car::Anova(lmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_2019, REML = F))
+car::Anova(glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_2019, family = poisson))
 # distance not significant
 
 
 ### CROSSED RANDOM EFFECTS-----
-lmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = heights_2019, REML = F)
-# NOT singular!
+glmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + City_dist,
+  data = heights_2019, family = poisson,
+     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5)))
+# convergence warning
 
-car::Anova(lmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = heights_2019, REML = F))
+car::Anova(glmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + City_dist,
+  data = heights_2019, family = poisson,
+     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
 # distance not  significant
 
-r.squaredGLMM(lmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = heights_2019, REML = F))
+r.squaredGLMM(glmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + City_dist,
+  data = heights_2019, family = poisson,
+     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
 
-# ANy variation within families or populations?
-m.1 <- lmer(Ramets_Sept ~ (1|Population/Family), data = heights_2019, REML = T)
-
-ranova(m.1)
-# YES for within families
-
-sum.1 <- summary(m.1)
-
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
-  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
-  dplyr::select(., c(grp, vcov, PVE)) %>%
-  dplyr::rename(., Group = grp,
-                Variance = vcov)
-
-
-write.table(ranova(m.1), "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_SeptRamets_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_SeptRamets_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
 ```
 
 ###### Urb_score
@@ -2053,30 +1940,30 @@ write.table(variances1, "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_2019, REML = F,
-     control=lmerControl(optimizer="bobyqa",
+glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_2019, family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5)))
 #  singular...
 
-car::Anova(lmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_2019, REML = F,
-     control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_2019, family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5))))
 # not significant
 
 
 ### CROSSED RANDOM EFFECTS-----
-lmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = heights_2019, REML = F)
+glmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
+  data = heights_2019, family = poisson)
 # NOT singular!
 
-car::Anova(lmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = heights_2019, REML = F))
+car::Anova(glmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
+  data = heights_2019, family = poisson))
 # not significant
 
-r.squaredGLMM(lmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = heights_2019, REML = F))
+r.squaredGLMM(glmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
+  data = heights_2019, family = poisson))
 
 ```
 
@@ -2089,23 +1976,23 @@ r.squaredGLMM(lmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
 
 ### NESTED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F,
-     control=lmerControl(optimizer="bobyqa",
+glmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5)))
 # singular
 
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F,
-     control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5))))
 # nothing significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F,
-     control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5))))
 # nothing significant
 
@@ -2113,68 +2000,27 @@ car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + City_dist + T
 
 ### CROSSED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson)
 # No warnings!!
 
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # nothing significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # nothing significant
 
 
-AIC(lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 
-AIC(lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # AIC <2 apart; both "best models" though just main effects lower AIC
-
-
-
-
-# ANy variation among families or populations?
-m.1 <- lmer(Ramets_Sept ~ (1|Population/Family), data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
-ranova(m.1)
-# YES for among families
-
-m.2 <- lmer(Ramets_Sept ~ (1|Population/Family) + Transect_ID, data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-car::Anova(m.2)
-# not among transects though
-
-
-m.3 <- lmer(Ramets_Sept ~ (1|Population/Family) + Transect_ID, data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T,
-     control=lmerControl(optimizer="bobyqa",
-                                 optCtrl=list(maxfun=2e5)))
-car::Anova(m.3)
-# not sig in this or m.2
-
-
-sum.1 <- summary(m.1)
-
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
-  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
-  dplyr::select(., c(grp, vcov, PVE)) %>%
-  dplyr::rename(., Group = grp,
-                Variance = vcov)
-
-
-write.table(ranova(m.1),
-            "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_SeptRamets_urban_lmer_PVE.csv", 
-            col.names=TRUE, sep=",")
-write.table(variances1,
-            "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_SeptRamets_urban_lmer_PVE.csv", 
-            col.names=TRUE, sep=",", append=TRUE)
-write.table(car::Anova(m.2),
-            "~/R_Projects/chapter_two/Figures_Tables/ranova_PVE/2019_SeptRamets_urban_lmer_PVE.csv", 
-            col.names=TRUE, sep=",", append=TRUE)
 ```
 
 
@@ -2185,44 +2031,46 @@ write.table(car::Anova(m.2),
 
 ### NESTED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson)
 # singular
 
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # nothing significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+      control=glmerControl(optimizer="bobyqa",
+                                  optCtrl=list(maxfun=2e5))))
 # nothing significant
 
 
 
 ### CROSSED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson)
 # No warnings!!
 
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # nothing significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # nothing significant
 
 
-AIC(lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 
-AIC(lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
-     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
+     data = heights_2019 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # AIC <2 apart; both "best models" though just main effects lower AIC
 
 ```
@@ -5521,7 +5369,10 @@ AIC(lmer(rel_growth_rate  ~ (1|Block) + (1|Population:Family) + Urb_score + Tran
 
 ## Number of Ramets
 ### June ramets
-#### lmer
+#### glmer
+NOTE:  Originally used lmer but then switched to glmer w/poisson bc it's count data.
+-This didn't change the story for gradient (city_dist nor urb_score)
+-This DID change story for urb subs (urb_score: transect lost marg sig)
 ##### Entire gradient: *Nothing sig for either
 ###### City_dist
 ```{r}
@@ -5530,51 +5381,33 @@ AIC(lmer(rel_growth_rate  ~ (1|Block) + (1|Population:Family) + Urb_score + Tran
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Ramets_June ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_both_2020, REML = F, control=lmerControl(optimizer="bobyqa",
+glmer(Ramets_June ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_both_2020, family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5)))
-# no warning!
+# convergence warning
 
-car::Anova(lmer(Ramets_June ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_both_2020, REML = F, control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_June ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_both_2020, family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5))))
 # nothing significant
 
 
-r.squaredGLMM(lmer(Ramets_June ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_both_2020, REML = F, control=lmerControl(optimizer="bobyqa",
+r.squaredGLMM(glmer(Ramets_June ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_both_2020, family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5))))
 
 ### CROSSED RANDOM EFFECTS-----
-lmer(Ramets_June ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = heights_both_2020, REML = F, control=lmerControl(optimizer="bobyqa",
+glmer(Ramets_June ~ (1|Block) + (1|Population:Family) + City_dist,
+  data = heights_both_2020, family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5)))
-# NOT singular!
+# convergence warning
 
-car::Anova(lmer(Ramets_June ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = heights_both_2020, REML = F, control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_June ~ (1|Block) + (1|Population:Family) + City_dist,
+  data = heights_both_2020, family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5))))
 # nothing significant
 
 
-# Any variation within families or populations?
-m.1 <- lmer(Ramets_June ~ (1|Population/Family), data = heights_both_2020, REML = T)
-
-ranova(m.1)
-# YES- marg sig among families
-sum.1 <- summary(m.1)
-
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
-  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
-  dplyr::select(., c(grp, vcov, PVE)) %>%
-  dplyr::rename(., Group = grp,
-                Variance = vcov)
-
-
-write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_JuneRamets_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_JuneRamets_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
 ```
 
 ###### Urb_score
@@ -5584,29 +5417,29 @@ write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/202
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Ramets_June ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_both_2020, REML = F, control=lmerControl(optimizer="bobyqa",
+glmer(Ramets_June ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_both_2020, family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5)))
 # no warning!
 
-car::Anova(lmer(Ramets_June ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_both_2020, REML = F, control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_June ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_both_2020, family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5))))
 # nothing significant
 
 
-r.squaredGLMM(lmer(Ramets_June ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_both_2020, REML = F, control=lmerControl(optimizer="bobyqa",
+r.squaredGLMM(glmer(Ramets_June ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_both_2020, family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5))))
 
 ### CROSSED RANDOM EFFECTS-----
-lmer(Ramets_June ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = heights_both_2020, REML = F, control=lmerControl(optimizer="bobyqa",
+glmer(Ramets_June ~ (1|Block) + (1|Population:Family) + Urb_score,
+  data = heights_both_2020, family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5)))
 # NOT singular!
 
-car::Anova(lmer(Ramets_June ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = heights_both_2020, REML = F, control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_June ~ (1|Block) + (1|Population:Family) + Urb_score,
+  data = heights_both_2020, family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5))))
 # nothing significant
 
@@ -5621,83 +5454,52 @@ car::Anova(lmer(Ramets_June ~ (1|Block) + (1|Population:Family) + Urb_score,
 
 ### NESTED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_June  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Ramets_June  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson)
 
 
-car::Anova(lmer(Ramets_June  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_June  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # nothing significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_June  ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_June  ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # nothing significant
 
 
 
 ### CROSSED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F, control=lmerControl(optimizer="bobyqa",
+glmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5)))
 # No warnings!!
 
-car::Anova(lmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F, control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5))))
 # nothing significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID, 
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F, control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID, 
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5))))
 # nothing significant
 
 
-AIC(lmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F, control=lmerControl(optimizer="bobyqa",
+AIC(glmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5))))
 
-AIC(lmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F, control=lmerControl(optimizer="bobyqa",
+AIC(glmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5))))
-# AIC <2 apart; both "best models" though just main effects lower AIC
+# AIC <2 apart; both "best models" though full model lower AIC
 
 
-
-
-# ANy variation among families or populations?
-m.1 <- lmer(Ramets_June ~ (1|Population/Family), data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
-ranova(m.1)
-# no
-
-m.2 <- lmer(Ramets_June ~ (1|Population/Family) + Transect_ID, data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-car::Anova(m.2)
-# not among transects 
-
-
-m.3 <- lmer(Ramets_June ~ (1|Population/Family) + Transect_ID, data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
-car::Anova(m.3)
-# not sig in this or m.2
-
-
-sum.1 <- summary(m.1)
-
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
-  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
-  dplyr::select(., c(grp, vcov, PVE)) %>%
-  dplyr::rename(., Group = grp,
-                Variance = vcov)
-
-
-write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_JuneRamets_urban_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_JuneRamets_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
-write.table(car::Anova(m.2), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_JuneRamets_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
 ```
 
 ###### Urb_score
@@ -5707,59 +5509,62 @@ write.table(car::Anova(m.2), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PV
 
 ### NESTED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_June  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-# singular
+glmer(Ramets_June  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson)
+# no warnings
 
-car::Anova(lmer(Ramets_June  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# urb_score significant, transect marg sig
+car::Anova(glmer(Ramets_June  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
+# urb_score significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_June  ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-#  urb_score significant, transect marg sig
+car::Anova(glmer(Ramets_June  ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
+#  urb_score significant
 
 
 
 ### CROSSED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F, control=lmerControl(optimizer="bobyqa",
+glmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5)))
 # No warnings!!
 
-car::Anova(lmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F, control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5))))
-#  urb_score significant, transect marg sig
+#  urb_score significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID, 
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F, control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID, 
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5))))
-# urb_score significant, transect marg sig
+# urb_score significant
 # 
-summary(lmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID, 
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F, control=lmerControl(optimizer="bobyqa",
+summary(glmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID, 
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5))))
 
 
-AIC(lmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F, control=lmerControl(optimizer="bobyqa",
+AIC(glmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5))))
 
-AIC(lmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F, control=lmerControl(optimizer="bobyqa",
+AIC(glmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5))))
-# AIC <2 apart; both "best models" though just main effects lower AIC
+# AIC <2 apart; both "best models" though full model lower AIC
 ```
 
 
 ### Sept ramets
-#### lmer
+#### glmer
+NOTE:  Originally used lmer but then switched to glmer w/poisson bc it's count data.
+-This didn't change the story for urb_score (gradient and urb subs)
+-This DID change story for gradient (city_dist: dist became marg sig (from sig) during nested but stayed sig during crossed) AND for urb subs (city_dist: interaxn became marg sig)
 ##### Entire gradient: *Sig for city_dist, not for urb_score
 ###### City_dist
 ```{r}
@@ -5768,49 +5573,36 @@ AIC(lmer(Ramets_June  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_both_2020, REML = F)
-# is singular...
+glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_both_2020, family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5)))
+# convergence awrning
 
-car::Anova(lmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_both_2020, REML = F))
-# distance is significant
+car::Anova(glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_both_2020, family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
+# distance is marg significant
 
 
-r.squaredGLMM(lmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_both_2020, REML = F))
+r.squaredGLMM(glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_both_2020, family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
 
 
 ### CROSSED RANDOM EFFECTS-----
-lmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = heights_both_2020, REML = F, control=lmerControl(optimizer="bobyqa",
+glmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + City_dist,
+  data = heights_both_2020, family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5)))
-#  singular
+#  convergence warning
 
-car::Anova(lmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = heights_both_2020, REML = F), control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + City_dist,
+  data = heights_both_2020, family = poisson), control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5)))
 # distance is significant
 
-
-# ANy variation within families or populations?
-m.1 <- lmer(Ramets_Sept ~ (1|Population/Family), data = heights_both_2020, REML = T)
-
-ranova(m.1)
-# no
-sum.1 <- summary(m.1)
-
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
-  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
-  dplyr::select(., c(grp, vcov, PVE)) %>%
-  dplyr::rename(., Group = grp,
-                Variance = vcov)
-
-
-write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_SeptRamets_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_SeptRamets_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
 ```
 
 ###### Urb_score
@@ -5820,27 +5612,27 @@ write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/202
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_both_2020, REML = F)
-# is singular...
+glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_both_2020, family = poisson)
+# NOT singular...
 
-car::Anova(lmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_both_2020, REML = F))
+car::Anova(glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_both_2020, family = poisson))
 # not significant
 
 
-r.squaredGLMM(lmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_both_2020, REML = F))
+r.squaredGLMM(glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_both_2020, family = poisson))
 
 
 ### CROSSED RANDOM EFFECTS-----
-lmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = heights_both_2020, REML = F, control=lmerControl(optimizer="bobyqa",
+glmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
+  data = heights_both_2020, family = poisson, control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5)))
-#  singular
+# NOT singular
 
-car::Anova(lmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = heights_both_2020, REML = F), control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
+  data = heights_both_2020, family = poisson), control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5)))
 # not significant
 
@@ -5856,79 +5648,52 @@ car::Anova(lmer(Ramets_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
 
 ### NESTED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5)))
 # singular
 
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# distance significant
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
+# distance significant & interaxn is marg sig
 
 
 # Just main effects
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # distance significant
 
 
 
 ### CROSSED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-# No warnings!!
+glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson)
+# singular
 
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# distance significant
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
+# distance significant and interaxn is marg sig
 
 
 # Just main effects
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # distance significant
 
 
-AIC(lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 
-AIC(lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# AIC <2 apart; both "best models" though just main effects lower AIC
-
-
+AIC(glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
+# AIC <2 apart; both "best models" though full model lower AIC
 
 
-# ANy variation among families or populations?
-m.1 <- lmer(Ramets_Sept ~ (1|Population/Family), data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
-ranova(m.1)
-# no
 
-m.2 <- lmer(Ramets_Sept ~ (1|Population/Family) + Transect_ID, data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F, control=lmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5)))
-car::Anova(m.2)
-# not among transects 
-
-
-m.3 <- lmer(Ramets_Sept ~ (1|Population/Family) + Transect_ID, data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
-car::Anova(m.3)
-# not sig in this or m.2
-
-
-sum.1 <- summary(m.1)
-
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
-  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
-  dplyr::select(., c(grp, vcov, PVE)) %>%
-  dplyr::rename(., Group = grp,
-                Variance = vcov)
-
-
-write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_SeptRamets_urban_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_SeptRamets_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
-write.table(car::Anova(m.2), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_SeptRamets_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
 ```
 
 
@@ -5939,45 +5704,45 @@ write.table(car::Anova(m.2), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PV
 
 ### NESTED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson)
 # singular
 
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # nothing significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # nothing significant
 
 
 
 ### CROSSED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-# singular
+glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson)
+# NOT singular
 
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # nothing significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # nothing significant
 
 
-AIC(lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 
-AIC(lmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# AIC <2 apart; both "best models" though just main effects lower AIC
+AIC(glmer(Ramets_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
+     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
+# AIC <2 apart; both "best models" though full model lower AIC
 
 ```
 
@@ -6770,7 +6535,10 @@ AIC(lmer(rel_growth_rate  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_s
 
 ## No. Ramets
 ### Mid June ramets
-#### lmer
+#### glmer
+NOTE:  Originally used lmer but then switched to glmer w/poisson bc it's count data.
+-This didn't change the story for gradient (city_dist nor urb_score)
+-This DID change story for urb subs (city_dist: transect lost marg sig, and urb_score: transect lost sig)
 ##### Entire gradient: *NOT sig for city_dist or urb_score
 ###### City_dist
 ```{r}
@@ -6779,33 +6547,34 @@ AIC(lmer(rel_growth_rate  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_s
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
-  data = heights_19_20, REML = F,
-     control=lmerControl(optimizer="bobyqa",
+glmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+  data = heights_19_20, family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5)))
+# singular
 
-car::Anova(lmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
-  data = heights_19_20, REML = F,
-     control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+  data = heights_19_20, family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5))))
 # distance NOT significant
 
 
-r.squaredGLMM(lmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
-  data = heights_19_20, REML = F,
-     control=lmerControl(optimizer="bobyqa",
+r.squaredGLMM(glmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+  data = heights_19_20, family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5))))
 
 ### CROSSED RANDOM EFFECTS-----
-lmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist,
-  data = heights_19_20, REML = F,
-     control=lmerControl(optimizer="bobyqa",
+glmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist,
+  data = heights_19_20, family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5)))
-# NOT singular!
+#  singular
 
-car::Anova(lmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist,
-  data = heights_19_20, REML = F,
-     control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist,
+  data = heights_19_20, family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5))))
 # distance NOT significant
 
@@ -6819,24 +6588,25 @@ car::Anova(lmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population:Family) + 
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
-  data = heights_19_20, REML = F)
+glmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+  data = heights_19_20, family = poisson)
+# singular
 
-car::Anova(lmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
-  data = heights_19_20, REML = F))
+car::Anova(glmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+  data = heights_19_20, family = poisson))
 # nothing significant
 
 
-r.squaredGLMM(lmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
-  data = heights_19_20, REML = F))
+r.squaredGLMM(glmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+  data = heights_19_20, family = poisson))
 
 ### CROSSED RANDOM EFFECTS-----
-lmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score,
-  data = heights_19_20, REML = F)
+glmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score,
+  data = heights_19_20, family = poisson)
 #  singular
 
-car::Anova(lmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score,
-  data = heights_19_20, REML = F))
+car::Anova(glmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score,
+  data = heights_19_20, family = poisson))
 # nothing significant
 
 ```
@@ -6849,44 +6619,44 @@ car::Anova(lmer(Ramets_midJune ~ (1|Block) + (1|Year) + (1|Population:Family) + 
 
 ### NESTED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson)
 # singular
 
-car::Anova(lmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# transect marg significant
+car::Anova(glmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
+# nothing significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist + Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# singular, transect marg significant
+car::Anova(glmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist + Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
+# singular, nothing sig
 
 
 
 ### CROSSED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-# No warnings!!
+glmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson)
+# singular
 
-car::Anova(lmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# transect marg significant
+car::Anova(glmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
+# nothing sig
 
 
 # Just main effects
-car::Anova(lmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist + Transect_ID, 
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# transect marg significant
+car::Anova(glmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist + Transect_ID, 
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
+# nothing significant
 
 
-AIC(lmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 
-AIC(lmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist + Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist + Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # AIC <2 apart; both "best models" though just main effects lower AIC
 
 ```
@@ -6898,57 +6668,59 @@ AIC(lmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_d
 
 ### NESTED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F,
-     control=lmerControl(optimizer="bobyqa",
+glmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5)))
 # singular
 
-car::Anova(lmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F,
-     control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5))))
-# transect significant
+# nothing significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score + Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F,
-     control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score + Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5))))
-# transect significant
+# nothing significant
 
 
 
 ### CROSSED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-# No warnings!!
+glmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson)
+# singular
 
-car::Anova(lmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# transect significant
+car::Anova(glmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
+# transect marg significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score + Transect_ID, 
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# transect significant
+car::Anova(glmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score + Transect_ID, 
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
+# transect marg significant
 
 
-AIC(lmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 
-AIC(lmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score + Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score + Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # AIC <2 apart; both "best models" though just main effects lower AIC
 
 ```
 
 
 ### Sept ramets
-#### lmer
+#### glmer
+NOTE:  Originally used lmer but then switched to glmer w/poisson bc it's count data.
+-This didn't change the story for gradient NOR urb_score (city_dist nor urb_score)
 ##### Entire gradient: *Not sig for either
 ###### City_dist
 ```{r}
@@ -6957,26 +6729,26 @@ AIC(lmer(Ramets_midJune  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_sc
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
-  data = heights_19_20, REML = F)
+glmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+  data = heights_19_20, family = poisson)
 #  singular
 
-car::Anova(lmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
-  data = heights_19_20, REML = F))
+car::Anova(glmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+  data = heights_19_20, family = poisson))
 # distance not significant
 
 
 ### CROSSED RANDOM EFFECTS-----
-lmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist,
-  data = heights_19_20, REML = F)
-# NOT singular!
+glmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist,
+  data = heights_19_20, family = poisson)
+# convergence warning
 
-car::Anova(lmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist,
-  data = heights_19_20, REML = F))
+car::Anova(glmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist,
+  data = heights_19_20, family = poisson))
 # distance not  significant
 
-r.squaredGLMM(lmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist,
-  data = heights_19_20, REML = F))
+r.squaredGLMM(glmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist,
+  data = heights_19_20, family = poisson))
 
 ```
 
@@ -6987,30 +6759,30 @@ r.squaredGLMM(lmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population:Family) + 
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
-  data = heights_19_20, REML = F,
-     control=lmerControl(optimizer="bobyqa",
+glmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+  data = heights_19_20, family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5)))
 #  singular...
 
-car::Anova(lmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
-  data = heights_19_20, REML = F,
-     control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+  data = heights_19_20, family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5))))
 # not significant
 
 
 ### CROSSED RANDOM EFFECTS-----
-lmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score,
-  data = heights_19_20, REML = F)
+glmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score,
+  data = heights_19_20, family = poisson)
 # NOT singular!
 
-car::Anova(lmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score,
-  data = heights_19_20, REML = F))
+car::Anova(glmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score,
+  data = heights_19_20, family = poisson))
 # not significant
 
-r.squaredGLMM(lmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score,
-  data = heights_19_20, REML = F))
+r.squaredGLMM(glmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score,
+  data = heights_19_20, family = poisson))
 
 ```
 
@@ -7023,23 +6795,23 @@ r.squaredGLMM(lmer(Ramets_Sept ~ (1|Block) + (1|Year) + (1|Population:Family) + 
 
 ### NESTED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F,
-     control=lmerControl(optimizer="bobyqa",
+glmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5)))
 # singular
 
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F,
-     control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5))))
 # nothing significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist + Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F,
-     control=lmerControl(optimizer="bobyqa",
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist + Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
                                  optCtrl=list(maxfun=2e5))))
 # nothing significant
 
@@ -7047,26 +6819,36 @@ car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population/Family) + Ci
 
 ### CROSSED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-# No warnings!!
+glmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5)))
+# no warnings
 
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
 # nothing significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist + Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist + Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
 # nothing significant
 
 
-AIC(lmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
 
-AIC(lmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist + Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist + Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson,
+     control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))))
 # AIC <2 apart; both "best models" though just main effects lower AIC
 
 
@@ -7080,44 +6862,44 @@ AIC(lmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + City_dist
 
 ### NESTED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson)
 # singular
 
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # nothing significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score + Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score + Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # nothing significant
 
 
 
 ### CROSSED RANDOM EFFECTS-----
 # Full model
-lmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+glmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson)
 # No warnings!!
 
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # nothing significant
 
 
 # Just main effects
-car::Anova(lmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score + Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+car::Anova(glmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score + Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # nothing significant
 
 
-AIC(lmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score * Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 
-AIC(lmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score + Transect_ID,
-     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
+AIC(glmer(Ramets_Sept  ~ (1|Block) + (1|Year) + (1|Population:Family) + Urb_score + Transect_ID,
+     data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"), family = poisson))
 # AIC <2 apart; both "best models" though just main effects lower AIC
 
 ```
