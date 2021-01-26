@@ -4584,32 +4584,73 @@ manova(cbind(Sepal.Length, Petal.Length) ~ Species, data = iris)
 
 ### RDA
 ```{r}
-
-herbpopMeansJuly_PCA <- prcomp(as.matrix(herbivores2020_popmeansJuly[,c(4:15)]))
-summary(herbpopMeansJuly_PCA) # 17.3% variation explained by PC1
-
-herbpopMeansAug_PCA <- prcomp(as.matrix(herbivores2020_popmeansAug[,c(4:15)]))
-summary(herbpopMeansAug_PCA) # 18.4% variation explained by PC1
-
-# trait_loadings <- herbpopMeansAug_PCA$rotation[,'PC1']
-
-
-
-
-
-
-hist(herbivores$Lygaeus_kalmii)
-
-glmer(City_dist ~  (1|Block) + (1|Sample) + (1|Population/Family) + Lygaeus_kalmii,
-  data = herbivores, family = 'poisson')
-
-
+# Make herbivore subsets per month
 # JULY
-herbivores2020_popmeansJuly <- herbivores2020_popmeans %>%
-  dplyr::filter(., Sample == 'July')
+herb2020_July <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'July') %>%
+  dplyr::select(-c(1:3, 15:17))
 
-rda_herb_July <- rda(herbivores2020_popmeansJuly %>%
-                        dplyr::select(, c(4:14)) ~ herbivores2020_popmeansJuly$City_dist,
+herb2020_July.env <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'July') %>%
+  dplyr::select(c(1, 15,17))
+
+# AUGUST
+herb2020_Aug <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'August') %>%
+  dplyr::select(-c(1:3, 15:17))
+
+herb2020_Aug.env <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'August') %>%
+  dplyr::select(-c(1, 15:17))
+
+
+# Do Hellinger transformations
+herb2020_July.hel <- vegan::decostand(herb2020_July, "hellinger")
+herb2020_Aug.hel <- vegan::decostand(herb2020_Aug, "hellinger")
+# Distances
+herb_July.DHell = dist(herb2020_July.hel)
+herb_Aug.DHell = dist(herb2020_Aug.hel)
+
+# make PCNM df
+library(PCNM)
+dist_Jul=dist(herb2020_July)
+herb2020_July.PCNM=pcnm(dist_Jul)
+
+
+
+
+
+# Redundancy analysis- ATTEMPT 1
+result_Jul_varpart = varpart(herb2020_July,
+                             ~ City_dist,
+                             herb2020_July.PCNM,
+                             data=herb2020_July.env,
+                             transfo="hel")
+# Keep getting this error: Error in colMeans(x, na.rm = TRUE) : 'x' must be numeric
+# So trying this:
+sapply(herb2020_July, class)
+sapply(herb2020_July.PCNM, class)
+sapply(herb2020_July.env, class)
+# Everything is numeric except for Vectors within PCNM list...
+
+showvarparts(3, bg=2:4)
+plot(result_Jul_varpart, bg=5:7)
+
+
+
+
+
+
+# ATTEMPT 2: do Hellinger transformations, bind ID and env'tl cols, then do RDA like I'd been trying before
+herb_July_hel_bind <- bind_cols(herb2020_July.env, herb2020_July.hel)
+
+
+
+
+
+rda_herb_July <- rda(herb_July_hel_bind %>%
+                       # removing mean_monarch_quantity_past b/c all zeroes
+                        dplyr::select(, c(5:14)) ~ herb_July_hel_bind$City_dist,
                 na.action = "na.omit",
                 scale = T)
 
@@ -4630,8 +4671,6 @@ text(rda_herb_July, display='cn', col='red')
 
 
 # AUGUST
-herbivores2020_popmeansAug <- herbivores2020_popmeans %>%
-  dplyr::filter(., Sample == 'August')
 
 rda_herb_August <- rda(herbivores2020_popmeansAug %>%
                         dplyr::select(, c(4:14)) ~ herbivores2020_popmeansAug$City_dist,
@@ -4647,7 +4686,289 @@ RsquareAdj(rda_herb_August)
 plot(rda_herb_August, type='n', scaling=1)
 orditorp(rda_herb_August, display='sp', cex=0.5, scaling=1, col='blue')
 text(rda_herb_August, display='cn', col='red')
+
+
+
+# Other- from JS paper
+# herbpopMeansJuly_PCA <- prcomp(as.matrix(herbivores2020_popmeansJuly[,c(4:15)]))
+# summary(herbpopMeansJuly_PCA) # 17.3% variation explained by PC1
+# 
+# herbpopMeansAug_PCA <- prcomp(as.matrix(herbivores2020_popmeansAug[,c(4:15)]))
+# summary(herbpopMeansAug_PCA) # 18.4% variation explained by PC1
+
+
+
+
+
+
+# Purpose: initial ordination on herbivore data
+## Make herbivore subsets per month
+### JULY
+#### All sites
+herb2020_July <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'July') %>%
+  dplyr::select(-c(1:3, 15:17))
+
+herb2020_July.env <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'July') %>%
+  dplyr::select(c(15:17))
+
+head(herb2020_July)
+head(herb2020_July.env)
+
+#### Just urban sites
+herb2020_July_urb <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'July') %>%
+  dplyr::filter(., Transect_ID != 'Rural') %>%
+  dplyr::select(-c(1:3, 15:17))
+
+herb2020_July_urb.env <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'July') %>%
+  dplyr::filter(., Transect_ID != 'Rural') %>%
+  dplyr::select(c(15:17))
+
+head(herb2020_July_urb)
+head(herb2020_July_urb.env)
+
+
+
+### AUGUST
+herb2020_Aug <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'August') %>%
+  dplyr::select(-c(1:3, 15:17))
+
+herb2020_Aug.env <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'August') %>%
+  dplyr::select(c(15:17))
+
+head(herb2020_Aug)
+head(herb2020_Aug.env)
+
+#### Just urban sites
+herb2020_Aug_urb <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'August') %>%
+  dplyr::filter(., Transect_ID != 'Rural') %>%
+  dplyr::select(-c(1:3, 15:17))
+
+herb2020_Aug_urb.env <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'August') %>%
+  dplyr::filter(., Transect_ID != 'Rural') %>%
+  dplyr::select(c(15:17))
+
+head(herb2020_Aug_urb)
+head(herb2020_Aug_urb.env)
+
+
+
+# hellinger transform the species dataset: gives low weights to rare species
+## All sites 
+herb2020_July.hel <- vegan::decostand(herb2020_July, "hellinger")
+herb2020_Aug.hel <- vegan::decostand(herb2020_Aug, "hellinger")
+## Just urban
+herb2020_July_urb.hel <- vegan::decostand(herb2020_July_urb, "hellinger")
+herb2020_Aug_urb.hel <- vegan::decostand(herb2020_Aug_urb, "hellinger")
+
+# Calculate distance matrix
+## All sites 
+herb_July.DHell <- vegdist(herb2020_July.hel, method="bray", binary=FALSE) 
+herb_Aug.DHell <- vegdist(herb2020_Aug.hel, method="bray", binary=FALSE) 
+## Just urban
+herb_July_urb.DHell <- vegdist(herb2020_July_urb.hel, method="bray", binary=FALSE) 
+herb_Aug_urb.DHell <- vegdist(herb2020_Aug_urb.hel, method="bray", binary=FALSE)
+
+
+
+# look at an unconstrained ordination first, it is always a good idea to look at both unconstrained and constrained ordinations
+# set the seed: to reproduce the same result in the fture
+set.seed(100)
+## All sites
+bci.mds_J <- metaMDS(herb_July.DHell, distance = "bray", k = 2)
+bci.mds_A <- metaMDS(herb_Aug.DHell, distance = "bray", k = 2)
+## Just urban sites
+bci.mds_J_urb <- metaMDS(herb_July_urb.DHell, distance = "bray", k = 2)
+bci.mds_A_urb <- metaMDS(herb_Aug_urb.DHell, distance = "bray", k = 2)
+
+# extract x and y coordinates from MDS plot into new dataframe, so you can plot with ggplot
+## All sites 
+MDS_xy_J <- data.frame(bci.mds_J$points)
+bci.mds_J$stress # 0.1393613
+
+MDS_xy_A <- data.frame(bci.mds_A$points)
+bci.mds_A$stress # 0.1517961
+
+## Just urban sites 
+MDS_xy_J_urb <- data.frame(bci.mds_J_urb$points)
+bci.mds_J_urb$stress # 0.1061803
+
+MDS_xy_A_urb <- data.frame(bci.mds_A_urb$points)
+bci.mds_A_urb$stress # 0.162326
+
+
+
+# PLOTS
+## July
+### All sites
+ggplot(MDS_xy_J, aes(MDS1, MDS2,
+                     col = herb2020_July.env$City_dist)) +
+  geom_point(size = 3) + 
+  theme_bw() + 
+  ggtitle('stress:0.139') + 
+  scale_color_gradient(low="blue", high="yellow")
+
+### Just urban sites
+ggplot(MDS_xy_J_urb, aes(MDS1, MDS2,
+                     col = herb2020_July_urb.env$Transect_ID,
+                     shape = herb2020_July_urb.env$Transect_ID)) +
+  geom_point(size = 3) + 
+  theme_bw() + 
+  ggtitle('stress:0.106')
+
+
+## Aug
+### All sites
+ggplot(MDS_xy_A, aes(MDS1, MDS2,
+                     col = herb2020_Aug.env$City_dist)) +
+  geom_point(size = 3) + 
+  theme_bw() + 
+  ggtitle('stress:0.152') + 
+  scale_color_gradient(low="blue", high="yellow")
+
+### Just urban sites
+ggplot(MDS_xy_A_urb, aes(MDS1, MDS2,
+                     col = herb2020_Aug_urb.env$Transect_ID,
+                     shape = herb2020_Aug_urb.env$Transect_ID)) +
+  geom_point(size = 3) + 
+  theme_bw() + 
+  ggtitle('stress:0.162')
+
+
+
+
+
+# RDA
+## July
+### All sites
+#### herbivores ~ City_dist
+RDA_July <- rda(herb2020_July.hel ~ City_dist,
+                              data=herb2020_July.env )
+summary(RDA_July)
+screeplot(RDA_July) 
+
+#### herbivores ~ Urb_score
+RDA_July_urbscore <- rda(herb2020_July.hel ~ Urb_score,
+                              data = herb2020_July.env )
+summary(RDA_July_urbscore)
+screeplot(RDA_July_urbscore)
+
+
+### Just urban sites
+#### herbivores ~ City_dist
+RDA_July.urb <- rda(herb2020_July_urb.hel ~ City_dist + Transect_ID,
+                              data = herb2020_July_urb.env )
+summary(RDA_July.urb)
+screeplot(RDA_July.urb) 
+
+#### herbivores ~ Urb_score
+RDA_July_urbscore.urb <- rda(herb2020_July_urb.hel ~ Urb_score + Transect_ID,
+                              data = herb2020_July_urb.env )
+summary(RDA_July_urbscore.urb)
+screeplot(RDA_July_urbscore.urb)
+
+
+
+
+## August
+### All sites
+#### herbivores ~ City_dist
+RDA_Aug <- rda(herb2020_Aug.hel ~ City_dist,
+                              data=herb2020_Aug.env )
+summary(RDA_Aug)
+screeplot(RDA_Aug) 
+
+#### herbivores ~ Urb_score
+RDA_Aug_urbscore <- rda(herb2020_Aug.hel ~ Urb_score,
+                              data = herb2020_Aug.env )
+summary(RDA_Aug_urbscore)
+screeplot(RDA_Aug_urbscore)
+
+
+### Just urban sites
+#### herbivores ~ City_dist
+RDA_Aug.urb <- rda(herb2020_Aug_urb.hel ~ City_dist + Transect_ID,
+                              data = herb2020_Aug_urb.env )
+summary(RDA_Aug.urb)
+screeplot(RDA_Aug.urb) 
+
+#### herbivores ~ Urb_score
+RDA_Aug_urbscore.urb <- rda(herb2020_Aug_urb.hel ~ Urb_score + Transect_ID,
+                              data = herb2020_Aug_urb.env )
+summary(RDA_Aug_urbscore.urb)
+screeplot(RDA_Aug_urbscore.urb)
+
+
+
+RDA_list <- list(RDA_July,
+                 RDA_July_urbscore,
+                 RDA_July.urb,
+                 RDA_July_urbscore.urb,
+                 RDA_Aug,
+                 RDA_Aug_urbscore,
+                 RDA_Aug.urb,
+                 RDA_Aug_urbscore.urb)
+
+## canonical coefficients
+canon_coeffs <- lapply(RDA_list, coef)
+canon_coeffs
+
+# unadjusted R^2 retreived from the rda result
+RsquareAdj(RDA_July              )$r.squared
+RsquareAdj(RDA_July_urbscore     )$r.squared
+RsquareAdj(RDA_July.urb          )$r.squared
+RsquareAdj(RDA_July_urbscore.urb )$r.squared
+RsquareAdj(RDA_Aug               )$r.squared
+RsquareAdj(RDA_Aug_urbscore      )$r.squared
+RsquareAdj(RDA_Aug.urb           )$r.squared
+RsquareAdj(RDA_Aug_urbscore.urb  )$r.squared
+# values very low... none above 0.06
+
+# for (i in length(RDA_list)) {
+#   print RsquareAdj(i)$r.squared
+# }
+
+# adjusted R^2
+RsquareAdj(RDA_July              )$adj.r.squared
+RsquareAdj(RDA_July_urbscore     )$adj.r.squared
+RsquareAdj(RDA_July.urb          )$adj.r.squared
+RsquareAdj(RDA_July_urbscore.urb )$adj.r.squared
+RsquareAdj(RDA_Aug               )$adj.r.squared
+RsquareAdj(RDA_Aug_urbscore      )$adj.r.squared
+RsquareAdj(RDA_Aug.urb           )$adj.r.squared
+RsquareAdj(RDA_Aug_urbscore.urb  )$adj.r.squared
+# values very low... none above 0.03
+
+
+# Triplot: three different entities in the plot: sites, response variables and explanatory variables (arrowheads are on the explanatory variables)
+## SCALING 1
+makeRDAplot_scaling1 <- function(x) {
+  plot(x, scaling=1, main="Triplot RDA matrix ~ env - scaling 1 - wa scores")
+  spe.sc <- scores(x, choices=1:2, scaling=1, display="sp")
+   arrows(0,0,spe.sc[,1], spe.sc[,2], length=0, lty=1, col='red')
+}
+makeRDAplot_scaling1(RDA_July)
+lapply(RDA_list, makeRDAplot_scaling1)
+
+## SCALING 2
+makeRDAplot_scaling2 <- function(x) {
+  plot(x, main="Triplot RDA matrix ~ env - scaling 2 - wa scores")
+  spe2.sc <- scores(x, choices=1:2, display="sp") # scores() choices= indicates which axes are to be selected, make sure to specify the scaling if its different than 2 
+  arrows(0,0,spe2.sc[,1], spe2.sc[,2], length=0, lty=1, col='red')
+}
+makeRDAplot_scaling2(RDA_July)
+lapply(RDA_list, makeRDAplot_scaling2)
+
 ```
+
+
 
 ## Herbivory
 NOTE: I originally fit these models w/herbivory scores ranging from 0 to 100 and used lmer. Then I switched to herbivory percents (dividing by 100) and using binomial distr. I would've used quasi-binomial but glmer can't handle that, only glm.
