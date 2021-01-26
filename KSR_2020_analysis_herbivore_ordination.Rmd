@@ -1,0 +1,513 @@
+---
+title: "KSR 2020 Herbivore Ordination"
+author: "Sophie Breitbart"
+output:
+  html_document:
+    number_sections: true
+    df_print: paged
+    toc: yes
+    toc_depth: 6
+    toc_float:
+      collapsed: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
+editor_options: 
+  chunk_output_type: console
+---
+
+*Background information:*
+
+* Herbivore surveys were done twice: Once in July, once in August.
+* The species observed are in the column names. The only species with two columns was the Monarch butterfly:
+ + one column for Monarchs that had been on the plant in the past ("mean_Monarch_Quantity_Past") and which refers to empty chrysalis, empty eggs, and chrysalis with a dead butterfly inside, and
+ + one column for alive Monarchs present on the plant itself ("mean_Monarch_Quantity_Observed") and which refers to all other Monarch forms (caterpillars, eggs, chrysalises with insects still inside)
+* Monarchs notwithstanding, dead herbivores were not counted in the surveys. After Hellinger transformation, though, the mean_Monarch_Quantity_Past column had been converted to all 0's.
+* Environmental variables are as follows:
+ + To quantify urbanization, both distance from the city center and urbanization score were used, separately.
+ + Transect was also used as a variable when analyzing the urban sites ONLY (i.e. excluding rural sites).
+
+
+**Existing questions:**
+
+* What did I do incorrectly and can be fixed?
+* What does this mean? (Return to this once I get on the right track re: setting up analysis)
+
+*Used [this site](https://fukamilab.github.io/BIO202/06-B-constrained-ordination.html) for guidance.*
+
+# Set up notebook
+## Load packages
+```{r, warning=FALSE, message=FALSE}
+library(dplyr)
+library(reshape)
+library(reshape2)
+library(tidyr)
+library(ggplot2)
+library(ggExtra)
+library("ggpubr")
+library(devtools)
+library(rpart)
+library("tibble", lib.loc="~/R/win-library/3.5")
+library(ISLR)
+library(MASS)
+library(car)
+library(data.table)
+library(plyr)
+library(dplyr)
+library(MuMIn)
+library(ggplot2)
+library(gridExtra)
+library(Hmisc)
+library(lme4)
+library(nlme)
+library(reshape)
+library(lmerTest)
+library(tidyverse)
+library(vegan)
+library(lindia)
+library(e1071)
+library(ggpubr)
+library(forcats)
+library(car)
+library(multcomp)
+library(lsmeans)
+library(ggbiplot)
+library(ggplot2)
+require(MASS)
+require(scales)
+require(car)
+require(ggplot2)
+require(ggiraph)
+require(ggiraphExtra)
+library(geosphere)
+library(vctrs)
+library(here)
+library(stringi)
+```
+
+## Import data
+```{r}
+herbivores <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_herbivores_clean.csv")) %>%
+  dplyr::select(., -c(1:2))
+
+```
+
+## Find averages per family & population
+```{r}
+
+# Find family means
+herbivores2020_familymeans <- herbivores %>%
+  group_by(Population, Family, Sample) %>%
+    dplyr::summarise(
+      sum_replicates = n_distinct(Replicate),
+      mean_Monarch_Quantity_Past = mean(Monarch_Quantity_Past),
+      mean_Monarch_Quantity_Observed = mean(Monarch_Quantity_Observed),
+      mean_Tetraopes_tetropthalmus = mean(Tetraopes_tetropthalmus),
+      mean_Liriomyza_asclepiadis = mean(Liriomyza_asclepiadis),
+      mean_Aphis_nerii = mean(Aphis_nerii),
+      mean_Aphis_asclepiadis = mean(Aphis_asclepiadis),
+      mean_Myzocallis_asclepiadis = mean(Myzocallis_asclepiadis),
+      mean_Euchaetes_egle = mean(Euchaetes_egle),
+      mean_Lygaeus_kalmii = mean(Lygaeus_kalmii),
+      mean_Labidomera_clivicollis = mean(Labidomera_clivicollis),
+      mean_Rhyssomatus_lineaticollis = mean(Rhyssomatus_lineaticollis),
+      City_dist = first(City_dist),
+      Transect_ID = first(Transect_ID),
+      Urb_score = first(Urb_score),
+      nPlants=n())
+herbivores2020_familymeans <- as.data.frame(herbivores2020_familymeans)
+
+
+# Find population means
+herbivores2020_popmeans <- herbivores2020_familymeans %>%
+  group_by(Population, Sample) %>%
+    dplyr::summarise(
+      sum_replicates = sum(sum_replicates),
+      mean_Monarch_Quantity_Past = mean(mean_Monarch_Quantity_Past),
+      mean_Monarch_Quantity_Observed = mean(mean_Monarch_Quantity_Observed),
+      mean_Tetraopes_tetropthalmus = mean(mean_Tetraopes_tetropthalmus),
+      mean_Liriomyza_asclepiadis = mean(mean_Liriomyza_asclepiadis),
+      mean_Aphis_nerii = mean(mean_Aphis_nerii),
+      mean_Aphis_asclepiadis = mean(mean_Aphis_asclepiadis),
+      mean_Myzocallis_asclepiadis = mean(mean_Myzocallis_asclepiadis),
+      mean_Euchaetes_egle = mean(mean_Euchaetes_egle),
+      mean_Lygaeus_kalmii = mean(mean_Lygaeus_kalmii),
+      mean_Labidomera_clivicollis = mean(mean_Labidomera_clivicollis),
+      mean_Rhyssomatus_lineaticollis = mean(mean_Rhyssomatus_lineaticollis),
+      City_dist = first(City_dist),
+      Transect_ID = first(Transect_ID),
+      Urb_score = first(Urb_score))
+herbivores2020_popmeans <- as.data.frame(herbivores2020_popmeans)
+
+
+```
+# 2020 Herbivore Ordination
+## Set up input data
+### Make herbivore subsets per month
+```{r}
+### JULY
+#### All sites
+herb2020_July <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'July') %>%
+  dplyr::select(-c(1:3, 15:17))
+
+herb2020_July.env <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'July') %>%
+  dplyr::select(c(15:17))
+
+head(herb2020_July)
+head(herb2020_July.env)
+
+#### Just urban sites
+herb2020_July_urb <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'July') %>%
+  dplyr::filter(., Transect_ID != 'Rural') %>%
+  dplyr::select(-c(1:3, 15:17))
+
+herb2020_July_urb.env <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'July') %>%
+  dplyr::filter(., Transect_ID != 'Rural') %>%
+  dplyr::select(c(15:17))
+
+head(herb2020_July_urb)
+head(herb2020_July_urb.env)
+
+
+
+### AUGUST
+herb2020_Aug <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'August') %>%
+  dplyr::select(-c(1:3, 15:17))
+
+herb2020_Aug.env <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'August') %>%
+  dplyr::select(c(15:17))
+
+head(herb2020_Aug)
+head(herb2020_Aug.env)
+
+#### Just urban sites
+herb2020_Aug_urb <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'August') %>%
+  dplyr::filter(., Transect_ID != 'Rural') %>%
+  dplyr::select(-c(1:3, 15:17))
+
+herb2020_Aug_urb.env <- herbivores2020_popmeans %>%
+  dplyr::filter(., Sample == 'August') %>%
+  dplyr::filter(., Transect_ID != 'Rural') %>%
+  dplyr::select(c(15:17))
+
+head(herb2020_Aug_urb)
+head(herb2020_Aug_urb.env)
+```
+
+
+### Hellinger-transform the species dataset: gives low weights to rare species
+```{r}
+## All sites 
+herb2020_July.hel <- vegan::decostand(herb2020_July, "hellinger")
+herb2020_Aug.hel <- vegan::decostand(herb2020_Aug, "hellinger")
+## Just urban
+herb2020_July_urb.hel <- vegan::decostand(herb2020_July_urb, "hellinger")
+herb2020_Aug_urb.hel <- vegan::decostand(herb2020_Aug_urb, "hellinger")
+
+
+
+# Calculate distance matrix
+## All sites 
+herb_July.DHell <- vegdist(herb2020_July.hel, method="bray", binary=FALSE) 
+herb_Aug.DHell <- vegdist(herb2020_Aug.hel, method="bray", binary=FALSE) 
+## Just urban
+herb_July_urb.DHell <- vegdist(herb2020_July_urb.hel, method="bray", binary=FALSE) 
+herb_Aug_urb.DHell <- vegdist(herb2020_Aug_urb.hel, method="bray", binary=FALSE)
+```
+
+## Initial unconstrained ordination on herbivore data
+### Pre-plot setup
+```{r}
+# set the seed: to reproduce the same result in the fture
+set.seed(100)
+## All sites
+bci.mds_J <- metaMDS(herb_July.DHell, distance = "bray", k = 2)
+bci.mds_A <- metaMDS(herb_Aug.DHell, distance = "bray", k = 2)
+## Just urban sites
+bci.mds_J_urb <- metaMDS(herb_July_urb.DHell, distance = "bray", k = 2)
+bci.mds_A_urb <- metaMDS(herb_Aug_urb.DHell, distance = "bray", k = 2)
+
+# extract x and y coordinates from MDS plot into new dataframe, so you can plot with ggplot
+## All sites 
+MDS_xy_J <- data.frame(bci.mds_J$points)
+bci.mds_J$stress # 0.1393613
+
+MDS_xy_A <- data.frame(bci.mds_A$points)
+bci.mds_A$stress # 0.1517961
+
+## Just urban sites 
+MDS_xy_J_urb <- data.frame(bci.mds_J_urb$points)
+bci.mds_J_urb$stress # 0.1061803
+
+MDS_xy_A_urb <- data.frame(bci.mds_A_urb$points)
+bci.mds_A_urb$stress # 0.162326
+```
+
+### Plots
+> I don't see any clear trends yet: herbivore occurrence doesn't seem to correlate with urbanization (when quantified as distance from the city center OR by urbanization score) NOR does it seem to vary between urban subtransects.
+
+```{r}
+## July
+### All sites
+ggplot(MDS_xy_J, aes(MDS1, MDS2,
+                     col = herb2020_July.env$City_dist)) +
+  geom_point(size = 3) + 
+  theme_bw() + 
+  ggtitle('Unconstrained ordination: July / All sites \n environmental variable = Distance from the city center') + 
+  scale_color_gradient(low="blue", high="yellow")
+
+### Just urban sites
+ggplot(MDS_xy_J_urb, aes(MDS1, MDS2,
+                     col = herb2020_July_urb.env$Transect_ID,
+                     shape = herb2020_July_urb.env$Transect_ID)) +
+  geom_point(size = 3) + 
+  theme_bw() + 
+  ggtitle('Unconstrained ordination: July / Urban sites \n environmental variables = Distance from the city center & Transect')  
+
+## Aug
+### All sites
+ggplot(MDS_xy_A, aes(MDS1, MDS2,
+                     col = herb2020_Aug.env$City_dist)) +
+  geom_point(size = 3) + 
+  theme_bw() + 
+  ggtitle('Unconstrained ordination: August / All sites \n environmental variable = Distance from the city center') + 
+  scale_color_gradient(low="blue", high="yellow")
+
+### Just urban sites
+ggplot(MDS_xy_A_urb, aes(MDS1, MDS2,
+                     col = herb2020_Aug_urb.env$Transect_ID,
+                     shape = herb2020_Aug_urb.env$Transect_ID)) +
+  geom_point(size = 3) + 
+  theme_bw() + 
+  ggtitle('Unconstrained ordination: August / Urban sites \n environmental variables = Distance from the city center & Transect')  
+
+```
+
+## Constrained ordination (RDA)
+### Pre-plot setup
+#### July
+```{r}
+### All sites
+#### herbivores ~ City_dist
+RDA_July <- rda(herb2020_July.hel ~ City_dist,
+                              data=herb2020_July.env )
+summary(RDA_July)
+screeplot(RDA_July) 
+
+#### herbivores ~ Urb_score
+RDA_July_urbscore <- rda(herb2020_July.hel ~ Urb_score,
+                              data = herb2020_July.env )
+summary(RDA_July_urbscore)
+screeplot(RDA_July_urbscore)
+
+
+### Just urban sites
+#### herbivores ~ City_dist
+RDA_July.urb <- rda(herb2020_July_urb.hel ~ City_dist + Transect_ID,
+                              data = herb2020_July_urb.env )
+summary(RDA_July.urb)
+screeplot(RDA_July.urb) 
+
+#### herbivores ~ Urb_score
+RDA_July_urbscore.urb <- rda(herb2020_July_urb.hel ~ Urb_score + Transect_ID,
+                              data = herb2020_July_urb.env )
+summary(RDA_July_urbscore.urb)
+screeplot(RDA_July_urbscore.urb)
+```
+
+#### August
+```{r}
+### All sites
+#### herbivores ~ City_dist
+RDA_Aug <- rda(herb2020_Aug.hel ~ City_dist,
+                              data=herb2020_Aug.env )
+summary(RDA_Aug)
+screeplot(RDA_Aug) 
+
+#### herbivores ~ Urb_score
+RDA_Aug_urbscore <- rda(herb2020_Aug.hel ~ Urb_score,
+                              data = herb2020_Aug.env )
+summary(RDA_Aug_urbscore)
+screeplot(RDA_Aug_urbscore)
+
+
+### Just urban sites
+#### herbivores ~ City_dist
+RDA_Aug.urb <- rda(herb2020_Aug_urb.hel ~ City_dist + Transect_ID,
+                              data = herb2020_Aug_urb.env )
+summary(RDA_Aug.urb)
+screeplot(RDA_Aug.urb) 
+
+#### herbivores ~ Urb_score
+RDA_Aug_urbscore.urb <- rda(herb2020_Aug_urb.hel ~ Urb_score + Transect_ID,
+                              data = herb2020_Aug_urb.env )
+summary(RDA_Aug_urbscore.urb)
+screeplot(RDA_Aug_urbscore.urb)
+```
+
+### RDA statistics
+```{r}
+RDA_list <- list(RDA_July,
+                 RDA_July_urbscore,
+                 RDA_July.urb,
+                 RDA_July_urbscore.urb,
+                 RDA_Aug,
+                 RDA_Aug_urbscore,
+                 RDA_Aug.urb,
+                 RDA_Aug_urbscore.urb)
+
+## canonical coefficients
+canon_coeffs <- lapply(RDA_list, coef)
+canon_coeffs
+
+# unadjusted R^2 retreived from the rda result
+RsquareAdj(RDA_July              )$r.squared
+RsquareAdj(RDA_July_urbscore     )$r.squared
+RsquareAdj(RDA_July.urb          )$r.squared
+RsquareAdj(RDA_July_urbscore.urb )$r.squared
+RsquareAdj(RDA_Aug               )$r.squared
+RsquareAdj(RDA_Aug_urbscore      )$r.squared
+RsquareAdj(RDA_Aug.urb           )$r.squared
+RsquareAdj(RDA_Aug_urbscore.urb  )$r.squared
+# values very low... none above 0.06
+
+# for (i in length(RDA_list)) {
+#   print RsquareAdj(i)$r.squared
+# }
+
+# adjusted R^2
+RsquareAdj(RDA_July              )$adj.r.squared
+RsquareAdj(RDA_July_urbscore     )$adj.r.squared
+RsquareAdj(RDA_July.urb          )$adj.r.squared
+RsquareAdj(RDA_July_urbscore.urb )$adj.r.squared
+RsquareAdj(RDA_Aug               )$adj.r.squared
+RsquareAdj(RDA_Aug_urbscore      )$adj.r.squared
+RsquareAdj(RDA_Aug.urb           )$adj.r.squared
+RsquareAdj(RDA_Aug_urbscore.urb  )$adj.r.squared
+# values very low... none above 0.03
+```
+
+### Plots
+#### Make plotting functions
+```{r}
+# Triplot: three different entities in the plot: sites, response variables and explanatory variables (arrowheads are on the explanatory variables)
+## SCALING 1
+makeRDAplot_scaling1 <- function(x) {
+  plot(x, scaling=1, main="Triplot RDA matrix ~ env - scaling 1 - wa scores")
+  spe.sc <- scores(x, choices=1:2, scaling=1, display="sp")
+  arrows(0,0,spe.sc[,1], spe.sc[,2], length=0, lty=1, col='red')
+}
+# lapply(RDA_list, makeRDAplot_scaling1)
+
+## SCALING 2
+makeRDAplot_scaling2 <- function(x) {
+  plot(x, main="Triplot RDA matrix ~ env - scaling 2 - wa scores")
+  spe2.sc <- scores(x, choices=1:2, display="sp") # scores() choices= indicates which axes are to be selected, make sure to specify the scaling if its different than 2 
+  arrows(0,0,spe2.sc[,1], spe2.sc[,2], length=0, lty=1, col='red')
+}
+# lapply(RDA_list, makeRDAplot_scaling2)
+```
+
+
+**Scaling 1 vs Scaling 2:**
+
+* Scaling 1- distance biplot (object focused): distance between objects are eudlidean distances (objects closer together have similar variable values), angles between vectors of response variables are meaningless. Angles between vectors of response variables and explanatory variables reflect linear correlation.
+
+* Scaling 2- correlation biplot (response variable focused): distances between objects are not approximate Euclidean distances. Angles between all vectors reflect linear correlation.
+
+*Taken directly from [this site](https://fukamilab.github.io/BIO202/06-B-constrained-ordination.html)*
+
+#### July
+##### All sites
+###### Environmental var: Distance from city center
+```{r}
+# Scaling 1
+makeRDAplot_scaling1(RDA_July)
+
+# Scaling 2
+makeRDAplot_scaling2(RDA_July)
+
+```
+
+###### Environmental var: Urbanization score
+```{r}
+# Scaling 1
+makeRDAplot_scaling1(RDA_July_urbscore)
+
+# Scaling 2
+makeRDAplot_scaling2(RDA_July_urbscore)
+
+```
+
+##### Urban sites
+###### Environmental var: Distance from city center
+```{r}
+# Scaling 1
+makeRDAplot_scaling1(RDA_July.urb)
+
+# Scaling 2
+makeRDAplot_scaling2(RDA_July.urb)
+
+```
+
+###### Environmental var: Urbanization score
+```{r}
+# Scaling 1
+makeRDAplot_scaling1(RDA_July_urbscore.urb)
+
+# Scaling 2
+makeRDAplot_scaling2(RDA_July_urbscore.urb)
+
+```
+
+
+
+#### Aug
+##### All sites
+###### Environmental var: Distance from city center
+```{r}
+# Scaling 1
+makeRDAplot_scaling1(RDA_Aug)
+
+# Scaling 2
+makeRDAplot_scaling2(RDA_Aug)
+
+```
+
+###### Environmental var: Urbanization score
+```{r}
+# Scaling 1
+makeRDAplot_scaling1(RDA_Aug_urbscore)
+
+# Scaling 2
+makeRDAplot_scaling2(RDA_Aug_urbscore)
+
+```
+
+##### Urban sites
+###### Environmental var: Distance from city center
+```{r}
+# Scaling 1
+makeRDAplot_scaling1(RDA_Aug.urb)
+
+# Scaling 2
+makeRDAplot_scaling2(RDA_Aug.urb)
+
+```
+
+###### Environmental var: Urbanization score
+```{r}
+# Scaling 1
+makeRDAplot_scaling1(RDA_Aug_urbscore.urb)
+
+# Scaling 2
+makeRDAplot_scaling2(RDA_Aug_urbscore.urb)
+
+```
