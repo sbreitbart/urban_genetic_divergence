@@ -264,13 +264,17 @@ div.tocify {
 <p><em>Background information:</em></p>
 <ul>
 <li>Herbivore surveys were done twice: Once in July, once in August.</li>
-<li>The species observed are in the column names. The only species with two columns was the Monarch butterfly:</li>
+<li>The species observed are in the column names. The only species with two columns was the Monarch butterfly:
+<ul>
 <li>one column for Monarchs that had been on the plant in the past (“mean_Monarch_Quantity_Past”) and which refers to empty chrysalis, empty eggs, and chrysalis with a dead butterfly inside, and</li>
 <li>one column for alive Monarchs present on the plant itself (“mean_Monarch_Quantity_Observed”) and which refers to all other Monarch forms (caterpillars, eggs, chrysalises with insects still inside)</li>
+</ul></li>
 <li>Monarchs notwithstanding, dead herbivores were not counted in the surveys. After Hellinger transformation, though, the mean_Monarch_Quantity_Past column had been converted to all 0’s.</li>
-<li>Environmental variables are as follows:</li>
+<li>Environmental variables are as follows:
+<ul>
 <li>To quantify urbanization, both distance from the city center and urbanization score were used, separately.</li>
 <li>Transect was also used as a variable when analyzing the urban sites ONLY (i.e. excluding rural sites).</li>
+</ul></li>
 </ul>
 <p><strong>Existing questions:</strong></p>
 <ul>
@@ -2121,6 +2125,8 @@ summary(RDA_Aug_urbscore.urb)</code></pre>
 </div>
 <div id="rda-statistics" class="section level3">
 <h3><span class="header-section-number">2.3.2</span> RDA statistics</h3>
+<div id="canonical-coefficients-r-squared-values" class="section level4">
+<h4><span class="header-section-number">2.3.2.1</span> Canonical coefficients &amp; R-squared values</h4>
 <pre class="r"><code>RDA_list &lt;- list(RDA_July,
                  RDA_July_urbscore,
                  RDA_July.urb,
@@ -2129,6 +2135,8 @@ summary(RDA_Aug_urbscore.urb)</code></pre>
                  RDA_Aug_urbscore,
                  RDA_Aug.urb,
                  RDA_Aug_urbscore.urb)
+
+
 
 ## canonical coefficients
 canon_coeffs &lt;- lapply(RDA_list, coef)
@@ -2209,6 +2217,147 @@ RsquareAdj(RDA_July              )$adj.r.squared</code></pre>
 <pre class="r"><code>RsquareAdj(RDA_Aug_urbscore.urb  )$adj.r.squared</code></pre>
 <pre><code>## [1] -0.005004856</code></pre>
 <pre class="r"><code># values very low... none above 0.03</code></pre>
+</div>
+<div id="anova" class="section level4">
+<h4><span class="header-section-number">2.3.2.2</span> ANOVA</h4>
+<div id="entire-model" class="section level5">
+<h5><span class="header-section-number">2.3.2.2.1</span> Entire model</h5>
+<pre class="r"><code># ANOVA-like permutation test to assess the significance of constraints
+## Entire model: No models significant (except for one marg sig)
+anova(RDA_July              , permutations = how(nperm = 9999))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0.002060126","3":"0.8762947","4":"0.4257","_rn_":"Model"},{"1":"49","2":"0.115196598","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>anova(RDA_July_urbscore     , permutations = how(nperm = 9999))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0.002456559","3":"1.04853","4":"0.347","_rn_":"Model"},{"1":"49","2":"0.114800165","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>anova(RDA_July.urb          , permutations = how(nperm = 9999))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"2","2":"0.003875368","3":"0.5610974","4":"0.7068","_rn_":"Model"},{"1":"32","2":"0.110508244","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>anova(RDA_July_urbscore.urb , permutations = how(nperm = 9999))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"2","2":"0.003140617","3":"0.4517127","4":"0.8138","_rn_":"Model"},{"1":"32","2":"0.111242994","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>anova(RDA_Aug               , permutations = how(nperm = 9999))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0.005472373","3":"1.437667","4":"0.2138","_rn_":"Model"},{"1":"49","2":"0.186514885","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># Reminder: RDA_Aug_urbscore is this model:
+# rda(herb2020_Aug.hel ~ Urb_score, data = herb2020_Aug.env)
+# (i.e. August herbivores ~ Urbanization score) along ENTIRE gradient
+anova(RDA_Aug_urbscore      , permutations = how(nperm = 9999)) # marg sig</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0.007851921","3":"2.089464","4":"0.0922","_rn_":"Model"},{"1":"49","2":"0.184135337","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>anova(RDA_Aug.urb           , permutations = how(nperm = 9999))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"2","2":"0.008840105","3":"0.8873487","4":"0.4852","_rn_":"Model"},{"1":"32","2":"0.159398085","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>anova(RDA_Aug_urbscore.urb  , permutations = how(nperm = 9999))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"2","2":"0.009103886","3":"0.9153411","4":"0.4591","_rn_":"Model"},{"1":"32","2":"0.159134304","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="per-term" class="section level5">
+<h5><span class="header-section-number">2.3.2.2.2</span> Per term</h5>
+<pre class="r"><code>## Per term: no explanatory vars significant
+### Only doing this for models with &gt;1 explanatory var (otherwise, same as above)
+anova(RDA_July.urb              , permutations = how(nperm = 9999), by = &quot;term&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0.0028781018","3":"0.8334153","4":"0.4046","_rn_":"City_dist"},{"1":"1","2":"0.0009972661","3":"0.2887795","4":"0.8629","_rn_":"Transect_ID"},{"1":"32","2":"0.1105082435","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>anova(RDA_July_urbscore.urb     , permutations = how(nperm = 9999), by = &quot;term&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0.002120468","3":"0.6099707","4":"0.5475","_rn_":"Urb_score"},{"1":"1","2":"0.001020150","3":"0.2934548","4":"0.8571","_rn_":"Transect_ID"},{"1":"32","2":"0.111242994","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>anova(RDA_Aug.urb               , permutations = how(nperm = 9999), by = &quot;term&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0.004027536","3":"0.8085489","4":"0.4547","_rn_":"City_dist"},{"1":"1","2":"0.004812569","3":"0.9661484","4":"0.3699","_rn_":"Transect_ID"},{"1":"32","2":"0.159398085","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>anova(RDA_Aug_urbscore.urb      , permutations = how(nperm = 9999), by = &quot;term&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0.004518184","3":"0.9085527","4":"0.4031","_rn_":"Urb_score"},{"1":"1","2":"0.004585702","3":"0.9221296","4":"0.3981","_rn_":"Transect_ID"},{"1":"32","2":"0.159134304","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<div id="per-margin" class="section level5">
+<h5><span class="header-section-number">2.3.2.2.3</span> Per margin</h5>
+<pre class="r"><code>## Per margin- seem to be very similar to entire model anovas?
+anova(RDA_July              , permutations = how(nperm = 9999), by = &quot;margin&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0.002060126","3":"0.8762947","4":"0.4341","_rn_":"City_dist"},{"1":"49","2":"0.115196598","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>anova(RDA_July_urbscore     , permutations = how(nperm = 9999), by = &quot;margin&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0.002456559","3":"1.04853","4":"0.3503","_rn_":"Urb_score"},{"1":"49","2":"0.114800165","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>anova(RDA_July.urb          , permutations = how(nperm = 9999), by = &quot;margin&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0.0027203301","3":"0.7877291","4":"0.4246","_rn_":"City_dist"},{"1":"1","2":"0.0009972661","3":"0.2887795","4":"0.8675","_rn_":"Transect_ID"},{"1":"32","2":"0.1105082435","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>anova(RDA_July_urbscore.urb , permutations = how(nperm = 9999), by = &quot;margin&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0.00198558","3":"0.5711690","4":"0.5754","_rn_":"Urb_score"},{"1":"1","2":"0.00102015","3":"0.2934548","4":"0.8600","_rn_":"Transect_ID"},{"1":"32","2":"0.11124299","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>anova(RDA_Aug               , permutations = how(nperm = 9999), by = &quot;margin&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0.005472373","3":"1.437667","4":"0.2155","_rn_":"City_dist"},{"1":"49","2":"0.186514885","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>anova(RDA_Aug_urbscore      , permutations = how(nperm = 9999), by = &quot;margin&quot;) # marg sig</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0.007851921","3":"2.089464","4":"0.0929","_rn_":"Urb_score"},{"1":"49","2":"0.184135337","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>anova(RDA_Aug.urb           , permutations = how(nperm = 9999), by = &quot;margin&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0.003922414","3":"0.7874452","4":"0.4825","_rn_":"City_dist"},{"1":"1","2":"0.004812569","3":"0.9661484","4":"0.3794","_rn_":"Transect_ID"},{"1":"32","2":"0.159398085","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>anova(RDA_Aug_urbscore.urb  , permutations = how(nperm = 9999), by = &quot;margin&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Variance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"0.004186195","3":"0.8417936","4":"0.4411","_rn_":"Urb_score"},{"1":"1","2":"0.004585702","3":"0.9221296","4":"0.3929","_rn_":"Transect_ID"},{"1":"32","2":"0.159134304","3":"NA","4":"NA","_rn_":"Residual"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
 </div>
 <div id="plots-1" class="section level3">
 <h3><span class="header-section-number">2.3.3</span> Plots</h3>

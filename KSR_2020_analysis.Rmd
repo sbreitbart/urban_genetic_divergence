@@ -16,9 +16,8 @@ editor_options:
   chunk_output_type: console
 
 NOTES:
-  -leaving off here in mid-Jan.
+  -leaving off here in late Jan.
   -Still to do--
-    -figure out if I did the herbivore RDA correctly
     -try to do an RDA (or PCA?) with all the traits
     -make a ReadMe file for each level
     -renv::snapshot() to update packages
@@ -223,7 +222,7 @@ survival_19_20$Family <- as.factor(survival_19_20$Family)
 
 ```
 
-# Find averages per family & population
+# Find family & population means
 ## reproductive
 ### Binary: flowering success
 ```{r}

@@ -20,12 +20,12 @@ editor_options:
 
 * Herbivore surveys were done twice: Once in July, once in August.
 * The species observed are in the column names. The only species with two columns was the Monarch butterfly:
- + one column for Monarchs that had been on the plant in the past ("mean_Monarch_Quantity_Past") and which refers to empty chrysalis, empty eggs, and chrysalis with a dead butterfly inside, and
- + one column for alive Monarchs present on the plant itself ("mean_Monarch_Quantity_Observed") and which refers to all other Monarch forms (caterpillars, eggs, chrysalises with insects still inside)
+    + one column for Monarchs that had been on the plant in the past ("mean_Monarch_Quantity_Past") and which refers to empty chrysalis, empty eggs, and chrysalis with a dead butterfly inside, and
+    + one column for alive Monarchs present on the plant itself ("mean_Monarch_Quantity_Observed") and which refers to all other Monarch forms (caterpillars, eggs, chrysalises with insects still inside)
 * Monarchs notwithstanding, dead herbivores were not counted in the surveys. After Hellinger transformation, though, the mean_Monarch_Quantity_Past column had been converted to all 0's.
 * Environmental variables are as follows:
- + To quantify urbanization, both distance from the city center and urbanization score were used, separately.
- + Transect was also used as a variable when analyzing the urban sites ONLY (i.e. excluding rural sites).
+    + To quantify urbanization, both distance from the city center and urbanization score were used, separately.
+    + Transect was also used as a variable when analyzing the urban sites ONLY (i.e. excluding rural sites).
 
 
 **Existing questions:**
@@ -210,85 +210,48 @@ herb2020_Aug.hel <- vegan::decostand(herb2020_Aug, "hellinger")
 ## Just urban
 herb2020_July_urb.hel <- vegan::decostand(herb2020_July_urb, "hellinger")
 herb2020_Aug_urb.hel <- vegan::decostand(herb2020_Aug_urb, "hellinger")
-
-
-
-# Calculate distance matrix
-## All sites 
-herb_July.DHell <- vegdist(herb2020_July.hel, method="bray", binary=FALSE) 
-herb_Aug.DHell <- vegdist(herb2020_Aug.hel, method="bray", binary=FALSE) 
-## Just urban
-herb_July_urb.DHell <- vegdist(herb2020_July_urb.hel, method="bray", binary=FALSE) 
-herb_Aug_urb.DHell <- vegdist(herb2020_Aug_urb.hel, method="bray", binary=FALSE)
 ```
 
 ## Initial unconstrained ordination on herbivore data
-### Pre-plot setup
-```{r}
-# set the seed: to reproduce the same result in the fture
-set.seed(100)
-## All sites
-bci.mds_J <- metaMDS(herb_July.DHell, distance = "bray", k = 2)
-bci.mds_A <- metaMDS(herb_Aug.DHell, distance = "bray", k = 2)
-## Just urban sites
-bci.mds_J_urb <- metaMDS(herb_July_urb.DHell, distance = "bray", k = 2)
-bci.mds_A_urb <- metaMDS(herb_Aug_urb.DHell, distance = "bray", k = 2)
-
-# extract x and y coordinates from MDS plot into new dataframe, so you can plot with ggplot
-## All sites 
-MDS_xy_J <- data.frame(bci.mds_J$points)
-bci.mds_J$stress # 0.1393613
-
-MDS_xy_A <- data.frame(bci.mds_A$points)
-bci.mds_A$stress # 0.1517961
-
-## Just urban sites 
-MDS_xy_J_urb <- data.frame(bci.mds_J_urb$points)
-bci.mds_J_urb$stress # 0.1061803
-
-MDS_xy_A_urb <- data.frame(bci.mds_A_urb$points)
-bci.mds_A_urb$stress # 0.162326
-```
-
 ### Plots
-> I don't see any clear trends yet: herbivore occurrence doesn't seem to correlate with urbanization (when quantified as distance from the city center OR by urbanization score) NOR does it seem to vary between urban subtransects.
 
+**Scaling 1 vs Scaling 2:**
+
+* Scaling 1- distance biplot (object focused): distance between objects are eudlidean distances (objects closer together have similar variable values), angles between vectors of response variables are meaningless. Angles between vectors of response variables and explanatory variables reflect linear correlation.
+
+* Scaling 2- correlation biplot (response variable focused): distances between objects are not approximate Euclidean distances. Angles between all vectors reflect linear correlation.
+
+*Taken directly from [this site](https://fukamilab.github.io/BIO202/06-B-constrained-ordination.html)*
+
+#### Make plotting functions
 ```{r}
-## July
-### All sites
-ggplot(MDS_xy_J, aes(MDS1, MDS2,
-                     col = herb2020_July.env$City_dist)) +
-  geom_point(size = 3) + 
-  theme_bw() + 
-  ggtitle('Unconstrained ordination: July / All sites \n environmental variable = Distance from the city center') + 
-  scale_color_gradient(low="blue", high="yellow")
 
-### Just urban sites
-ggplot(MDS_xy_J_urb, aes(MDS1, MDS2,
-                     col = herb2020_July_urb.env$Transect_ID,
-                     shape = herb2020_July_urb.env$Transect_ID)) +
-  geom_point(size = 3) + 
-  theme_bw() + 
-  ggtitle('Unconstrained ordination: July / Urban sites \n environmental variables = Distance from the city center & Transect')  
+PCA_list <- list(herb2020_July.hel,
+                 herb2020_Aug.hel,
+                 herb2020_July_urb.hel,
+                 herb2020_Aug_urb.hel)
 
-## Aug
-### All sites
-ggplot(MDS_xy_A, aes(MDS1, MDS2,
-                     col = herb2020_Aug.env$City_dist)) +
-  geom_point(size = 3) + 
-  theme_bw() + 
-  ggtitle('Unconstrained ordination: August / All sites \n environmental variable = Distance from the city center') + 
-  scale_color_gradient(low="blue", high="yellow")
 
-### Just urban sites
-ggplot(MDS_xy_A_urb, aes(MDS1, MDS2,
-                     col = herb2020_Aug_urb.env$Transect_ID,
-                     shape = herb2020_Aug_urb.env$Transect_ID)) +
-  geom_point(size = 3) + 
-  theme_bw() + 
-  ggtitle('Unconstrained ordination: August / Urban sites \n environmental variables = Distance from the city center & Transect')  
+# Triplot: three different entities in the plot: sites, response variables and explanatory variables (arrowheads are on the explanatory variables)
+## SCALING 1
+makePCAplot_scaling1 <- function(x) {
+  plot(vegan::rda(x), scaling=1, main="Triplot PCA matrix - scaling 1")
+  spe.sc <- scores(vegan::rda(x), choices=1:2, scaling=1, display="sp")
+  arrows(0,0,spe.sc[,1], spe.sc[,2], length=0, lty=1, col='red')
+}
+lapply(PCA_list, makePCAplot_scaling1)
+
+## SCALING 2
+makePCAplot_scaling2 <- function(x) {
+  plot(rda(x), main="Triplot PCA matrix - scaling 2")
+  spe2.sc <- scores(rda(x), choices=1:2, display="sp") # scores() choices= indicates which axes are to be selected, make sure to specify the scaling if its different than 2 
+  arrows(0,0,spe2.sc[,1], spe2.sc[,2], length=0, lty=1, col='red')
+}
+lapply(PCA_list, makePCAplot_scaling2)
 
 ```
+
+> I don't see any clear trends yet: herbivore community doesn't seem to correlate with urbanization (when quantified as distance from the city center OR by urbanization score) NOR does it seem to vary between urban subtransects.
 
 ## Constrained ordination (RDA)
 ### Pre-plot setup
@@ -299,7 +262,10 @@ ggplot(MDS_xy_A_urb, aes(MDS1, MDS2,
 RDA_July <- rda(herb2020_July.hel ~ City_dist,
                               data=herb2020_July.env )
 summary(RDA_July)
-screeplot(RDA_July) 
+screeplot(RDA_July)
+
+rda(herb2020_July.hel)
+
 
 #### herbivores ~ Urb_score
 RDA_July_urbscore <- rda(herb2020_July.hel ~ Urb_score,
@@ -353,6 +319,7 @@ screeplot(RDA_Aug_urbscore.urb)
 ```
 
 ### RDA statistics
+#### Canonical coefficients & R-squared values
 ```{r}
 RDA_list <- list(RDA_July,
                  RDA_July_urbscore,
@@ -362,6 +329,8 @@ RDA_list <- list(RDA_July,
                  RDA_Aug_urbscore,
                  RDA_Aug.urb,
                  RDA_Aug_urbscore.urb)
+
+
 
 ## canonical coefficients
 canon_coeffs <- lapply(RDA_list, coef)
@@ -392,10 +361,59 @@ RsquareAdj(RDA_Aug_urbscore      )$adj.r.squared
 RsquareAdj(RDA_Aug.urb           )$adj.r.squared
 RsquareAdj(RDA_Aug_urbscore.urb  )$adj.r.squared
 # values very low... none above 0.03
+
+```
+
+#### ANOVA
+##### Entire model
+```{r}
+# ANOVA-like permutation test to assess the significance of constraints
+## Entire model: No models significant (except for one marg sig)
+anova(RDA_July              , permutations = how(nperm = 9999))
+anova(RDA_July_urbscore     , permutations = how(nperm = 9999))
+anova(RDA_July.urb          , permutations = how(nperm = 9999))
+anova(RDA_July_urbscore.urb , permutations = how(nperm = 9999))
+anova(RDA_Aug               , permutations = how(nperm = 9999))
+# Reminder: RDA_Aug_urbscore is this model:
+# rda(herb2020_Aug.hel ~ Urb_score, data = herb2020_Aug.env)
+# (i.e. August herbivores ~ Urbanization score) along ENTIRE gradient
+anova(RDA_Aug_urbscore      , permutations = how(nperm = 9999)) # marg sig
+anova(RDA_Aug.urb           , permutations = how(nperm = 9999))
+anova(RDA_Aug_urbscore.urb  , permutations = how(nperm = 9999))
+```
+##### Per term
+```{r}
+## Per term: no explanatory vars significant
+### Only doing this for models with >1 explanatory var (otherwise, same as above)
+anova(RDA_July.urb              , permutations = how(nperm = 9999), by = "term")
+anova(RDA_July_urbscore.urb     , permutations = how(nperm = 9999), by = "term")
+anova(RDA_Aug.urb               , permutations = how(nperm = 9999), by = "term")
+anova(RDA_Aug_urbscore.urb      , permutations = how(nperm = 9999), by = "term")
+```
+##### Per margin
+```{r}
+## Per margin- seem to be very similar to entire model anovas?
+anova(RDA_July              , permutations = how(nperm = 9999), by = "margin")
+anova(RDA_July_urbscore     , permutations = how(nperm = 9999), by = "margin")
+anova(RDA_July.urb          , permutations = how(nperm = 9999), by = "margin")
+anova(RDA_July_urbscore.urb , permutations = how(nperm = 9999), by = "margin")
+anova(RDA_Aug               , permutations = how(nperm = 9999), by = "margin")
+anova(RDA_Aug_urbscore      , permutations = how(nperm = 9999), by = "margin") # marg sig
+anova(RDA_Aug.urb           , permutations = how(nperm = 9999), by = "margin")
+anova(RDA_Aug_urbscore.urb  , permutations = how(nperm = 9999), by = "margin")
+
 ```
 
 ### Plots
-#### Make plotting functions
+
+**Scaling 1 vs Scaling 2:**
+
+* Scaling 1- distance biplot (object focused): distance between objects are eudlidean distances (objects closer together have similar variable values), angles between vectors of response variables are meaningless. Angles between vectors of response variables and explanatory variables reflect linear correlation.
+
+* Scaling 2- correlation biplot (response variable focused): distances between objects are not approximate Euclidean distances. Angles between all vectors reflect linear correlation.
+
+*Taken directly from [this site](https://fukamilab.github.io/BIO202/06-B-constrained-ordination.html)*
+#### Plotting RDA functions
 ```{r}
 # Triplot: three different entities in the plot: sites, response variables and explanatory variables (arrowheads are on the explanatory variables)
 ## SCALING 1
@@ -414,15 +432,6 @@ makeRDAplot_scaling2 <- function(x) {
 }
 # lapply(RDA_list, makeRDAplot_scaling2)
 ```
-
-
-**Scaling 1 vs Scaling 2:**
-
-* Scaling 1- distance biplot (object focused): distance between objects are eudlidean distances (objects closer together have similar variable values), angles between vectors of response variables are meaningless. Angles between vectors of response variables and explanatory variables reflect linear correlation.
-
-* Scaling 2- correlation biplot (response variable focused): distances between objects are not approximate Euclidean distances. Angles between all vectors reflect linear correlation.
-
-*Taken directly from [this site](https://fukamilab.github.io/BIO202/06-B-constrained-ordination.html)*
 
 #### July
 ##### All sites
