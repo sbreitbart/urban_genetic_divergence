@@ -16,13 +16,15 @@ editor_options:
   chunk_output_type: console
 
 NOTES:
-  -leaving off here in late Jan.
   -Still to do--
     -try to do an RDA (or PCA?) with all the traits
     -make a ReadMe file for each level
-    -renv::snapshot() to update packages
     -export stats w/flextable ? see ch1
     -calculate heritability coefficients
+    
+WHEN TOTALLY DONE, type this:
+renv::activate()
+renv::snapshot()
 
 ---
 # Set up notebook
@@ -31,6 +33,7 @@ NOTES:
 library(dplyr)
 library(reshape)
 library(reshape2)
+library(DHARMa)
 library(tidyr)
 library(ggplot2)
 library(ggExtra)
@@ -585,10 +588,17 @@ survival2020_popmeans <- as.data.frame(survival2020_popmeans)
 ```{r}
 # NO DIFFERENCE BETWEEN MODELS W/ CROSSED VS NESTED RANDOM EFFECTS #
 ###################################################################
+diagnostic(test1)
+
+plot(test1, type = c("p", "smooth"))
+plot(test1, sqrt(abs(resid(.))) ~ fitted(.),
+     type = c("p", "smooth"))
+qqnorm(residuals(test1))
+qqline(residuals(test1))
 
 
 ### NESTED RANDOM EFFECTS-----
-lmer(Total_Height_DC1 ~ (1|Block) + (1|Population/Family) + City_dist,
+test1<- lmer(Total_Height_DC1 ~ (1|Block) + (1|Population/Family) + City_dist,
   data = heights_2019, REML = F)
 # NOT singular
 
