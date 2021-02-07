@@ -92,33 +92,154 @@ library(stringi)
 
 ## Make functions
 ```{r}
-make_Anova <- function(full_model, main_effects_model) {
-  
-  return(
-    list(
-      
-      print('Full model ANOVA: ', quote = FALSE),
-      print(car::Anova(full_model)),
-      
+Anova_etc.dist <- function(full_model_dist, main_effects_model_dist) {
+
+    A_citydist <- list(
+      print(paste('Full model ANOVA: ', formula(full_model_dist)), quote = FALSE),
+      print(car::Anova(full_model_dist)),
+    
       print('Full model R-squared: ', quote = FALSE),
-      print(r.squaredGLMM(full_model)),
+      print(r.squaredGLMM(full_model_dist)),
   
-      print('Main effects model ANOVA: ', quote = FALSE),
-      print(car::Anova(main_effects_model)),
-          
+      print(paste('Main effects model ANOVA: ', formula(main_effects_model_dist)), quote = FALSE),
+      print(car::Anova(main_effects_model_dist)),
+        
       print('Main effects model R-squared: ', quote = FALSE),
-      print(r.squaredGLMM(main_effects_model)),
-      
+      print(r.squaredGLMM(main_effects_model_dist)),
+    
       cat(sep="\n\n"),
+    
+      print(paste("AIC (full model) =", AIC(full_model_dist)), quote = FALSE),
+      print(paste("AIC (main effects model) =", AIC(main_effects_model_dist)), quote = FALSE)
       
-      print(paste("AIC (full model) =", AIC(full_model)), quote = FALSE),
-      print(paste("AIC (main effects model) =", AIC(main_effects_model)), quote = FALSE)
+  )
+  
+  # make filename a string (from symbol)
+  filename1 <- toString(formula(full_model_dist)[[2]])
+
+ # export list to csv named for herbivore
+  lapply(A_citydist, function(x) write.table( data.frame(x),
+                                              file = paste(filename1, "_ANOVA_citydist.csv"),
+                                              append= T, sep=',' ))
+
+}
+Anova_etc.urbscore <- function(full_model_urbscore, main_effects_model_urbscore) {
+  
+  A_urbscore <- list(
+    
+    print(paste('Full model ANOVA: ', formula(full_model_urbscore)), quote = FALSE),
+    print(car::Anova(full_model_urbscore)),
+    
+    print('Full model R-squared: ', quote = FALSE),
+    print(r.squaredGLMM(full_model_urbscore)),
+  
+    print(paste('Main effects model ANOVA: ', formula(main_effects_model_urbscore)), quote = FALSE),
+    print(car::Anova(main_effects_model_urbscore)),
+        
+    print('Main effects model R-squared: ', quote = FALSE),
+    print(r.squaredGLMM(main_effects_model_urbscore)),
+    
+    cat(sep="\n\n"),
+    
+    print(paste("AIC (full model) =", AIC(full_model_urbscore)), quote = FALSE),
+    print(paste("AIC (main effects model) =", AIC(main_effects_model_urbscore)), quote = FALSE)
       
-      )
-    )
+  )
+  
+  # make filename a string (from symbol)
+  filename1 <- toString(formula(full_model_urbscore)[[2]])
+
+ # export list to csv named for herbivore
+  lapply(A_urbscore, function(x) write.table( data.frame(x),
+                                              file = paste(filename1, "_ANOVA_urbscore.csv"),
+                                              append= T, sep=',' ))
+
+    # return( A_urbscore )
+
+}
+Anova_etc <- function(full_model_dist.gradient,
+                      full_model_dist.urbsubs,
+                      main_effects_dist.urbsubs,
+                      full_model_urbscore.gradient,
+                      full_model_urbscore.urbsubs,
+                      main_effects_model_urbscore.urbsubs) {
+  
+  ######################################################   
+  ## Distance to city center as a predictor: list/export
+  
+  # Gradient/City distance
+  A_citydist <- list(
+      print(paste('Gradient: Full model ANOVA: ', formula(full_model_dist.gradient)), quote = FALSE),
+      print(car::Anova(full_model_dist.gradient)),
+    
+      print('Gradient: Full model R-squared: ', quote = FALSE),
+      print(r.squaredGLMM(full_model_dist.gradient)),
+      
+  # Urban subtransects/City distance x subtransect (urban sites ONLY) : FULL MODEL    
+      print(paste('Urban Subtransects: Full model ANOVA: ', formula(full_model_dist.urbsubs)), quote = FALSE),
+      print(car::Anova(full_model_dist.urbsubs)),
+    
+      print('Urban Subtransects: Full model R-squared: ', quote = FALSE),
+      print(r.squaredGLMM(full_model_dist.urbsubs)),
+      
+    # Urban subtransects/City distance x subtransect (urban sites ONLY) : MAIN EFFECTS ONLY   
+      print(paste('Urban Subtransects: Main effects model ANOVA: ', formula(main_effects_dist.urbsubs)), quote = FALSE),
+      print(car::Anova(main_effects_dist.urbsubs)),
+        
+      print('Urban Subtransects: Main effects model R-squared: ', quote = FALSE),
+      print(r.squaredGLMM(main_effects_dist.urbsubs)),
+    
+      cat(sep="\n\n"),
+    
+      print(paste("Gradient AIC (full model) =", AIC(full_model_dist.gradient)), quote = FALSE),
+      print(paste("Urban subtransects AIC (full model) =", AIC(full_model_dist.urbsubs)), quote = FALSE),
+      print(paste("Urban subtransects AIC (main effects model) =", AIC(main_effects_dist.urbsubs)), quote = FALSE)
+      
+  )
+  
+  # make filename a string (from symbol)
+  filename1 <- toString(formula(full_model_dist.gradient)[[2]])
+
+ # export list to csv named for herbivore
+  lapply(A_citydist, function(x) write.table( data.frame(x),
+                                              file = paste(filename1, "_ANOVA_dist.csv"),
+                                              append= T, sep=',' ))
+  
+  
+  ######################################################
+  ####### Urbanization Score as a predictor: list/export
+
+  A_urbscore <- list(
+    
+    print(paste('Full model ANOVA: ', formula(full_model_urbscore)), quote = FALSE),
+    print(car::Anova(full_model_urbscore)),
+    
+    print('Full model R-squared: ', quote = FALSE),
+    print(r.squaredGLMM(full_model_urbscore)),
+  
+    print(paste('Main effects model ANOVA: ', formula(main_effects_model_urbscore)), quote = FALSE),
+    print(car::Anova(main_effects_model_urbscore)),
+        
+    print('Main effects model R-squared: ', quote = FALSE),
+    print(r.squaredGLMM(main_effects_model_urbscore)),
+    
+    cat(sep="\n\n"),
+    
+    print(paste("AIC (full model) =", AIC(full_model_urbscore)), quote = FALSE),
+    print(paste("AIC (main effects model) =", AIC(main_effects_model_urbscore)), quote = FALSE)
+      
+  )
+  
+ # export list to csv named for herbivore
+  lapply(A_urbscore, function(x) write.table( data.frame(x),
+                                              file = paste(filename1, "_ANOVA_urbscore.csv"),
+                                              append= T, sep=',' ))
+
+    # return( A_urbscore )
 
 }
 
+Anova_etc(m1_RL, m1_RL.urb, m1_RL.urb_ME)
 ```
 
 ## Import data
