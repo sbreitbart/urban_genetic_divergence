@@ -1,0 +1,46 @@
+"x"
+"1","Gradient: Full model ANOVA:  ~"
+"2","Gradient: Full model ANOVA:  Labidomera_clivicollis"
+"3","Gradient: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",0.0141835316991676,1,0.905200382429446
+"x"
+"1","Gradient: Full model R-squared: "
+"R2m","R2c"
+"delta",2.8388324732603e-05,0.224685737645242
+"lognormal",7.60782028102775e-05,0.602137930933276
+"trigamma",2.50579510856058e-06,0.0198326751457851
+"x"
+"1","Urban Subtransects: Full model ANOVA:  ~"
+"2","Urban Subtransects: Full model ANOVA:  Labidomera_clivicollis"
+"3","Urban Subtransects: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score * Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",0.0454684392132502,1,0.831144997700274
+"Transect_ID",1.83478896969048,1,0.175562941979859
+"Urb_score:Transect_ID",0.543741260708299,1,0.460886349156933
+"x"
+"1","Urban Subtransects: Full model R-squared: "
+"R2m","R2c"
+"delta",0.0109594010731189,0.257304825518232
+"lognormal",0.0271041995818957,0.636352415401321
+"trigamma",0.00105648844104971,0.0248042363056765
+"x"
+"1","Urban Subtransects: Main effects model ANOVA:  ~"
+"2","Urban Subtransects: Main effects model ANOVA:  Labidomera_clivicollis"
+"3","Urban Subtransects: Main effects model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score + Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",0.0448610294133367,1,0.832259772809845
+"Transect_ID",1.95224282942761,1,0.162345369375964
+"x"
+"1","Urban Subtransects: Main effects model R-squared: "
+"R2m","R2c"
+"delta",0.00812260485864536,0.253865540479726
+"lognormal",0.020226369847453,0.632159067518993
+"trigamma",0.000779757899587858,0.0243707116211019
+""
+"x"
+"1","Gradient AIC (full model) = 810.454500907602"
+"x"
+"1","Urban subtransects AIC (full model) = 563.175254444472"
+"x"
+"1","Urban subtransects AIC (main effects model) = 561.733162954018"

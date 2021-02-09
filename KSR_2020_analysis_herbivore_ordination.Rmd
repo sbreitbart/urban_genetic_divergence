@@ -757,7 +757,7 @@ Anova_etc(m1_TT,
 
 
 ```
-## Liriomyza asclepiadis- no & no
+## Liriomyza asclepiadis- marg sig diff btwn urb subtransects w/urbanization score ONLY
 ### Diagnostics: glmer w/poisson distribution (b/c count data)
 #### All sites
 ```{r}
@@ -812,7 +812,7 @@ m2_LA.nb <- glmmTMB(Liriomyza_asclepiadis ~
               (1|Block) + (1|Population/Family) + (1|Sample) +
               Urb_score,
               data = herbivores ,
-              family = nbinom2(),
+              family = nbinom1(),
               REML=F)
 res <- simulateResiduals(m2_LA.nb)
 plot(res)
@@ -880,7 +880,7 @@ m2_LA.urb.nb <- glmmTMB(Liriomyza_asclepiadis ~
               Urb_score * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
-              family = nbinom2(),
+              family = nbinom1(),
               REML = F)
 res <- simulateResiduals(m2_LA.nb)
 plot(res)
@@ -893,7 +893,7 @@ m2_LA.urb.nb_ME <- glmmTMB(Liriomyza_asclepiadis ~
               Urb_score + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
-              family = nbinom2(),
+              family = nbinom1(),
               REML = F)
 ```
 
@@ -926,14 +926,14 @@ Anova_etc(m1_LA.nb,
 ## -Nothing significant
 
 ## full_model_urbscore.urbsubs: -----
-## -Nothing significant
+## -Transect marg significant
 
 ## main_effects_urbscore.urbsubs: -----
-## -Nothing significant
+## -Transect marg significant
 
 
 ```
-## Aphis nerii- perhaps
+## Aphis nerii- no & no
 ### Diagnostics: glmer w/poisson distribution (b/c count data)
 #### All sites
 ```{r}
@@ -980,7 +980,7 @@ m2_AN.nb <- glmmTMB(Aphis_nerii ~
               (1|Block) + (1|Population/Family) + (1|Sample) +
               Urb_score,
               data = herbivores ,
-              family = nbinom2(),
+              family = nbinom1(),
               REML = F)
 res <- simulateResiduals(m2_AN.nb)
 plot(res)
@@ -1045,7 +1045,7 @@ m2_AN.urb.nb <- glmmTMB(Aphis_nerii ~
               Urb_score * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
-              family = nbinom2(),
+              family = nbinom1(),
               REML = F)
 res <- simulateResiduals(m2_AN.urb.nb)
 plot(res)
@@ -1057,7 +1057,7 @@ m2_AN.urb.nb_ME <- glmmTMB(Aphis_nerii ~
               Urb_score + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
-              family = nbinom2(),
+              family = nbinom1(),
               REML = F)
 ```
 
@@ -1089,7 +1089,7 @@ Anova_etc( m1_AN.nb,
 ## -ANOVA not sig
 
 ## full_model_urbscore.urbsubs: -----
-## -ANOVA not sig, r_sq around 0.12
+## -ANOVA not sig, r_sq small
 
 ## main_effects_urbscore.urbsubs: -----
 ## -not sig
@@ -1107,6 +1107,7 @@ m1_AA <- glmer(Aphis_asclepiadis ~
               family = poisson)
 res <- simulateResiduals(m1_AA)
 plot(res)
+
 
 # KS test significant...
 # try neg binomial
@@ -1127,7 +1128,25 @@ plot(res)
 
 
 # URBANIZATION SCORE
+m2_AA <- glmer(Aphis_asclepiadis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score,
+              data = herbivores,
+              family = poisson)
+res <- simulateResiduals(m2_AA)
+plot(res)
+# KS test significant...
+# try neg binomial
 
+m2_AA.nb <- glmmTMB(Aphis_asclepiadis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score,
+              data = herbivores ,
+              family = nbinom1(),
+              REML = F)
+res <- simulateResiduals(m2_AA.nb)
+plot(res)
+# KS test not sig anymore. Looks good
 ```
 
 #### Urban sites
@@ -1157,86 +1176,86 @@ res <- simulateResiduals(m1_AA.urb.nb)
 plot(res)
 # Looks good.
 
-
+# main effects
+m1_AA.urb.nb_ME <- glmmTMB(Aphis_asclepiadis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              City_dist + Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = nbinom1(),
+              REML = F)
 
 
 
 
 # URBANIZATION SCORE
+m2_AA.urb <- glmer(Aphis_asclepiadis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score * Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = poisson,
+              control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))) # singular
+res <- simulateResiduals(m2_AA.urb)
+plot(res)
+# KS test sig... trying neg bin transformation
 
+
+m2_AA.urb.nb <- glmmTMB(Aphis_asclepiadis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score * Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = nbinom1(),
+              REML = F)
+res <- simulateResiduals(m2_AA.urb.nb)
+plot(res)
+# Looks good.
+
+# main effects
+m2_AA.urb.nb_ME <- glmmTMB(Aphis_asclepiadis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score + Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = nbinom1(),
+              REML = F)
 ```
 
 ### ANOVA
-#### All sites
 ```{r}
+
+Anova_etc( m1_AA.nb,
+           m1_AA.urb.nb,
+           m1_AA.urb.nb_ME,
+           m2_AA.nb,
+           m2_AA.urb.nb,
+           m2_AA.urb.nb_ME)
 
 # PREDICTOR - CITY DISTANCE --------
 ## full_model_dist.gradient: -----
-## -
+## -distance NOT significant
 
 ## full_model_dist.urbsubs: -----
 ## -not singular
-## -marginal R-sq: 
-## -ANOVA: 
+## -marginal R-sq: small
+## -ANOVA: not sig
 
 ## main_effects_dist.urbsubs: -----
-## -
+## -not sig
 
 
 # PREDICTOR - URBANIZATION SCORE-------
 ## full_model_urbscore.gradient: -----
-## -
+## -not sig, small r-sq
 
 ## full_model_urbscore.urbsubs: -----
-## -
+## -not sig, r-sq small
 
 ## main_effects_urbscore.urbsubs: -----
-## -
+## -not sig, r-sq small
 
-m1_AA.nb
-# NOT singular
-
-car::Anova(m1_AA.nb)
-# distance NOT significant
-
-r.squaredGLMM(m1_AA.nb)
-# very small marginal R-sq
-
-
-
-
-
-# FULL MODEL:
-
-m1_AA.urb.nb
-# NOT singular
-
-car::Anova(m1_AA.urb.nb)
-# Nothing significant
-
-r.squaredGLMM(m1_AA.urb.nb)
-# small r-sq
-
-
-
-# MAIN EFFECTS:
-car::Anova(glmmTMB(Aphis_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
-              City_dist + Transect_ID,
-              data = herbivores %>% 
-                filter(., Transect_ID != "Rural"),
-              family = nbinom1(),
-              REML = F))
-# nothing significant
-
-r.squaredGLMM(glmmTMB(Aphis_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
-              City_dist + Transect_ID,
-              data = herbivores %>% 
-                filter(., Transect_ID != "Rural"),
-              family = nbinom1(),
-              REML = F))
-# very small r-sq.
 ```
 ## Myzocallis asclepiadis- no and no
 ### Diagnostics: glmer w/poisson distribution (b/c count data)
@@ -1267,16 +1286,32 @@ plot(res)
 
 
 
-
-
 # URBANIZATION SCORE
+m2_MA <- glmer(Myzocallis_asclepiadis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score,
+              data = herbivores,
+              family = poisson)
+res <- simulateResiduals(m2_MA)
+plot(res)
 
+# KS test significant...
+# try neg binomial
+
+m2_MA.nb <- glmmTMB(Myzocallis_asclepiadis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score,
+              data = herbivores ,
+              family = nbinom1(),
+              REML = F)
+res <- simulateResiduals(m2_MA.nb)
+plot(res)
+# KS test not sig anymore. Looks good
 ```
 
 #### Urban sites
 ```{r}
 # DISTANCE FROM CITY CENTER
-
 m1_MA.urb <- glmer(Myzocallis_asclepiadis ~
               (1|Block) + (1|Population/Family) + (1|Sample) +
               City_dist * Transect_ID,
@@ -1301,42 +1336,84 @@ res <- simulateResiduals(m1_MA.urb.nb)
 plot(res)
 # Looks good.
 
-
+# main effects
+m1_MA.urb.nb_ME <- glmmTMB(Myzocallis_asclepiadis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              City_dist + Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = nbinom1(),
+              REML = F)
 
 
 
 
 
 # URBANIZATION SCORE
+m2_MA.urb <- glmer(Myzocallis_asclepiadis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score * Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = poisson,
+              control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))) 
+res <- simulateResiduals(m2_MA.urb)
+plot(res)
+# KS test sig... trying neg bin transformation
 
+
+m2_MA.urb.nb <- glmmTMB(Myzocallis_asclepiadis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score * Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = nbinom1(),
+              REML = F)
+res <- simulateResiduals(m2_MA.urb.nb)
+plot(res)
+# Looks good. Outlier test has a p = 0.04 but I'm not going to worry about that.
+
+# main effects
+m2_MA.urb.nb_ME <- glmmTMB(Myzocallis_asclepiadis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score + Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = nbinom1(),
+              REML = F)
 ```
 
 ### ANOVA
-#### All sites
 ```{r}
+
+Anova_etc( m1_MA.nb,
+           m1_MA.urb.nb,
+           m1_MA.urb.nb_ME,
+           m2_MA.nb,
+           m2_MA.urb.nb,
+           m2_MA.urb.nb_ME)
 
 # PREDICTOR - CITY DISTANCE --------
 ## full_model_dist.gradient: -----
-## -
+## -not sig, small r-sq
 
 ## full_model_dist.urbsubs: -----
-## -not singular
-## -marginal R-sq: 
-## -ANOVA: 
+## -not sig, small r-sq
 
 ## main_effects_dist.urbsubs: -----
-## -
+## --not sig, small r-sq
 
 
 # PREDICTOR - URBANIZATION SCORE-------
 ## full_model_urbscore.gradient: -----
-## -
+## --not sig, small r-sq
 
 ## full_model_urbscore.urbsubs: -----
-## -
+## --not sig, small r-sq
 
 ## main_effects_urbscore.urbsubs: -----
-## -
+## --not sig, small r-sq
 
 
 
@@ -1387,7 +1464,7 @@ r.squaredGLMM(glmmTMB(Myzocallis_asclepiadis ~
               REML = F))
 # very small r-sq.
 ```
-## Euchaetes egle- no and no
+## Euchaetes egle- sig diff along gradient for urban sites w/urbanization score. High r-squared too!
 ### Diagnostics: glmer w/poisson distribution (b/c count data)
 #### All sites
 ```{r}
@@ -1421,6 +1498,27 @@ plot(res)
 
 
 # URBANIZATION SCORE
+m2_EE <- glmer(Euchaetes_egle ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score,
+              data = herbivores,
+              family = poisson,
+              control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5)))
+res <- simulateResiduals(m2_EE)
+plot(res)
+
+# several technical issues with NAs and infinity even though diagnostics seem fine... trying neg bin transformation
+
+m2_EE.nb <- glmmTMB(Euchaetes_egle ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score,
+              data = herbivores ,
+              family = nbinom1(),
+              REML = F)
+res <- simulateResiduals(m2_EE.nb)
+plot(res)
+# Looks good
 
 ```
 
@@ -1451,89 +1549,88 @@ res <- simulateResiduals(m1_EE.urb.nb)
 plot(res)
 # Looks good.
 
-
+# main effects
+m1_EE.urb.nb_ME <- glmmTMB(Euchaetes_egle ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              City_dist + Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = nbinom1(),
+              REML = F)
 
 
 
 
 
 # URBANIZATION SCORE
+m2_EE.urb <- glmer(Euchaetes_egle ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score * Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = poisson,
+              control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))) 
+res <- simulateResiduals(m2_EE.urb)
+plot(res)
+# various issues even though diagnostics look fine... trying neg bin
 
+
+m2_EE.urb.nb <- glmmTMB(Euchaetes_egle ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score * Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = nbinom1(),
+              REML = F)
+res <- simulateResiduals(m2_EE.urb.nb)
+plot(res)
+# Looks good.
+
+# main effects
+m2_EE.urb.nb_ME <- glmmTMB(Euchaetes_egle ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score + Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = nbinom1(),
+              REML = F)
 ```
 
 ### ANOVA
 ```{r}
 
+Anova_etc( m1_EE.nb,
+           m1_EE.urb.nb,
+           m1_EE.urb.nb_ME,
+           m2_EE.nb,
+           m2_EE.urb.nb,
+           m2_EE.urb.nb_ME)
 
 # PREDICTOR - CITY DISTANCE --------
 ## full_model_dist.gradient: -----
-## -
+## -distance NOT significant
 
 ## full_model_dist.urbsubs: -----
 ## -not singular
-## -marginal R-sq: 
-## -ANOVA: 
+## -marginal R-sq: very small
+## -ANOVA: nothing sig
 
 ## main_effects_dist.urbsubs: -----
-## -
+## -nothing sig, small r-sq
 
 
 # PREDICTOR - URBANIZATION SCORE-------
 ## full_model_urbscore.gradient: -----
-## -
+## -distance not sig
 
 ## full_model_urbscore.urbsubs: -----
-## -
+## -Urb_score significant! With pretty high R-sq too- 0.44!
 
 ## main_effects_urbscore.urbsubs: -----
-## -
+## -Urb_score significant! With pretty high R-sq too- 0.45!
 
 
-
-m1_EE.nb
-# NOT singular
-
-car::Anova(m1_EE.nb)
-# distance NOT significant
-
-r.squaredGLMM(m1_EE.nb)
-# very small marginal R-sq
-
-
-
-
-
-# FULL MODEL:
-
-m1_EE.urb.nb
-# NOT singular
-
-car::Anova(m1_EE.urb.nb)
-# Nothing significant
-
-r.squaredGLMM(m1_EE.urb.nb)
-# small r-sq
-
-
-
-# MAIN EFFECTS:
-car::Anova(glmmTMB(Euchaetes_egle ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
-              City_dist + Transect_ID,
-              data = herbivores %>% 
-                filter(., Transect_ID != "Rural"),
-              family = nbinom1(),
-              REML = F))
-# nothing significant
-
-r.squaredGLMM(glmmTMB(Euchaetes_egle ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
-              City_dist + Transect_ID,
-              data = herbivores %>% 
-                filter(., Transect_ID != "Rural"),
-              family = nbinom1(),
-              REML = F))
-# very small r-sq.
 ```
 ## Lygaeus kalmii- no and no
 ### Diagnostics: glmer w/poisson distribution (b/c count data)
@@ -1549,7 +1646,6 @@ m1_LK <- glmer(Lygaeus_kalmii ~
                                  optCtrl=list(maxfun=2e5)))
 res <- simulateResiduals(m1_LK)
 plot(res)
-
 # singular and KS test significant.. trying neg bin transformation
 
 m1_LK.nb <- glmmTMB(Lygaeus_kalmii ~
@@ -1568,7 +1664,26 @@ plot(res)
 
 
 # URBANIZATION SCORE
+m2_LK <- glmer(Lygaeus_kalmii ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score,
+              data = herbivores,
+              family = poisson,
+              control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5)))
+res <- simulateResiduals(m2_LK)
+plot(res)
+# singular and KS test significant.. trying neg bin transformation
 
+m2_LK.nb <- glmmTMB(Lygaeus_kalmii ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score,
+              data = herbivores ,
+              family = nbinom1(),
+              REML = F)
+res <- simulateResiduals(m2_LK.nb)
+plot(res)
+# Looks good
 ```
 
 #### Urban sites
@@ -1598,86 +1713,84 @@ res <- simulateResiduals(m1_LK.urb.nb)
 plot(res)
 # Looks good and isn't singular.
 
-
-
+# main effects
+m1_LK.urb.nb_ME <- glmmTMB(Lygaeus_kalmii ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              City_dist + Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = nbinom1(),
+              REML = F)
 
 
 
 
 # URBANIZATION SCORE
+m2_LK.urb <- glmer(Lygaeus_kalmii ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score * Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = poisson,
+              control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))) 
+res <- simulateResiduals(m2_LK.urb)
+plot(res)
+# singular & KS test sig (barely)... trying neg bin
 
+
+m2_LK.urb.nb <- glmmTMB(Lygaeus_kalmii ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score * Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = nbinom1(),
+              REML = F)
+res <- simulateResiduals(m2_LK.urb.nb)
+plot(res)
+# Looks good and isn't singular.
+
+# main effects
+m2_LK.urb.nb_ME <- glmmTMB(Lygaeus_kalmii ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score + Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = nbinom1(),
+              REML = F)
 ```
 
 ### ANOVA
 ```{r}
 
+Anova_etc( m1_LK.nb,
+           m1_LK.urb.nb,
+           m1_LK.urb.nb_ME,
+           m2_LK.nb,
+           m2_LK.urb.nb,
+           m2_LK.urb.nb_ME)
+
 # PREDICTOR - CITY DISTANCE --------
 ## full_model_dist.gradient: -----
-## -
+## -distance NOT significant, small r-sq
 
 ## full_model_dist.urbsubs: -----
 ## -not singular
-## -marginal R-sq: 
-## -ANOVA: 
+## --nothing significant, small r-sq
 
 ## main_effects_dist.urbsubs: -----
-## -
+## -nothing significant, small r-sq
 
 
 # PREDICTOR - URBANIZATION SCORE-------
 ## full_model_urbscore.gradient: -----
-## -
+## ---nothing significant, small r-sq
 
 ## full_model_urbscore.urbsubs: -----
-## -
+## ---nothing significant, small r-sq
 
 ## main_effects_urbscore.urbsubs: -----
-## -
-
-m1_LK.nb
-# NOT singular
-
-car::Anova(m1_LK.nb)
-# distance NOT significant
-
-r.squaredGLMM(m1_LK.nb)
-# very small marginal R-sq
-
-
-
-
-
-# FULL MODEL:
-
-m1_LK.urb.nb
-# NOT singular
-
-car::Anova(m1_LK.urb.nb)
-# Nothing significant
-
-r.squaredGLMM(m1_LK.urb.nb)
-# small r-sq
-
-
-
-# MAIN EFFECTS:
-car::Anova(glmmTMB(Lygaeus_kalmii ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
-              City_dist + Transect_ID,
-              data = herbivores %>% 
-                filter(., Transect_ID != "Rural"),
-              family = nbinom1(),
-              REML = F))
-# nothing significant
-
-r.squaredGLMM(glmmTMB(Lygaeus_kalmii ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
-              City_dist + Transect_ID,
-              data = herbivores %>% 
-                filter(., Transect_ID != "Rural"),
-              family = nbinom1(),
-              REML = F))
-# very small r-sq.
+## ---nothing significant, small r-sq
 
 
 
@@ -1693,7 +1806,6 @@ car::Anova(m1_LK.urb)
 
 r.squaredGLMM(m1_LK.urb)
 # small r-sq
-
 
 
 # MAIN EFFECTS:
@@ -1718,7 +1830,7 @@ r.squaredGLMM(glmer(Lygaeus_kalmii ~
 # very small r-sq. SINGULAR.
 
 ```
-## Labidomera clivicollis- no and YES*
+## Labidomera clivicollis- sig diff along gradient for urban sites w/city_dist. Low-moderate r-sq too.
 ### Diagnostics: glmer w/poisson distribution (b/c count data)
 #### All sites
 ```{r}
@@ -1732,7 +1844,6 @@ m1_LC <- glmer(Labidomera_clivicollis ~
                                  optCtrl=list(maxfun=2e5)))
 res <- simulateResiduals(m1_LC)
 plot(res)
-
 # looks good... try neg bin transf just in case
 
 m1_LC.nb <- glmmTMB(Labidomera_clivicollis ~
@@ -1752,6 +1863,26 @@ plot(res)
 
 
 # URBANIZATION SCORE
+m2_LC <- glmer(Labidomera_clivicollis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score,
+              data = herbivores,
+              family = poisson,
+              control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5)))
+res <- simulateResiduals(m2_LC)
+plot(res)
+# looks good... try neg bin transf just in case
+
+m2_LC.nb <- glmmTMB(Labidomera_clivicollis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score,
+              data = herbivores ,
+              family = nbinom1(),
+              REML = F)
+res <- simulateResiduals(m2_LC.nb)
+plot(res)
+# Also looks fine... try both models just in case
 
 ```
 
@@ -1782,7 +1913,14 @@ res <- simulateResiduals(m1_LC.urb.nb)
 plot(res)
 # Looks good and isn't singular.
 
-
+# main effects
+m1_LC.urb.nb_ME <- glmmTMB(Labidomera_clivicollis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              City_dist + Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = nbinom1(),
+              REML = F)
 
 
 
@@ -1790,92 +1928,83 @@ plot(res)
 
 
 # URBANIZATION SCORE
+m2_LC.urb <- glmer(Labidomera_clivicollis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score * Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = poisson,
+              control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5))) 
+res <- simulateResiduals(m2_LC.urb)
+plot(res)
+# looks fine... trying neg bin
 
+
+m2_LC.urb.nb <- glmmTMB(Labidomera_clivicollis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score * Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = nbinom1(),
+              REML = F)
+res <- simulateResiduals(m2_LC.urb.nb)
+plot(res)
+# Looks good too. Try both models just in case
+
+# main effects
+m2_LC.urb_ME <- glmer(Labidomera_clivicollis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score + Transect_ID,
+              data = herbivores %>% 
+                filter(., Transect_ID != "Rural"),
+              family = poisson,
+              control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5)))
 ```
 
 ### ANOVA
 ```{r}
 
+Anova_etc( m1_LC, 
+           m1_LC.urb.nb,
+           m1_LC.urb.nb_ME,
+           m2_LC,        # poisson. also try m2_LC.nb (neg binomial)
+           m2_LC.urb,    # poisson. also try m2_LC.urb.nb (neg binomial)
+           m2_LC.urb_ME) 
+
+
 # PREDICTOR - CITY DISTANCE --------
 ## full_model_dist.gradient: -----
-## -
+## -nothing sig, small r-sq
 
 ## full_model_dist.urbsubs: -----
 ## -not singular
-## -marginal R-sq: 
-## -ANOVA: 
+## -marginal R-sq: Around 0.16!
+## -ANOVA: City_dist sig!
 
 ## main_effects_dist.urbsubs: -----
-## -
+## -City_dist marg sig
 
 
 # PREDICTOR - URBANIZATION SCORE-------
 ## full_model_urbscore.gradient: -----
-## -
+## -nothing sig, very small r-sq
 
 ## full_model_urbscore.urbsubs: -----
-## -
+## -nothing sig, very small r-sq
 
 ## main_effects_urbscore.urbsubs: -----
-## -
+## -nothing sig, very small r-sq
 
 
+# SINCE DIAGNOSTICS FOR THESE TWO MODELS VERY SIMILAR TO POISSON DISTRIBUTION MODELS, CHECKING TO SEE IF THEIR RESULTS ARE DIFFERENT (they aren't.)
+# neg binomial w/urbanization score: gradient
+car::Anova(m2_LC.nb) # not sig
 
-m1_LC
-# NOT singular
+# neg binomial w/urbanization score: urban sites
+car::Anova(m2_LC.urb.nb) # nothing near sig
 
-car::Anova(m1_LC)
-# distance NOT significant
-
-r.squaredGLMM(m1_LC)
-# very small marginal R-sq
-
-
-
-
-
-# FULL MODEL:
-
-m1_LC.urb.nb
-# NOT singular
-
-car::Anova(m1_LC.urb.nb)
-# City_dist is significant!
-
-r.squaredGLMM(m1_LC.urb.nb)
-# relatively moderate r-sqs!
-
-
-
-# MAIN EFFECTS:
-car::Anova(glmmTMB(Labidomera_clivicollis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
-              City_dist + Transect_ID,
-              data = herbivores %>% 
-                filter(., Transect_ID != "Rural"),
-              family = nbinom1(),
-              REML = F))
-# city_dist is marg significant
-
-r.squaredGLMM(glmmTMB(Labidomera_clivicollis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
-              City_dist + Transect_ID,
-              data = herbivores %>% 
-                filter(., Transect_ID != "Rural"),
-              family = nbinom1(),
-              REML = F))
-# very small r-sq.
-
-
-AIC(m1_LC.urb.nb)
-AIC(glmmTMB(Labidomera_clivicollis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
-              City_dist + Transect_ID,
-              data = herbivores %>% 
-                filter(., Transect_ID != "Rural"),
-              family = nbinom1(),
-              REML = F))
-# AICs <2 apart but just main effects is smaller
 ```
 ## Rhyssomatus lineaticollis- no and YES*
 ### Diagnostics: glmer w/poisson distribution (b/c count data)
@@ -1891,7 +2020,6 @@ m1_RL <- glmer(Rhyssomatus_lineaticollis ~
                                  optCtrl=list(maxfun=2e5)))
 res <- simulateResiduals(m1_RL)
 plot(res)
-
 # not converging.. try neg bin transf
 
 m1_RL.nb <- glmmTMB(Rhyssomatus_lineaticollis ~
@@ -1910,11 +2038,38 @@ plot(res)
 
 
 # URBANIZATION SCORE
+m2_RL <- glmer(Rhyssomatus_lineaticollis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score,
+              data = herbivores,
+              family = poisson,
+              control=glmerControl(optimizer="bobyqa",
+                                 optCtrl=list(maxfun=2e5)))
+res <- simulateResiduals(m2_RL)
+plot(res)
+# several issues.. try neg bin transf
 
+m2_RL.nb <- glmmTMB(Rhyssomatus_lineaticollis ~
+              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Urb_score,
+              data = herbivores ,
+              family = nbinom1(),
+              REML = F)
+res <- simulateResiduals(m2_RL.nb)
+plot(res)
+# Looks better but still doesn't pass KS test and dispersion deviates...
+
+
+# My data does only contain 20 non-zero data points out of 1683...
+# try a non-parametric test
 ```
 
 #### Urban sites
 ```{r}
+# My data does only contain 20 non-zero data points out of 1683...
+# try a non-parametric test
+
+
 # DISTANCE FROM CITY CENTER
 m1_RL.urb <- glmer(Rhyssomatus_lineaticollis ~
               (1|Block) + (1|Population/Family) + (1|Sample) +
@@ -2064,5 +2219,18 @@ sjPlot::plot_model(m1_RL.urb, type = "pred", terms = c("City_dist", "Transect_ID
 sjPlot::plot_model(m1_RL.urb_ME, type = "pred", terms = c("City_dist", "Transect_ID")) 
 
 
+```
+
+
+# Exporting ANOVAs
+```{r}
+# 
+# library(stargazer)
+# stargazer(car::Anova(m2_LA),
+#           car::Anova(m2_LA.urb),
+#           type = "latex",
+#           out ="iristest.html")
+
+# https://stackoverflow.com/questions/62954069/r-anova-output-of-several-models-side-by-side
 ```
 

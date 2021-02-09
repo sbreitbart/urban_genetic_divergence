@@ -44,3 +44,49 @@
 "1","Urban subtransects AIC (full model) = 7260.3149925622"
 "x"
 "1","Urban subtransects AIC (main effects model) = 7259.00904425715"
+"x"
+"1","Gradient: Full model ANOVA:  ~"
+"2","Gradient: Full model ANOVA:  Liriomyza_asclepiadis"
+"3","Gradient: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",0.0518273542516975,1,0.819913510513825
+"x"
+"1","Gradient: Full model R-squared: "
+"R2m","R2c"
+"delta",0.000308694300144778,0.992793154592522
+"lognormal",0.000308695847647561,0.99279813152332
+"trigamma",0.000308692750502179,0.992788170779852
+"x"
+"1","Urban Subtransects: Full model ANOVA:  ~"
+"2","Urban Subtransects: Full model ANOVA:  Liriomyza_asclepiadis"
+"3","Urban Subtransects: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score * Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",1.36594521223186,1,0.24250977586266
+"Transect_ID",2.91514465518046,1,0.0877515436839473
+"Urb_score:Transect_ID",0.13154767378998,1,0.716832724095688
+"x"
+"1","Urban Subtransects: Full model R-squared: "
+"R2m","R2c"
+"delta",0.0309686950794346,0.993018023109953
+"lognormal",0.0309688558772493,0.993023179127269
+"trigamma",0.0309685340438377,0.993012859468099
+"x"
+"1","Urban Subtransects: Main effects model ANOVA:  ~"
+"2","Urban Subtransects: Main effects model ANOVA:  Liriomyza_asclepiadis"
+"3","Urban Subtransects: Main effects model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score + Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",1.34920332477609,1,0.245417440926931
+"Transect_ID",2.8807279550737,1,0.0896454869855377
+"x"
+"1","Urban Subtransects: Main effects model R-squared: "
+"R2m","R2c"
+"delta",0.030325834811041,0.993036638296116
+"lognormal",0.030325991857984,0.993041780887221
+"trigamma",0.0303256775318479,0.993031488099853
+""
+"x"
+"1","Gradient AIC (full model) = 10737.1411767208"
+"x"
+"1","Urban subtransects AIC (full model) = 7183.4869889399"
+"x"
+"1","Urban subtransects AIC (main effects model) = 7181.6168369585"

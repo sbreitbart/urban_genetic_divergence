@@ -44,3 +44,49 @@
 "1","Urban subtransects AIC (full model) = 555.417178015533"
 "x"
 "1","Urban subtransects AIC (main effects model) = 555.860026681218"
+"x"
+"1","Gradient: Full model ANOVA:  ~"
+"2","Gradient: Full model ANOVA:  Aphis_nerii"
+"3","Gradient: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",0.000674745737166978,1,0.97927658621246
+"x"
+"1","Gradient: Full model R-squared: "
+"R2m","R2c"
+"delta",1.0611044349659e-05,0.999997168505302
+"lognormal",1.06110443497092e-05,0.999997168510034
+"trigamma",1.06110443496087e-05,0.99999716850057
+"x"
+"1","Urban Subtransects: Full model ANOVA:  ~"
+"2","Urban Subtransects: Full model ANOVA:  Aphis_nerii"
+"3","Urban Subtransects: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score * Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",0.410074463504672,1,0.521931713045391
+"Transect_ID",0.429612620509941,1,0.512179090679511
+"Urb_score:Transect_ID",0.0539936824536524,1,0.816254214719953
+"x"
+"1","Urban Subtransects: Full model R-squared: "
+"R2m","R2c"
+"delta",0.0164136176156957,0.999526921170865
+"lognormal",0.0164136204634034,0.999527094585437
+"trigamma",0.016413614765899,0.999526747629078
+"x"
+"1","Urban Subtransects: Main effects model ANOVA:  ~"
+"2","Urban Subtransects: Main effects model ANOVA:  Aphis_nerii"
+"3","Urban Subtransects: Main effects model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score + Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",0.409578006844392,1,0.52218377013609
+"Transect_ID",0.426828190208358,1,0.513549425303762
+"x"
+"1","Urban Subtransects: Main effects model R-squared: "
+"R2m","R2c"
+"delta",0.0158128143350107,0.999529773518803
+"lognormal",0.0158128170616018,0.99952994586693
+"trigamma",0.0158128116064198,0.999529601044261
+""
+"x"
+"1","Gradient AIC (full model) = 969.829315616498"
+"x"
+"1","Urban subtransects AIC (full model) = 549.313626087671"
+"x"
+"1","Urban subtransects AIC (main effects model) = 547.367546704695"
