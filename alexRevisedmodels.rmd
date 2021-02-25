@@ -1,0 +1,75 @@
+---
+title: "Simplified Models"
+author: "Sophie Breitbart & Alessandro Filazzola"
+date: "2/25/2021"
+output:
+  html_document:
+    number_sections: true
+    df_print: paged
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapsed: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+
+### Libraries
+```{r warning=FALSE, message=FALSE}
+library(tidyverse)
+library(lmerTest)
+
+```
+
+### Load data
+```{r warning=FALSE, message=FALSE}
+source("scripts//alexLoadData.r")
+
+## Data
+DT::datatable(survival_19_20)
+DT::datatable(herbivory_19_20)
+DT::datatable(heights_19_20)
+```
+
+
+### Interaction with all measures
+```{r}
+surv <- survival_19_20 %>% select(Population, Block, Family, Replicate, Year, City_dist, Urb_score, Dead  )
+herb <- herbivory_19_20 %>% select(Population, Block, Family, Replicate, Year, City_dist, Urb_score, Herbivory_mean_Sept  )
+height <- heights_19_20 %>% mutate(Year = as.numeric(as.character(Year))) %>%  ## convert year to number
+  select(Population, Block, Family, Replicate, Year, City_dist, Urb_score, Total_Height_midJune, Total_Height_Sept,Ramets_midJune, Ramets_Sept, rel_growth_rate )
+
+## Join all three together
+allMeasure <- left_join(surv, herb) %>% left_join(height)
+allMeasure <- allMeasure[!is.na(allMeasure$Year),]
+allMeasure[,"Year"] <- as.factor(allMeasure[,"Year"])
+
+## Fix missing values in Urb_score
+urbValues <- data.frame(Population = c(unique(allMeasure$Population),NA), UrbScore = unique(allMeasure$Urb_score))
+urbValues <- urbValues[!is.na(urbValues$Population),]
+allMeasure <- merge(allMeasure, urbValues, by="Population")
+
+## Survival
+m1 <- glmer(Dead ~  UrbScore + (1|Year) + (1|Block), data=allMeasure, family="binomial")
+summary(m1)
+car::Anova(m1)
+
+## Herbivory
+m2 <- glmer(Herbivory_mean_Sept ~  UrbScore  + (1|Block), data=allMeasure %>% filter(Year== 2019), family="binomial")
+summary(m2)
+car::Anova(m2)
+# ggplot(allMeasure, aes(x=as.factor(Year), y=Herbivory_mean_Sept)) + geom_boxplot()  ## No 2020 values
+
+
+## Total Height
+m3 <- lmer(Total_Height_midJune ~  UrbScore + (1|Block), data=allMeasure)
+summary(m1)
+car::Anova(m1)
+# ggplot(allMeasure, aes(x=as.factor(Year), y=Total_Height_midJune)) + geom_boxplot() ## No 2020 values
+
+
+m4 <- lmer(rel_growth_rate ~  UrbScore + (1|Block), data=allMeasure)
+summary(m4)
+car::Anova(m4)
+```
