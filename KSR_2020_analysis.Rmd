@@ -3529,35 +3529,79 @@ AIC(flowering_urbsubs_usc_m1, flowering_urbsubs_usc_m1_ME) # <2 away
 
 ## Heights
 ### June height
-#### lmer
-##### Entire gradient: *Sig for city_dist, not for urb_score
-###### City_dist
+#### lmer: diagnostics
 ```{r}
-# NO DIFFERENCE BETWEEN MODELS W/ CROSSED VS NESTED RANDOM EFFECTS #
-###################################################################
-
-
-### NESTED RANDOM EFFECTS-----
-lmer(Total_Height_June ~ (1|Block) + (1|Population/Family) + City_dist,
+# GRADIENT / CITY_DIST-----
+Height_Jun20_gr_city_m1 <- lmer(Total_Height_June ~ (1|Block) + (1|Population/Family) + City_dist,
   data = heights_both_2020, REML = F)
-# is singular...
+sjPlot::plot_model(Height_Jun20_gr_city_m1, type = "diag") # is singular & right-skewed
 
-car::Anova(lmer(Total_Height_June ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_both_2020, REML = F))
-# distance is significant
-
-
-r.squaredGLMM(lmer(Total_Height_June ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_both_2020, REML = F))
-
-### CROSSED RANDOM EFFECTS-----
-lmer(Total_Height_June ~ (1|Block) + (1|Population:Family) + City_dist,
+Height_Jun20_gr_city_m2 <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + City_dist,
   data = heights_both_2020, REML = F)
-# NOT singular!
+sjPlot::plot_model(Height_Jun20_gr_city_m2, type = "diag") # looks good
 
-car::Anova(lmer(Total_Height_June ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = heights_both_2020, REML = F))
-# distance is significant
+
+
+
+
+# GRADIENT / URB SCORE-----
+Height_Jun20_gr_usc_m1 <- lmer(Total_Height_June ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_both_2020, REML = F)
+sjPlot::plot_model(Height_Jun20_gr_usc_m1, type = "diag") # right-skewed
+
+
+Height_Jun20_gr_usc_m2 <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_both_2020, REML = F)
+sjPlot::plot_model(Height_Jun20_gr_usc_m2, type = "diag") # looks good
+
+
+
+
+
+
+# URB SUBTRANSECTS / CITY_DIST-----
+Height_Jun20_urbsubs_city_m1 <- lmer(Total_Height_June ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)
+sjPlot::plot_model(Height_Jun20_urbsubs_city_m1, type = "diag") # right-skewed
+
+Height_Jun20_urbsubs_city_m2 <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)
+sjPlot::plot_model(Height_Jun20_urbsubs_city_m2, type = "diag") # looks good
+
+# main effects
+Height_Jun20_urbsubs_city_m2_ME <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)
+
+
+
+
+# URB SUBTRANSECTS / URB SCORE-----
+Height_Jun20_urbsubs_usc_m1 <- lmer(Total_Height_June ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)
+sjPlot::plot_model(Height_Jun20_urbsubs_usc_m1, type = "diag") # right-skewed & singular
+
+Height_Jun20_urbsubs_usc_m2 <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)
+sjPlot::plot_model(Height_Jun20_urbsubs_usc_m2, type = "diag") # looks good
+
+# main effects
+Height_Jun20_urbsubs_usc_m2_ME <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F,
+    control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
+summary(Height_Jun20_urbsubs_usc_m2_ME)
+```
+
+#### Entire gradient: *Not sig for either
+##### City_dist
+```{r}
+car::Anova(Height_Jun20_gr_city_m2) # not sig
 
 
 
@@ -3582,83 +3626,16 @@ write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/20
 write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_JuneHeight_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
 ```
 
-###### Urb_score
+##### Urb_score
 ```{r}
-# NO DIFFERENCE BETWEEN MODELS W/ CROSSED VS NESTED RANDOM EFFECTS #
-###################################################################
-
-
-### NESTED RANDOM EFFECTS-----
-lmer(Total_Height_June ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_both_2020, REML = F)
-# is singular...
-
-car::Anova(lmer(Total_Height_June ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_both_2020, REML = F))
-# nothing significant
-
-
-r.squaredGLMM(lmer(Total_Height_June ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_both_2020, REML = F))
-
-### CROSSED RANDOM EFFECTS-----
-lmer(Total_Height_June ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = heights_both_2020, REML = F)
-# NOT singular!
-
-car::Anova(lmer(Total_Height_June ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = heights_both_2020, REML = F))
-# nothing significant
-
+car::Anova(Height_Jun20_gr_usc_m2) # not sig
 ```
 
-##### Urban subtransects: *Not sig for either
-###### City_dist
+#### Urban subtransects: *Not sig for either
+##### City_dist
 ```{r}
-# NO DIFFERENCE BETWEEN MODELS W/ CROSSED VS NESTED RANDOM EFFECTS #
-###################################################################
-
-### NESTED RANDOM EFFECTS-----
-# Full model
-lmer(Total_Height_June  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-
-
-car::Anova(lmer(Total_Height_June  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
-
-
-# Just main effects
-car::Anova(lmer(Total_Height_June  ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
-
-
-
-### CROSSED RANDOM EFFECTS-----
-# Full model
-lmer(Total_Height_June  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-# No warnings!!
-
-car::Anova(lmer(Total_Height_June  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
-
-
-# Just main effects
-car::Anova(lmer(Total_Height_June  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID, 
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
-
-
-AIC(lmer(Total_Height_June  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-
-AIC(lmer(Total_Height_June  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# AIC <2 apart; both "best models" though just main effects lower AIC
+car::Anova(Height_Jun20_urbsubs_city_m2) # nothing sig
+car::Anova(Height_Jun20_urbsubs_city_m2_ME) # nothing sig
 
 
 
@@ -3694,86 +3671,92 @@ write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/202
 write.table(car::Anova(m.2), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_JuneHeight_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
 ```
 
-###### Urb_score
+##### Urb_score
 ```{r}
-# NO DIFFERENCE BETWEEN MODELS W/ CROSSED VS NESTED RANDOM EFFECTS #
-###################################################################
-
-### NESTED RANDOM EFFECTS-----
-# Full model
-lmer(Total_Height_June  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-
-
-car::Anova(lmer(Total_Height_June  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
-
-
-# Just main effects
-car::Anova(lmer(Total_Height_June  ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
-
-
-
-### CROSSED RANDOM EFFECTS-----
-# Full model
-lmer(Total_Height_June  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-# No warnings!!
-
-car::Anova(lmer(Total_Height_June  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
-
-
-# Just main effects
-car::Anova(lmer(Total_Height_June  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID, 
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
-
-
-AIC(lmer(Total_Height_June  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-
-AIC(lmer(Total_Height_June  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# AIC <2 apart; both "best models" though just main effects lower AIC
+car::Anova(Height_Jun20_urbsubs_usc_m2) # not sig
+car::Anova(Height_Jun20_urbsubs_usc_m2_ME) # not sig
 
 ```
 
-
 ### Sept height
-#### lmer
-##### Entire gradient: *Sig for city_dist, not for urb_score
+#### lmer: diagnostics
+```{r}
+# GRADIENT / CITY_DIST-----
+Height_Sept20_gr_city_m1 <- lmer(Total_Height_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_both_2020, REML = F,
+      control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(Height_Sept20_gr_city_m1, type = "diag") # right-skewed
+
+Height_Sept20_gr_city_m2 <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_both_2020, REML = F)
+sjPlot::plot_model(Height_Sept20_gr_city_m2, type = "diag") # looks good
+
+
+
+
+
+# GRADIENT / URB SCORE-----
+Height_Sept20_gr_usc_m1 <- lmer(Total_Height_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_both_2020, REML = F)
+sjPlot::plot_model(Height_Sept20_gr_usc_m1, type = "diag") # right-skewed
+
+
+Height_Sept20_gr_usc_m2 <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_both_2020, REML = F,
+        control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(Height_Sept20_gr_usc_m2, type = "diag") # looks good
+
+
+
+
+
+
+# URB SUBTRANSECTS / CITY_DIST-----
+Height_Sept20_urbsubs_city_m1 <- lmer(Total_Height_Sept ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)
+sjPlot::plot_model(Height_Sept20_urbsubs_city_m1, type = "diag") # right-skewed
+
+Height_Sept20_urbsubs_city_m2 <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F,
+        control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(Height_Sept20_urbsubs_city_m2, type = "diag") # looks good
+
+# main effects
+Height_Sept20_urbsubs_city_m2_ME <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)
+
+
+
+
+# URB SUBTRANSECTS / URB SCORE-----
+Height_Sept20_urbsubs_usc_m1 <- lmer(Total_Height_Sept ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)
+sjPlot::plot_model(Height_Sept20_urbsubs_usc_m1, type = "diag") # right-skewed
+
+
+Height_Sept20_urbsubs_usc_m2 <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)
+sjPlot::plot_model(Height_Sept20_urbsubs_usc_m2, type = "diag") # looks good
+
+# main effects
+Height_Sept20_urbsubs_usc_m2_ME <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F,
+    control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
+summary(Height_Sept20_urbsubs_usc_m2_ME)
+```
+##### Entire gradient: *marginally sig for city_dist, not for urb_score
 ###### City_dist
 ```{r}
-# NO DIFFERENCE BETWEEN MODELS W/ CROSSED VS NESTED RANDOM EFFECTS #
-###################################################################
+car::Anova(Height_Sept20_gr_city_m2) #marginally sig
 
 
-### NESTED RANDOM EFFECTS-----
-lmer(Total_Height_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_both_2020, REML = F)
-# NOT singular
-
-car::Anova(lmer(Total_Height_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_both_2020, REML = F))
-# distance is significant
-
-
-### CROSSED RANDOM EFFECTS-----
-lmer(Total_Height_Sept ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = heights_both_2020, REML = F)
-# NOT singular!
-
-car::Anova(lmer(Total_Height_Sept ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = heights_both_2020, REML = F))
-# distance is  significant
-
-r.squaredGLMM(lmer(Total_Height_Sept ~ (1|Block) + (1|Population:Family) + City_dist,
-  data = heights_both_2020, REML = F))
 
 # ANy variation within families or populations?
 m.1 <- lmer(Total_Height_Sept ~ (1|Population/Family), data = heights_both_2020, REML = T)
@@ -3797,84 +3780,15 @@ write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/202
 
 ###### Urb_score
 ```{r}
-# NO DIFFERENCE BETWEEN MODELS W/ CROSSED VS NESTED RANDOM EFFECTS #
-###################################################################
-
-
-### NESTED RANDOM EFFECTS-----
-lmer(Total_Height_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_both_2020, REML = F)
-# is singular...
-
-car::Anova(lmer(Total_Height_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_both_2020, REML = F))
-# not significant
-
-
-### CROSSED RANDOM EFFECTS-----
-lmer(Total_Height_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = heights_both_2020, REML = F)
-# NOT singular!
-
-car::Anova(lmer(Total_Height_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = heights_both_2020, REML = F))
-# not significant
-
-r.squaredGLMM(lmer(Total_Height_Sept ~ (1|Block) + (1|Population:Family) + Urb_score,
-  data = heights_both_2020, REML = F))
-
+car::Anova(Height_Sept20_gr_usc_m2) # not sig
 ```
 
 
 ##### Urban subtransects: *Not sig for either
 ###### City_dist
 ```{r}
-# NO DIFFERENCE BETWEEN MODELS W/ CROSSED VS NESTED RANDOM EFFECTS #
-###################################################################
-
-### NESTED RANDOM EFFECTS-----
-# Full model
-lmer(Total_Height_Sept  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-
-
-car::Anova(lmer(Total_Height_Sept  ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
-
-
-# Just main effects
-car::Anova(lmer(Total_Height_Sept  ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
-
-
-
-### CROSSED RANDOM EFFECTS-----
-# Full model
-lmer(Total_Height_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-# No warnings!!
-
-car::Anova(lmer(Total_Height_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
-
-
-# Just main effects
-car::Anova(lmer(Total_Height_Sept  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
-
-
-AIC(lmer(Total_Height_Sept  ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-
-AIC(lmer(Total_Height_Sept  ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# AIC <2 apart; both "best models" though just main effects lower AIC
-
-
+car::Anova(Height_Sept20_urbsubs_city_m2) # not sig
+car::Anova(Height_Sept20_urbsubs_city_m2_ME)# not sig
 
 
 # ANy variation among families or populations?
@@ -3911,57 +3825,157 @@ write.table(car::Anova(m.2), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PV
 
 ###### Urb_score
 ```{r}
-# NO DIFFERENCE BETWEEN MODELS W/ CROSSED VS NESTED RANDOM EFFECTS #
-###################################################################
-
-### NESTED RANDOM EFFECTS-----
-# Full model
-lmer(Total_Height_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-
-
-car::Anova(lmer(Total_Height_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
-
-
-# Just main effects
-car::Anova(lmer(Total_Height_Sept  ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
-
-
-
-### CROSSED RANDOM EFFECTS-----
-# Full model
-lmer(Total_Height_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
-# No warnings!!
-
-car::Anova(lmer(Total_Height_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
-
-
-# Just main effects
-car::Anova(lmer(Total_Height_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# nothing significant
-
-
-AIC(lmer(Total_Height_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-
-AIC(lmer(Total_Height_Sept  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
-     data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F))
-# AIC <2 apart; both "best models" though just main effects lower AIC
-
+car::Anova(Height_Sept20_urbsubs_usc_m2) # not sig
+car::Anova(Height_Sept20_urbsubs_usc_m2_ME)# not sig
 ```
 
-
-
 ## Weevil scars: standardized by June height
-### lmer
+### lmer: diagnostics
+```{r}
+# GRADIENT / CITY_DIST-----
+weev_stn_gr_city_m1 <- lmer(scar_div_Juneheight ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = weevil_both, REML = F)
+sjPlot::plot_model(weev_stn_gr_city_m1, type = "diag") # is singular & right-skewed
+
+weev_stn_gr_city_m2 <- lmer(log(scar_div_Juneheight + 1) ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = weevil_both, REML = F)
+sjPlot::plot_model(weev_stn_gr_city_m2, type = "diag") # sqrt, cube root, log still look bad... try binomial, then removing zeroes and going from there
+
+
+
+# TAKING OUT PLANTS W/ZERO SCAR LENGTH & FITTING A BINOMIAL MODEL
+## THEN I'LL USE >0 DATA AND LOOK AT QUANTITATIVE MEASUREMENTS
+
+# recode plants as having height or not
+weevil_both$scar_div_Juneheight_binary <- weevil_both$scar_div_Juneheight
+weevil_both$scar_div_Juneheight_binary[weevil_both$scar_div_Juneheight_binary > 0] <- 1
+
+weev_stn_gr_city_m3 <- glmer((scar_div_Juneheight_binary) ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = weevil_both,
+  family = "binomial",
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
+res <- simulateResiduals(weev_stn_gr_city_m3)
+plot(res)
+# looks great! though is singular...
+summary(weev_stn_gr_city_m3)
+
+car::Anova(weev_stn_gr_city_m3) # not sig- so, whether the plant was attacked by weevils not associated with urbanization
+
+
+weev_stn_gr_city_m4 <- lmer(scar_div_Juneheight ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(weev_stn_gr_city_m4, type='diag') #very right-skewed... try sqrt
+
+weev_stn_gr_city_m5 <- lmer(sqrt(scar_div_Juneheight) ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(weev_stn_gr_city_m5, type='diag') # still r-skew... try cube rt
+
+weev_stn_gr_city_m6 <- lmer((scar_div_Juneheight)^(1/3) ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(weev_stn_gr_city_m6, type='diag') # still r-skew... try log
+
+weev_stn_gr_city_m7 <- lmer(log(scar_div_Juneheight) ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(weev_stn_gr_city_m7, type='diag') # much better but qqplot suspicious... good enough, I guess
+
+car::Anova(weev_stn_gr_city_m7) #not sig
+
+
+
+
+# GRADIENT / URB SCORE-----
+weev_stn_gr_usc_m1 <- lmer(scar_div_Juneheight ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = weevil_both, REML = F)
+sjPlot::plot_model(weev_stn_gr_usc_m1, type = "diag") # is singular & right-skewed
+
+weev_stn_gr_usc_m2 <- lmer((scar_div_Juneheight)^(1/3) ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = weevil_both, REML = F)
+sjPlot::plot_model(weev_stn_gr_usc_m2, type = "diag") # sqrt, cube root, log still look bad... try binomial, then removing zeroes and going from there
+
+
+# TAKING OUT PLANTS W/ZERO SCAR LENGTH & FITTING A BINOMIAL MODEL
+## THEN I'LL USE >0 DATA AND LOOK AT QUANTITATIVE MEASUREMENTS
+weev_stn_gr_usc_m3 <- glmer((scar_div_Juneheight_binary) ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = weevil_both,
+  family = "binomial",
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
+res <- simulateResiduals(weev_stn_gr_usc_m3)
+plot(res)
+# looks great! though is singular...
+summary(weev_stn_gr_usc_m3)
+
+car::Anova(weev_stn_gr_usc_m3) # not sig- so, whether the plant was attacked by weevils not associated with urbanization
+
+
+weev_stn_gr_usc_m4 <- lmer(scar_div_Juneheight ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(weev_stn_gr_usc_m4, type='diag') #very right-skewed... try sqrt
+
+weev_stn_gr_usc_m5 <- lmer(sqrt(scar_div_Juneheight) ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(weev_stn_gr_usc_m5, type='diag') # still r-skew... try cube rt
+
+weev_stn_gr_usc_m6 <- lmer((scar_div_Juneheight)^(1/3) ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(weev_stn_gr_usc_m6, type='diag') # still r-skew... try log
+
+weev_stn_gr_usc_m7 <- lmer(log(scar_div_Juneheight) ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(weev_stn_gr_usc_m7, type='diag') # much better but qqplot suspicious... good enough, I guess
+
+car::Anova(weev_stn_gr_usc_m7) #not sig
+
+
+
+# URB SUBTRANSECTS / CITY_DIST-----
+Height_Jun20_urbsubs_city_m1 <- lmer(Total_Height_June ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)
+sjPlot::plot_model(Height_Jun20_urbsubs_city_m1, type = "diag") # right-skewed
+
+Height_Jun20_urbsubs_city_m2 <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)
+sjPlot::plot_model(Height_Jun20_urbsubs_city_m2, type = "diag") # looks good
+
+# main effects
+Height_Jun20_urbsubs_city_m2_ME <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)
+
+
+
+
+# URB SUBTRANSECTS / URB SCORE-----
+Height_Jun20_urbsubs_usc_m1 <- lmer(Total_Height_June ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)
+sjPlot::plot_model(Height_Jun20_urbsubs_usc_m1, type = "diag") # right-skewed & singular
+
+Height_Jun20_urbsubs_usc_m2 <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)
+sjPlot::plot_model(Height_Jun20_urbsubs_usc_m2, type = "diag") # looks good
+
+# main effects
+Height_Jun20_urbsubs_usc_m2_ME <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F,
+    control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
+summary(Height_Jun20_urbsubs_usc_m2_ME)
+```
+
 #### Entire gradient: *Not sig for either
 ##### City_dist
 ```{r}
