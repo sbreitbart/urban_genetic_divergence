@@ -3529,6 +3529,99 @@ AIC(flowering_urbsubs_usc_m1, flowering_urbsubs_usc_m1_ME) # <2 away
 ```
 
 
+##### Export to table
+```{r}
+# 
+# flowering_gr_city_m1.tidy      <- tidy(car::Anova(flowering_gr_city_m1      ))
+# flowering_gr_urb_m1.tidy       <- tidy(car::Anova(flowering_gr_urb_m1       ))
+# flowering_urbsubs_city_m1.tidy <- tidy(car::Anova(flowering_urbsubs_city_m1 ))
+# flowering_urbsubs_usc_m1.tidy  <- tidy(car::Anova(flowering_urbsubs_usc_m1   ))
+#  
+
+# anovas_merged.1 <- bind_rows(flowering_gr_city_m1.tidy    ,
+#                               flowering_gr_urb_m1.tidy,
+#                               flowering_urbsubs_city_m1.tidy,
+#                               flowering_urbsubs_usc_m1.tidy ) %>%
+#   mutate_if(.,
+#             is.character,
+#             str_replace_all,
+#             pattern = c("City_dist", "Urb_score"),
+#             replacement = c("Distance to City Center", "Urbanization Score")) %>%
+#   mutate_if(.,
+#             is.character,
+#             str_replace_all,
+#             pattern = c("Transect_ID", ":"),
+#             replacement = c("Subtransect", " : ")) %>%
+#   mutate_at(c(2,4), round, 3) %>%
+#   rename_at(1, ~ "Effect") %>%
+#   rename_at(2, ~ "Chi Square" ) %>%
+#   rename_at(4, ~ "P" ) %>%
+#   add_column(Model = 0) %>%
+#   relocate(Model, before = Effect)
+
+anovas_table <- function(mod1, mod2, mod3, mod4) {
+  mod1.anova.tidy <- tidy(car::Anova(mod1))
+  mod2.anova.tidy <- tidy(car::Anova(mod2))
+  mod3.anova.tidy <- tidy(car::Anova(mod3))
+  mod4.anova.tidy <- tidy(car::Anova(mod4))
+  
+  anovas_merged <-  bind_rows( mod1.anova.tidy,
+                             mod2.anova.tidy,
+                             mod3.anova.tidy,
+                             mod4.anova.tidy) %>%
+  mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("City_dist", "Urb_score"),
+            replacement = c("Distance to City Center", "Urbanization Score")) %>%
+  mutate_at(c(2,4), round, 3) %>%
+  rename_at(1, ~ "Effect") %>%
+  rename_at(2, ~ "Chi Square" ) %>%
+  rename_at(4, ~ "P" ) %>%
+  add_column(Model = "") %>%
+  relocate(Model, before = Effect) %>%
+    dplyr::select(., -4)
+  
+
+  
+  anovas_merged[[1]][[1]] <- 1
+  anovas_merged[[1]][[2]] <- 2
+  anovas_merged[[1]][[3]] <- 3
+  anovas_merged[[1]][[6]] <- 4
+
+  
+  return(as.data.frame(anovas_merged))
+}
+
+fl1 <- anovas_table(flowering_gr_city_m1 ,
+                    flowering_gr_urb_m1      ,
+                    flowering_urbsubs_city_m1,
+                    flowering_urbsubs_usc_m1 ) %>%
+  mutate(P = ifelse(P < 0.001, "< 0.001", round(P, 3))) %>%
+  mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("Transect_ID"),
+            replacement = c("Subtransect"))
+
+
+# NEXT: PUT INTO  NICE TABLE
+
+library(flextable)
+library(officer)
+ft <- flextable(fl1) %>%
+  bold(., ~ P  == "< 0.001" | P <= 0.05, ~ P, bold = TRUE) %>%
+  set_caption(., caption = "Does Urbanization Affect Year 2 Flowering?") %>%
+  add_footer_lines(., "Models 1 and 2 include all populations. Models 3 and 4 include only urban populations.") %>%
+  italic(., italic = TRUE, part = "footer") %>%
+  align(., i = 1, part = "header", align = "center") %>%
+  width(., 2, width = 2.75) %>%
+  border(., c(2,3,6), border.top = fp_border(color="black", width = 0.5))  %>%
+  save_as_image(., "flextable_test.1.png")
+
+
+```
+
 ## Heights
 ### June height
 #### lmer: diagnostics
@@ -3540,7 +3633,23 @@ sjPlot::plot_model(Height_Jun20_gr_city_m1, type = "diag") # is singular & right
 
 Height_Jun20_gr_city_m2 <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + City_dist,
   data = heights_both_2020, REML = F)
-sjPlot::plot_model(Height_Jun20_gr_city_m2, type = "diag") # looks good
+sjPlot::plot_model(Height_Jun20_gr_city_m2, type = "diag") # looks good though singular... take out block
+
+Height_Jun20_gr_city_m3 <- lmer(sqrt(Total_Height_June) ~  (1|Population/Family) + City_dist,
+  data = heights_both_2020, REML = F)
+sjPlot::plot_model(Height_Jun20_gr_city_m3, type = "diag") # looks good
+
+AIC(Height_Jun20_gr_city_m2, Height_Jun20_gr_city_m3) #model with block has significantly lower AIC, so I should leave in block
+
+Height_Jun20_gr_city_m4 <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population) +  City_dist,
+  data = heights_both_2020, REML = F)
+sjPlot::plot_model(Height_Jun20_gr_city_m4, type = "diag") # looks good 
+
+AIC(Height_Jun20_gr_city_m2, Height_Jun20_gr_city_m4) #model with Pop/Fam has >4  lower AIC, so I should leave in Pop/Fam
+
+car::Anova(Height_Jun20_gr_city_m2) # very similar results to anova below!
+car::Anova(Height_Jun20_gr_city_m4)
+
 
 
 
@@ -3588,7 +3697,8 @@ sjPlot::plot_model(Height_Jun20_urbsubs_usc_m1, type = "diag") # right-skewed & 
 
 Height_Jun20_urbsubs_usc_m2 <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
-  REML = F)
+  REML = F,
+      control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 sjPlot::plot_model(Height_Jun20_urbsubs_usc_m2, type = "diag") # looks good
 
 # main effects
@@ -3600,10 +3710,10 @@ Height_Jun20_urbsubs_usc_m2_ME <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|
 summary(Height_Jun20_urbsubs_usc_m2_ME)
 ```
 
-#### Entire gradient: *Not sig for either
+#### Entire gradient: *Marg sig for City_dist, not for urb_score
 ##### City_dist
 ```{r}
-car::Anova(Height_Jun20_gr_city_m2) # not sig
+car::Anova(Height_Jun20_gr_city_m4) # marg sig
 
 
 
@@ -3706,8 +3816,26 @@ sjPlot::plot_model(Height_Sept20_gr_usc_m1, type = "diag") # right-skewed
 Height_Sept20_gr_usc_m2 <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population/Family) + Urb_score,
   data = heights_both_2020, REML = F,
         control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
-sjPlot::plot_model(Height_Sept20_gr_usc_m2, type = "diag") # looks good
+sjPlot::plot_model(Height_Sept20_gr_usc_m2, type = "diag") # looks good though singular... take out block 
 
+Height_Sept20_gr_usc_m3 <- lmer(sqrt(Total_Height_Sept) ~ (1|Population/Family) + Urb_score,
+  data = heights_both_2020, REML = F,
+        control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(Height_Sept20_gr_usc_m3, type = "diag") # looks ok
+
+AIC(Height_Sept20_gr_usc_m2, Height_Sept20_gr_usc_m3) # model with block has significantly lower AIC... leave it in
+
+Height_Sept20_gr_usc_m4 <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population) + Urb_score,
+  data = heights_both_2020, REML = F,
+        control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(Height_Sept20_gr_usc_m4, type = "diag") # looks ok
+
+
+car::Anova(Height_Sept20_gr_usc_m2) # very similar results to model below
+car::Anova(Height_Sept20_gr_usc_m4)
+
+
+AIC(Height_Sept20_gr_usc_m2, Height_Sept20_gr_usc_m4) # nearly identical AIC... use m4
 
 
 
@@ -3717,16 +3845,36 @@ sjPlot::plot_model(Height_Sept20_gr_usc_m2, type = "diag") # looks good
 Height_Sept20_urbsubs_city_m1 <- lmer(Total_Height_Sept ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
   REML = F)
-sjPlot::plot_model(Height_Sept20_urbsubs_city_m1, type = "diag") # right-skewed
+sjPlot::plot_model(Height_Sept20_urbsubs_city_m1, type = "diag") # right-skewed & singular
 
 Height_Sept20_urbsubs_city_m2 <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
   REML = F,
         control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
-sjPlot::plot_model(Height_Sept20_urbsubs_city_m2, type = "diag") # looks good
+sjPlot::plot_model(Height_Sept20_urbsubs_city_m2, type = "diag") # looks good but still singular... take out block
+
+Height_Sept20_urbsubs_city_m3 <- lmer(sqrt(Total_Height_Sept) ~  (1|Population/Family) + City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F,
+        control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(Height_Sept20_urbsubs_city_m3, type = "diag") # still singular... take out fam
+
+Height_Sept20_urbsubs_city_m4 <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population) + City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F,
+        control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(Height_Sept20_urbsubs_city_m4, type = "diag") # looks ok 
+
+AIC(Height_Sept20_urbsubs_city_m2, Height_Sept20_urbsubs_city_m4) # nearly identical AIC
+
+car::Anova(Height_Sept20_urbsubs_city_m4) # extremely similar results!
+car::Anova(Height_Sept20_urbsubs_city_m2)
+
+
+
 
 # main effects
-Height_Sept20_urbsubs_city_m2_ME <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+Height_Sept20_urbsubs_city_m4_ME <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) +(1|Population) + City_dist + Transect_ID,
   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
   REML = F)
 
@@ -3782,15 +3930,15 @@ write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/202
 
 ###### Urb_score
 ```{r}
-car::Anova(Height_Sept20_gr_usc_m2) # not sig
+car::Anova(Height_Sept20_gr_usc_m4) # not sig
 ```
 
 
 ##### Urban subtransects: *Not sig for either
 ###### City_dist
 ```{r}
-car::Anova(Height_Sept20_urbsubs_city_m2) # not sig
-car::Anova(Height_Sept20_urbsubs_city_m2_ME)# not sig
+car::Anova(Height_Sept20_urbsubs_city_m4) # not sig
+car::Anova(Height_Sept20_urbsubs_city_m4_ME)# not sig
 
 
 # ANy variation among families or populations?
@@ -3853,12 +4001,13 @@ weevil_both$scar_div_Juneheight_binary[weevil_both$scar_div_Juneheight_binary > 
 
 weev_stn_gr_city_m3 <- glmer((scar_div_Juneheight_binary) ~ (1|Block) + (1|Population/Family) + City_dist,
   data = weevil_both,
-  family = "binomial",
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 res <- simulateResiduals(weev_stn_gr_city_m3)
 plot(res)
-# looks great! though is singular...
+# looks great! 
 summary(weev_stn_gr_city_m3)
 
 car::Anova(weev_stn_gr_city_m3) # not sig- so, whether the plant was attacked by weevils not associated with urbanization
@@ -3882,11 +4031,27 @@ sjPlot::plot_model(weev_stn_gr_city_m6, type='diag') # still r-skew... try log
 weev_stn_gr_city_m7 <- lmer(log(scar_div_Juneheight) ~ (1|Block) + (1|Population/Family) + City_dist,
   data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
-sjPlot::plot_model(weev_stn_gr_city_m7, type='diag') # much better but qqplot suspicious... good enough, I guess
+sjPlot::plot_model(weev_stn_gr_city_m7, type='diag') # much better but qqplot suspicious... good enough, I guess... still singular though. Take out block
 
-car::Anova(weev_stn_gr_city_m7) #not sig
+weev_stn_gr_city_m8 <- lmer(log(scar_div_Juneheight) ~ (1|Population/Family) + City_dist,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... take out /Fam
+
+weev_stn_gr_city_m9 <- lmer(log(scar_div_Juneheight) ~ (1|Block) + (1|Population) + City_dist,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... take out block
+
+weev_stn_gr_city_m10 <- lmer(log(scar_div_Juneheight) ~ (1|Population) +  City_dist,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... 
 
 
+# 
+# car::Anova(weev_stn_gr_city_m7) #not sig - identical to model below
+# car::Anova(weev_stn_gr_city_m9) #not sig
+# 
+# AIC(weev_stn_gr_city_m7, weev_stn_gr_city_m9) # model 9 significantly lower AIC...
+# 
 
 
 # GRADIENT / URB SCORE-----
@@ -3903,12 +4068,13 @@ sjPlot::plot_model(weev_stn_gr_usc_m2, type = "diag") # sqrt, cube root, log sti
 ## THEN I'LL USE >0 DATA AND LOOK AT QUANTITATIVE MEASUREMENTS
 weev_stn_gr_usc_m3 <- glmer((scar_div_Juneheight_binary) ~ (1|Block) + (1|Population/Family) + Urb_score,
   data = weevil_both,
-  family = "binomial",
-  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+family = "binomial"(link = "logit"),
+  nAGQ = 0,
+control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 res <- simulateResiduals(weev_stn_gr_usc_m3)
 plot(res)
-# looks great! though is singular...
+# looks great! 
 summary(weev_stn_gr_usc_m3)
 
 car::Anova(weev_stn_gr_usc_m3) # not sig- so, whether the plant was attacked by weevils not associated with urbanization
@@ -3932,9 +4098,31 @@ sjPlot::plot_model(weev_stn_gr_usc_m6, type='diag') # still r-skew... try log
 weev_stn_gr_usc_m7 <- lmer(log(scar_div_Juneheight) ~ (1|Block) + (1|Population/Family) + Urb_score,
   data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
-sjPlot::plot_model(weev_stn_gr_usc_m7, type='diag') # much better but qqplot suspicious... good enough, I guess
+sjPlot::plot_model(weev_stn_gr_usc_m7, type='diag') # much better but qqplot suspicious...still singular though. Take out block
 
-car::Anova(weev_stn_gr_usc_m7) #not sig
+weev_stn_gr_usc_m8 <- lmer(log(scar_div_Juneheight) ~ (1|Population/Family) + Urb_score,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... take out Fam
+
+weev_stn_gr_usc_m10 <- lmer(log(scar_div_Juneheight) ~ (1|Block) + (1|Population) + Urb_score,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... take out block too
+
+weev_stn_gr_usc_m11 <- lmer(log(scar_div_Juneheight) ~ (1|Population) + Urb_score,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... 
+
+# 
+# car::Anova(weev_stn_gr_usc_m7) #not sig - identical to model below
+# car::Anova(weev_stn_gr_usc_m9) #not sig
+# 
+# AIC(weev_stn_gr_usc_m7, weev_stn_gr_usc_m9) # model 9 significantly lower AIC...
+
+
+
+
+
+
 
 
 
@@ -3960,8 +4148,9 @@ sjPlot::plot_model(weev_stn_urbsubs_city_m3, type = "diag") # still very right-s
 ## THEN I'LL USE >0 DATA AND LOOK AT QUANTITATIVE MEASUREMENTS
 weev_stn_urbsubs_city_m4 <- glmer((scar_div_Juneheight_binary) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
   data = weevil_both %>% filter(Urb_Rur == "Urban"),
-  family = "binomial",
-  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
+control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 res <- simulateResiduals(weev_stn_urbsubs_city_m4)
 plot(res)
@@ -3989,10 +4178,24 @@ sjPlot::plot_model(weev_stn_urbsubs_city_m6, type='diag') # looks pretty good...
 weev_stn_urbsubs_city_m7 <- lmer(log(scar_div_Juneheight + 0.1) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
   data = weevil_both %>% filter(scar_div_Juneheight_binary == 1 & Urb_Rur == "Urban"),
   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
-sjPlot::plot_model(weev_stn_urbsubs_city_m7, type='diag') # looks the same as cube root but maybe a little better?
+sjPlot::plot_model(weev_stn_urbsubs_city_m7, type='diag') # looks the same as cube root but maybe a little better? still singular though. Take out block
 
-car::Anova(weev_stn_urbsubs_city_m6) # transect marginally sig!
-car::Anova(weev_stn_urbsubs_city_m7) # transect marginally sig!
+weev_stn_urbsubs_city_m8 <- lmer(log(scar_div_Juneheight) ~ (1|Population/Family) +  City_dist * Transect_ID,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1 & Urb_Rur == "Urban"),  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... take out Fam
+
+weev_stn_urbsubs_city_m9 <- lmer(log(scar_div_Juneheight) ~ (1|Block) + (1|Population) + City_dist * Transect_ID,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1 & Urb_Rur == "Urban"),  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) #  singular... take out block
+
+weev_stn_urbsubs_city_m10 <- lmer(log(scar_div_Juneheight) ~  (1|Population) + City_dist * Transect_ID,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1 & Urb_Rur == "Urban"),  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) #  singular... 
+
+
+# 
+# car::Anova(weev_stn_urbsubs_city_m7) # transect marg sig - very similar to model below
+# car::Anova(weev_stn_urbsubs_city_m9) # transect marg sig 
+# 
+# AIC(weev_stn_urbsubs_city_m7, weev_stn_urbsubs_city_m9) # model 9 significantly higher AIC...
+# 
 
 
 
@@ -4029,7 +4232,8 @@ sjPlot::plot_model(weev_stn_urbsubs_usc_m3, type = "diag") # still very right-sk
 ## THEN I'LL USE >0 DATA AND LOOK AT QUANTITATIVE MEASUREMENTS
 weev_stn_urbsubs_usc_m4 <- glmer((scar_div_Juneheight_binary) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
   data = weevil_both %>% filter(Urb_Rur == "Urban"),
-  family = "binomial",
+  family = "binomial"(link = "logit"),
+    nAGQ = 0,
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 res <- simulateResiduals(weev_stn_urbsubs_usc_m4)
@@ -4058,10 +4262,23 @@ sjPlot::plot_model(weev_stn_gr_usc_m6, type='diag') # looks pretty good... try l
 weev_stn_gr_usc_m7 <- lmer(log(scar_div_Juneheight + 0.1) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
   data = weevil_both %>% filter(scar_div_Juneheight_binary == 1 & Urb_Rur == "Urban"),
   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
-sjPlot::plot_model(weev_stn_gr_usc_m7, type='diag') # looks the same as cube root but maybe a little better?
+sjPlot::plot_model(weev_stn_gr_usc_m7, type='diag') # looks the same as cube root but maybe a little better? still singular though...Take out block
 
-car::Anova(weev_stn_gr_usc_m6) #nothing sig
-car::Anova(weev_stn_gr_usc_m7) #nothing sig
+weev_stn_gr_usc_m8 <- lmer(log(scar_div_Juneheight) ~ (1|Population/Family) +  Urb_score * Transect_ID,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1 & Urb_Rur == "Urban"),  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... take out Fam
+
+weev_stn_gr_usc_m9 <- lmer(log(scar_div_Juneheight) ~ (1|Block) + (1|Population) + Urb_score * Transect_ID,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1 & Urb_Rur == "Urban"),  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) #  singular... take out block
+
+weev_stn_gr_usc_m10 <- lmer(log(scar_div_Juneheight) ~ (1|Population) + Urb_score * Transect_ID,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1 & Urb_Rur == "Urban"),  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) #  singular... 
+
+
+# car::Anova(weev_stn_gr_usc_m7) # nothing sig - very similar to model below
+# car::Anova(weev_stn_gr_usc_m9) # nothing sig 
+# 
+# AIC(weev_stn_gr_usc_m7, weev_stn_gr_usc_m9) # model 9 significantly higher AIC...
+# 
 
 
 
@@ -4190,12 +4407,13 @@ weevil_both$Scar_length_cm_binary[weevil_both$Scar_length_cm_binary > 0] <- 1
 
 weev_gr_city_m3 <- glmer((Scar_length_cm_binary) ~ (1|Block) + (1|Population/Family) + City_dist,
   data = weevil_both,
-  family = "binomial",
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 res <- simulateResiduals(weev_gr_city_m3)
 plot(res)
-# looks great! though is singular...
+# looks great! 
 summary(weev_gr_city_m3)
 
 car::Anova(weev_gr_city_m3) # not sig- so, whether the plant was attacked by weevils not associated with urbanization
@@ -4219,11 +4437,29 @@ sjPlot::plot_model(weev_gr_city_m6, type='diag') # still r-skew... try log
 weev_gr_city_m7 <- lmer(log(Scar_length_cm) ~ (1|Block) + (1|Population/Family) + City_dist,
   data = weevil_both %>% filter(Scar_length_cm_binary == 1),
   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
-sjPlot::plot_model(weev_gr_city_m7, type='diag') # much better 
+sjPlot::plot_model(weev_gr_city_m7, type='diag') # much better  still singular though. Take out block
 
-car::Anova(weev_gr_city_m7) #not sig
+weev_gr_city_m8 <- lmer(log(Scar_length_cm) ~ (1|Population/Family) + City_dist,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... take out Fam
 
+weev_gr_city_m9 <- lmer(log(Scar_length_cm) ~ (1|Block) + (1|Population) + City_dist,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... take out block
 
+weev_gr_city_m10 <- lmer(log(Scar_length_cm) ~ (1|Population) + City_dist,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... 
+
+# 
+# 
+# car::Anova(weev_gr_city_m7) #not sig - very similar to model below
+# car::Anova(weev_gr_city_m9) #not sig
+# 
+# AIC(weev_gr_city_m7, weev_gr_city_m9) # model 9 significantly lower AIC...
+# 
+# 
+# 
 
 
 # GRADIENT / URB SCORE-----
@@ -4242,13 +4478,13 @@ sjPlot::plot_model(weev_gr_usc_m2, type = "diag") # sqrt, cube root, log still l
 ## THEN I'LL USE >0 DATA AND LOOK AT QUANTITATIVE MEASUREMENTS
 weev_gr_usc_m3 <- glmer((Scar_length_cm_binary) ~ (1|Block) + (1|Population/Family) + Urb_score,
   data = weevil_both,
-  family = "binomial",
+  family = "binomial"(link = "logit"),
   nAGQ = 0,
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 res <- simulateResiduals(weev_gr_usc_m3)
 plot(res)
-# looks great! though is singular...
+# looks great! 
 summary(weev_gr_usc_m3)
 
 car::Anova(weev_gr_usc_m3) # not sig- so, whether the plant was attacked by weevils not associated with urbanization
@@ -4272,9 +4508,25 @@ sjPlot::plot_model(weev_gr_usc_m6, type='diag') # still r-skew... try log
 weev_gr_usc_m7 <- lmer(log(Scar_length_cm) ~ (1|Block) + (1|Population/Family) + Urb_score,
   data = weevil_both %>% filter(Scar_length_cm_binary == 1),
   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
-sjPlot::plot_model(weev_gr_usc_m7, type='diag') # much better but qqplot suspicious... good enough, I guess
+sjPlot::plot_model(weev_gr_usc_m7, type='diag') # much better but qqplot suspicious... good enough, I guess still singular though. Take out block
 
-car::Anova(weev_gr_usc_m7) #not sig
+weev_gr_usc_m8 <- lmer(log(Scar_length_cm) ~ (1|Population/Family) + Urb_score,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... take out /Fam
+
+weev_gr_usc_m9 <- lmer(log(Scar_length_cm) ~ (1|Block) + (1|Population) + Urb_score,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... take out block
+
+weev_gr_usc_m10 <- lmer(log(Scar_length_cm) ~ (1|Population) + Urb_score,
+  data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... 
+# 
+# car::Anova(weev_gr_usc_m7) #not sig - very similar to model below
+# car::Anova(weev_gr_usc_m9) #not sig
+# 
+# AIC(weev_gr_usc_m7, weev_gr_usc_m9) # model 9 significantly lower AIC...
+
 
 
 
@@ -4300,7 +4552,8 @@ sjPlot::plot_model(weev_urbsubs_city_m3, type = "diag") # still very right-skewe
 ## THEN I'LL USE >0 DATA AND LOOK AT QUANTITATIVE MEASUREMENTS
 weev_urbsubs_city_m4 <- glmer((Scar_length_cm_binary) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
   data = weevil_both %>% filter(Urb_Rur == "Urban"),
-  family = "binomial",
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 res <- simulateResiduals(weev_urbsubs_city_m4)
@@ -4329,11 +4582,28 @@ sjPlot::plot_model(weev_urbsubs_city_m6, type='diag') # looks pretty good! try l
 weev_urbsubs_city_m7 <- lmer(log(Scar_length_cm + 0.1) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
   data = weevil_both %>% filter(Scar_length_cm_binary == 1 & Urb_Rur == "Urban"),
   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
-sjPlot::plot_model(weev_urbsubs_city_m7, type='diag') # looks the same as cube root but maybe a little better? a bit of kurtosis though
+sjPlot::plot_model(weev_urbsubs_city_m7, type='diag') # looks the same as cube root but maybe a little better? a bit of kurtosis thoughstill singular though. Take out block
 
-car::Anova(weev_urbsubs_city_m6) # transect sig!
-car::Anova(weev_urbsubs_city_m7) # transect sig!
+weev_urbsubs_city_m8 <- lmer(log(Scar_length_cm) ~ (1|Population/Family) + City_dist* Transect_ID,
+  data = weevil_both %>% filter(Scar_length_cm_binary == 1 & Urb_Rur == "Urban"),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... take out Fam
 
+weev_urbsubs_city_m9 <- lmer(log(Scar_length_cm) ~ (1|Block) +  (1|Population) + City_dist* Transect_ID,
+  data = weevil_both %>% filter(Scar_length_cm_binary == 1 & Urb_Rur == "Urban"),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... take out block too
+
+weev_urbsubs_city_m10 <- lmer(log(Scar_length_cm) ~  (1|Population) + City_dist* Transect_ID,
+  data = weevil_both %>% filter(Scar_length_cm_binary == 1 & Urb_Rur == "Urban"),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... 
+
+
+
+
+# car::Anova(weev_urbsubs_city_m7) # transect sig - very similar to model below
+# car::Anova(weev_urbsubs_city_m9) # transect sig
+# 
+# AIC(weev_urbsubs_city_m7, weev_urbsubs_city_m9) # model 9 significantly higher AIC...
+# 
 
 
 
@@ -4369,7 +4639,8 @@ sjPlot::plot_model(weev_urbsubs_usc_m3, type = "diag") # still very right-skewed
 ## THEN I'LL USE >0 DATA AND LOOK AT QUANTITATIVE MEASUREMENTS
 weev_urbsubs_usc_m4 <- glmer((Scar_length_cm_binary) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
   data = weevil_both %>% filter(Urb_Rur == "Urban"),
-  family = "binomial",
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 res <- simulateResiduals(weev_urbsubs_usc_m4)
@@ -4398,10 +4669,25 @@ sjPlot::plot_model(weev_urbsubs_usc_m6, type='diag') # looks pretty good... try 
 weev_urbsubs_usc_m7 <- lmer(log(Scar_length_cm + 0.1) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
   data = weevil_both %>% filter(Scar_length_cm_binary == 1 & Urb_Rur == "Urban"),
   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
-sjPlot::plot_model(weev_urbsubs_usc_m7, type='diag') # looks the same as cube root but maybe a little better? some kurtosis though
+sjPlot::plot_model(weev_urbsubs_usc_m7, type='diag') # looks the same as cube root but maybe a little better? some kurtosis though still singular  Take out block
 
-car::Anova(weev_urbsubs_usc_m6) # transect sig!
-car::Anova(weev_urbsubs_usc_m7) # transect sig!
+weev_urbsubs_usc_m8 <- lmer(log(Scar_length_cm) ~ (1|Population/Family) + Urb_score* Transect_ID,
+  data = weevil_both %>% filter(Scar_length_cm_binary == 1 & Urb_Rur == "Urban"),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... take out Fam
+
+weev_urbsubs_usc_m9 <- lmer(log(Scar_length_cm) ~ (1|Block) +  (1|Population) + Urb_score* Transect_ID,
+  data = weevil_both %>% filter(Scar_length_cm_binary == 1 & Urb_Rur == "Urban"),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... take out block too
+
+weev_urbsubs_usc_m10 <- lmer(log(Scar_length_cm) ~  (1|Population) + Urb_score* Transect_ID,
+  data = weevil_both %>% filter(Scar_length_cm_binary == 1 & Urb_Rur == "Urban"),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... 
+
+# car::Anova(weev_urbsubs_usc_m7) # transect sig - very similar to model below
+# car::Anova(weev_urbsubs_usc_m9) # transect marginally sig
+# 
+# AIC(weev_urbsubs_usc_m7, weev_urbsubs_usc_m9) # model 9 significantly higher AIC...
+# 
 
 
 
@@ -4568,7 +4854,7 @@ herbivory_both_2020$Herbivory.July_mean_binary[herbivory_both_2020$Herbivory.Jul
 
 herb2020_gr_dist_m5 <- glmer((Herbivory.July_mean_binary) ~ (1|Block) + (1|Population/Family) + City_dist,
   data = herbivory_both_2020,
-  family = "binomial",
+  family = "binomial"(link = "logit"),
   nAGQ = 0,
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
@@ -4648,7 +4934,7 @@ testZeroInflation(herb2020_gr_usc_m4)
 # recode plants as having height or not
 herb2020_gr_usc_m5 <- glmer((Herbivory.July_mean_binary) ~ (1|Block) + (1|Population/Family) + Urb_score,
   data = herbivory_both_2020,
-  family = "binomial",
+  family = "binomial"(link="logit"),
   nAGQ = 0,
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
@@ -4728,7 +5014,7 @@ testZeroInflation(herb2020_urb_dist_m4)
 
 herb2020_urb_dist_m5 <- glmer((Herbivory.July_mean_binary) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
   data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
-  family = "binomial",
+  family = "binomial"(link="logit"),
   nAGQ = 0,
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
@@ -4810,7 +5096,7 @@ testZeroInflation(herb2020_urb_usc_m4)
 
 herb2020_urb_usc_m5 <- glmer((Herbivory.July_mean_binary) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
   data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
-  family = "binomial",
+  family = "binomial"(link="logit"),
   nAGQ = 0,
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
@@ -4945,7 +5231,7 @@ herbivory_both_2020$Herbivory.Sept_mean_binary[herbivory_both_2020$Herbivory.Sep
 
 herb2020.S_gr_dist_m5 <- glmer((Herbivory.Sept_mean_binary) ~ (1|Block) + (1|Population/Family) + City_dist,
   data = herbivory_both_2020,
-  family = "binomial",
+  family = "binomial"(link="logit"),
   nAGQ = 0,
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
@@ -4970,9 +5256,25 @@ sjPlot::plot_model(herb2020.S_gr_dist_m7, type='diag') # still right-skewed... t
 herb2020.S_gr_dist_m8 <- lmer(log(Herbivory.Sept_mean) ~ (1|Block) + (1|Population/Family) + City_dist,
   data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1),
   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
-sjPlot::plot_model(herb2020.S_gr_dist_m8, type='diag') # looks good
+sjPlot::plot_model(herb2020.S_gr_dist_m8, type='diag') # looks good but still singular... try removing block
 
-car::Anova(herb2020.S_gr_dist_m8) # not sig
+herb2020.S_gr_dist_m9 <- lmer(log(Herbivory.Sept_mean) ~  (1|Population/Family) + City_dist,
+  data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... remove Fam instead
+
+herb2020.S_gr_dist_m10 <- lmer(log(Herbivory.Sept_mean) ~ (1|Population) + (1|Block) + City_dist,
+  data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... remove block
+
+herb2020.S_gr_dist_m11 <- lmer(log(Herbivory.Sept_mean) ~ (1|Population) + City_dist,
+  data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... 
+
+# car::Anova(herb2020.S_gr_dist_m8) # identical to anova below
+# car::Anova(herb2020.S_gr_dist_m10)
+# 
+# AIC(herb2020.S_gr_dist_m8, herb2020.S_gr_dist_m10) # not-singular model has lower AIC
+
 
 
 
@@ -5023,7 +5325,7 @@ plot(res)
 # recode plants as having height or not
 herb2020.S_gr_usc_m5 <- glmer((Herbivory.Sept_mean_binary) ~ (1|Block) + (1|Population/Family) + Urb_score,
   data = herbivory_both_2020,
-  family = "binomial",
+  family = "binomial"(link = "logit"),
   nAGQ = 0,
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
@@ -5048,11 +5350,21 @@ sjPlot::plot_model(herb2020.S_gr_usc_m7, type='diag') # still right-skewed... tr
 herb2020.S_gr_usc_m8 <- lmer(log(Herbivory.Sept_mean) ~ (1|Block) + (1|Population/Family) + Urb_score,
   data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1),
   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
-sjPlot::plot_model(herb2020.S_gr_usc_m8, type='diag') # looks great!
+sjPlot::plot_model(herb2020.S_gr_usc_m8, type='diag') # looks great! but still singular... try removing block
 
-car::Anova(herb2020.S_gr_usc_m8) # not sig
+herb2020.S_gr_usc_m9 <- lmer(log(Herbivory.Sept_mean) ~  (1|Population/Family) + Urb_score,
+  data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... remove Pop/Fam instead
 
+herb2020.S_gr_usc_m10 <- lmer(log(Herbivory.Sept_mean) ~ (1|Block) + Urb_score,
+  data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(herb2020.S_gr_usc_m10, type='diag') # looks good
 
+car::Anova(herb2020.S_gr_usc_m8) # identical to anova below
+car::Anova(herb2020.S_gr_usc_m10)
+
+AIC(herb2020.S_gr_usc_m8, herb2020.S_gr_usc_m10) # not-singular model has lower AIC
 
 
 
@@ -5129,9 +5441,22 @@ sjPlot::plot_model(herb2020.S_urb_dist_m7, type='diag') # still right-skewed... 
 herb2020.S_urb_dist_m8 <- lmer(log(Herbivory.Sept_mean) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
   data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1),
   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
-sjPlot::plot_model(herb2020.S_urb_dist_m8, type='diag') # looks good
+sjPlot::plot_model(herb2020.S_urb_dist_m8, type='diag') # looks good but still singular... try removing block
 
-car::Anova(herb2020.S_urb_dist_m8) # nothing sig
+herb2020.S_urb_dist_m9 <- lmer(log(Herbivory.Sept_mean) ~  (1|Population/Family) + City_dist * Transect_ID,
+  data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... try removing Pop/Fam
+
+herb2020.S_urb_dist_m10 <- lmer(log(Herbivory.Sept_mean) ~ (1|Block) + City_dist * Transect_ID,
+  data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(herb2020.S_urb_dist_m10, type='diag') # looks good 
+
+car::Anova(herb2020.S_urb_dist_m8) # identical to ANOVA below
+car::Anova(herb2020.S_urb_dist_m10)
+
+AIC(herb2020.S_urb_dist_m8, herb2020.S_urb_dist_m10) # m10 >4 lower AIC
+
 
 # main effects
 herb2020.S_urb_dist_m8_ME <- lmer(log(Herbivory.Sept_mean) ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
@@ -5186,7 +5511,7 @@ testZeroInflation(herb2020.S_urb_usc_m4)
 
 herb2020.S_urb_usc_m5 <- glmer((Herbivory.Sept_mean_binary) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
   data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
-  family = "binomial",
+  family = "binomial"(link = "logit"),
   nAGQ = 0,
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
@@ -5211,9 +5536,25 @@ sjPlot::plot_model(herb2020.S_urb_usc_m7, type='diag') # still right-skewed... t
 herb2020.S_urb_usc_m8 <- lmer(log(Herbivory.Sept_mean) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
   data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1),
   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
-sjPlot::plot_model(herb2020.S_urb_usc_m8, type='diag') # looks great!
+sjPlot::plot_model(herb2020.S_urb_usc_m8, type='diag') # looks great  but still singular... try removing block
 
-car::Anova(herb2020.S_urb_usc_m8) # nothing sig
+herb2020.S_urb_usc_m9 <- lmer(log(Herbivory.Sept_mean) ~  (1|Population/Family) + Urb_score * Transect_ID,
+  data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))) # still singular... try removing Pop/Fam
+
+herb2020.S_urb_usc_m10 <- lmer(log(Herbivory.Sept_mean) ~ (1|Block) + Urb_score * Transect_ID,
+  data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(herb2020.S_urb_usc_m10, type='diag') # looks good 
+
+car::Anova(herb2020.S_urb_usc_m8) # identical to ANOVA below
+car::Anova(herb2020.S_urb_usc_m10)
+
+AIC(herb2020.S_urb_usc_m8, herb2020.S_urb_usc_m10) # m10 >4 lower AIC
+
+
+
+
 
 # main effects
 herb2020.S_urb_usc_m8_ME <- lmer(log(Herbivory.Sept_mean) ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
@@ -5269,14 +5610,42 @@ AIC(herb2020.S_urb_usc_m8, herb2020.S_urb_usc_m8_ME)
 # GRADIENT / CITY_DIST-----
 rgr_gr_city_m1 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + City_dist,
   data = heights_both_2020, REML = F)
-sjPlot::plot_model(rgr_gr_city_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)
+sjPlot::plot_model(rgr_gr_city_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)... try taking out block
+
+rgr_gr_city_m2 <- lmer(rel_growth_rate ~  (1|Population/Family) + City_dist,
+  data = heights_both_2020, REML = F)
+sjPlot::plot_model(rgr_gr_city_m2, type = "diag") # still singular... take out Pop/Fam
+
+rgr_gr_city_m3 <- lmer(rel_growth_rate ~ (1|Block) + City_dist,
+  data = heights_both_2020, REML = F)
+sjPlot::plot_model(rgr_gr_city_m3, type = "diag") # not singular. looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)..
+
+car::Anova(rgr_gr_city_m1) # identical to anova below
+car::Anova(rgr_gr_city_m3)
+
+AIC(rgr_gr_city_m1, rgr_gr_city_m3) # m3 has 4 AIC lower
+
+
 
 
 
 # GRADIENT / URB SCORE-----
 rgr_gr_usc_m1 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + Urb_score,
   data = heights_both_2020, REML = F)
-sjPlot::plot_model(rgr_gr_usc_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)
+sjPlot::plot_model(rgr_gr_usc_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)... take out block
+
+rgr_gr_usc_m2 <- lmer(rel_growth_rate ~  (1|Population/Family) + Urb_score,
+  data = heights_both_2020, REML = F)
+sjPlot::plot_model(rgr_gr_usc_m2, type = "diag") # still singular... take out Pop/Fam
+
+rgr_gr_usc_m3 <- lmer(rel_growth_rate ~ (1|Block) + Urb_score,
+  data = heights_both_2020, REML = F)
+sjPlot::plot_model(rgr_gr_usc_m3, type = "diag") # not singular. looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)..
+
+car::Anova(rgr_gr_usc_m1) # nearly identical to anova below
+car::Anova(rgr_gr_usc_m3)
+
+AIC(rgr_gr_usc_m1, rgr_gr_usc_m3) # m3 has 4 AIC lower
 
 
 
@@ -5284,7 +5653,26 @@ sjPlot::plot_model(rgr_gr_usc_m1, type = "diag") # is singular, looks normal exc
 rgr_urbsubs_city_m1 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
   REML = F)
-sjPlot::plot_model(rgr_urbsubs_city_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)
+sjPlot::plot_model(rgr_urbsubs_city_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)... take out block
+
+rgr_urbsubs_city_m2 <- lmer(rel_growth_rate ~  (1|Population/Family) + City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F) # is singular,  take out Pop/Fam
+
+rgr_urbsubs_city_m3 <- lmer(rel_growth_rate ~ (1|Block) + City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)  # is singular... take out block and pop/fam
+
+rgr_urbsubs_city_m4 <- lm(rel_growth_rate ~  City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"))
+sjPlot::plot_model(rgr_urbsubs_city_m4, type = "diag") # looks fine
+
+
+car::Anova(rgr_urbsubs_city_m1) # nearly identical to anova below
+car::Anova(rgr_urbsubs_city_m4)
+
+AIC(rgr_urbsubs_city_m1, rgr_urbsubs_city_m4) # m3 has >4 AIC lower
+
 
 # main effects
 rgr_urbsubs_city_m1_ME <-  lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
@@ -5298,7 +5686,30 @@ rgr_urbsubs_city_m1_ME <-  lmer(rel_growth_rate ~ (1|Block) + (1|Population/Fami
 rgr_urbsubs_usc_m1 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
   REML = F)
-sjPlot::plot_model(rgr_urbsubs_usc_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)
+sjPlot::plot_model(rgr_urbsubs_usc_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)... take out block
+
+rgr_urbsubs_usc_m2 <- lmer(rel_growth_rate ~  (1|Population/Family) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F) # is singular,  take out Pop/Fam
+
+rgr_urbsubs_usc_m3 <- lmer(rel_growth_rate ~ (1|Block) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)  # is singular... take out block and pop/fam
+
+rgr_urbsubs_usc_m4 <- lm(rel_growth_rate ~  Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"))
+sjPlot::plot_model(rgr_urbsubs_usc_m4, type = "diag") # looks fine
+
+
+car::Anova(rgr_urbsubs_usc_m1) # nearly identical to anova below
+car::Anova(rgr_urbsubs_usc_m4)
+
+AIC(rgr_urbsubs_usc_m1, rgr_urbsubs_usc_m4) # m4 has >4 AIC lower
+
+
+
+
+
 
 # main effects
 rgr_urbsubs_usc_m1_ME <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
@@ -5468,8 +5879,41 @@ rametsJ_urbsubs_urbsubs_m1 <- glmer(Ramets_June ~ (1|Block) + (1|Population/Fami
   control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5)))
 res <- simulateResiduals(rametsJ_urbsubs_urbsubs_m1)
-plot(res)
-# looks good!
+plot(res) # looks good but is singular... take out block
+
+rametsJ_urbsubs_urbsubs_m2 <- glmer(Ramets_June ~ (1|Population/Family) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))) # still singular... take out Fam
+
+rametsJ_urbsubs_urbsubs_m3 <- glmer(Ramets_June ~  (1|Population) + (1|Block) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+res <- simulateResiduals(rametsJ_urbsubs_urbsubs_m3)
+plot(res) # # dispersion significant...
+testOverdispersion(rametsJ_urbsubs_urbsubs_m3) # add ID as random effect
+
+rametsJ_urbsubs_urbsubs_m4 <- glmer(Ramets_June ~ (1|Block) +(1|Population) + (1|ID) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))) # singular... take out block
+
+rametsJ_urbsubs_urbsubs_m5 <- glmer(Ramets_June ~ (1|Population) + (1|ID) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))) # singular... 
+
+
+# car::Anova(rametsJ_urbsubs_urbsubs_m1) # very similar results to below model! Urb_score is sig and transect is marg sig
+# car::Anova(rametsJ_urbsubs_urbsubs_m4)
+# 
+# AIC(rametsJ_urbsubs_urbsubs_m1, rametsJ_urbsubs_urbsubs_m4) # m4 6 AIC below m1
+# 
 
 # main effects
 rametsJ_urbsubs_urbsubs_m1_ME <- glmer(Ramets_June ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
@@ -5524,8 +5968,27 @@ rametsS_gr_city_m1 <- glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + Ci
   control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5)))
 res <- simulateResiduals(rametsS_gr_city_m1)
-plot(res)
-# looks good!
+plot(res) # looks good but singular... take out block
+
+rametsS_gr_city_m2 <- glmer(Ramets_Sept ~  (1|Population/Family) + City_dist,
+  data = heights_both_2020,
+  family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))) # singular... take out Pop/fam
+
+rametsS_gr_city_m3 <- glmer(Ramets_Sept ~ (1|Block) +  City_dist,
+  data = heights_both_2020,
+  family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+res <- simulateResiduals(rametsS_gr_city_m3)
+plot(res) # looks good 
+
+car::Anova(rametsS_gr_city_m1) # nearly similar result... though this is marg sig and latter is sig (p = 0.05002 vs 0.04908)
+car::Anova(rametsS_gr_city_m3)
+
+AIC(rametsS_gr_city_m1, rametsS_gr_city_m3) # m3 has 4 fewer AIC than m1
+
 
 
 
@@ -5538,7 +6001,31 @@ rametsS_gr_usc_m1 <- glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + Urb
                             optCtrl=list(maxfun=2e5)))
 res <- simulateResiduals(rametsS_gr_usc_m1)
 plot(res)
-# looks good! 
+# looks good! though singular... take out block
+
+rametsS_gr_usc_m2 <- glmer(Ramets_Sept ~  (1|Population/Family) + Urb_score,
+  data = heights_both_2020,
+  family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))) # singular... take out Pop/fam
+
+rametsS_gr_usc_m3 <- glmer(Ramets_Sept ~ (1|Block) +  Urb_score,
+  data = heights_both_2020,
+  family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+res <- simulateResiduals(rametsS_gr_usc_m3)
+plot(res) # looks good 
+
+car::Anova(rametsS_gr_usc_m1) # nearly similar results
+car::Anova(rametsS_gr_usc_m3)
+
+AIC(rametsS_gr_usc_m1, rametsS_gr_usc_m3) # m3 has 4 fewer AIC than m1
+
+
+
+
+
 
 
 
@@ -5549,8 +6036,35 @@ rametsS_urbsubs_city_m1 <- glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family)
   control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5)))
 res <- simulateResiduals(rametsS_urbsubs_city_m1)
-plot(res)
-# looks good
+plot(res) # looks good though singular... take out block
+
+rametsS_urbsubs_city_m2 <- glmer(Ramets_Sept ~  (1|Population/Family) + City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))) # singular... take out pop/fam
+
+rametsS_urbsubs_city_m3 <- glmer(Ramets_Sept ~ (1|Block) + City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))) # not converging... take out block too?
+
+rametsS_urbsubs_city_m4 <- glm(Ramets_Sept ~  City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson) 
+res <- simulateResiduals(rametsS_urbsubs_city_m4)
+plot(res) # looks good
+
+car::Anova(rametsS_urbsubs_city_m1) # nearly identical- both have city_dist as sig
+car::Anova(rametsS_urbsubs_city_m4)
+
+AIC(rametsS_urbsubs_city_m1, rametsS_urbsubs_city_m4) # m4 >5 AIC below m1
+
+
+
+
+
 
 # main effects
 rametsS_urbsubs_city_m1_ME <- glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
@@ -5569,7 +6083,33 @@ rametsS_urbsubs_urbsubs_m1 <- glmer(Ramets_Sept ~ (1|Block) + (1|Population/Fami
                             optCtrl=list(maxfun=2e5)))
 res <- simulateResiduals(rametsS_urbsubs_urbsubs_m1)
 plot(res)
-# looks good!
+# looks good but singular... take out block
+
+rametsS_urbsubs_usc_m2 <- glmer(Ramets_Sept ~  (1|Population/Family) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))) # singular... take out pop/fam
+
+rametsS_urbsubs_usc_m3 <- glmer(Ramets_Sept ~ (1|Block) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))) 
+res <- simulateResiduals(rametsS_urbsubs_usc_m3)
+plot(res) # looks good
+
+
+car::Anova(rametsS_urbsubs_urbsubs_m1) # nearly identical
+car::Anova(rametsS_urbsubs_usc_m3)
+
+AIC(rametsS_urbsubs_urbsubs_m1, rametsS_urbsubs_usc_m3) # m4 4 AIC below m1
+
+
+
+
+
+
 
 # main effects
 rametsS_urbsubs_urbsubs_m1_ME <- glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
@@ -5908,7 +6448,7 @@ heights_19_20$Total_Height_Sept_binary[heights_19_20$Total_Height_Sept_binary > 
 
 height2_gr_dist_m4 <- glmer((Total_Height_Sept_binary) ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
   data = heights_19_20,
-  family = "binomial",
+  family = "binomial"(link = "logit"),
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 res <- simulateResiduals(height2_gr_dist_m4)
@@ -5988,7 +6528,7 @@ sjPlot::plot_model(height2_gr_usc_m2, type='diag')
 
 height2_gr_usc_m3 <- glmer((Total_Height_Sept_binary) ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
   data = heights_19_20,
-  family = "binomial",
+  family = "binomial"(link = "logit"),
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 res <- simulateResiduals(height2_gr_usc_m3)
@@ -6054,7 +6594,7 @@ sjPlot::plot_model(height2_urb_dist_m2, type='diag')
 
 height2_urb_dist_m3 <- glmer((Total_Height_Sept_binary) ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
   data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"),
-  family = "binomial",
+  family = "binomial"(link = "logit"),
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 res <- simulateResiduals(height2_urb_dist_m3)
@@ -6115,7 +6655,7 @@ sjPlot::plot_model(height2_urb_usc_m2, type='diag')
 
 height2_urb_usc_m3 <- glmer((Total_Height_Sept_binary) ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
   data = heights_19_20 %>% dplyr::filter(., Transect_ID != "Rural"),
-  family = "binomial",
+  family = "binomial"(link = "logit"),
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 res <- simulateResiduals(height2_urb_usc_m3)
@@ -6585,7 +7125,7 @@ AIC((ramets2_urb_usc_m1),
 # Gradient / city_dist----------
 herbivory_gr_dist_m1 <- glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
   data = herbivory_19_20,
-  family = "binomial",
+  family = "binomial"(link = "logit"),
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 res <- simulateResiduals(herbivory_gr_dist_m1)
@@ -6598,7 +7138,7 @@ summary(herbivory_gr_dist_m1)
 
 herbivory_gr_dist_m2 <- glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Year) + (1|Family) + City_dist,
   data = herbivory_19_20,
-  family = "binomial",
+  family = "binomial"(link = "logit"),
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 res <- simulateResiduals(herbivory_gr_dist_m2)
 plot(res)
@@ -6608,7 +7148,7 @@ herbivory_19_20[,"FamPop"] <- paste0(herbivory_19_20$Family, "-", herbivory_19_2
 
 herbivory_gr_dist_m3 <- glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Year) + City_dist,
   data = herbivory_19_20,
-  family = "binomial",
+  family = "binomial"(link = "logit"),
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 summary(herbivory_gr_dist_m3)
