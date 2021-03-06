@@ -5706,129 +5706,296 @@ AIC(herb2020.S_urb_usc_m12, herb2020.S_urb_usc_m12_ME)
 ### lmer: diagnostics
 ```{r}
 # GRADIENT / CITY_DIST-----
-rgr_gr_city_m1 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + City_dist,
-  data = heights_both_2020, REML = F)
-sjPlot::plot_model(rgr_gr_city_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)... try taking out block
 
-diagnostic(resid(rgr_gr_city_m1)) # very kurtotic
+# rgr_gr_city_m1 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + City_dist,
+#   data = heights_both_2020, REML = F)
+# sjPlot::plot_model(rgr_gr_city_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)... try taking out block
+# 
+# diagnostic(resid(rgr_gr_city_m1)) # very kurtotic
+# 
+# rgr_gr_city_m2 <- lmer(rel_growth_rate ~  (1|Population/Family) + City_dist,
+#   data = heights_both_2020, REML = F) # still singular... take out Fam
+# 
+# rgr_gr_city_m3 <- lmer(rel_growth_rate ~ (1|Block) +(1|Population) + City_dist,
+#   data = heights_both_2020, REML = F)#  singular. take out block
+# 
+# rgr_gr_city_m4 <- lmer(rel_growth_rate ~ (1|Population) + City_dist,
+#   data = heights_both_2020, REML = F)#  singular...
+# 
+# # try glmmtmb
+# test1 <- glmmTMB(rel_growth_rate ~ (1|Block) + (1|Population/Family) + City_dist,
+#   data = heights_both_2020,
+#   family = gaussian) # singular. take out block
+# 
+# test1 <- glmmTMB(rel_growth_rate ~ (1|Population/Family) + City_dist,
+#   data = heights_both_2020,
+#   family = gaussian) # singular. take out Family
+# 
+# rgr_gr_city_m5 <- glmmTMB(rel_growth_rate ~ (1|Population) + City_dist,
+#   data = heights_both_2020,
+#   family = gaussian) # singular...
 
-rgr_gr_city_m2 <- lmer(rel_growth_rate ~  (1|Population/Family) + City_dist,
-  data = heights_both_2020, REML = F) # still singular... take out Fam
+# try binomial, then removing zeroes and going from there
 
-rgr_gr_city_m3 <- lmer(rel_growth_rate ~ (1|Block) +(1|Population) + City_dist,
-  data = heights_both_2020, REML = F)#  singular. take out block
 
-rgr_gr_city_m4 <- lmer(rel_growth_rate ~ (1|Population) + City_dist,
-  data = heights_both_2020, REML = F)#  singular...
+# TAKING OUT PLANTS W/ZERO SCAR LENGTH & FITTING A BINOMIAL MODEL
+## THEN I'LL USE >0 DATA AND LOOK AT QUANTITATIVE MEASUREMENTS
 
-# try glmmtmb
-test1 <- glmmTMB(rel_growth_rate ~ (1|Block) + (1|Population/Family) + City_dist,
+# recode plants as having height or not
+heights_both_2020$rel_growth_rate_binary <- heights_both_2020$rel_growth_rate
+heights_both_2020$rel_growth_rate_binary[heights_both_2020$rel_growth_rate > 0] <- 1
+heights_both_2020$rel_growth_rate_binary[heights_both_2020$rel_growth_rate <= 0] <- 0
+
+
+rgr_gr_city_m6 <- glmer((rel_growth_rate_binary) ~ (1|Block) + (1|Population/Family) + City_dist,
   data = heights_both_2020,
-  family = gaussian) # singular. take out block
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
-test1 <- glmmTMB(rel_growth_rate ~ (1|Population/Family) + City_dist,
-  data = heights_both_2020,
-  family = gaussian) # singular. take out Family
+res <- simulateResiduals(rgr_gr_city_m6)
+plot(res)
+# looks great! 
+summary(rgr_gr_city_m6)
 
-rgr_gr_city_m5 <- glmmTMB(rel_growth_rate ~ (1|Population) + City_dist,
-  data = heights_both_2020,
-  family = gaussian) # singular...
+car::Anova(rgr_gr_city_m6) # not sig
+
+
+# rgr_gr_city_m7 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + City_dist,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1),
+#   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(rgr_gr_city_m7, type='diag') #very right-skewed but otherwise aligns well with normal curve... try sqrt
+
+rgr_gr_city_m8 <- lmer(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(rgr_gr_city_m8, type='diag') # looks great!
+
+
+
 
 
 
 # GRADIENT / URB SCORE-----
-rgr_gr_usc_m1 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + Urb_score,
-  data = heights_both_2020, REML = F)
-sjPlot::plot_model(rgr_gr_usc_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)... take out block
 
-rgr_gr_usc_m2 <- lmer(rel_growth_rate ~  (1|Population/Family) + Urb_score,
-  data = heights_both_2020, REML = F)
-sjPlot::plot_model(rgr_gr_usc_m2, type = "diag") # still singular... take out Pop/Fam
+# rgr_gr_usc_m1 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + Urb_score,
+#   data = heights_both_2020, REML = F)
+# sjPlot::plot_model(rgr_gr_usc_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)... take out block
+# 
+# rgr_gr_usc_m2 <- lmer(rel_growth_rate ~  (1|Population/Family) + Urb_score,
+#   data = heights_both_2020, REML = F)
+# sjPlot::plot_model(rgr_gr_usc_m2, type = "diag") # still singular... take out Pop/Fam
+# 
+# rgr_gr_usc_m3 <- lmer(rel_growth_rate ~ (1|Block) + Urb_score,
+#   data = heights_both_2020, REML = F)
+# sjPlot::plot_model(rgr_gr_usc_m3, type = "diag") # not singular. looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)..
+# 
+# diagnostic(resid(rgr_gr_usc_m3)) # high kurtosis
 
-rgr_gr_usc_m3 <- lmer(rel_growth_rate ~ (1|Block) + Urb_score,
-  data = heights_both_2020, REML = F)
-sjPlot::plot_model(rgr_gr_usc_m3, type = "diag") # not singular. looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)..
 
-car::Anova(rgr_gr_usc_m1) # nearly identical to anova below
-car::Anova(rgr_gr_usc_m3)
+# try binomial, then removing zeroes and going from there
 
-AIC(rgr_gr_usc_m1, rgr_gr_usc_m3) # m3 has 4 AIC lower
+# TAKING OUT PLANTS W/negative RGR & FITTING A BINOMIAL MODEL
+## THEN I'LL USE >0 DATA AND LOOK AT QUANTITATIVE MEASUREMENTS
+
+rgr_gr_usc_m6 <- glmer((rel_growth_rate_binary) ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_both_2020,
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
+res <- simulateResiduals(rgr_gr_usc_m6)
+plot(res)
+# looks great! 
+summary(rgr_gr_usc_m6)
+
+car::Anova(rgr_gr_usc_m6) # not sig
+
+
+# rgr_gr_usc_m7 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + Urb_score,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1),
+#   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(rgr_gr_usc_m7, type='diag') #very right-skewed but otherwise aligns well with normal curve... try sqrt
+
+rgr_gr_usc_m8 <- lmer(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(rgr_gr_usc_m8, type='diag') # looks great!
+
 
 
 
 # URB SUBTRANSECTS / CITY_DIST-----
-rgr_urbsubs_city_m1 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
-  REML = F)
-sjPlot::plot_model(rgr_urbsubs_city_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)... take out block
 
-rgr_urbsubs_city_m2 <- lmer(rel_growth_rate ~  (1|Population/Family) + City_dist * Transect_ID,
-  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
-  REML = F) # is singular,  take out Pop/Fam
+# rgr_urbsubs_city_m1 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F)
+# sjPlot::plot_model(rgr_urbsubs_city_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)... take out block
+# 
+# rgr_urbsubs_city_m2 <- lmer(rel_growth_rate ~  (1|Population/Family) + City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F) # is singular,  take out Pop/Fam
+# 
+# rgr_urbsubs_city_m3 <- lmer(rel_growth_rate ~ (1|Block) + City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F)  # is singular... take out block and pop/fam
+# 
+# rgr_urbsubs_city_m4 <- lm(rel_growth_rate ~  City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"))
+# sjPlot::plot_model(rgr_urbsubs_city_m4, type = "diag")
+# 
+# diagnostic(resid(rgr_urbsubs_city_m4)) # high kurtosis
 
-rgr_urbsubs_city_m3 <- lmer(rel_growth_rate ~ (1|Block) + City_dist * Transect_ID,
-  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
-  REML = F)  # is singular... take out block and pop/fam
 
-rgr_urbsubs_city_m4 <- lm(rel_growth_rate ~  City_dist * Transect_ID,
-  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"))
-sjPlot::plot_model(rgr_urbsubs_city_m4, type = "diag") # looks fine
+# try binomial, then removing zeroes and going from there
 
+# TAKING OUT PLANTS W/negative RGR & FITTING A BINOMIAL MODEL
+## THEN I'LL USE >0 DATA AND LOOK AT QUANTITATIVE MEASUREMENTS
 
-car::Anova(rgr_urbsubs_city_m1) # nearly identical to anova below
-car::Anova(rgr_urbsubs_city_m4)
+rgr_urbsubs_city_m5 <- glmer((rel_growth_rate_binary) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban" ),
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
-AIC(rgr_urbsubs_city_m1, rgr_urbsubs_city_m4) # m3 has >4 AIC lower
+res <- simulateResiduals(rgr_urbsubs_city_m5)
+plot(res)
+# looks great! 
+summary(rgr_urbsubs_city_m5)
+
+car::Anova(rgr_urbsubs_city_m5) # city_dist marg sig
+
+# main effects:
+rgr_urbsubs_city_m5_ME <- glmer((rel_growth_rate_binary) ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban" ),
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+car::Anova(rgr_urbsubs_city_m5_ME) # city_dist marg sig
+
+# 
+# rgr_urbsubs_city_m6 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) +  City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+#   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(rgr_urbsubs_city_m6, type='diag') # singular... but first align it w/normal curve. do sqrt 
+# 
+# rgr_urbsubs_city_m7 <- lmer(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population/Family) +  City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+#   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(rgr_urbsubs_city_m7, type='diag') # meets expectations but still singular... try glmmTMB
+
+rgr_urbsubs_city_m8 <- glmmTMB(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population/Family) +  City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+  family = gaussian) # it works! use this
 
 
 # main effects
-rgr_urbsubs_city_m1_ME <-  lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
-  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
-  REML = F)
+# rgr_urbsubs_city_m8_ME <- glmmTMB(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population/Family) +  City_dist + Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+#   family = gaussian) # singular... take out block
 
+rgr_urbsubs_city_m8_ME.1 <- glmmTMB(sqrt(rel_growth_rate) ~ (1|Population/Family) +  City_dist + Transect_ID,
+  data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+  family = gaussian) # it works. put back block and take out fam and see how it compares to full model
+# 
+# rgr_urbsubs_city_m8_ME.2 <- glmmTMB(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population) +  City_dist + Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+#   family = gaussian)
+# 
+# car::Anova(rgr_urbsubs_city_m8)
+# car::Anova(rgr_urbsubs_city_m8_ME.1) # identical to model below!
+# car::Anova(rgr_urbsubs_city_m8_ME.2)
 
 
 
 # URB SUBTRANSECTS / URB SCORE-----
-rgr_urbsubs_usc_m1 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+
+# rgr_urbsubs_usc_m1 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F)
+# sjPlot::plot_model(rgr_urbsubs_usc_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)... take out block
+# 
+# rgr_urbsubs_usc_m2 <- lmer(rel_growth_rate ~  (1|Population/Family) + Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F) # is singular,  take out Pop/Fam
+# 
+# rgr_urbsubs_usc_m3 <- lmer(rel_growth_rate ~ (1|Block) + Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F)  # is singular... take out block and pop/fam
+# 
+# rgr_urbsubs_usc_m4 <- lm(rel_growth_rate ~  Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"))
+# sjPlot::plot_model(rgr_urbsubs_usc_m4, type = "diag") 
+# 
+# diagnostic(resid(rgr_urbsubs_usc_m4)) # high kurtosis
+
+
+# try binomial, then removing zeroes and going from there
+
+# TAKING OUT PLANTS W/negative RGR & FITTING A BINOMIAL MODEL
+## THEN I'LL USE >0 DATA AND LOOK AT QUANTITATIVE MEASUREMENTS
+
+rgr_urbsubs_usc_m5 <- glmer((rel_growth_rate_binary) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban" ),
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
+res <- simulateResiduals(rgr_urbsubs_usc_m5)
+plot(res)
+# looks great! 
+summary(rgr_urbsubs_usc_m5)
+
+car::Anova(rgr_urbsubs_usc_m5) # nothing sig
+
+# main effects:
+rgr_urbsubs_usc_m5_ME <- glmer((rel_growth_rate_binary) ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
-  REML = F)
-sjPlot::plot_model(rgr_urbsubs_usc_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)... take out block
-
-rgr_urbsubs_usc_m2 <- lmer(rel_growth_rate ~  (1|Population/Family) + Urb_score * Transect_ID,
-  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
-  REML = F) # is singular,  take out Pop/Fam
-
-rgr_urbsubs_usc_m3 <- lmer(rel_growth_rate ~ (1|Block) + Urb_score * Transect_ID,
-  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
-  REML = F)  # is singular... take out block and pop/fam
-
-rgr_urbsubs_usc_m4 <- lm(rel_growth_rate ~  Urb_score * Transect_ID,
-  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"))
-sjPlot::plot_model(rgr_urbsubs_usc_m4, type = "diag") # looks fine
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 
-car::Anova(rgr_urbsubs_usc_m1) # nearly identical to anova below
-car::Anova(rgr_urbsubs_usc_m4)
+# rgr_urbsubs_usc_m6 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) +  Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 & Urb_Rur == "Urban"),
+#   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(rgr_urbsubs_usc_m6, type='diag') #very right-skewed but otherwise aligns well with normal curve... try sqrt (also singular)
+# 
+# rgr_urbsubs_usc_m7 <- lmer(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population/Family) +  Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 & Urb_Rur == "Urban"),
+#   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(rgr_urbsubs_usc_m7, type='diag') # looks great! now address singularity... try glmmTMB
 
-AIC(rgr_urbsubs_usc_m1, rgr_urbsubs_usc_m4) # m4 has >4 AIC lower
-
-
-
-
+rgr_urbsubs_usc_m8 <- glmmTMB(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population/Family) +  Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 & Urb_Rur == "Urban"),
+  family = gaussian) # not singular! Use this
 
 
 # main effects
-rgr_urbsubs_usc_m1_ME <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
-  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
-  REML = F)
+# rgr_urbsubs_usc_m8_ME <- glmmTMB(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population/Family) +  Urb_score + Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 & Urb_Rur == "Urban"),
+#   family = gaussian) # singular... remove block
+
+rgr_urbsubs_usc_m8_ME.1 <- glmmTMB(sqrt(rel_growth_rate) ~ (1|Population/Family) +  Urb_score + Transect_ID,
+  data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+  family = gaussian) # it works. put back block and take out fam and see how it compares to full model
+
+# rgr_urbsubs_usc_m8_ME.2 <- glmmTMB(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population) +  Urb_score + Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+#   family = gaussian) # it works
+# 
+# car::Anova(rgr_urbsubs_usc_m8_ME)
+# car::Anova(rgr_urbsubs_usc_m8_ME.1) # identical to model below!
+# car::Anova(rgr_urbsubs_usc_m8_ME.2)
+
+
 
 ```
 
 ### Entire gradient: *Not sig for either
 #### City_dist
 ```{r}
-car::Anova(rgr_gr_city_m1) # not sig
+car::Anova(rgr_gr_city_m8) # not sig
 
 
 # ANy variation within families or populations?
@@ -5853,18 +6020,21 @@ write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/202
 
 #### Urb_score
 ```{r}
-car::Anova(rgr_gr_usc_m1) #not sig
+car::Anova(rgr_gr_usc_m8) #not sig
 
 ```
 
 
-### Urban subtransects: *Not sig for either
+### Urban subtransects: *Marg sig for city_dist (quant) & urb_score (quant)
 #### City_dist
 ```{r}
-car::Anova(rgr_urbsubs_city_m1) # nothing sig
-car::Anova(rgr_urbsubs_city_m1_ME) # nothing sig
-AIC(rgr_urbsubs_city_m1, rgr_urbsubs_city_m1_ME) # ME model lower AIC
+car::Anova(rgr_urbsubs_city_m5) # binomial: nothing sig
+car::Anova(rgr_urbsubs_city_m5_ME) # binomial: nothing sig
+car::Anova(rgr_urbsubs_city_m8) # quantitative: transect sig & city_dist marg sig
+car::Anova(rgr_urbsubs_city_m8_ME.1) # quantitative: transect marg sig & city_dist marg sig
 
+AIC(rgr_urbsubs_city_m8, rgr_urbsubs_city_m8_ME.1) # ME model lower AIC
+summary(rgr_urbsubs_city_m8_ME.1)
 
 # ANy variation among families or populations?
 m.1 <- lmer(rel_growth_rate ~ (1|Population/Family), data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
@@ -5899,9 +6069,13 @@ write.table(car::Anova(m.2), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PV
 
 #### Urb_score
 ```{r}
-car::Anova(rgr_urbsubs_usc_m1) # nothing sig
-car::Anova(rgr_urbsubs_usc_m1_ME) # nothing sig
-AIC(rgr_urbsubs_usc_m1, rgr_urbsubs_usc_m1_ME) # similar AIC
+car::Anova(rgr_urbsubs_usc_m5) # binomial: nothing sig
+car::Anova(rgr_urbsubs_usc_m5_ME) # binomial: nothing sig
+car::Anova(rgr_urbsubs_usc_m8) # quantitative: interaxn marg sig
+car::Anova(rgr_urbsubs_usc_m8_ME.1) # quantitative: nothing sig
+
+AIC(rgr_urbsubs_usc_m8, rgr_urbsubs_usc_m8_ME.1) # ME model lower AIC but not significant difference
+summary(rgr_urbsubs_usc_m8)
 ```
 
 
