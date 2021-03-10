@@ -34,6 +34,7 @@ library(dplyr)
 library(reshape)
 library(reshape2)
 library(DHARMa)
+library(flextable)
 library(glmmTMB)
 library(redres)
 library(tidyr)
@@ -117,6 +118,298 @@ diagnostic<-function(x){
 #  return( list(p1, p2, p3, p4) )
 #     
 # }
+
+
+
+##### Export ANOVAs
+# OLD-----
+# flowering_gr_city_m1.tidy      <- tidy(car::Anova(flowering_gr_city_m1      ))
+# flowering_gr_urb_m1.tidy       <- tidy(car::Anova(flowering_gr_urb_m1       ))
+# flowering_urbsubs_city_m1.tidy <- tidy(car::Anova(flowering_urbsubs_city_m1 ))
+# flowering_urbsubs_usc_m1.tidy  <- tidy(car::Anova(flowering_urbsubs_usc_m1   ))
+#  
+
+# anovas_merged.1 <- bind_rows(flowering_gr_city_m1.tidy    ,
+#                               flowering_gr_urb_m1.tidy,
+#                               flowering_urbsubs_city_m1.tidy,
+#                               flowering_urbsubs_usc_m1.tidy ) %>%
+#   mutate_if(.,
+#             is.character,
+#             str_replace_all,
+#             pattern = c("City_dist", "Urb_score"),
+#             replacement = c("Distance to City Center", "Urbanization Score")) %>%
+#   mutate_if(.,
+#             is.character,
+#             str_replace_all,
+#             pattern = c("Transect_ID", ":"),
+#             replacement = c("Subtransect", " : ")) %>%
+#   mutate_at(c(2,4), round, 3) %>%
+#   rename_at(1, ~ "Effect") %>%
+#   rename_at(2, ~ "Chi Square" ) %>%
+#   rename_at(4, ~ "P" ) %>%
+#   add_column(Model = 0) %>%
+#   relocate(Model, before = Effect)
+
+# anovas_table <- function(mod1, mod2, mod3, mod4) {
+#   mod1.anova.tidy <- tidy(car::Anova(mod1))
+#   mod2.anova.tidy <- tidy(car::Anova(mod2))
+#   mod3.anova.tidy <- tidy(car::Anova(mod3))
+#   mod4.anova.tidy <- tidy(car::Anova(mod4))
+#   
+#   anovas_merged <-  bind_rows( mod1.anova.tidy,
+#                              mod2.anova.tidy,
+#                              mod3.anova.tidy,
+#                              mod4.anova.tidy) %>%
+#   mutate_if(.,
+#             is.character,
+#             str_replace_all,
+#             pattern = c("City_dist", "Urb_score"),
+#             replacement = c("Distance to City Center", "Urbanization Score")) %>%
+#   mutate_at(c(2,4), round, 3) %>%
+#   rename_at(1, ~ "Effect") %>%
+#   rename_at(2, ~ "Chi Square" ) %>%
+#   rename_at(4, ~ "P" ) %>%
+#   add_column(Model = "") %>%
+#   relocate(Model, before = Effect) %>%
+#     dplyr::select(., -4)
+#   
+# 
+#   
+#   anovas_merged[[1]][[1]] <- 1
+#   anovas_merged[[1]][[2]] <- 2
+#   anovas_merged[[1]][[3]] <- 3
+#   anovas_merged[[1]][[6]] <- 4
+# 
+#   
+#   return(as.data.frame(anovas_merged))
+# }
+# 
+# fl1 <- anovas_table(flowering_gr_city_m1 ,
+#                     flowering_gr_urb_m1      ,
+#                     flowering_urbsubs_city_m1,
+#                     flowering_urbsubs_usc_m1 ) %>%
+#   mutate(P = ifelse(P < 0.001, "< 0.001", round(P, 3))) %>%
+#   mutate_if(.,
+#             is.character,
+#             str_replace_all,
+#             pattern = c("Transect_ID"),
+#             replacement = c("Subtransect"))
+
+
+# NEXT: PUT INTO  NICE TABLE
+
+# library(flextable)
+# library(officer)
+# ft <- flextable(fl1) %>%
+#   bold(., ~ P  == "< 0.001" | P <= 0.05, ~ P, bold = TRUE) %>%
+#   set_caption(., caption = "Does Urbanization Affect Year 2 Flowering?") %>%
+#   add_footer_lines(., "Models 1 and 2 include all populations. Models 3 and 4 include only urban populations.") %>%
+#   italic(., italic = TRUE, part = "footer") %>%
+#   align(., i = 1, part = "header", align = "center") %>%
+#   width(., 2, width = 2.75) %>%
+#   border(., c(2,3,6), border.top = fp_border(color="black", width = 0.5))  %>%
+#   save_as_image(., "flextable_test.1.png")
+
+### this fits a regular model... not the anova...
+# flowering_gr_city_m1 %>% 
+#   tidy() %>%
+#   dplyr::filter(., effect == "fixed") %>%
+#   dplyr::select(-c(1:2)) %>%
+#   dplyr::filter(term != "(Intercept)") %>%
+#   dplyr::mutate_if(.,
+#             is.character,
+#             str_replace_all,
+#             pattern = c("City_dist"),
+#             replacement = c("Distance to City Center")) %>%
+#   rename_at(1, ~ "Effect") %>%
+#   rename_at(2, ~ "Estimate") %>%
+#   rename_at(3, ~ "Standard Error") %>%
+#   rename_at(4, ~ "Chi Square" ) %>%
+#   rename_at(5, ~ "P" ) %>%
+#       flextable()  %>%
+#   colformat_num(j = c(2:5), digits = 3) %>%
+# bold(., ~ P  == "< 0.001" | P <= 0.05, ~ P, bold = TRUE) %>%
+#   set_caption(., caption = "Does Urbanization Affect Year 2 Flowering?") %>%
+#   align(., i = 1, part = "header", align = "center") %>%
+#   align_text_col(., align = "left") %>%
+#   align_nottext_col(., align = "center") %>%
+#   autofit(., add_w = 0.1, add_h = 0.1)
+
+# GOOD CODE-----
+anova_table_flx <- function(mod1) {
+
+  flx_1 <-  car::Anova(mod1) %>% 
+  tidy() %>%
+  dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("City_dist"),
+            replacement = c("Distance to City Center")) %>%
+    dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("Urb_score"),
+            replacement = c("Urbanization Score")) %>%
+    dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("Transect_ID"),
+            replacement = c("Subtransect")) %>%
+  rename_at(1, ~ "Effect") %>%
+  rename_at(2, ~ "Chi Square" ) %>%
+  rename_at(4, ~ "P" ) %>%
+  # dplyr::select(-3) %>%
+    flextable()  %>%
+    colformat_num(j = c(2,4), digits = 3) %>%
+    flextable::bold(., ~ P  == "< 0.001" | P <= 0.05, ~ P, bold = TRUE) %>%
+  # set_caption(., caption = "Does Urbanization Affect Year 2 Flowering?") %>%
+  # align(., i = 1, part = "header", align = "center") %>%
+  # add_footer_lines(., paste("Model formula: ", paste0(toString(formula(mod1)[3])))) %>%
+  # italic(., italic = TRUE, part = "footer") %>%
+  align_text_col(., align = "left") %>%
+  align_nottext_col(., align = "center") %>%
+  autofit(., add_w = 0.1, add_h = 0.1) 
+
+  
+      # make filename a string (from symbol)
+  # filename1 <- toString(formula(mod1)[[2]])
+
+  # can't figure out how to remove space from filename so it's staying for now...
+  path_out = here::here("./Figures_Tables/ANOVA_tables_images/ ")
+  
+  save_as_image(flx_1,
+                gsub(" ", "",
+                     paste(path_out,
+                      # filename1,
+                      print(substitute(mod1)),
+                      "_ANOVA.png")))
+
+}
+
+# use _transf function if response var has been transformed
+# use _binomial or _quantitative when I had to fit 2 extra models per var: binomial and then, with positive values, quantitative
+AIC_compare.city_dist <- function(full_model, ME_model) {
+  
+  data.frame(Model = c("Full model",
+                       "Main effects only"),
+                     AIC = c(AIC(full_model),
+                             AIC(ME_model))) %>%
+    write.csv(gsub(" ", "",
+                   paste(here::here("./Figures_Tables/ANOVA_tables_images/ "),
+                       "AIC_comparison_",
+                       formula(full_model)[[2]],
+                       "_city",
+                       # deparse(substitute(full_model)),
+                       ".csv")))
+  
+}
+AIC_compare.city_dist_transf <- function(full_model, ME_model) {
+  
+  data.frame(Model = c("Full model",
+                       "Main effects only"),
+                     AIC = c(AIC(full_model),
+                             AIC(ME_model))) %>%
+    write.csv(gsub(" ", "",
+                   paste(here::here("./Figures_Tables/ANOVA_tables_images/ "),
+                       "AIC_comparison_",
+                       toString(formula(full_model)[[2]][2]),
+                       "_city",
+                       # deparse(substitute(full_model)),
+                       ".csv")))
+  
+}
+AIC_compare.city_dist_transf_binomial <- function(full_model, ME_model) {
+  
+  data.frame(Model = c("Full model",
+                       "Main effects only"),
+                     AIC = c(AIC(full_model),
+                             AIC(ME_model))) %>%
+    write.csv(gsub(" ", "",
+                   paste(here::here("./Figures_Tables/ANOVA_tables_images/ "),
+                       "AIC_comparison_",
+                       toString(formula(full_model)[[2]][2]),
+                       "_city_binomial",
+                       # deparse(substitute(full_model)),
+                       ".csv")))
+  
+}
+AIC_compare.city_dist_transf_quantitative <- function(full_model, ME_model) {
+  
+  data.frame(Model = c("Full model",
+                       "Main effects only"),
+                     AIC = c(AIC(full_model),
+                             AIC(ME_model))) %>%
+    write.csv(gsub(" ", "",
+                   paste(here::here("./Figures_Tables/ANOVA_tables_images/ "),
+                       "AIC_comparison_",
+                       toString(formula(full_model)[[2]][2]),
+                       "_city_quantitative",
+                       # deparse(substitute(full_model)),
+                       ".csv")))
+  
+}
+
+
+AIC_compare.urb_score <- function(full_model, ME_model) {
+  
+  data.frame(Model = c("Full model",
+                       "Main effects only"),
+                     AIC = c(AIC(full_model),
+                             AIC(ME_model))) %>%
+    write.csv(gsub(" ", "",
+                   paste(here::here("./Figures_Tables/ANOVA_tables_images/ "),
+                       "AIC_comparison_",
+                       toString(formula(full_model)[[2]]),
+                       "_urbscore",
+                       # deparse(substitute(full_model)),
+                       ".csv")))
+  
+}
+AIC_compare.urb_score_transf <- function(full_model, ME_model) {
+  
+  data.frame(Model = c("Full model",
+                       "Main effects only"),
+                     AIC = c(AIC(full_model),
+                             AIC(ME_model))) %>%
+    write.csv(gsub(" ", "",
+                   paste(here::here("./Figures_Tables/ANOVA_tables_images/ "),
+                       "AIC_comparison_",
+                       toString(formula(full_model)[[2]][2]),
+                       "_urbscore",
+                       # deparse(substitute(full_model)),
+                       ".csv")))
+  
+}
+AIC_compare.urb_score_transf_binomial <- function(full_model, ME_model) {
+  
+  data.frame(Model = c("Full model",
+                       "Main effects only"),
+                     AIC = c(AIC(full_model),
+                             AIC(ME_model))) %>%
+    write.csv(gsub(" ", "",
+                   paste(here::here("./Figures_Tables/ANOVA_tables_images/ "),
+                       "AIC_comparison_",
+                       toString(formula(full_model)[[2]][2]),
+                       "_urbscore_binomial",
+                       # deparse(substitute(full_model)),
+                       ".csv")))
+  
+}
+AIC_compare.urb_score_transf_quantitative <- function(full_model, ME_model) {
+  
+  data.frame(Model = c("Full model",
+                       "Main effects only"),
+                     AIC = c(AIC(full_model),
+                             AIC(ME_model))) %>%
+    write.csv(gsub(" ", "",
+                   paste(here::here("./Figures_Tables/ANOVA_tables_images/ "),
+                       "AIC_comparison_",
+                       toString(formula(full_model)[[2]][2]),
+                       "_urbscore_quantitative",
+                       # deparse(substitute(full_model)),
+                       ".csv")))
+  
+}
 
 ```
 
@@ -3557,95 +3850,18 @@ AIC(flowering_urbsubs_usc_m1, flowering_urbsubs_usc_m1_ME) # <2 away
 ```
 
 
-##### Export to table
+##### Export ANOVAs
 ```{r}
-# 
-# flowering_gr_city_m1.tidy      <- tidy(car::Anova(flowering_gr_city_m1      ))
-# flowering_gr_urb_m1.tidy       <- tidy(car::Anova(flowering_gr_urb_m1       ))
-# flowering_urbsubs_city_m1.tidy <- tidy(car::Anova(flowering_urbsubs_city_m1 ))
-# flowering_urbsubs_usc_m1.tidy  <- tidy(car::Anova(flowering_urbsubs_usc_m1   ))
-#  
 
-# anovas_merged.1 <- bind_rows(flowering_gr_city_m1.tidy    ,
-#                               flowering_gr_urb_m1.tidy,
-#                               flowering_urbsubs_city_m1.tidy,
-#                               flowering_urbsubs_usc_m1.tidy ) %>%
-#   mutate_if(.,
-#             is.character,
-#             str_replace_all,
-#             pattern = c("City_dist", "Urb_score"),
-#             replacement = c("Distance to City Center", "Urbanization Score")) %>%
-#   mutate_if(.,
-#             is.character,
-#             str_replace_all,
-#             pattern = c("Transect_ID", ":"),
-#             replacement = c("Subtransect", " : ")) %>%
-#   mutate_at(c(2,4), round, 3) %>%
-#   rename_at(1, ~ "Effect") %>%
-#   rename_at(2, ~ "Chi Square" ) %>%
-#   rename_at(4, ~ "P" ) %>%
-#   add_column(Model = 0) %>%
-#   relocate(Model, before = Effect)
+anova_table_flx(flowering_gr_city_m1)
+anova_table_flx(flowering_gr_urb_m1)
+anova_table_flx(flowering_urbsubs_city_m1)
+anova_table_flx(flowering_urbsubs_city_m1_ME)
+anova_table_flx(flowering_urbsubs_usc_m1)
+anova_table_flx(flowering_urbsubs_usc_m1_ME)
 
-anovas_table <- function(mod1, mod2, mod3, mod4) {
-  mod1.anova.tidy <- tidy(car::Anova(mod1))
-  mod2.anova.tidy <- tidy(car::Anova(mod2))
-  mod3.anova.tidy <- tidy(car::Anova(mod3))
-  mod4.anova.tidy <- tidy(car::Anova(mod4))
-  
-  anovas_merged <-  bind_rows( mod1.anova.tidy,
-                             mod2.anova.tidy,
-                             mod3.anova.tidy,
-                             mod4.anova.tidy) %>%
-  mutate_if(.,
-            is.character,
-            str_replace_all,
-            pattern = c("City_dist", "Urb_score"),
-            replacement = c("Distance to City Center", "Urbanization Score")) %>%
-  mutate_at(c(2,4), round, 3) %>%
-  rename_at(1, ~ "Effect") %>%
-  rename_at(2, ~ "Chi Square" ) %>%
-  rename_at(4, ~ "P" ) %>%
-  add_column(Model = "") %>%
-  relocate(Model, before = Effect) %>%
-    dplyr::select(., -4)
-  
-
-  
-  anovas_merged[[1]][[1]] <- 1
-  anovas_merged[[1]][[2]] <- 2
-  anovas_merged[[1]][[3]] <- 3
-  anovas_merged[[1]][[6]] <- 4
-
-  
-  return(as.data.frame(anovas_merged))
-}
-
-fl1 <- anovas_table(flowering_gr_city_m1 ,
-                    flowering_gr_urb_m1      ,
-                    flowering_urbsubs_city_m1,
-                    flowering_urbsubs_usc_m1 ) %>%
-  mutate(P = ifelse(P < 0.001, "< 0.001", round(P, 3))) %>%
-  mutate_if(.,
-            is.character,
-            str_replace_all,
-            pattern = c("Transect_ID"),
-            replacement = c("Subtransect"))
-
-
-# NEXT: PUT INTO  NICE TABLE
-
-library(flextable)
-library(officer)
-ft <- flextable(fl1) %>%
-  bold(., ~ P  == "< 0.001" | P <= 0.05, ~ P, bold = TRUE) %>%
-  set_caption(., caption = "Does Urbanization Affect Year 2 Flowering?") %>%
-  add_footer_lines(., "Models 1 and 2 include all populations. Models 3 and 4 include only urban populations.") %>%
-  italic(., italic = TRUE, part = "footer") %>%
-  align(., i = 1, part = "header", align = "center") %>%
-  width(., 2, width = 2.75) %>%
-  border(., c(2,3,6), border.top = fp_border(color="black", width = 0.5))  %>%
-  save_as_image(., "flextable_test.1.png")
+AIC_compare.city_dist(flowering_urbsubs_city_m1, flowering_urbsubs_city_m1_ME)
+AIC_compare.urb_score(flowering_urbsubs_usc_m1, flowering_urbsubs_usc_m1_ME)
 
 
 ```
@@ -3821,6 +4037,22 @@ car::Anova(Height_Jun20_urbsubs_usc_m2_ME) # not sig
 
 ```
 
+#### Export ANOVA
+```{r}
+anova_table_flx(Height_Jun20_gr_city_m5)
+anova_table_flx(Height_Jun20_gr_usc_m2)
+anova_table_flx(Height_Jun20_urbsubs_city_m2)
+anova_table_flx(Height_Jun20_urbsubs_city_m2_ME)
+anova_table_flx(Height_Jun20_urbsubs_usc_m2)
+anova_table_flx(Height_Jun20_urbsubs_usc_m2_ME)
+
+AIC_compare.city_dist_transf(Height_Jun20_urbsubs_city_m2,
+                      Height_Jun20_urbsubs_city_m2_ME)
+    
+AIC_compare.urb_score_transf(Height_Jun20_urbsubs_usc_m2,
+                      Height_Jun20_urbsubs_usc_m2_ME) 
+```
+
 ### Sept height
 #### lmer: diagnostics
 ```{r}
@@ -3943,7 +4175,7 @@ Height_Sept20_urbsubs_usc_m2_ME <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1
 
 summary(Height_Sept20_urbsubs_usc_m2_ME)
 ```
-##### Entire gradient: *marginally sig for city_dist, not for urb_score
+#### Entire gradient: *marginally sig for city_dist, not for urb_score
 ###### City_dist
 ```{r}
 car::Anova(Height_Sept20_gr_city_m2) #marginally sig
@@ -3976,7 +4208,7 @@ car::Anova(Height_Sept20_gr_usc_m5) # not sig
 ```
 
 
-##### Urban subtransects: *Not sig for either
+#### Urban subtransects: *Not sig for either
 ###### City_dist
 ```{r}
 car::Anova(Height_Sept20_urbsubs_city_m5) # not sig
@@ -4021,6 +4253,21 @@ car::Anova(Height_Sept20_urbsubs_usc_m2) # not sig
 car::Anova(Height_Sept20_urbsubs_usc_m2_ME)# not sig
 ```
 
+#### Export ANOVA
+```{r}
+anova_table_flx(Height_Sept20_gr_city_m2)
+anova_table_flx(Height_Sept20_gr_usc_m5)
+anova_table_flx(Height_Sept20_urbsubs_city_m5)
+anova_table_flx(Height_Sept20_urbsubs_city_m5_ME)
+anova_table_flx(Height_Sept20_urbsubs_usc_m2)
+anova_table_flx(Height_Sept20_urbsubs_usc_m2_ME)
+
+AIC_compare.city_dist_transf(Height_Sept20_urbsubs_city_m5,
+                      Height_Sept20_urbsubs_city_m5_ME)
+    
+AIC_compare.urb_score_transf(Height_Sept20_urbsubs_usc_m2,
+                      Height_Sept20_urbsubs_usc_m2_ME) 
+```
 ## Weevil scars: standardized by June height
 ### lmer: diagnostics
 ```{r}
@@ -4207,6 +4454,12 @@ plot(res)
 
 car::Anova(weev_stn_urbsubs_city_m4) # not sig- so, whether the plant was attacked by weevils not associated with urbanization nor urban subtr
 
+# main effects
+weev_stn_urbsubs_city_m4_ME <- glmer((scar_div_Juneheight_binary) ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+  data = weevil_both %>% filter(Urb_Rur == "Urban"),
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
+control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 # weev_stn_urbsubs_city_m4 <- lmer(scar_div_Juneheight ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
 #   data = weevil_both %>% filter(scar_div_Juneheight_binary == 1 & Urb_Rur == "Urban"),
@@ -4297,6 +4550,13 @@ plot(res)
 # looks great! 
 
 car::Anova(weev_stn_urbsubs_usc_m4) # not sig- so, whether the plant was attacked by weevils not associated with urbanization nor urban subtr
+
+# main effects
+weev_stn_urbsubs_usc_m4_ME <- glmer((scar_div_Juneheight_binary) ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+  data = weevil_both %>% filter(Urb_Rur == "Urban"),
+  family = "binomial"(link = "logit"),
+    nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 
 # weev_stn_gr_usc_m4 <- lmer(scar_div_Juneheight ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
@@ -4402,7 +4662,8 @@ car::Anova(weev_stn_gr_usc_m12) # quantitative: not sig
 ### Urban subtransects: *Marg sig transect for city_dist
 #### City_dist
 ```{r}
-car::Anova(weev_stn_urbsubs_city_m4) # binomial: interaxn marg sig
+car::Anova(weev_stn_urbsubs_city_m4) # binomial: nothing sig
+car::Anova(weev_stn_urbsubs_city_m4_ME) # binomial: nothing sig
 car::Anova(weev_stn_urbsubs_city_m11) # quantitative: transect marg sig
 car::Anova(weev_stn_urbsubs_city_m11_ME.2) #quant main effects: transect marg sig
 
@@ -4443,13 +4704,44 @@ write.table(car::Anova(m.2), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PV
 
 #### Urb_score
 ```{r}
-car::Anova(weev_stn_gr_usc_m4) # binomial: not sig
+car::Anova(weev_stn_urbsubs_usc_m4) # binomial: not sig
 car::Anova(weev_stn_usc_usc_m10) # quantitative: not sig
 car::Anova(weev_stn_usc_usc_m10_ME.2)
 
 AIC(weev_stn_usc_usc_m10, weev_stn_usc_usc_m10_ME.2) # ME better but <2 AIC away
 ```
 
+
+### Export ANOVA
+```{r}
+anova_table_flx(weev_stn_gr_city_m3)
+anova_table_flx(weev_stn_gr_city_m11)
+anova_table_flx(weev_stn_gr_usc_m3)
+anova_table_flx(weev_stn_gr_usc_m12)
+
+anova_table_flx(weev_stn_urbsubs_city_m4)
+anova_table_flx(weev_stn_urbsubs_city_m4_ME)
+anova_table_flx(weev_stn_urbsubs_city_m11)
+anova_table_flx(weev_stn_urbsubs_city_m11_ME.2)
+
+anova_table_flx(weev_stn_urbsubs_usc_m4)
+anova_table_flx(weev_stn_urbsubs_usc_m4_ME)
+anova_table_flx(weev_stn_usc_usc_m10)
+anova_table_flx(weev_stn_usc_usc_m10_ME.2)
+
+
+AIC_compare.city_dist_transf_binomial(weev_stn_urbsubs_city_m4,
+                      weev_stn_urbsubs_city_m4_ME)
+
+AIC_compare.city_dist_transf_quantitative(weev_stn_urbsubs_city_m11,
+                      weev_stn_urbsubs_city_m11_ME.2)
+
+AIC_compare.urb_score_transf_binomial(weev_stn_urbsubs_usc_m4,
+                      weev_stn_urbsubs_usc_m4_ME)
+
+AIC_compare.urb_score_transf_quantitative(weev_stn_usc_usc_m10,
+                      weev_stn_usc_usc_m10_ME.2) 
+```
 
 ## Weevil scars: NOT standardized by June height
 ### lmer
@@ -4630,6 +4922,13 @@ plot(res)
 car::Anova(weev_urbsubs_city_m4) # not sig- so, whether the plant was attacked by weevils not associated with urbanization nor urban subtr
 
 
+# main effects
+weev_urbsubs_city_m4_ME <- glmer((Scar_length_cm_binary) ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+  data = weevil_both %>% filter(Urb_Rur == "Urban"),
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
 # weev_urbsubs_city_m4 <- lmer(Scar_length_cm ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
 #   data = weevil_both %>% filter(Scar_length_cm_binary == 1 & Urb_Rur == "Urban"),
 #   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
@@ -4710,6 +5009,13 @@ plot(res)
 
 car::Anova(weev_urbsubs_usc_m4) # not sig- so, whether the plant was attacked by weevils not associated with urbanization nor urban subtr
 
+
+# main effects
+weev_urbsubs_usc_m4_ME <- glmer((Scar_length_cm_binary) ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+  data = weevil_both %>% filter(Urb_Rur == "Urban"),
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 # weev_urbsubs_usc_m4 <- lmer(Scar_length_cm ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
 #   data = weevil_both %>% filter(Scar_length_cm_binary == 1 & Urb_Rur == "Urban"),
@@ -4798,6 +5104,7 @@ car::Anova(weev_gr_usc_m10) # quantitative: not sig
 #### City_dist
 ```{r}
 car::Anova(weev_urbsubs_city_m4) # binomial: not sig
+car::Anova(weev_urbsubs_city_m4_ME) # binomial: not sig
 car::Anova(weev_urbsubs_city_m11) # quantitative: transect sig
 car::Anova(weev_urbsubs_city_m11_ME) # quantitative main effects: transect sig
 
@@ -4840,12 +5147,43 @@ write.table(car::Anova(m.2), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PV
 #### Urb_score
 ```{r}
 car::Anova(weev_urbsubs_usc_m4) # binomial: not sig
+car::Anova(weev_urbsubs_usc_m4_ME) # binomial: not sig
 car::Anova(weev_urbsubs_usc_m11) # quantitative: transect sig
 car::Anova(weev_urbsubs_usc_m11_ME) # quantitative main effects: transect sig
 
 AIC(weev_urbsubs_usc_m11, weev_urbsubs_usc_m11_ME)# main effects lower AIC (less than 2)
 
 
+```
+
+### Export ANOVA
+```{r}
+anova_table_flx(weev_gr_city_m3)
+anova_table_flx(weev_gr_city_m11)
+anova_table_flx(weev_gr_usc_m3)
+anova_table_flx(weev_gr_usc_m10)
+
+anova_table_flx(weev_urbsubs_city_m4)
+anova_table_flx(weev_urbsubs_city_m4_ME) 
+anova_table_flx(weev_urbsubs_city_m11)
+anova_table_flx(weev_urbsubs_city_m11_ME)
+anova_table_flx(weev_urbsubs_usc_m4)
+anova_table_flx(weev_urbsubs_usc_m4_ME)
+anova_table_flx(weev_urbsubs_usc_m11)
+anova_table_flx(weev_urbsubs_usc_m11_ME)
+
+
+AIC_compare.city_dist_transf_binomial(weev_urbsubs_city_m4,
+                      weev_urbsubs_city_m4_ME)
+
+AIC_compare.city_dist_transf_quantitative(weev_urbsubs_city_m11,
+                      weev_urbsubs_city_m11_ME)
+
+AIC_compare.urb_score_transf_binomial(weev_urbsubs_usc_m4,
+                      weev_urbsubs_usc_m4_ME)
+
+AIC_compare.urb_score_transf_quantitative(weev_urbsubs_usc_m11,
+                      weev_urbsubs_usc_m11_ME) 
 ```
 
 ## Herbivory
@@ -5084,6 +5422,13 @@ summary(herb2020_urb_dist_m5)
 car::Anova(herb2020_urb_dist_m5) # city_dist sig
 
 
+# main effects
+herb2020_urb_dist_m5_ME <- glmer((Herbivory.July_mean_binary) ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+  data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+  family = "binomial"(link="logit"),
+  nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
 # herb2020_urb_dist_m6 <- lmer(Herbivory.July_mean ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
 #   data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1),
 #   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
@@ -5167,6 +5512,13 @@ summary(herb2020_urb_usc_m5)
 car::Anova(herb2020_urb_usc_m5) # Urb_score marg sig
 
 
+# main effects
+herb2020_urb_usc_m5_ME <- glmer((Herbivory.July_mean_binary) ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+  data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+  family = "binomial"(link="logit"),
+  nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
 # herb2020_urb_usc_m6 <- lmer(Herbivory.July_mean ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
 #   data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1),
 #   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
@@ -5212,11 +5564,12 @@ car::Anova(herb2020_gr_usc_m8) # quantitative: not sig
 ##### City_dist
 ```{r}
 car::Anova(herb2020_urb_dist_m5) # binomial: city_dist sig
+car::Anova(herb2020_urb_dist_m5_ME) # binomial: city_dist sig
 car::Anova(herb2020_urb_dist_m8) # quantitative: interaxn sig
 car::Anova(herb2020_urb_dist_m8_ME) # quantitative main effects: not sig
 
-AIC(herb2020_urb_dist_m8, herb2020_urb_dist_m8_ME)
-# main effects has lower AIC ... but the interaxn is sig so ME model isn't relevant
+AIC(herb2020_urb_dist_m5, herb2020_urb_dist_m5_ME) # very close
+AIC(herb2020_urb_dist_m8, herb2020_urb_dist_m8_ME) # main effects has lower AIC ... but the interaxn is sig so ME model isn't relevant
 
 
 ```
@@ -5224,11 +5577,43 @@ AIC(herb2020_urb_dist_m8, herb2020_urb_dist_m8_ME)
 ##### Urb_score
 ```{r}
 car::Anova(herb2020_urb_usc_m5) # binomial: urb_score marg sig
+car::Anova(herb2020_urb_usc_m5_ME) # binomial: urb_score marg sig
 car::Anova(herb2020_urb_usc_m8) # quantitative: nothing sig
 car::Anova(herb2020_urb_usc_m8_ME) # quantitative main effects: not sig
 
+AIC(herb2020_urb_usc_m5, herb2020_urb_usc_m5_ME) # very close
 AIC(herb2020_urb_usc_m8, herb2020_urb_usc_m8_ME)
 # main effects has lower AIC
+```
+
+
+#### Export ANOVA
+```{r}
+anova_table_flx(herb2020_gr_dist_m5)
+anova_table_flx(herb2020_gr_dist_m8)
+anova_table_flx(herb2020_gr_usc_m5)
+anova_table_flx(herb2020_gr_usc_m8)
+
+anova_table_flx(herb2020_urb_dist_m5)
+anova_table_flx(herb2020_urb_dist_m5_ME)
+anova_table_flx(herb2020_urb_dist_m8)
+anova_table_flx(herb2020_urb_dist_m8_ME)
+anova_table_flx(herb2020_urb_usc_m5)
+anova_table_flx(herb2020_urb_usc_m5_ME)
+anova_table_flx(herb2020_urb_usc_m8)
+anova_table_flx(herb2020_urb_usc_m8_ME)
+
+AIC_compare.city_dist_transf_binomial(herb2020_urb_dist_m5,
+                      herb2020_urb_dist_m5_ME)
+
+AIC_compare.city_dist_transf_quantitative(herb2020_urb_dist_m8,
+                      herb2020_urb_dist_m8_ME)
+    
+AIC_compare.urb_score_transf_binomial(herb2020_urb_usc_m5,
+                      herb2020_urb_usc_m5_ME)
+
+AIC_compare.urb_score_transf_quantitative(herb2020_urb_usc_m8,
+                                          herb2020_urb_usc_m8_ME)
 ```
 
 
@@ -5504,6 +5889,13 @@ summary(herb2020.S_urb_dist_m5)
 
 car::Anova(herb2020.S_urb_dist_m5) # nothing sig
 
+# main effects:
+herb2020.S_urb_dist_m5_ME <- glmer((Herbivory.Sept_mean_binary) ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+  data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
 
 # herb2020.S_urb_dist_m6 <- lmer(Herbivory.Sept_mean ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
 #   data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1 & Transect_ID != "Rural"),
@@ -5612,6 +6004,13 @@ summary(herb2020.S_urb_usc_m5)
 car::Anova(herb2020.S_urb_usc_m5) # nothing sig
 
 
+# main effects
+herb2020.S_urb_usc_m5_ME <- glmer((Herbivory.Sept_mean_binary) ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+  data = herbivory_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
 # herb2020.S_urb_usc_m6 <- lmer(Herbivory.Sept_mean ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
 #   data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1),
 #   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
@@ -5681,6 +6080,7 @@ car::Anova(herb2020.S_gr_usc_m12) # quantitative: not sig
 ##### City_dist
 ```{r}
 car::Anova(herb2020.S_urb_dist_m5) # binomial: nothing sig
+car::Anova(herb2020.S_urb_dist_m5_ME) # binomial: nothing sig
 car::Anova(herb2020.S_urb_dist_m12) # quantitative: nothing sig
 car::Anova(herb2020.S_urb_dist_m12_ME) # quantitative main effects: not sig
 
@@ -5693,11 +6093,43 @@ AIC(herb2020.S_urb_dist_m12, herb2020.S_urb_dist_m12_ME)
 ##### Urb_score
 ```{r}
 car::Anova(herb2020.S_urb_usc_m5) # binomial: ntohing sig
+car::Anova(herb2020.S_urb_usc_m5_ME)# binomial: ntohing sig
 car::Anova(herb2020.S_urb_usc_m12) # quantitative: nothing sig
 car::Anova(herb2020.S_urb_usc_m12_ME) # quantitative main effects: not sig
 
 AIC(herb2020.S_urb_usc_m12, herb2020.S_urb_usc_m12_ME)
 # main effects has lower AIC
+```
+
+
+
+#### Export ANOVA
+```{r}
+anova_table_flx(herb2020.S_gr_dist_m5)
+anova_table_flx(herb2020.S_gr_dist_m12)
+anova_table_flx(herb2020.S_gr_usc_m5)
+anova_table_flx(herb2020.S_gr_usc_m12)
+
+anova_table_flx(herb2020.S_urb_dist_m5)
+anova_table_flx(herb2020.S_urb_dist_m5_ME)
+anova_table_flx(herb2020.S_urb_dist_m12)
+anova_table_flx(herb2020.S_urb_dist_m12_ME)
+anova_table_flx(herb2020.S_urb_usc_m5)
+anova_table_flx(herb2020.S_urb_usc_m5_ME)
+anova_table_flx(herb2020.S_urb_usc_m12)
+anova_table_flx(herb2020.S_urb_usc_m12_ME)
+
+AIC_compare.city_dist_transf_binomial(herb2020.S_urb_dist_m5,
+                      herb2020.S_urb_dist_m5_ME)
+
+AIC_compare.city_dist_transf_quantitative(herb2020.S_urb_dist_m12,
+                      herb2020.S_urb_dist_m12_ME)
+    
+AIC_compare.urb_score_transf_binomial(herb2020.S_urb_usc_m5,
+                      herb2020.S_urb_usc_m5_ME)
+
+AIC_compare.urb_score_transf_quantitative(herb2020.S_urb_usc_m12,
+                                          herb2020.S_urb_usc_m12_ME)
 ```
 
 
@@ -5995,6 +6427,7 @@ rgr_urbsubs_usc_m8_ME.1 <- glmmTMB(sqrt(rel_growth_rate) ~ (1|Population/Family)
 ### Entire gradient: *Not sig for either
 #### City_dist
 ```{r}
+car::Anova(rgr_gr_city_m6) # not sig
 car::Anova(rgr_gr_city_m8) # not sig
 
 
@@ -6020,6 +6453,7 @@ write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/202
 
 #### Urb_score
 ```{r}
+car::Anova(rgr_gr_usc_m6) #not sig
 car::Anova(rgr_gr_usc_m8) #not sig
 
 ```
@@ -6033,6 +6467,7 @@ car::Anova(rgr_urbsubs_city_m5_ME) # binomial: nothing sig
 car::Anova(rgr_urbsubs_city_m8) # quantitative: transect sig & city_dist marg sig
 car::Anova(rgr_urbsubs_city_m8_ME.1) # quantitative: transect marg sig & city_dist marg sig
 
+AIC(rgr_urbsubs_city_m5, rgr_urbsubs_city_m5_ME) # ME model lower AIC
 AIC(rgr_urbsubs_city_m8, rgr_urbsubs_city_m8_ME.1) # ME model lower AIC
 summary(rgr_urbsubs_city_m8_ME.1)
 
@@ -6076,6 +6511,36 @@ car::Anova(rgr_urbsubs_usc_m8_ME.1) # quantitative: nothing sig
 
 AIC(rgr_urbsubs_usc_m8, rgr_urbsubs_usc_m8_ME.1) # ME model lower AIC but not significant difference
 summary(rgr_urbsubs_usc_m8)
+```
+
+
+### Export ANOVA
+```{r}
+anova_table_flx(rgr_gr_city_m6)
+anova_table_flx(rgr_gr_city_m8)
+anova_table_flx(rgr_gr_usc_m6)
+anova_table_flx(rgr_gr_usc_m8)
+
+anova_table_flx(rgr_urbsubs_city_m5)
+anova_table_flx(rgr_urbsubs_city_m5_ME)
+anova_table_flx(rgr_urbsubs_city_m8)
+anova_table_flx(rgr_urbsubs_city_m8_ME.1)
+anova_table_flx(rgr_urbsubs_usc_m5)
+anova_table_flx(rgr_urbsubs_usc_m5_ME)
+anova_table_flx(rgr_urbsubs_usc_m8)
+anova_table_flx(rgr_urbsubs_usc_m8_ME.1)
+
+AIC_compare.city_dist_transf_binomial(rgr_urbsubs_city_m5 ,
+                       rgr_urbsubs_city_m5_ME)
+    
+AIC_compare.city_dist_transf_quantitative( rgr_urbsubs_city_m8,
+                       rgr_urbsubs_city_m8_ME.1) 
+
+AIC_compare.urb_score_transf_binomial(rgr_urbsubs_usc_m5 ,
+                       rgr_urbsubs_usc_m5_ME)
+    
+AIC_compare.urb_score_transf_quantitative( rgr_urbsubs_usc_m8,
+                       rgr_urbsubs_usc_m8_ME.1) 
 ```
 
 
@@ -6246,6 +6711,21 @@ AIC(rametsJ_urbsubs_urbsubs_m7, rametsJ_urbsubs_urbsubs_m7_ME) # ME has slightly
 ```
 
 
+#### Export ANOVA
+```{r}
+anova_table_flx(rametsJ_gr_city_m2)
+anova_table_flx(rametsJ_gr_usc_m2)
+anova_table_flx(rametsJ_urbsubs_city_m1)
+anova_table_flx(rametsJ_urbsubs_city_m1_ME)
+anova_table_flx(rametsJ_urbsubs_urbsubs_m7)
+anova_table_flx(rametsJ_urbsubs_urbsubs_m7_ME)
+
+AIC_compare.city_dist(rametsJ_urbsubs_city_m1,
+                      rametsJ_urbsubs_city_m1_ME)
+    
+AIC_compare.urb_score(rametsJ_urbsubs_urbsubs_m7,
+                      rametsJ_urbsubs_urbsubs_m7_ME) 
+```
 ### Sept ramets
 #### glmer: diagnostics
 ```{r}
@@ -6427,7 +6907,6 @@ car::Anova(rametsS_gr_usc_m5) # not sig
 
 ```
 
-
 #### Urban subtransects: *Sig for city_dist, not for urb_score
 ##### City_dist
 ```{r}
@@ -6444,6 +6923,22 @@ car::Anova(rametsS_urbsubs_usc_m5) # nothing sig
 car::Anova(rametsS_urbsubs_usc_m5_ME) # nothing sig
 
 AIC(rametsS_urbsubs_usc_m5, rametsS_urbsubs_usc_m5_ME) # <2 away from e.o. though ME is lower
+```
+
+#### Export ANOVA
+```{r}
+anova_table_flx(rametsS_gr_city_m5)
+anova_table_flx(rametsS_gr_usc_m5)
+anova_table_flx(rametsS_urbsubs_city_m5)
+anova_table_flx(rametsS_urbsubs_city_m5_ME)
+anova_table_flx(rametsS_urbsubs_usc_m5)
+anova_table_flx(rametsS_urbsubs_usc_m5_ME)
+
+AIC_compare.city_dist(rametsS_urbsubs_city_m5,
+                      rametsS_urbsubs_city_m5_ME)
+    
+AIC_compare.urb_score(rametsS_urbsubs_usc_m5,
+                      rametsS_urbsubs_usc_m5_ME) 
 ```
 
 ## Survival
@@ -6533,7 +7028,6 @@ AIC(surv20_urbsubs_city_m1, surv20_urbsubs_city_m1_ME)
 # AIC <2 apart; both "best models" though just main effects lower AIC
 ```
 
-
 #### Urb_score
 ```{r}
 car::Anova(surv20_urbsubs_usc_m1) # not sig
@@ -6542,6 +7036,21 @@ AIC(surv20_urbsubs_usc_m1, surv20_urbsubs_usc_m1_ME)
 # AIC <2 apart; both "best models" though just main effects lower AIC
 ```
 
+### Export ANOVA
+```{r}
+anova_table_flx(surv20_gr_city_m1)
+anova_table_flx(surv20_gr_usc_m1)
+anova_table_flx(surv20_urbsubs_city_m1)
+anova_table_flx(surv20_urbsubs_city_m1_ME)
+anova_table_flx(surv20_urbsubs_usc_m1)
+anova_table_flx(surv20_urbsubs_usc_m1_ME)
+
+AIC_compare.city_dist(surv20_urbsubs_city_m1,
+                      surv20_urbsubs_city_m1_ME)
+    
+AIC_compare.urb_score(surv20_urbsubs_usc_m1,
+                      surv20_urbsubs_usc_m1_ME) 
+```
 
 
 # Statistics: 2019-2020 (seems better to do per year)
