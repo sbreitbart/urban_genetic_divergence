@@ -121,7 +121,7 @@ diagnostic<-function(x){
 
 
 
-##### Export ANOVAs
+##### Export ANOVAs ##### 
 # OLD-----
 # flowering_gr_city_m1.tidy      <- tidy(car::Anova(flowering_gr_city_m1      ))
 # flowering_gr_urb_m1.tidy       <- tidy(car::Anova(flowering_gr_urb_m1       ))
@@ -262,6 +262,7 @@ anova_table_flx <- function(mod1) {
     flextable()  %>%
     colformat_num(j = c(2,4), digits = 3) %>%
     flextable::bold(., ~ P  == "< 0.001" | P <= 0.05, ~ P, bold = TRUE) %>%
+    flextable::italic(., ~ P > 0.05 & P <= 0.1, ~ P, italic = TRUE) %>%
   # set_caption(., caption = "Does Urbanization Affect Year 2 Flowering?") %>%
   # align(., i = 1, part = "header", align = "center") %>%
   # add_footer_lines(., paste("Model formula: ", paste0(toString(formula(mod1)[3])))) %>%
@@ -410,6 +411,11 @@ AIC_compare.urb_score_transf_quantitative <- function(full_model, ME_model) {
                        ".csv")))
   
 }
+
+
+
+# get name of models so I can later export all model names with their formulas-----
+qq <- function(...) sapply(substitute({ ... })[-1], deparse)
 
 ```
 
@@ -3862,8 +3868,7 @@ anova_table_flx(flowering_urbsubs_usc_m1_ME)
 
 AIC_compare.city_dist(flowering_urbsubs_city_m1, flowering_urbsubs_city_m1_ME)
 AIC_compare.urb_score(flowering_urbsubs_usc_m1, flowering_urbsubs_usc_m1_ME)
-
-
+       
 ```
 
 ## Heights
@@ -7052,6 +7057,69 @@ AIC_compare.urb_score(surv20_urbsubs_usc_m1,
                       surv20_urbsubs_usc_m1_ME) 
 ```
 
+
+## Export all models & model formulas as a key
+```{r}
+# list of all models, in quotes
+all_models_2020 <- qq(flowering_urbsubs_city_m1, # GET ALL MODELS, ADD HERE
+             flowering_urbsubs_city_m1_ME,
+             flowering_gr_city_m1,
+             Height_Jun20_gr_usc_m2)
+
+# list of all models, for parsing purposes
+list1 <- list(flowering_urbsubs_city_m1, # GET ALL MODELS, ADD HERE
+             flowering_urbsubs_city_m1_ME,
+             flowering_gr_city_m1,
+             Height_Jun20_gr_usc_m2)
+
+# get model formulas
+all_models_2020_formulas <- sapply(list1, formula) %>%
+  sapply(., toString)
+
+
+test3 <- data.frame(sapply(list1, summary)) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::select(., c(call, family)) 
+
+# Get R-sq values here
+library(jtools)
+export_summs(list1, digits = 3, to.file = "xlsx", file.name = here::here("./Figures_Tables/ANOVA_tables_images/R_sq_2020.xlsx"))
+
+
+ # as.data.frame(sapply(list1, jtools::export_summs))
+
+
+test1 <- data.frame(Model_Name1 = all_models_2020, 
+       Formula = all_models_2020_formulas,
+       sapply(list1, r.squaredGLMM()[1]))
+  # dplyr::rename(., R2m_theor = R2m,
+  #               R2c_theor = R2c,
+  #               R2c_theor = R2m.1,
+  #               R2c_theor = R2c.1,
+  #               R2c_theor = R2m.2,
+  #               R2c_theor = R2c.2,
+  #               R2c_theor = R2m.3,
+  #               R2c_theor = R2c.3
+  #               ) %>%
+  # dplyr::select(-Family.2) %>%
+  # filter(!grepl( "function", Family.1)) %>%
+  # filter(!grepl( "expression", Family.1))
+
+test1_3_merge <- cbind(test3, test1)
+
+test2 <- data.frame(Model_Name1 = all_models_2020, 
+       Formula = all_models_2020_formulas,
+       R2 = sapply(list1, r.squaredGLMM),
+       Summary = sapply(list1, summary)) %>%
+  dplyr::rename(., R2m = R2.1, R2c = R2.2)
+  
+
+%>%
+  write.csv(gsub(" ", "",
+                   paste(here::here("./Figures_Tables/ANOVA_tables_images/ "),
+                       "Model_List.csv")))
+```
 
 # Statistics: 2019-2020 (seems better to do per year)
 ## Heights

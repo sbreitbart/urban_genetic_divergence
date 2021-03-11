@@ -1,0 +1,3 @@
+"","Model_Name1","Formula"
+"1","flowering_urbsubs_city_m1","~, Flowered2020, (1 | Block) + (1 | Population/Family) + City_dist * Transect_ID"
+"2","flowering_urbsubs_city_m1_ME","~, Flowered2020, (1 | Block) + (1 | Population/Family) + City_dist + Transect_ID"
