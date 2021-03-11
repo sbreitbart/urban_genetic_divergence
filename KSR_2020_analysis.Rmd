@@ -19,7 +19,6 @@ NOTES:
   -Still to do--
     -try to do an RDA (or PCA?) with all the traits
     -make a ReadMe file for each level
-    -export stats w/broom
     -calculate heritability coefficients
     
 WHEN TOTALLY DONE, type this:
@@ -3869,6 +3868,13 @@ anova_table_flx(flowering_urbsubs_usc_m1_ME)
 AIC_compare.city_dist(flowering_urbsubs_city_m1, flowering_urbsubs_city_m1_ME)
 AIC_compare.urb_score(flowering_urbsubs_usc_m1, flowering_urbsubs_usc_m1_ME)
        
+# list of models
+# model_list <- list(flowering_gr_city_m1,
+# flowering_gr_urb_m1,
+# flowering_urbsubs_city_m1,
+# flowering_urbsubs_city_m1_ME,
+# flowering_urbsubs_usc_m1,
+# flowering_urbsubs_usc_m1_ME)
 ```
 
 ## Heights
@@ -4056,6 +4062,17 @@ AIC_compare.city_dist_transf(Height_Jun20_urbsubs_city_m2,
     
 AIC_compare.urb_score_transf(Height_Jun20_urbsubs_usc_m2,
                       Height_Jun20_urbsubs_usc_m2_ME) 
+
+# list of models
+# model_list <- append(model_list,
+#                      list(
+#                        Height_Jun20_gr_city_m5,
+# Height_Jun20_gr_usc_m2,
+# Height_Jun20_urbsubs_city_m2,
+# Height_Jun20_urbsubs_city_m2_ME,
+# Height_Jun20_urbsubs_usc_m2,
+# Height_Jun20_urbsubs_usc_m2_ME
+# ))
 ```
 
 ### Sept height
@@ -4272,6 +4289,18 @@ AIC_compare.city_dist_transf(Height_Sept20_urbsubs_city_m5,
     
 AIC_compare.urb_score_transf(Height_Sept20_urbsubs_usc_m2,
                       Height_Sept20_urbsubs_usc_m2_ME) 
+
+# list of models
+# model_list <- append(model_list,
+# 
+# list(
+#   Height_Sept20_gr_city_m2,
+# Height_Sept20_gr_usc_m5,
+# Height_Sept20_urbsubs_city_m5,
+# Height_Sept20_urbsubs_city_m5_ME,
+# Height_Sept20_urbsubs_usc_m2,
+# Height_Sept20_urbsubs_usc_m2_ME
+# ))
 ```
 ## Weevil scars: standardized by June height
 ### lmer: diagnostics
@@ -4746,6 +4775,25 @@ AIC_compare.urb_score_transf_binomial(weev_stn_urbsubs_usc_m4,
 
 AIC_compare.urb_score_transf_quantitative(weev_stn_usc_usc_m10,
                       weev_stn_usc_usc_m10_ME.2) 
+
+# list of models
+# model_list <- append(model_list,
+# 
+# list(
+#   weev_stn_gr_city_m3,
+# weev_stn_gr_city_m11,
+# weev_stn_gr_usc_m3,
+# weev_stn_gr_usc_m12,
+# weev_stn_urbsubs_city_m4,
+# weev_stn_urbsubs_city_m4_ME,
+# weev_stn_urbsubs_city_m11,
+# weev_stn_urbsubs_city_m11_ME.2,
+# weev_stn_urbsubs_usc_m4,
+# weev_stn_urbsubs_usc_m4_ME,
+# weev_stn_usc_usc_m10,
+# weev_stn_usc_usc_m10_ME.2
+#   
+# ))
 ```
 
 ## Weevil scars: NOT standardized by June height
@@ -5189,6 +5237,26 @@ AIC_compare.urb_score_transf_binomial(weev_urbsubs_usc_m4,
 
 AIC_compare.urb_score_transf_quantitative(weev_urbsubs_usc_m11,
                       weev_urbsubs_usc_m11_ME) 
+
+# list of models
+# model_list <- append(model_list,
+# 
+# list(
+# 
+#   weev_gr_city_m3,
+# weev_gr_city_m11,
+# weev_gr_usc_m3,
+# weev_gr_usc_m10,
+# weev_urbsubs_city_m4,
+# weev_urbsubs_city_m4_ME, 
+# weev_urbsubs_city_m11,
+# weev_urbsubs_city_m11_ME,
+# weev_urbsubs_usc_m4,
+# weev_urbsubs_usc_m4_ME,
+# weev_urbsubs_usc_m11,
+# weev_urbsubs_usc_m11_ME
+#   
+# ))
 ```
 
 ## Herbivory
@@ -5619,6 +5687,26 @@ AIC_compare.urb_score_transf_binomial(herb2020_urb_usc_m5,
 
 AIC_compare.urb_score_transf_quantitative(herb2020_urb_usc_m8,
                                           herb2020_urb_usc_m8_ME)
+
+# list of models
+# model_list <- append(model_list,
+# 
+# list(
+# 
+# herb2020_gr_dist_m5,
+# herb2020_gr_dist_m8,
+# herb2020_gr_usc_m5,
+# herb2020_gr_usc_m8,
+# herb2020_urb_dist_m5,
+# herb2020_urb_dist_m5_ME,
+# herb2020_urb_dist_m8,
+# herb2020_urb_dist_m8_ME,
+# herb2020_urb_usc_m5,
+# herb2020_urb_usc_m5_ME,
+# herb2020_urb_usc_m8,
+# herb2020_urb_usc_m8_ME
+#   
+# ))
 ```
 
 
@@ -6135,8 +6223,27 @@ AIC_compare.urb_score_transf_binomial(herb2020.S_urb_usc_m5,
 
 AIC_compare.urb_score_transf_quantitative(herb2020.S_urb_usc_m12,
                                           herb2020.S_urb_usc_m12_ME)
-```
 
+# list of models
+# model_list <- append(model_list,
+# 
+# list(
+# 
+# herb2020.S_gr_dist_m5,
+# herb2020.S_gr_dist_m12,
+# herb2020.S_gr_usc_m5,
+# herb2020.S_gr_usc_m12,
+# herb2020.S_urb_dist_m5,
+# herb2020.S_urb_dist_m5_ME,
+# herb2020.S_urb_dist_m12,
+# herb2020.S_urb_dist_m12_ME,
+# herb2020.S_urb_usc_m5,
+# herb2020.S_urb_usc_m5_ME,
+# herb2020.S_urb_usc_m12,
+# herb2020.S_urb_usc_m12_ME
+#   
+# ))
+```
 
 
 ## Relative Growth Rate
@@ -6546,6 +6653,26 @@ AIC_compare.urb_score_transf_binomial(rgr_urbsubs_usc_m5 ,
     
 AIC_compare.urb_score_transf_quantitative( rgr_urbsubs_usc_m8,
                        rgr_urbsubs_usc_m8_ME.1) 
+
+# list of models
+# model_list <- append(model_list,
+# 
+# list(
+# 
+# rgr_gr_city_m6,
+# rgr_gr_city_m8,
+# rgr_gr_usc_m6,
+# rgr_gr_usc_m8,
+# rgr_urbsubs_city_m5,
+# rgr_urbsubs_city_m5_ME,
+# rgr_urbsubs_city_m8,
+# rgr_urbsubs_city_m8_ME.1,
+# rgr_urbsubs_usc_m5,
+# rgr_urbsubs_usc_m5_ME,
+# rgr_urbsubs_usc_m8,
+# rgr_urbsubs_usc_m8_ME.1
+#   
+# ))
 ```
 
 
@@ -6730,6 +6857,20 @@ AIC_compare.city_dist(rametsJ_urbsubs_city_m1,
     
 AIC_compare.urb_score(rametsJ_urbsubs_urbsubs_m7,
                       rametsJ_urbsubs_urbsubs_m7_ME) 
+
+# list of models
+# model_list <- append(model_list,
+# 
+# list(
+# 
+# rametsJ_gr_city_m2,
+# rametsJ_gr_usc_m2,
+# rametsJ_urbsubs_city_m1,
+# rametsJ_urbsubs_city_m1_ME,
+# rametsJ_urbsubs_urbsubs_m7,
+# rametsJ_urbsubs_urbsubs_m7_ME
+#   
+# ))
 ```
 ### Sept ramets
 #### glmer: diagnostics
@@ -6944,6 +7085,20 @@ AIC_compare.city_dist(rametsS_urbsubs_city_m5,
     
 AIC_compare.urb_score(rametsS_urbsubs_usc_m5,
                       rametsS_urbsubs_usc_m5_ME) 
+
+# # list of models
+# model_list <- append(model_list,
+# 
+# list(
+# 
+# rametsS_gr_city_m5,
+# rametsS_gr_usc_m5,
+# rametsS_urbsubs_city_m5,
+# rametsS_urbsubs_city_m5_ME,
+# rametsS_urbsubs_usc_m5,
+# rametsS_urbsubs_usc_m5_ME
+#   
+# ))
 ```
 
 ## Survival
@@ -7055,70 +7210,285 @@ AIC_compare.city_dist(surv20_urbsubs_city_m1,
     
 AIC_compare.urb_score(surv20_urbsubs_usc_m1,
                       surv20_urbsubs_usc_m1_ME) 
+
+# list of models
+# model_list <- append(model_list,
+# 
+# list(
+# 
+# surv20_gr_city_m1,
+# surv20_gr_usc_m1,
+# surv20_urbsubs_city_m1,
+# surv20_urbsubs_city_m1_ME,
+# surv20_urbsubs_usc_m1,
+# surv20_urbsubs_usc_m1_ME
+#   
+# ))
 ```
 
 
 ## Export all models & model formulas as a key
 ```{r}
-# list of all models, in quotes
-all_models_2020 <- qq(flowering_urbsubs_city_m1, # GET ALL MODELS, ADD HERE
-             flowering_urbsubs_city_m1_ME,
-             flowering_gr_city_m1,
-             Height_Jun20_gr_usc_m2)
+# list of all models-----
+model_list <- list(
+  
+  flowering_gr_city_m1, # flowering success models
+flowering_gr_urb_m1,
+flowering_urbsubs_city_m1,
+flowering_urbsubs_city_m1_ME,
+flowering_urbsubs_usc_m1,
+flowering_urbsubs_usc_m1_ME,
+  
+  Height_Jun20_gr_city_m5, # June height models
+Height_Jun20_gr_usc_m2,
+Height_Jun20_urbsubs_city_m2,
+Height_Jun20_urbsubs_city_m2_ME,
+Height_Jun20_urbsubs_usc_m2,
+Height_Jun20_urbsubs_usc_m2_ME,
+  
+    Height_Sept20_gr_city_m2, # Sept height models
+Height_Sept20_gr_usc_m5,
+Height_Sept20_urbsubs_city_m5,
+Height_Sept20_urbsubs_city_m5_ME,
+Height_Sept20_urbsubs_usc_m2,
+Height_Sept20_urbsubs_usc_m2_ME,
+  
+    weev_stn_gr_city_m3, # weevil damage (standardized) models
+weev_stn_gr_city_m11,
+weev_stn_gr_usc_m3,
+weev_stn_gr_usc_m12,
+weev_stn_urbsubs_city_m4,
+weev_stn_urbsubs_city_m4_ME,
+weev_stn_urbsubs_city_m11,
+weev_stn_urbsubs_city_m11_ME.2,
+weev_stn_urbsubs_usc_m4,
+weev_stn_urbsubs_usc_m4_ME,
+weev_stn_usc_usc_m10,
+weev_stn_usc_usc_m10_ME.2,
+  
+    weev_gr_city_m3, # weevil damage models
+weev_gr_city_m11,
+weev_gr_usc_m3,
+weev_gr_usc_m10,
+weev_urbsubs_city_m4,
+weev_urbsubs_city_m4_ME, 
+weev_urbsubs_city_m11,
+weev_urbsubs_city_m11_ME,
+weev_urbsubs_usc_m4,
+weev_urbsubs_usc_m4_ME,
+weev_urbsubs_usc_m11,
+weev_urbsubs_usc_m11_ME,
+  
+  herb2020_gr_dist_m5, # July herbivory models
+herb2020_gr_dist_m8,
+herb2020_gr_usc_m5,
+herb2020_gr_usc_m8,
+herb2020_urb_dist_m5,
+herb2020_urb_dist_m5_ME,
+herb2020_urb_dist_m8,
+herb2020_urb_dist_m8_ME,
+herb2020_urb_usc_m5,
+herb2020_urb_usc_m5_ME,
+herb2020_urb_usc_m8,
+herb2020_urb_usc_m8_ME,
+  
+  herb2020.S_gr_dist_m5, # Sept herbivory models
+herb2020.S_gr_dist_m12,
+herb2020.S_gr_usc_m5,
+herb2020.S_gr_usc_m12,
+herb2020.S_urb_dist_m5,
+herb2020.S_urb_dist_m5_ME,
+herb2020.S_urb_dist_m12,
+herb2020.S_urb_dist_m12_ME,
+herb2020.S_urb_usc_m5,
+herb2020.S_urb_usc_m5_ME,
+herb2020.S_urb_usc_m12,
+herb2020.S_urb_usc_m12_ME,
 
-# list of all models, for parsing purposes
-list1 <- list(flowering_urbsubs_city_m1, # GET ALL MODELS, ADD HERE
-             flowering_urbsubs_city_m1_ME,
-             flowering_gr_city_m1,
-             Height_Jun20_gr_usc_m2)
+  rgr_gr_city_m6, # relative growth rate models
+rgr_gr_city_m8,
+rgr_gr_usc_m6,
+rgr_gr_usc_m8,
+rgr_urbsubs_city_m5,
+rgr_urbsubs_city_m5_ME,
+rgr_urbsubs_city_m8,
+rgr_urbsubs_city_m8_ME.1,
+rgr_urbsubs_usc_m5,
+rgr_urbsubs_usc_m5_ME,
+rgr_urbsubs_usc_m8,
+rgr_urbsubs_usc_m8_ME.1,
+  
+  rametsJ_gr_city_m2, # June ramets models
+rametsJ_gr_usc_m2,
+rametsJ_urbsubs_city_m1,
+rametsJ_urbsubs_city_m1_ME,
+rametsJ_urbsubs_urbsubs_m7,
+rametsJ_urbsubs_urbsubs_m7_ME,
+  
+  rametsS_gr_city_m5, # Sept ramets models
+rametsS_gr_usc_m5,
+rametsS_urbsubs_city_m5,
+rametsS_urbsubs_city_m5_ME,
+rametsS_urbsubs_usc_m5,
+rametsS_urbsubs_usc_m5_ME,
 
-# get model formulas
-all_models_2020_formulas <- sapply(list1, formula) %>%
-  sapply(., toString)
+  surv20_gr_city_m1, # survival models
+surv20_gr_usc_m1,
+surv20_urbsubs_city_m1,
+surv20_urbsubs_city_m1_ME,
+surv20_urbsubs_usc_m1,
+surv20_urbsubs_usc_m1_ME
+  
+)
+
+# list of all models, in quotes-----
+all_models_2020 <- qq(
+  flowering_gr_city_m1, # flowering success models
+flowering_gr_urb_m1,
+flowering_urbsubs_city_m1,
+flowering_urbsubs_city_m1_ME,
+flowering_urbsubs_usc_m1,
+flowering_urbsubs_usc_m1_ME,
+  
+  Height_Jun20_gr_city_m5, # June height models
+Height_Jun20_gr_usc_m2,
+Height_Jun20_urbsubs_city_m2,
+Height_Jun20_urbsubs_city_m2_ME,
+Height_Jun20_urbsubs_usc_m2,
+Height_Jun20_urbsubs_usc_m2_ME,
+  
+    Height_Sept20_gr_city_m2, # Sept height models
+Height_Sept20_gr_usc_m5,
+Height_Sept20_urbsubs_city_m5,
+Height_Sept20_urbsubs_city_m5_ME,
+Height_Sept20_urbsubs_usc_m2,
+Height_Sept20_urbsubs_usc_m2_ME,
+  
+    weev_stn_gr_city_m3, # weevil damage (standardized) models
+weev_stn_gr_city_m11,
+weev_stn_gr_usc_m3,
+weev_stn_gr_usc_m12,
+weev_stn_urbsubs_city_m4,
+weev_stn_urbsubs_city_m4_ME,
+weev_stn_urbsubs_city_m11,
+weev_stn_urbsubs_city_m11_ME.2,
+weev_stn_urbsubs_usc_m4,
+weev_stn_urbsubs_usc_m4_ME,
+weev_stn_usc_usc_m10,
+weev_stn_usc_usc_m10_ME.2,
+  
+    weev_gr_city_m3, # weevil damage models
+weev_gr_city_m11,
+weev_gr_usc_m3,
+weev_gr_usc_m10,
+weev_urbsubs_city_m4,
+weev_urbsubs_city_m4_ME, 
+weev_urbsubs_city_m11,
+weev_urbsubs_city_m11_ME,
+weev_urbsubs_usc_m4,
+weev_urbsubs_usc_m4_ME,
+weev_urbsubs_usc_m11,
+weev_urbsubs_usc_m11_ME,
+  
+  herb2020_gr_dist_m5, # July herbivory models
+herb2020_gr_dist_m8,
+herb2020_gr_usc_m5,
+herb2020_gr_usc_m8,
+herb2020_urb_dist_m5,
+herb2020_urb_dist_m5_ME,
+herb2020_urb_dist_m8,
+herb2020_urb_dist_m8_ME,
+herb2020_urb_usc_m5,
+herb2020_urb_usc_m5_ME,
+herb2020_urb_usc_m8,
+herb2020_urb_usc_m8_ME,
+  
+  herb2020.S_gr_dist_m5, # Sept herbivory models
+herb2020.S_gr_dist_m12,
+herb2020.S_gr_usc_m5,
+herb2020.S_gr_usc_m12,
+herb2020.S_urb_dist_m5,
+herb2020.S_urb_dist_m5_ME,
+herb2020.S_urb_dist_m12,
+herb2020.S_urb_dist_m12_ME,
+herb2020.S_urb_usc_m5,
+herb2020.S_urb_usc_m5_ME,
+herb2020.S_urb_usc_m12,
+herb2020.S_urb_usc_m12_ME,
+
+  rgr_gr_city_m6, # relative growth rate models
+rgr_gr_city_m8,
+rgr_gr_usc_m6,
+rgr_gr_usc_m8,
+rgr_urbsubs_city_m5,
+rgr_urbsubs_city_m5_ME,
+rgr_urbsubs_city_m8,
+rgr_urbsubs_city_m8_ME.1,
+rgr_urbsubs_usc_m5,
+rgr_urbsubs_usc_m5_ME,
+rgr_urbsubs_usc_m8,
+rgr_urbsubs_usc_m8_ME.1,
+  
+  rametsJ_gr_city_m2, # June ramets models
+rametsJ_gr_usc_m2,
+rametsJ_urbsubs_city_m1,
+rametsJ_urbsubs_city_m1_ME,
+rametsJ_urbsubs_urbsubs_m7,
+rametsJ_urbsubs_urbsubs_m7_ME,
+  
+  rametsS_gr_city_m5, # Sept ramets models
+rametsS_gr_usc_m5,
+rametsS_urbsubs_city_m5,
+rametsS_urbsubs_city_m5_ME,
+rametsS_urbsubs_usc_m5,
+rametsS_urbsubs_usc_m5_ME,
+
+  surv20_gr_city_m1, # survival models
+surv20_gr_usc_m1,
+surv20_urbsubs_city_m1,
+surv20_urbsubs_city_m1_ME,
+surv20_urbsubs_usc_m1,
+surv20_urbsubs_usc_m1_ME)
 
 
-test3 <- data.frame(sapply(list1, summary)) %>%
-  t() %>%
-  as.data.frame() %>%
-  dplyr::select(., c(call, family)) 
+# get model formulas --> export -----
+all_models_2020_formulas <- lapply(model_list, formula) %>%
+  lapply(., toString) %>%
+  as.character()
+
+# get df with model name and formula
+modsum_1 <- data.frame(Model_Name1 = all_models_2020, 
+       Formula = all_models_2020_formulas)
+       # sapply(list1, r.squaredGLMM()[1]))
+
+# get df with model family and formula 
+modsum_2 <- tibble(Model_Name1 = all_models_2020,
+                   col2 = lapply(model_list, family),
+               Family = sub("\\,.*", "", col2)) %>%
+   dplyr::select(-col2) %>%
+  mutate(Family = str_remove(Family, "list"))
+ 
+# modsum_2 <- tibble(lapply(list1, family)) %>%
+#   t() %>%
+#   as.data.frame() %>%
+#   dplyr::select(., c(V7, V15)) %>%
+#   unlist() %>%
+#     as.data.frame()
+
+
+
+
+# merge the two dfs
+modsum_merge2 <- inner_join(modsum_1, modsum_2, by = "Model_Name1") %>%
+  write.csv(here::here("./Figures_Tables/ANOVA_tables_images/Model_List.csv"))
 
 # Get R-sq values here
-library(jtools)
-export_summs(list1, digits = 3, to.file = "xlsx", file.name = here::here("./Figures_Tables/ANOVA_tables_images/R_sq_2020.xlsx"))
+capture.output(lapply(model_list, r.squaredGLMM), file = here::here("./Figures_Tables/ANOVA_tables_images/Model_R_squared_values.csv"))
 
 
- # as.data.frame(sapply(list1, jtools::export_summs))
+# library(jtools)
+# export_summs(model_list, digits = 3, to.file = "xlsx", file.name = here::here("./Figures_Tables/ANOVA_tables_images/R_sq_2020.xlsx"))
 
-
-test1 <- data.frame(Model_Name1 = all_models_2020, 
-       Formula = all_models_2020_formulas,
-       sapply(list1, r.squaredGLMM()[1]))
-  # dplyr::rename(., R2m_theor = R2m,
-  #               R2c_theor = R2c,
-  #               R2c_theor = R2m.1,
-  #               R2c_theor = R2c.1,
-  #               R2c_theor = R2m.2,
-  #               R2c_theor = R2c.2,
-  #               R2c_theor = R2m.3,
-  #               R2c_theor = R2c.3
-  #               ) %>%
-  # dplyr::select(-Family.2) %>%
-  # filter(!grepl( "function", Family.1)) %>%
-  # filter(!grepl( "expression", Family.1))
-
-test1_3_merge <- cbind(test3, test1)
-
-test2 <- data.frame(Model_Name1 = all_models_2020, 
-       Formula = all_models_2020_formulas,
-       R2 = sapply(list1, r.squaredGLMM),
-       Summary = sapply(list1, summary)) %>%
-  dplyr::rename(., R2m = R2.1, R2c = R2.2)
-  
-
-%>%
-  write.csv(gsub(" ", "",
-                   paste(here::here("./Figures_Tables/ANOVA_tables_images/ "),
-                       "Model_List.csv")))
 ```
 
 # Statistics: 2019-2020 (seems better to do per year)
@@ -8323,1372 +8693,3 @@ AIC((survival_urb_usc_m1),
     (survival_urb_usc_m1_ME)) # better but <2 AIC from full model
 ```
 
-
-# Figures: 2019
-## Height
-### Regressions
-#### Each point is a population mean
-##### Entire gradient
-```{r}
-# JUNE HEIGHT- 1
-ggplot(heights_both2019_popmeans, aes(x = City_dist, y = mean_height_earlyJune)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Early June: Mean height (cm)") +
-  theme_gradient_1 +
-  xlim(0, 71) 
-
-ggplot(heights_both2019_popmeans, aes(x = Urb_score, y = mean_height_earlyJune)) + 
-  labs(x = 'Urbanization Score', 
-    y = "Early June: Mean height (cm)") +
-  theme_gradient_1 +
-  xlim(0, 71) +
-  scale_x_reverse()
-
-# JUNE HEIGHT- 2
-ggplot(heights_both2019_popmeans, aes(x = City_dist, y = mean_height_midJune)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mid-June: Mean height (cm)") +
-  theme_gradient_1 +
-  xlim(0, 71) 
-
-ggplot(heights_both2019_popmeans, aes(x = Urb_score, y = mean_height_midJune)) + 
-  labs(x = 'Urbanization Score', 
-    y = "Mid-June: Mean height (cm)") +
-  theme_gradient_1 +
-  xlim(0, 71) +
-  scale_x_reverse()
-
-
-# SEPT HEIGHT
-ggplot(heights_both2019_popmeans, aes(x = City_dist, y = mean_height_Sept)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "September: Mean height (cm)") +
-  theme_gradient_1 +
-  xlim(0, 71) 
-
-ggplot(heights_both2019_popmeans, aes(x = Urb_score, y = mean_height_Sept)) + 
-  labs(x = "Urbanization Score", 
-    y = "September: Mean height (cm)") +
-  theme_gradient_1 +
-  xlim(0, 71) +
-  scale_x_reverse()
-
-```
-
-##### Urban subtransects
-```{r}
-# JUNE HEIGHT- 1
-ggplot(heights_both2019_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_height_earlyJune)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Early June: Mean height (cm)") +
-  theme_urbansubs_1 +
-  xlim(0, 35) 
-
-ggplot(heights_both2019_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = mean_height_earlyJune)) + 
-  labs(x = "Urbanization Score", 
-    y = "Early June: Mean height (cm)") +
-  theme_urbansubs_1 +
-  scale_x_reverse()
-
-# JUNE HEIGHT- 2
-ggplot(heights_both2019_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_height_midJune)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mid-June: Mean height (cm)") +
-  theme_urbansubs_1 +
-  xlim(0, 35) 
-
-ggplot(heights_both2019_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = mean_height_midJune)) + 
-  labs(x = "Urbanization Score", 
-    y = "Mid-June: Mean height (cm)") +
-  theme_urbansubs_1 +
-  scale_x_reverse()
-
-# sept HEIGHT
-ggplot(heights_both2019_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_height_Sept)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Sept: Mean height (cm)") +
-  theme_urbansubs_1 +
-  xlim(0, 35) 
-
-ggplot(heights_both2019_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = mean_height_Sept)) + 
-  labs(x = "Urbanization Score", 
-    y = "Sept: Mean height (cm)") +
-  theme_urbansubs_1 +
-  scale_x_reverse()
-
-```
-
-## No. of Ramets
-### Regressions
-#### Each point is a population mean
-##### Entire gradient
-```{r}
-# JUNE RAMETS-1 
-ggplot(heights_both2019_popmeans, aes(x = City_dist, y = mean_Ramets_earlyJune)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Early June: Mean No. Ramets") +
-  theme_gradient_1 +
-  xlim(0, 71) 
-
-ggplot(heights_both2019_popmeans, aes(x = Urb_score, y = mean_Ramets_earlyJune)) + 
-  labs(x = "Urbanization Score", 
-    y = "Early June: Mean No. Ramets") +
-  theme_gradient_1 +
-  scale_x_reverse()
-
-
-# JUNE RAMETS-2
-ggplot(heights_both2019_popmeans, aes(x = City_dist, y = mean_Ramets_midJune)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mid-June: Mean No. Ramets") +
-  theme_gradient_1 +
-  xlim(0, 71) 
-
-ggplot(heights_both2019_popmeans, aes(x = Urb_score, y = mean_Ramets_midJune)) + 
-  labs(x = "Urbanization Score", 
-    y = "Mid-June: Mean No. Ramets") +
-  theme_gradient_1 +
-  scale_x_reverse()
-
-
-# SEPT ramets
-ggplot(heights_both2019_popmeans, aes(x = City_dist, y = mean_Ramets_Sept)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "September: Mean No. Ramets") +
-  theme_gradient_1 +
-  xlim(0, 71) 
-
-ggplot(heights_both2019_popmeans, aes(x = Urb_score, y = mean_Ramets_Sept)) + 
-  labs(x = "Urbanization Score", 
-    y = "September: Mean No. Ramets") +
-  theme_gradient_1 +
-  scale_x_reverse()
-
-
-```
-
-##### Urban subtransects
-```{r}
-# JUNE ramets- 1
-ggplot(heights_both2019_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_Ramets_earlyJune)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Early June: Mean No. Ramets") +
-  theme_urbansubs_1 +
-  xlim(0, 35)  
-
-ggplot(heights_both2019_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = mean_Ramets_earlyJune)) + 
-  labs(x = "Urbanization Score", 
-    y = "Early June: Mean No. Ramets") +
-  theme_urbansubs_1 +
-  scale_x_reverse()
-
-
-# JUNE ramets- 2
-ggplot(heights_both2019_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_Ramets_midJune)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mid-June: Mean No. Ramets") +
-  theme_urbansubs_1 +
-  xlim(0, 35)  
-
-ggplot(heights_both2019_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = mean_Ramets_midJune)) + 
-  labs(x = "Urbanization Score", 
-    y = "Mid-June: Mean No. Ramets") +
-  theme_urbansubs_1 +
-  scale_x_reverse()
-
-
-# sept ramets
-ggplot(heights_both2019_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_Ramets_Sept)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Sept: Mean No. Ramets") +
-  theme_urbansubs_1 +
-  xlim(0, 35) 
-
-ggplot(heights_both2019_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = mean_Ramets_Sept)) + 
-  labs(x = "Urbanization Score", 
-    y = "Sept: Mean No. Ramets") +
-  theme_urbansubs_1 +
-  scale_x_reverse()
-
-
-```
-
-## Herbivory
-### Regressions
-#### Entire gradient
-```{r}
-ggplot(herbivory2019_popmeans, aes(x = City_dist, y = Herbivory.Sept_mean)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mean Herbivory") +
-  theme_gradient_1 +
-  xlim(0, 71) 
-
-ggplot(herbivory2019_popmeans, aes(x = Urb_score, y = Herbivory.Sept_mean)) + 
-  labs(x = "Urbanization Score", 
-    y = "Mean Herbivory") +
-  theme_gradient_1 +
-  xlim(0, 71) +
-  scale_x_reverse()
-
-```
-
-#### Urban subtransects
-```{r}
-# sept herbivory
-ggplot(herbivory2019_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = Herbivory.Sept_mean)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mean Herbivory") +
-  theme_urbansubs_1 +
-  xlim(0, 35)    
-
-ggplot(herbivory2019_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = Herbivory.Sept_mean)) + 
-  labs(x = "Urbanization Score", 
-    y = "Mean Herbivory") +
-  theme_urbansubs_1 +
-  scale_x_reverse()
-
-```
-
-## Survival
-Not putting anything here yet... I think I'd have to make a logistic regression plot?
-# Figures: 2020
-## make themes
-```{r}
-# Gradient
-theme_gradient_1_init <-  theme_bw() +
-  theme(text = element_text(size=12))
-
-theme_gradient_1 <-  list(theme_gradient_1_init,
-        geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2),
-        scale_shape(solid = F),
-        geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black'),
-        scale_shape_manual(values = c(1, 2, 5),
-                           breaks = c("North", "South", "Rural"),
-                           labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-                           name = "Sample Site Subtransect"),
-        scale_color_manual(values = c("black", "#333333", "#666666"),
-                           breaks = c("North", "South", "Rural"),
-                           labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-                           name = "Sample Site Subtransect"))
-
-
-# Urban subtransects
-theme_urbansubs_1 <- list(theme_gradient_1_init,
-                geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) ,
-                scale_shape(solid = F),
-                geom_smooth(aes(linetype = Transect_ID,
-                                color = Transect_ID, fill = Transect_ID),
-                            size=0.75, method = lm, alpha=.15, se = T) ,
-                scale_shape_manual(values = c(1, 2),
-                                   breaks = c("North", "South"),
-                                   labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                                   name = "Sample Site Subtransect") ,
-                scale_color_manual(values = c("red", "blue"),
-                                   breaks = c("North", "South"),
-                                   labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                                   name = "Sample Site Subtransect") ,
-                scale_linetype_manual(values = c("solid", "dashed"),
-                                   breaks = c("North", "South"),
-                                   labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                                   name = "Sample Site Subtransect") ,
-                scale_fill_manual(values = c("red", "blue"),
-                                   breaks = c("North", "South"),
-                                   labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                                   name = "Sample Site Subtransect"))
-```
-
-## Visualize spatial patterns
-### Blocks in plot
-```{r}
-blocks <- ggplot(data =  weevil_both, aes(x = Column, y = Row)) + 
-      geom_tile(aes(fill = Block), colour = "black") +
-      scale_y_reverse() +
-  theme_minimal()
-blocks
-
-png(here::here("./Figures_Tables/Spatial_patterns/blocks.png"), width = 800, height = 400)
-print(blocks)
-dev.off()
-```
-
-### Weevil damage
-```{r}
-# binary: damaged or not during first weevil damage assessment
-weevil_matrix_data_binary <- weevil_both[,c("Row", "Column", "Weevil_dam_binary")]
-
-weevil_plot_binary <- ggplot(data = weevil_matrix_data_binary, aes(x = Column, y = Row)) + 
-      geom_tile(aes(fill = as.factor(Weevil_dam_binary)), colour = "black") +
-      scale_y_reverse() +
-  scale_fill_manual(values = c("yellow", "red"),
-                      name = "Weevil Damage",
-                      labels = c("No", "Yes"))
-weevil_plot_binary
-
-png(here::here("./Figures_Tables/Spatial_patterns/weevil_matrix_binary.png"), width = 800, height = 400)
-print(weevil_plot_binary)
-dev.off()
-
-
-# quantitative: how long was the scar? during second weevil damage assessment
-weevil_matrix_data_quant <- weevil_both[,c("Row", "Column", "Scar_length_mm")]
-
-weevil_plot_quant <- ggplot(data =  weevil_matrix_data_quant, aes(x = Column, y = Row, fill = Scar_length_mm)) + 
-      geom_tile(aes(fill = Scar_length_mm), colour = "black") +
-      scale_y_reverse()
-weevil_plot_quant
-
-# quantitative: how long was the scar? during second weevil damage assessment- ONLY IF HAD SCAR
-weevil_matrix_data_quant <- weevil_both[,c("Row", "Column", "Scar_length_mm")]
-
-ggplot(data =  weevil_matrix_data_quant %>% filter(.,Scar_length_mm > 0), aes(x = Column, y = Row, fill = Scar_length_mm)) + 
-      geom_tile(aes(fill = Scar_length_mm), colour = "black") +
-      scale_y_reverse()
-
-
-# quantitative: how long was the scar? during second weevil damage assessment- ONLY IF HAD SCAR- STANDARDIZED BY HEIGHT
-weevil_matrix_data_standardized <- weevil_both[,c("Row", "Column", "scar_div_Juneheight")]
-
-ggplot(data =  weevil_matrix_data_standardized %>% filter(.,scar_div_Juneheight > 0), aes(x = Column, y = Row, fill = scar_div_Juneheight)) +
-  geom_tile(aes(fill = scar_div_Juneheight), colour = "black") +
-  scale_fill_gradient(colours = topo.colors(50)) +
-  scale_y_reverse() +
-  labs(fill = "Scar length per cm height")
-
-# hist(log(weevil_both$scar_div_Juneheight)
-# png("weevil_matrix_binary.png", width = 800, height = 400)
-# print(weevil_plot_binary)
-# dev.off()
-```
-
-### Mortality
-```{r}
-mortality_matrix_data <- dead_2020[,c("Row", "Column", "Dead_June")]
-
-mortality_plot <- ggplot(data =  mortality_matrix_data, aes(x = Column, y = Row)) + 
-      geom_tile(aes(fill = as.factor(Dead_June)), colour = "black") +
-      scale_y_reverse() +
-  scale_fill_manual(values = c("yellow", "red"),
-                      name = "Mortality",
-                          labels = c("Dead", "Alive")) 
-
-
-png(here::here("./Figures_Tables/Spatial_patterns/mortality_matrix_binary.png"), width = 800, height = 400)
-print(mortality_plot)
-dev.off()
-```
-
-### Flowering
-#### Flowering plants
-```{r}
-flowering_matrix_data <- reproductive[,c("Row", "Column", "Flowered2020")]
-
-flowering_plot <- ggplot(data =  flowering_matrix_data, aes(x = Column, y = Row)) + 
-  geom_tile(aes(fill = as.factor(Flowered2020)), colour = "black") +
-  scale_y_reverse() +
-  scale_fill_manual(values = c("yellow", "red"),
-                      name = "Flowering Plants",
-                      labels = c("No", "Yes"))
-flowering_plot
-
-png(here::here("./Figures_Tables/Spatial_patterns/flowering_matrix.png"), width = 800, height = 400)
-print(flowering_plot)
-dev.off()
-```
-
-
-## Look at distribution of pops along gradient
-```{r}
-ggplot(heights_both2020_popmeans, aes(x=City_dist)) +
-  geom_histogram(binwidth=6, color="black", fill="white")
-
-ggplot(heights_both2020_popmeans, aes(x=Urb_score)) +
-  geom_histogram(binwidth=0.8, color="black", fill="white")
-
-```
-
-## reproductive
-### Plants that flowered: Regressions
-#### Percent flowering plants/pop
-##### Entire gradient
-```{r}
-# City_dist
-ggplot(flowered2020_popmeans, aes(x = City_dist, y = percent_flowered)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Percent Flowering Plants/Population") +
-  theme_gradient_1
-
-# Urb_score
-ggplot(flowered2020_popmeans, aes(x = Urb_score, y = percent_flowered)) + 
-  labs(x = "Urbanization Score", 
-    y = "Percent Flowering Plants/Population") +
-  theme_gradient_1 +
-  scale_x_reverse()
-```
-
-##### Urban subtransects
-```{r}
-# City_dist
-ggplot(flowered2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = percent_flowered)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Percent Flowering Plants/Population") +
-  theme_urbansubs_1
-
-# Urb_score
-ggplot(flowered2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = percent_flowered)) + 
-  labs(x = "Urbanization Score", 
-    y = "Percent Flowering Plants/Population") +
-  theme_urbansubs_1 +
-  scale_x_reverse()
-
-```
-
-
-#### Mean flower count
-##### Entire gradient
-```{r}
-ggplot(flowering_2020, aes(x = City_dist, y = mean_flower_count)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mean flower count/inflorescence") +
-  theme_gradient_1
-
-
-ggplot(flowering_2020, aes(x = Urb_score, y = mean_flower_count)) + 
-  labs(x = "Urbanization Score", 
-    y = "Mean flower count/inflorescence") +
-  theme_gradient_1 +
-  scale_x_reverse()
-```
-
-
-##### Urban subtransects
-```{r}
-ggplot(flowering_2020 %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_flower_count)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mean flower count/inflorescence") +
-  theme_urbansubs_1
-
-ggplot(flowering_2020 %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = mean_flower_count)) + 
-  labs(x = "Urbanization Score", 
-    y = "Mean flower count/inflorescence") +
-  theme_urbansubs_1 +
-  scale_x_reverse()
-```
-
-#### Total flower count
-##### Entire gradient
-```{r}
-
-ggplot(flowering_2020, aes(x = City_dist, y = total_flower_count)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Total flower count") +
-  theme_gradient_1
-
-ggplot(flowering_2020, aes(x = Urb_score, y = total_flower_count)) + 
-  labs(x = "Urbanization Score", 
-    y = "Total flower count") +
-  theme_gradient_1 +
-  scale_x_reverse()
-```
-
-
-##### Urban subtransects
-```{r}
-ggplot(flowering_2020 %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = total_flower_count)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Total flower count") +
-  theme_urbansubs_1
-
-ggplot(flowering_2020 %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = total_flower_count)) + 
-  labs(x = "Urbanization Score", 
-    y = "Total flower count") +
-  theme_urbansubs_1+
-  scale_x_reverse()
-
-```
-
-
-#### Mean flower size
-##### Entire gradient
-```{r}
-ggplot(flowering_2020, aes(x = City_dist, y = Overall_mean)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mean flower size") +
-  theme_gradient_1
-
-ggplot(flowering_2020, aes(x = Urb_score, y = Overall_mean)) + 
-  labs(x = "Urbanization Score", 
-    y = "Mean flower size") +
-  theme_gradient_1 +
-  scale_x_reverse()
-
-
-
-# COMBINING INTO ONE FIGURE (do a PCA instead)
-ggplot() + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mean flower size") +
-  geom_point(aes(x = City_dist, y = Overall_mean), size=2, color = 'orange', data = flowering_2020) +
-  geom_point(aes(x = City_dist, y = Flower_mean), size=2, color = 'blue', data = flowering_2020) +
-  geom_point(aes(x = City_dist, y = Corolla_mean), size=2, color = 'green', data = flowering_2020) +
-  geom_point(aes(x = City_dist, y = Hood_mean), size=2, color = 'purple', data = flowering_2020) +
-  # xlim(0, 71) +
-  # ylim(0, 120) +
-  geom_smooth(aes(x = City_dist, y = Overall_mean), size=0.75, method = lm, alpha=.15, se = T, data = flowering_2020) +
-  geom_smooth(aes(x = City_dist, y = Flower_mean), size=0.75, method = lm, alpha=.15, se = T, data = flowering_2020) +
-  geom_smooth(aes(x = City_dist, y = Corolla_mean), size=0.75, method = lm, alpha=.15, se = T, data = flowering_2020) +
-  geom_smooth(aes(x = City_dist, y = Hood_mean), size=0.75, method = lm, alpha=.15, se = T, data = flowering_2020) +
-  theme_bw() 
-  # theme(text = element_text(size=12)) +
-  # scale_shape_manual(values = c(21, 24),
-  #                    breaks = c("June", "September"),
-  #                      labels = c("June", "September"),
-  #                      name = "Legend") +
-  # scale_color_manual(values = c("blue", "orange"),
-  #                    breaks = c("June", "September"),
-  #                      labels = c("June", "September"),
-  #                      name = "Legend") +
-  # scale_fill_manual(values = c("blue", "orange"),
-  #                    breaks = c("June", "September"),
-  #                      labels = c("June", "September"),
-  #                      name = "Legend")
-```
-
-
-##### Urban subtransects
-```{r}
-ggplot(flowering_2020 %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = Overall_mean)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mean flower size") +
-  theme_urbansubs_1
-
-
-ggplot(flowering_2020 %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = Overall_mean)) + 
-  labs(x = "Urbanization Score", 
-    y = "Mean flower size") +
-  theme_urbansubs_1 +
-  scale_x_reverse()
-```
-
-
-
-#### Pod count
-##### Entire gradient
-```{r}
-ggplot(flowering_2020, aes(x = City_dist, y = Pods)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Pods") +
-  theme_gradient_1
-
-ggplot(flowering_2020, aes(x = Urb_score, y = Pods)) + 
-  labs(x = "Urbanization Score", 
-    y = "Pods") +
-  theme_gradient_1 +
-  scale_x_reverse()
-
-```
-
-
-##### Urban subtransects
-```{r}
-ggplot(flowering_2020 %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = Pods)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Pods") +
-  theme_urbansubs_1
-
-
-ggplot(flowering_2020 %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = Pods)) + 
-  labs(x = "Urbanization Score", 
-    y = "Pods") +
-  theme_urbansubs_1 +
-  scale_x_reverse()
-```
-
-#### Peduncles/Inflorescences
-##### Entire gradient
-```{r}
-ggplot(flowering_2020, aes(x = City_dist, y = Peduncles)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Peduncles") +
-  theme_gradient_1
-
-ggplot(flowering_2020, aes(x = Urb_score, y = Peduncles)) + 
-  labs(x = "Urbanization Score", 
-    y = "Peduncles") +
-  theme_gradient_1 +
-  scale_x_reverse()
-
-```
-
-
-##### Urban subtransects
-```{r}
-ggplot(flowering_2020 %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = Peduncles)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Peduncles") +
-  theme_urbansubs_1
-
-
-ggplot(flowering_2020 %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = Peduncles)) + 
-  labs(x = "Urbanization Score", 
-    y = "Peduncles") +
-  theme_urbansubs_1 +
-  scale_x_reverse()
-```
-
-
-### Plants that flowered: Boxplots
-#### Mean flower count
-##### Urban subtransects
-```{r}
-library(viridis)
-
-flowering_2020 %>%
-  filter(Transect_ID != "Rural") %>%
-  ggplot( aes(x=Transect_ID, y=mean_flower_count, fill=Transect_ID)) +
-    geom_boxplot() +
-    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
-    geom_jitter(color="black", size=2, alpha=0.5) +
-    theme(
-      legend.position="none",
-      plot.title = element_text(size=11)
-    ) +
-    xlab("")
-```
-
-## Height
-### Regressions
-#### Each point is a population mean
-##### Entire gradient
-```{r}
-# JUNE HEIGHT
-## Multiple R-squared:  0.05561
-ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_height_June)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "June: Mean height (cm)") +
-  theme_gradient_1 +
-  xlim(0, 71) +
-  ylim(0, 60) 
-
-ggplot(heights_both2020_popmeans, aes(x = Urb_score, y = mean_height_June)) + 
-  labs(x = 'Urbanization Score', 
-    y = "June: Mean height (cm)") +
-  theme_gradient_1 +
-  xlim(0, 71) +
-  ylim(0, 60) +
-  scale_x_reverse()
-
-
-# SEPT HEIGHT
-# Multiple R-squared:  0.05979
-ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_height_Sept)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "September: Mean height (cm)") +
-  theme_gradient_1 +
-  xlim(0, 71) +
-  ylim(0, 120) 
-
-ggplot(heights_both2020_popmeans, aes(x = Urb_score, y = mean_height_Sept)) + 
-  labs(x = "Urbanization Score", 
-    y = "September: Mean height (cm)") +
-  theme_gradient_1 +
-  xlim(0, 71) +
-  ylim(0, 120) +
-  scale_x_reverse()
-
-
-# COMBINING INTO ONE FIGURE
-ggplot() + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mean height (cm)") +
-  geom_point(aes(x = City_dist, y = mean_height_June, fill = 'June', shape = 'June'), size=2, data = heights_both2020_popmeans) +
-  geom_point(aes(x = City_dist, y = mean_height_Sept, fill = 'September', shape = 'September' ), size=2, data = heights_both2020_popmeans) +
- # scale_shape(aes(x = City_dist, y = mean_height_June), solid = T, data = heights_both2020_popmeans)+
- # scale_shape(aes(x = City_dist, y = mean_height_Sept), solid = F, data = heights_both2020_popmeans)+
-  xlim(0, 71) +
-  ylim(0, 120) +
-  geom_smooth(aes(x = City_dist, y = mean_height_June, fill = 'June', color = 'June'), size=0.75, method = lm, alpha=.15, se = T, data = heights_both2020_popmeans) +
-  geom_smooth(aes(x = City_dist, y = mean_height_Sept, fill = 'September', color = 'September'), size=0.75, method = lm, alpha=.15, se = T, data = heights_both2020_popmeans) +
-  theme_bw() +
-  theme(text = element_text(size=12)) +
-  scale_shape_manual(values = c(21, 24),
-                     breaks = c("June", "September"),
-                       labels = c("June", "September"),
-                       name = "Legend") +
-  scale_color_manual(values = c("blue", "orange"),
-                     breaks = c("June", "September"),
-                       labels = c("June", "September"),
-                       name = "Legend") +
-  scale_fill_manual(values = c("blue", "orange"),
-                     breaks = c("June", "September"),
-                       labels = c("June", "September"),
-                       name = "Legend") 
-
-
-
-ggplot() + 
-  labs(x = "Urbanization Score", 
-    y = "Mean height (cm)") +
-  geom_point(aes(x = Urb_score, y = mean_height_June, fill = 'June', shape = 'June'), size=2, data = heights_both2020_popmeans) +
-  geom_point(aes(x = Urb_score, y = mean_height_Sept, fill = 'September', shape = 'September' ), size=2, data = heights_both2020_popmeans) +
- # scale_shape(aes(x = City_dist, y = mean_height_June), solid = T, data = heights_both2020_popmeans)+
- # scale_shape(aes(x = City_dist, y = mean_height_Sept), solid = F, data = heights_both2020_popmeans)+
-  # xlim(0, 71) +
-  ylim(0, 120) +
-  geom_smooth(aes(x = Urb_score, y = mean_height_June, fill = 'June', color = 'June'), size=0.75, method = lm, alpha=.15, se = T, data = heights_both2020_popmeans) +
-  geom_smooth(aes(x = Urb_score, y = mean_height_Sept, fill = 'September', color = 'September'), size=0.75, method = lm, alpha=.15, se = T, data = heights_both2020_popmeans) +
-  theme_bw() +
-  theme(text = element_text(size=12)) +
-  scale_shape_manual(values = c(21, 24),
-                     breaks = c("June", "September"),
-                       labels = c("June", "September"),
-                       name = "Legend") +
-  scale_color_manual(values = c("blue", "orange"),
-                     breaks = c("June", "September"),
-                       labels = c("June", "September"),
-                       name = "Legend") +
-  scale_fill_manual(values = c("blue", "orange"),
-                     breaks = c("June", "September"),
-                       labels = c("June", "September"),
-                       name = "Legend") +
-  scale_x_reverse()
-```
-
-##### Urban subtransects
-```{r}
-# JUNE HEIGHT
-ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_height_June)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "June: Mean height (cm)") +
-  theme_urbansubs_1 +
-  xlim(0, 35) +
-  ylim(0, 60) 
-
-ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = mean_height_June)) + 
-  labs(x = "Urbanization Score", 
-    y = "June: Mean height (cm)") +
-  theme_urbansubs_1 +
-  ylim(0, 60) +
-  scale_x_reverse()
-
-
-
-# sept HEIGHT
-ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_height_Sept)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Sept: Mean height (cm)") +
-  theme_urbansubs_1 +
-  xlim(0, 35) +
-  ylim(0, 120)
-
-ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = mean_height_Sept)) + 
-  labs(x = "Urbanization Score", 
-    y = "Sept: Mean height (cm)") +
-  theme_urbansubs_1 +
-  ylim(0, 120) +
-  scale_x_reverse()
-
-```
-
-#### Each point is a family mean
-##### Entire gradient
-```{r}
-# JUNE HEIGHT
-## Multiple R-squared:  0.05561
-ggplot(heights_both2020_familymeans, aes(x = City_dist, y = mean_height_June)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "June: Mean height (cm)") +
-  geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-  scale_shape(solid = F)+
-  xlim(0, 71) +
-  ylim(0, 60) +
-  geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-  theme_bw() +
-  theme(text = element_text(size=12)) +
-  scale_shape_manual(values = c(1, 2, 5),
-                     breaks = c("North", "South", "Rural"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-                       name = "Sample Site Subtransect") +
-  scale_color_manual(values = c("black", "#333333", "#666666"),
-                     breaks = c("North", "South", "Rural"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-                       name = "Sample Site Subtransect") 
-
-
-
-# SEPT HEIGHT
-# Multiple R-squared:  0.05979
-ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_height_Sept)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "September: Mean height (cm)") +
-  geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-  scale_shape(solid = F)+
-  xlim(0, 71) +
-  ylim(0, 120) +
-  geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-  theme_bw() +
-  theme(text = element_text(size=12)) +
-  scale_shape_manual(values = c(1, 2, 5),
-                     breaks = c("North", "South", "Rural"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-                       name = "Sample Site Subtransect") +
-  scale_color_manual(values = c("black", "#333333", "#666666"),
-                     breaks = c("North", "South", "Rural"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-                       name = "Sample Site Subtransect")
-
-
-
-
-# COMBINING INTO ONE FIGURE
-ggplot() + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mean height (cm)") +
-  geom_point(aes(x = City_dist, y = mean_height_June, fill = 'June', shape = 'June'), size=2, data = heights_both2020_popmeans) +
-  geom_point(aes(x = City_dist, y = mean_height_Sept, fill = 'September', shape = 'September' ), size=2, data = heights_both2020_popmeans) +
- # scale_shape(aes(x = City_dist, y = mean_height_June), solid = T, data = heights_both2020_popmeans)+
- # scale_shape(aes(x = City_dist, y = mean_height_Sept), solid = F, data = heights_both2020_popmeans)+
-  xlim(0, 71) +
-  ylim(0, 120) +
-  geom_smooth(aes(x = City_dist, y = mean_height_June, fill = 'June', color = 'June'), size=0.75, method = lm, alpha=.15, se = T, data = heights_both2020_popmeans) +
-  geom_smooth(aes(x = City_dist, y = mean_height_Sept, fill = 'September', color = 'September'), size=0.75, method = lm, alpha=.15, se = T, data = heights_both2020_popmeans) +
-  theme_bw() +
-  theme(text = element_text(size=12)) +
-  scale_shape_manual(values = c(21, 24),
-                     breaks = c("June", "September"),
-                       labels = c("June", "September"),
-                       name = "Legend") +
-  scale_color_manual(values = c("blue", "orange"),
-                     breaks = c("June", "September"),
-                       labels = c("June", "September"),
-                       name = "Legend") +
-  scale_fill_manual(values = c("blue", "orange"),
-                     breaks = c("June", "September"),
-                       labels = c("June", "September"),
-                       name = "Legend") 
-```
-
-##### Urban subtransects
-```{r}
-# JUNE HEIGHT
-
-ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_height_June)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "June: Mean height (cm)") +
-  geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-  scale_shape(solid = F)+
-  geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
-  xlim(0, 35) +
-  ylim(0, 60) +
-  theme_bw() +
-  theme(text = element_text(size=12),
-        legend.position = 'none') +
-  scale_shape_manual(values = c(1, 2),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect") +
-  scale_color_manual(values = c("red", "blue"),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect") +
-  scale_linetype_manual(values = c("solid", "dashed"),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect") +
-  scale_fill_manual(values = c("red", "blue"),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect")
-
-
-
-# sept HEIGHT
-
-ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_height_Sept)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Sept: Mean height (cm)") +
-  geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-  scale_shape(solid = F)+
-  geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
-  xlim(0, 35) +
-  ylim(0, 120) +
-  theme_bw() +
-  theme(text = element_text(size=12)) +
-  scale_shape_manual(values = c(1, 2),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect") +
-  scale_color_manual(values = c("red", "blue"),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect") +
-  scale_linetype_manual(values = c("solid", "dashed"),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect") +
-  scale_fill_manual(values = c("red", "blue"),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect")
-```
-
-
-
-## Weevil damage
-### Standardized by June height
-#### Regressions
-##### Entire gradient
-```{r}
-# Multiple R-squared: 0.0008
-ggplot(weevil_both2020_popmeans, aes(x = City_dist, y = mean_scar_div_Juneheight)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Weevil scar length/cm") +
-  theme_gradient_1
-
-
-ggplot(weevil_both2020_popmeans, aes(x = Urb_score, y = mean_scar_div_Juneheight)) + 
-  labs(x = 'Urbanization Score', 
-    y = "Weevil scar length/cm") +
-  theme_gradient_1 +
-  scale_x_reverse()
-
-```
-
-##### Urban subtransects
-```{r}
-
-# R-squared = 0.04079
-ggplot(weevil_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_scar_div_Juneheight)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Weevil scar length/cm") +
-  theme_urbansubs_1 +
-  ylim(0, 0.2) 
-
-
-ggplot(weevil_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = mean_scar_div_Juneheight)) + 
-  labs(x = "Urbanization Score", 
-    y = "Weevil scar length/cm") +
-  theme_urbansubs_1 +
-  ylim(0, 0.2) +
-  scale_x_reverse()
-```
-
-### NOT Standardized by June height
-#### Regressions
-##### Entire gradient
-```{r}
-# Multiple R-squared: 0.003591
-ggplot(weevil_both2020_popmeans, aes(x = City_dist, y = mean_scar)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Total weevil scar length") +
-  theme_gradient_1
-
-ggplot(weevil_both2020_popmeans, aes(x = Urb_score, y = mean_scar)) + 
-  labs(x = "Urbanization Score", 
-    y = "Total weevil scar length") +
-  theme_gradient_1 +
-  scale_x_reverse()
-```
-
-##### Urban subtransects
-```{r}
-ggplot(weevil_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_scar)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Total weevil scar length") +
-  theme_urbansubs_1
-
-ggplot(weevil_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = mean_scar)) + 
-  labs(x = "Urbanization Score", 
-    y = "Total weevil scar length") +
-  theme_urbansubs_1+
-  scale_x_reverse()
-```
-
-## Herbivory
-### Regressions
-#### Entire gradient
-```{r}
-# JULY HERBIVORY
-## NO TRANSFORMATIONS OR OUTLIERS REMOVED-----
-## Multiple R-squared: 0.08834
-ggplot(herbivory2020_popmeans, aes(x = City_dist, y = Herbivory.July_mean)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mean Herbivory") +
-  theme_gradient_1 +
-  xlim(0, 71) +
-  ylim(0, 15) 
-
-ggplot(herbivory2020_popmeans, aes(x = Urb_score, y = Herbivory.July_mean)) + 
-  labs(x = "Urbanization Score", 
-    y = "Mean Herbivory") +
-  theme_gradient_1 +
-  ylim(0, 15) +
-  scale_x_reverse()
-
-
-
-# SEPT HEIGHT-----
-# Multiple R-squared:  0.01975
-ggplot(herbivory2020_popmeans, aes(x = City_dist, y = Herbivory.Sept_mean)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mean Herbivory") +
-  theme_gradient_1 +
-  xlim(0, 71) 
-
-ggplot(herbivory2020_popmeans, aes(x = Urb_score, y = Herbivory.Sept_mean)) + 
-  labs(x = "Urbanization Score", 
-    y = "Mean Herbivory") +
-  theme_gradient_1 +
-  xlim(0, 71) +
-  scale_x_reverse()
-
-
-# COMBINING INTO ONE FIGURE-----
-ggplot() + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mean Herbivory") +
-  geom_point(aes(x = City_dist, y = Herbivory.July_mean, fill = 'July', shape = 'July'), size=2, data = herbivory2020_popmeans) +
-  geom_point(aes(x = City_dist, y = Herbivory.Sept_mean, fill = 'September', shape = 'September' ), size=2, data = herbivory2020_popmeans) +
- # scale_shape(aes(x = City_dist, y = mean_height_June), solid = T, data = heights_both2020_popmeans)+
- # scale_shape(aes(x = City_dist, y = mean_height_Sept), solid = F, data = heights_both2020_popmeans)+
-  xlim(0, 71) +
-  # ylim(0, 120) +
-  geom_smooth(aes(x = City_dist, y = Herbivory.July_mean, fill = 'July', color = 'July'), size=0.75, method = lm, alpha=.15, se = T, data = herbivory2020_popmeans) +
-  geom_smooth(aes(x = City_dist, y = Herbivory.Sept_mean, fill = 'September', color = 'September'), size=0.75, method = lm, alpha=.15, se = T, data = herbivory2020_popmeans) +
-  theme_bw() +
-  theme(text = element_text(size=12)) +
-  scale_shape_manual(values = c(21, 24),
-                     breaks = c("July", "September"),
-                       labels = c("July", "September"),
-                       name = "Legend") +
-  scale_color_manual(values = c("blue", "orange"),
-                     breaks = c("July", "September"),
-                       labels = c("July", "September"),
-                       name = "Legend") +
-  scale_fill_manual(values = c("blue", "orange"),
-                     breaks = c("July", "September"),
-                       labels = c("July", "September"),
-                       name = "Legend") 
-```
-
-#### Urban subtransects
-```{r}
-# JULY HERBIVORY
-ggplot(herbivory2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = Herbivory.July_mean)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mean Herbivory") +
-  theme_urbansubs_1 +
-  xlim(0, 35) +
-  ylim(0, 15) 
-
-ggplot(herbivory2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = Herbivory.July_mean)) + 
-  labs(x = "Urbanization Score", 
-    y = "Mean Herbivory") +
-  theme_urbansubs_1 +
-  ylim(0, 15) +
-  scale_x_reverse()
-
-
-# sept herbivory
-ggplot(herbivory2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = Herbivory.Sept_mean)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mean Herbivory") +
-  theme_urbansubs_1 +
-  xlim(0, 35) +
-  ylim(0, 40)    
-
-ggplot(herbivory2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = Herbivory.Sept_mean)) + 
-  labs(x = "Urbanization Score", 
-    y = "Mean Herbivory") +
-  theme_urbansubs_1 +
-  ylim(0, 40) +
-  scale_x_reverse()
-
-```
-
-
-## No. of Ramets
-### Regressions
-#### Each point is a population mean
-##### Entire gradient
-```{r}
-# JUNE RAMETS
-ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_Ramets_June)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "June: Mean No. Ramets") +
-  theme_gradient_1 +
-  xlim(0, 71) +
-  ylim(0, 5)
-
-ggplot(heights_both2020_popmeans, aes(x = Urb_score, y = mean_Ramets_June)) + 
-  labs(x = "Urbanization Score", 
-    y = "June: Mean No. Ramets") +
-  theme_gradient_1 +
-  ylim(0, 5) +
-  scale_x_reverse()
-
-
-# SEPT ramets
-ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_Ramets_Sept)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "September: Mean No. Ramets") +
-  theme_gradient_1 +
-  xlim(0, 71) +
-  ylim(0, 4) 
-
-ggplot(heights_both2020_popmeans, aes(x = Urb_score, y = mean_Ramets_Sept)) + 
-  labs(x = "Urbanization Score", 
-    y = "September: Mean No. Ramets") +
-  theme_gradient_1 +
-  ylim(0, 4) +
-  scale_x_reverse()
-
-
-# COMBINING INTO ONE FIGURE
-ggplot() + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mean No. Ramets") +
-  geom_point(aes(x = City_dist, y = mean_Ramets_June, fill = 'June', shape = 'June'), size=2, data = heights_both2020_popmeans) +
-  geom_point(aes(x = City_dist, y = mean_Ramets_Sept, fill = 'September', shape = 'September' ), size=2, data = heights_both2020_popmeans) +
- # scale_shape(aes(x = City_dist, y = mean_height_June), solid = T, data = heights_both2020_popmeans)+
- # scale_shape(aes(x = City_dist, y = mean_height_Sept), solid = F, data = heights_both2020_popmeans)+
-  xlim(0, 71) +
-  ylim(0, 5) +
-  geom_smooth(aes(x = City_dist, y = mean_Ramets_June, fill = 'June', color = 'June'), size=0.75, method = lm, alpha=.15, se = T, data = heights_both2020_popmeans) +
-  geom_smooth(aes(x = City_dist, y = mean_Ramets_Sept, fill = 'September', color = 'September'), size=0.75, method = lm, alpha=.15, se = T, data = heights_both2020_popmeans) +
-  theme_bw() +
-  theme(text = element_text(size=12)) +
-  scale_shape_manual(values = c(21, 24),
-                     breaks = c("June", "September"),
-                       labels = c("June", "September"),
-                       name = "Legend") +
-  scale_color_manual(values = c("blue", "orange"),
-                     breaks = c("June", "September"),
-                       labels = c("June", "September"),
-                       name = "Legend") +
-  scale_fill_manual(values = c("blue", "orange"),
-                     breaks = c("June", "September"),
-                       labels = c("June", "September"),
-                       name = "Legend") 
-```
-
-##### Urban subtransects
-```{r}
-# JUNE ramets
-p1 <- ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_Ramets_June)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "June: Mean No. Ramets") +
-  theme_urbansubs_1 +
-  xlim(0, 35) +
-  ylim(0, 4.2) 
-
-ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = mean_Ramets_June)) + 
-  labs(x = "Urbanization Score", 
-    y = "June: Mean No. Ramets") +
-  theme_urbansubs_1 +
-  ylim(0, 4.2) +
-  scale_x_reverse()
-
-
-# sept ramets
-p2 <- ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_Ramets_Sept)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Sept: Mean No. Ramets") +
-  theme_urbansubs_1 +
-  xlim(0, 35) +
-  ylim(0, 4)
-
-ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = mean_Ramets_Sept)) + 
-  labs(x = "Urbanization Score", 
-    y = "Sept: Mean No. Ramets") +
-  theme_urbansubs_1 +
-  ylim(0, 4)+
-  scale_x_reverse()
-
-
-
-library(patchwork)
-p1 + p2
-```
-
-#### Each point is a family mean
-##### Entire gradient
-```{r}
-# JUNE HEIGHT
-ggplot(ramets_2020_familymeans_stats, aes(x = City_dist, y = Ramets_June)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "June: Mean No. Ramets") +
-  geom_point(aes(color = Transect_ID, shape = Transect_ID), size=1.5) +
-  scale_shape(solid = F)+
-  geom_errorbar(aes(ymin=Ramets_June-se.June, ymax=Ramets_June+se.June), width = 0.25) +
-  xlim(0, 71) +
-  ylim(0, 8) +
-  geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-  theme_bw() +
-  theme(text = element_text(size=12)) +
-  scale_shape_manual(values = c(1, 2, 5),
-                     breaks = c("North", "South", "Rural"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-                       name = "Sample Site Subtransect") +
-  scale_color_manual(values = c("black", "#333333", "#666666"),
-                     breaks = c("North", "South", "Rural"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-                       name = "Sample Site Subtransect") 
-
-
-# SEPT HEIGHT
-ggplot(ramets_2020_familymeans_stats, aes(x = City_dist, y = Ramets_Sept)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Sept: Mean No. Ramets") +
-  geom_point(aes(color = Transect_ID, shape = Transect_ID), size=1.5) +
-  scale_shape(solid = F)+
-  geom_errorbar(aes(ymin=Ramets_June-se.Sept, ymax=Ramets_June+se.Sept), width = 0.25) +
-  xlim(0, 71) +
-  ylim(0, 8) +
-  geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black') +
-  theme_bw() +
-  theme(text = element_text(size=12)) +
-  scale_shape_manual(values = c(1, 2, 5),
-                     breaks = c("North", "South", "Rural"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-                       name = "Sample Site Subtransect") +
-  scale_color_manual(values = c("black", "#333333", "#666666"),
-                     breaks = c("North", "South", "Rural"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
-                       name = "Sample Site Subtransect") 
-
-```
-
-##### Urban subtransects
-```{r}
-# JUNE HEIGHT
-
-ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_height_June)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "June: Mean height (cm)") +
-  geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-  scale_shape(solid = F)+
-  geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
-  xlim(0, 35) +
-  ylim(0, 60) +
-  theme_bw() +
-  theme(text = element_text(size=12),
-        legend.position = 'none') +
-  scale_shape_manual(values = c(1, 2),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect") +
-  scale_color_manual(values = c("red", "blue"),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect") +
-  scale_linetype_manual(values = c("solid", "dashed"),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect") +
-  scale_fill_manual(values = c("red", "blue"),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect")
-
-
-
-# sept HEIGHT
-
-ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_height_Sept)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Sept: Mean height (cm)") +
-  geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
-  scale_shape(solid = F)+
-  geom_smooth(aes(linetype = Transect_ID, color = Transect_ID, fill = Transect_ID),size=0.75, method = lm, alpha=.15, se = T) +
-  xlim(0, 35) +
-  ylim(0, 120) +
-  theme_bw() +
-  theme(text = element_text(size=12)) +
-  scale_shape_manual(values = c(1, 2),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect") +
-  scale_color_manual(values = c("red", "blue"),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect") +
-  scale_linetype_manual(values = c("solid", "dashed"),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect") +
-  scale_fill_manual(values = c("red", "blue"),
-                     breaks = c("North", "South"),
-                       labels = c("Urban: Non-Corridor", "Urban: Corridor"),
-                       name = "Sample Site Subtransect")
-```
-
-
-
-## Growth rate
-### Regressions
-#### Entire gradient
-```{r}
-ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_rel_growth_rate)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Relative Growth Rate") +
-  theme_gradient_1 +
-  xlim(0, 71) +
-  ylim(-0.01, 0.015) 
-
-ggplot(heights_both2020_popmeans, aes(x = Urb_score, y = mean_rel_growth_rate)) + 
-  labs(x = "Urbanization Score", 
-    y = "Relative Growth Rate") +
-  theme_gradient_1 +
-  ylim(-0.01, 0.015)+
-  scale_x_reverse()
-
-
-```
-
-#### Urban subtransects
-```{r}
-ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_rel_growth_rate)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Relative Growth Rate") +
-  theme_urbansubs_1 +
-  xlim(0, 35) 
-
-ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = mean_rel_growth_rate)) + 
-  labs(x = "Urbanization Score", 
-    y = "Relative Growth Rate") +
-  theme_urbansubs_1 +
-  scale_x_reverse()
-```
-
-## Survival
-### Regressions
-#### Entire gradient
-```{r}
-ggplot(survival2020_popmeans, aes(x = City_dist, y = survival_mean)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mortality") +
-  theme_gradient_1 +
-  xlim(0, 71) 
-
-ggplot(survival2020_popmeans, aes(x = Urb_score, y = survival_mean)) + 
-  labs(x = "Urbanization Score", 
-    y = "Mortality") +
-  theme_gradient_1 +
-  scale_x_reverse()
-
-```
-
-#### Urban subtransects
-```{r}
-ggplot(survival2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = survival_mean)) + 
-  labs(x = "Distance to urban center (km)", 
-    y = "Mortality") +
-  theme_urbansubs_1 +
-  xlim(0, 35) 
-
-ggplot(survival2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = survival_mean)) + 
-  labs(x = "Urbanization Score", 
-    y = "Mortality") +
-  theme_urbansubs_1 +
-  scale_x_reverse()
-```
