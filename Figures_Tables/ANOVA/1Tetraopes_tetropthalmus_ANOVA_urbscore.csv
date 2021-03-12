@@ -44,3 +44,95 @@
 "1","Urban subtransects AIC (full model) = 375.125807494089"
 "x"
 "1","Urban subtransects AIC (main effects model) = 373.137723291966"
+"x"
+"1","Gradient: Full model ANOVA:  ~"
+"2","Gradient: Full model ANOVA:  Tetraopes_tetropthalmus"
+"3","Gradient: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",2.40944788188497,1,0.120604895895293
+"x"
+"1","Gradient: Full model R-squared: "
+"R2m","R2c"
+"delta",0.00305847435560836,0.172164433235249
+"lognormal",0.0098288173391069,0.553273485343164
+"trigamma",0.000209771418243869,0.0118082328415425
+"x"
+"1","Urban Subtransects: Full model ANOVA:  ~"
+"2","Urban Subtransects: Full model ANOVA:  Tetraopes_tetropthalmus"
+"3","Urban Subtransects: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score * Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",0.00104900294435259,1,0.974162380931351
+"Transect_ID",1.91437940900704,1,0.166477597228109
+"Urb_score:Transect_ID",0.0298251522368009,1,0.862887557318739
+"x"
+"1","Urban Subtransects: Full model R-squared: "
+"R2m","R2c"
+"delta",0.0032571865483905,0.0846510457759662
+"lognormal",0.0158388037616434,0.411634790437762
+"trigamma",0.000144313360632349,0.00375056101806911
+"x"
+"1","Urban Subtransects: Main effects model ANOVA:  ~"
+"2","Urban Subtransects: Main effects model ANOVA:  Tetraopes_tetropthalmus"
+"3","Urban Subtransects: Main effects model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score + Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",0.00103191035727757,1,0.974373673199218
+"Transect_ID",1.90464781579865,1,0.167559001921913
+"x"
+"1","Urban Subtransects: Main effects model R-squared: "
+"R2m","R2c"
+"delta",0.00318907163958364,0.084553387893674
+"lognormal",0.015513973147004,0.411329420445987
+"trigamma",0.000141281046667412,0.00374585223882068
+""
+"x"
+"1","Gradient AIC (full model) = 599.237696332691"
+"x"
+"1","Urban subtransects AIC (full model) = 374.748352399092"
+"x"
+"1","Urban subtransects AIC (main effects model) = 372.778284306518"
+"x"
+"1","Gradient: Full model ANOVA:  ~"
+"2","Gradient: Full model ANOVA:  Tetraopes_tetropthalmus"
+"3","Gradient: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",2.40944788188497,1,0.120604895895293
+"x"
+"1","Gradient: Full model R-squared: "
+"R2m","R2c"
+"delta",0.00305847435560836,0.172164433235249
+"lognormal",0.0098288173391069,0.553273485343164
+"trigamma",0.000209771418243869,0.0118082328415425
+"x"
+"1","Urban Subtransects: Full model ANOVA:  ~"
+"2","Urban Subtransects: Full model ANOVA:  Tetraopes_tetropthalmus"
+"3","Urban Subtransects: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score * Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",0.00104900294435259,1,0.974162380931351
+"Transect_ID",1.91437940900704,1,0.166477597228109
+"Urb_score:Transect_ID",0.0298251522368009,1,0.862887557318739
+"x"
+"1","Urban Subtransects: Full model R-squared: "
+"R2m","R2c"
+"delta",0.0032571865483905,0.0846510457759662
+"lognormal",0.0158388037616434,0.411634790437762
+"trigamma",0.000144313360632349,0.00375056101806911
+"x"
+"1","Urban Subtransects: Main effects model ANOVA:  ~"
+"2","Urban Subtransects: Main effects model ANOVA:  Tetraopes_tetropthalmus"
+"3","Urban Subtransects: Main effects model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score + Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",0.00103191035727757,1,0.974373673199218
+"Transect_ID",1.90464781579865,1,0.167559001921913
+"x"
+"1","Urban Subtransects: Main effects model R-squared: "
+"R2m","R2c"
+"delta",0.00318907163958364,0.084553387893674
+"lognormal",0.015513973147004,0.411329420445987
+"trigamma",0.000141281046667412,0.00374585223882068
+""
+"x"
+"1","Gradient AIC (full model) = 599.237696332691"
+"x"
+"1","Urban subtransects AIC (full model) = 374.748352399092"
+"x"
+"1","Urban subtransects AIC (main effects model) = 372.778284306518"

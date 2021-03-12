@@ -44,3 +44,71 @@
 "1","Urban subtransects AIC (full model) = 1761.18494649097"
 "x"
 "1","Urban subtransects AIC (main effects model) = 1759.91807603809"
+"x"
+"1","Gradient: Full model ANOVA:  ~"
+"2","Gradient: Full model ANOVA:  Monarch_Quantity_Observed"
+"3","Gradient: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + City_dist"
+"Chisq","Df","Pr..Chisq."
+"City_dist",0.434027935121153,1,0.510019091741032
+"x"
+"1","Gradient: Full model R-squared: "
+"R2m","R2c"
+"delta",0.000356452721094517,0.036904677517236
+"lognormal",0.000736206672374937,0.076221805087105
+"trigamma",0.000109706480524432,0.0113582588817763
+"x"
+"1","Urban Subtransects: Full model ANOVA:  ~"
+"2","Urban Subtransects: Full model ANOVA:  Monarch_Quantity_Observed"
+"3","Urban Subtransects: Full model ANOVA:  (1 | Population/Family) + (1 | Sample) + City_dist * Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"City_dist",0.571782840267945,1,0.449551331667073
+"Transect_ID",0.223803528961601,1,0.636156977717627
+"City_dist:Transect_ID",0.715982553098559,1,0.397464874739642
+"x"
+"1","Urban Subtransects: Main effects model ANOVA:  ~"
+"2","Urban Subtransects: Main effects model ANOVA:  Monarch_Quantity_Observed"
+"3","Urban Subtransects: Main effects model ANOVA:  (1 | Population/Family) + (1 | Sample) + City_dist + Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"City_dist",0.563134269902963,1,0.453000146987248
+"Transect_ID",0.226516790585535,1,0.634118690615067
+""
+"x"
+"1","Gradient AIC (full model) = 2520.49013498787"
+"x"
+"1","Urban subtransects AIC (full model) = 1759.24950467401"
+"x"
+"1","Urban subtransects AIC (main effects model) = 1757.96187967113"
+"x"
+"1","Gradient: Full model ANOVA:  ~"
+"2","Gradient: Full model ANOVA:  Monarch_Quantity_Observed"
+"3","Gradient: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + City_dist"
+"Chisq","Df","Pr..Chisq."
+"City_dist",0.434027935121153,1,0.510019091741032
+"x"
+"1","Gradient: Full model R-squared: "
+"R2m","R2c"
+"delta",0.000356452721094517,0.036904677517236
+"lognormal",0.000736206672374937,0.076221805087105
+"trigamma",0.000109706480524432,0.0113582588817763
+"x"
+"1","Urban Subtransects: Full model ANOVA:  ~"
+"2","Urban Subtransects: Full model ANOVA:  Monarch_Quantity_Observed"
+"3","Urban Subtransects: Full model ANOVA:  (1 | Population/Family) + (1 | Sample) + City_dist * Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"City_dist",0.571782840267945,1,0.449551331667073
+"Transect_ID",0.223803528961601,1,0.636156977717627
+"City_dist:Transect_ID",0.715982553098559,1,0.397464874739642
+"x"
+"1","Urban Subtransects: Main effects model ANOVA:  ~"
+"2","Urban Subtransects: Main effects model ANOVA:  Monarch_Quantity_Observed"
+"3","Urban Subtransects: Main effects model ANOVA:  (1 | Population/Family) + (1 | Sample) + City_dist + Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"City_dist",0.563134269902963,1,0.453000146987248
+"Transect_ID",0.226516790585535,1,0.634118690615067
+""
+"x"
+"1","Gradient AIC (full model) = 2520.49013498787"
+"x"
+"1","Urban subtransects AIC (full model) = 1759.24950467401"
+"x"
+"1","Urban subtransects AIC (main effects model) = 1757.96187967113"

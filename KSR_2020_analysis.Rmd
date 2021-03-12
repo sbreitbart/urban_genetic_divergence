@@ -3829,12 +3829,49 @@ flowering_urbsubs_usc_m1_ME <- glmer(Flowered2020 ~ (1|Block) + (1|Population/Fa
 car::Anova(flowering_gr_city_m1)
 # nothing significant
 
+
+# ANy variation within families or populations?
+m.1 <- glmer(Flowered2020 ~ (1|Population/Family) + (0+Flowered2020|Population/Family) + City_dist, data = reproductive,   family = binomial(link = "logit"),
+             nAGQ = 0)
+
+m.2 <- glmer(Flowered2020 ~ (1|Population/Family) + City_dist, data = reproductive,   family = binomial(link = "logit"),
+             nAGQ = 0)
+
+m.3 <- glm(Flowered2020 ~  City_dist, data = reproductive,   family = binomial(link = "logit"))
+
+car::Anova(m.1)
+car::Anova(m.2)
+car::Anova(m.3)
+
+pbkrtest::PBmodcomp(m.2,m.1,seed=101)
+
+
+
+
+
+ranova(m.1)
+# YES for within families
+sum.1 <- summary(m.1)
+
+variances1 <- print(VarCorr(m.1),comp="Variance")
+variances1 <- as.data.frame(variances1)
+variances1 <- variances1 %>%
+  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+  dplyr::select(., c(grp, vcov, PVE)) %>%
+  dplyr::rename(., Group = grp,
+                Variance = vcov)
+
+
+write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_JuneHeight_lmer_PVE.csv", col.names=TRUE, sep=",")
+write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_JuneHeight_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
 ```
 
 ###### Urb_score
 ```{r}
 car::Anova(flowering_gr_urb_m1)
 # not sig
+
+
 ```
 
 ##### Urban subtransects: *Nothing sig for either
@@ -3974,13 +4011,17 @@ summary(Height_Jun20_urbsubs_usc_m2_ME)
 car::Anova(Height_Jun20_gr_city_m5) # marg sig
 
 
-
+car::Anova(lm(sqrt(Total_Height_June) ~ (Population/Family),
+  data = heights_both_2020), REML = T)
 
 # ANy variation within families or populations?
-m.1 <- lmer(Total_Height_June ~ (1|Population/Family), data = heights_both_2020, REML = T)
+m.1 <- lmer(sqrt(Total_Height_June) ~ (1|Population/Family), data = heights_both_2020, REML = T)
 
 ranova(m.1)
 # YES for within families
+
+
+
 sum.1 <- summary(m.1)
 
 variances1 <- print(VarCorr(m.1),comp="Variance")

@@ -44,3 +44,95 @@
 "1","Urban subtransects AIC (full model) = 1761.64548781903"
 "x"
 "1","Urban subtransects AIC (main effects model) = 1759.66816628832"
+"x"
+"1","Gradient: Full model ANOVA:  ~"
+"2","Gradient: Full model ANOVA:  Monarch_Quantity_Observed"
+"3","Gradient: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",0.73216331143084,1,0.392182872568257
+"x"
+"1","Gradient: Full model R-squared: "
+"R2m","R2c"
+"delta",0.000605864802005499,0.0368814443606662
+"lognormal",0.00125136782095616,0.0761758275287687
+"trigamma",0.000186465408202602,0.0113509046160941
+"x"
+"1","Urban Subtransects: Full model ANOVA:  ~"
+"2","Urban Subtransects: Full model ANOVA:  Monarch_Quantity_Observed"
+"3","Urban Subtransects: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score * Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",0.775339116160528,1,0.378570405039255
+"Transect_ID",0.0438887919301419,1,0.834060651683311
+"Urb_score:Transect_ID",0.0172037164347867,1,0.8956464134164
+"x"
+"1","Urban Subtransects: Full model R-squared: "
+"R2m","R2c"
+"delta",0.00100486690835414,0.0243143966282667
+"lognormal",0.00205839389083911,0.0498062032523662
+"trigamma",0.000319528309568566,0.00773150950461161
+"x"
+"1","Urban Subtransects: Main effects model ANOVA:  ~"
+"2","Urban Subtransects: Main effects model ANOVA:  Monarch_Quantity_Observed"
+"3","Urban Subtransects: Main effects model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score + Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",0.776793390170506,1,0.378123632629754
+"Transect_ID",0.0438811243455469,1,0.834074936718043
+"x"
+"1","Urban Subtransects: Main effects model R-squared: "
+"R2m","R2c"
+"delta",0.000974013959380827,0.0242873046541429
+"lognormal",0.00199525204266181,0.0497521557624631
+"trigamma",0.000309711801207444,0.00772274852784478
+""
+"x"
+"1","Gradient AIC (full model) = 2520.20301126623"
+"x"
+"1","Urban subtransects AIC (full model) = 1760.18604849714"
+"x"
+"1","Urban subtransects AIC (main effects model) = 1758.20328739454"
+"x"
+"1","Gradient: Full model ANOVA:  ~"
+"2","Gradient: Full model ANOVA:  Monarch_Quantity_Observed"
+"3","Gradient: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",0.73216331143084,1,0.392182872568257
+"x"
+"1","Gradient: Full model R-squared: "
+"R2m","R2c"
+"delta",0.000605864802005499,0.0368814443606662
+"lognormal",0.00125136782095616,0.0761758275287687
+"trigamma",0.000186465408202602,0.0113509046160941
+"x"
+"1","Urban Subtransects: Full model ANOVA:  ~"
+"2","Urban Subtransects: Full model ANOVA:  Monarch_Quantity_Observed"
+"3","Urban Subtransects: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score * Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",0.775339116160528,1,0.378570405039255
+"Transect_ID",0.0438887919301419,1,0.834060651683311
+"Urb_score:Transect_ID",0.0172037164347867,1,0.8956464134164
+"x"
+"1","Urban Subtransects: Full model R-squared: "
+"R2m","R2c"
+"delta",0.00100486690835414,0.0243143966282667
+"lognormal",0.00205839389083911,0.0498062032523662
+"trigamma",0.000319528309568566,0.00773150950461161
+"x"
+"1","Urban Subtransects: Main effects model ANOVA:  ~"
+"2","Urban Subtransects: Main effects model ANOVA:  Monarch_Quantity_Observed"
+"3","Urban Subtransects: Main effects model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + Urb_score + Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"Urb_score",0.776793390170506,1,0.378123632629754
+"Transect_ID",0.0438811243455469,1,0.834074936718043
+"x"
+"1","Urban Subtransects: Main effects model R-squared: "
+"R2m","R2c"
+"delta",0.000974013959380827,0.0242873046541429
+"lognormal",0.00199525204266181,0.0497521557624631
+"trigamma",0.000309711801207444,0.00772274852784478
+""
+"x"
+"1","Gradient AIC (full model) = 2520.20301126623"
+"x"
+"1","Urban subtransects AIC (full model) = 1760.18604849714"
+"x"
+"1","Urban subtransects AIC (main effects model) = 1758.20328739454"
