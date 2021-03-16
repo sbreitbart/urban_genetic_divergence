@@ -1,8 +1,8 @@
-,npar,logLik,AIC,LRT,Df,Pr(>Chisq)
-<none>,4,-3648.249139,7304.498278,NA,NA,NA
-(1 | Family:Population),3,-3648.249139,7302.498278,0,1,1
-(1 | Population),3,-3648.249139,7302.498278,0,1,1
-,Group,Variance,PVE,,,
-1,Family:Population,0,0,,,
-2,Population,0,0,,,
-3,Residual,402.7121118,1,,,
+"npar","logLik","AIC","LRT","Df","Pr(>Chisq)"
+"<none>",4,-1274.16646454525,2556.3329290905,NA,NA,NA
+"(1 | Family:Population)",3,-1274.16646454525,2554.3329290905,0,1,1
+"(1 | Population)",3,-1274.16646454525,2554.3329290905,0,1,1
+"Group","Variance","PVE"
+"1","Family:Population",0,0
+"2","Population",0,0
+"3","Residual",1.75091158272891,1

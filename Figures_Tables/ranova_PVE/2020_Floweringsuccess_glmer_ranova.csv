@@ -1,0 +1,14 @@
+[1] "POPULATION"
+Parametric bootstrap testing: (Intercept) | Population:Family (Intercept) | Population = 0 
+from: glmer(formula = Flowered2020 ~ City_dist + (1 | Population:Family) +  (1 | Population), data = reproductive, family = binomial(link = "logit"),  nAGQ = 0) 
+1000 samples were taken Mon Mar 15 09:47:16 2021 
+P(LRT stat > |2.898396|) = 0.028
+
+[1] "FAMILY"
+Parametric bootstrap testing: (Intercept) | Population:Family = 0 
+from: glmer(formula = Flowered2020 ~ City_dist + (1 | Population:Family),  data = reproductive, family = binomial(link = "logit"), nAGQ = 0) 
+1000 samples were taken Fri Mar 12 17:10:58 2021 
+P(abs((Intercept) | Population:Family) > |0.3826501|) = 0.191
+
+[1] "There is variance among populations"
+[1] "There is not much variance among families"

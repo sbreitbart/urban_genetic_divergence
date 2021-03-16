@@ -3830,40 +3830,203 @@ car::Anova(flowering_gr_city_m1)
 # nothing significant
 
 
+
 # ANy variation within families or populations?
-m.1 <- glmer(Flowered2020 ~ (1|Population/Family) + (0+Flowered2020|Population/Family) + City_dist, data = reproductive,   family = binomial(link = "logit"),
+
+##### TACTIC 1: try bootstrapping #####
+# NOT PERFECT b/c can't nest family within pop but trying a few ways to get at the correct answer.
+# https://www.ssc.wisc.edu/sscc/pubs/MM/MM_TestEffects.html#test-of-random-parameter
+library(pbkrtest)
+library(pbnm)
+
+# JUST POPULATION
+gmm <-  glmer(Flowered2020 ~ City_dist + (1|Population), # can't leave in Family... doesn't work
+              family = binomial(link = "logit"),
+              data = reproductive,
              nAGQ = 0)
 
-m.2 <- glmer(Flowered2020 ~ (1|Population/Family) + City_dist, data = reproductive,   family = binomial(link = "logit"),
+# IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+gmm1 <-  glmer(Flowered2020 ~ City_dist + (1|Population/Family), 
+              family = binomial(link = "logit"),
+              data = reproductive,
              nAGQ = 0)
 
-m.3 <- glm(Flowered2020 ~  City_dist, data = reproductive,   family = binomial(link = "logit"))
+# POP:FAMILY
+gmm2 <-  glmer(Flowered2020 ~ City_dist + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+              family = binomial(link = "logit"),
+              data = reproductive,
+             nAGQ = 0)
 
-car::Anova(m.1)
-car::Anova(m.2)
-car::Anova(m.3)
+# UNIQUE FAMILIES
+reproductive$Family_unique <- paste(reproductive$Population, reproductive$Family)
+gmm3 <-  glmer(Flowered2020 ~ City_dist + (1|Family_unique),
+              family = binomial(link = "logit"),
+              data = reproductive,
+             nAGQ = 0)
 
-pbkrtest::PBmodcomp(m.2,m.1,seed=101)
+# EQUIVALENT TO FAM NESTED W/IN POP
+gmm4 <-  glmer(Flowered2020 ~ City_dist + (1|Population:Family) + (1|Population),
+              family = binomial(link = "logit"),
+              data = reproductive,
+             nAGQ = 0)
+
+
+# REDUCED MODEL
+gmmDG1 <- glm(Flowered2020 ~ City_dist,
+              family = binomial(link = "logit"),
+              data = reproductive)
+
+### RESULTS ###
+# POPULATION (so, results are about populations)
+pbgmmDg1 <- pbnm(gmm,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+summary(pbgmmDg1) # p = 0.031...  var among pops
+
+# EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+pbgmmDg4 <- pbnm(gmm4,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_pop <- summary(pbgmmDg4) %T>%
+  print() # p = 0.028... var among pops accounting for fams
+
+# POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+pbgmmDg2 <- pbnm(gmm2,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_fam <- summary(pbgmmDg2) %T>%
+  print() # p = 0.191... little var among families crossed w/ pops
+
+# UNIQUE FAMILIES (so, results are about families)
+pbgmmDg3 <- pbnm(gmm3,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+summary(pbgmmDg3) # p = 0.258... little var among families, period
 
 
 
 
+##### use anova to test significance of terms (this isn't what we want, though): #####
+## test Pop/Fam
+# anova(gmm1, gmmDG1) # p = 0.235
+# 
+# ## test Pop/Fam but expanded
+# anova(gmm4, gmmDG1) # p = 0.235      # SAME AS ABOVE
+# 
+# ## test Pop
+# anova(gmm, gmmDG1) # p = 0.088*
+# 
+# ## test Fam
+# anova(gmm3, gmmDG1) # p = 0.587
+# 
+# ## test pop:fam
+# anova(gmm2, gmmDG1) # p = 0.587     # SAME AS ABOVE
 
-ranova(m.1)
-# YES for within families
-sum.1 <- summary(m.1)
 
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
+
+#--------- FINAL RESULTS: ----------#
+# Bootstrapping:
+# - Pop: SIGNIFICANT
+# - Family: NOT SIGNIFICANT
+# anova:
+# - Pop: SIGNIFICANT
+# - Family: NOT SIGNIFICANT
+
+# --- DO THE 2 METHODS MATCH? ---#
+#       [X]    YES!
+#             
+
+##### TACTIC 2- comparing full to reduced models #####
+# m.1 <- glmer(Flowered2020 ~ (1|Population/Family) + (0+Flowered2020|Population/Family) + City_dist, data = reproductive,   family = binomial(link = "logit"),
+#              nAGQ = 0)
+# 
+# m.2 <- glmer(Flowered2020 ~ (1|Population/Family) + City_dist, data = reproductive,   family = binomial(link = "logit"),
+#              nAGQ = 0)
+# 
+# m.3 <- glm(Flowered2020 ~  City_dist, data = reproductive,   family = binomial(link = "logit"))
+# car::Anova(m.1)
+# car::Anova(m.2)
+# car::Anova(m.3)
+# 
+# 
+# 
+# 
+# pbkrtest::PBmodcomp(m.2,m.1,seed=101)
+
+#### TACTIC 3: BOOTSTRAP W/A DIFF PACKAGE #####
+# anova_merMod<-function(model,rand,w=NULL,seed=round(runif(1,0,100),0),nsim=50){
+#   data<-model@frame
+#   if(!is.null(w)){
+#     data<-data[,-grep("(weights)",names(data))]
+#   }
+#   
+#   resp<-names(model.frame(model))[1]
+#   #generate a list of reduced model formula
+#   fs<-list()
+#   fs[[1]]<-as.formula(paste(resp,"~ 1 +",rand))
+#   nb_terms<-length(attr(terms(model),"term.labels"))
+#   if(nb_terms>1){
+#     for(i in 1:nb_terms){
+#       tmp<-c(attr(terms(model),"term.labels")[1:i],rand)
+#       fs[[i+1]]<-reformulate(tmp,response=resp)
+#     }      
+#   }
+#   #fit the reduced model to the data
+#   
+#   fam<-family(model)[1]$family
+#   if(fam=="gaussian"){
+#     m_fit<-lapply(fs,function(x) lmer(x,data,REML=FALSE))
+#   } else if(fam=="binomial"){
+#     m_fit<-lapply(fs,function(x) glmer(x,data,family=fam,weights=w))
+#   }  else{
+#     m_fit<-lapply(fs,function(x) glmer(x,data,family=fam))
+#   }
+#   #compare nested model with one another and get LRT values (ie increase in the likelihood of the models as parameters are added)
+#   tab_out<-NULL
+#   
+#   for(i in 1:(length(m_fit)-1)){
+#     comp<-PBmodcomp(m_fit[[i+1]],m_fit[[i]],seed=seed,nsim=nsim)    
+#     term_added<-attr(terms(m_fit[[i+1]]),"term.labels")[length(attr(terms(m_fit[[i+1]]),"term.labels"))]
+#     #here are reported the bootstrapped p-values, ie not assuming any parametric distribution like chi-square to the LRT values generated under the null model
+#     #these p-values represent the number of time the simulated LRT value (under null model) are larger than the observe one
+#     tmp<-data.frame(term=term_added,LRT=comp$test$stat[1],p_value=comp$test$p.value[2])
+#     tab_out<-rbind(tab_out,tmp)
+#     print(paste("Variable ",term_added," tested",sep=""))
+#   }  
+#   print(paste("Seed set to:",seed))
+#   return(tab_out)  
+# }
+# 
+# anova_merMod(gmm1,rand = "(1|Population/Family)",w = rep(10,100))
+
+
+
+##### old code #####
+
+sum.1 <- summary(gmm4)
+
+variances1 <- print(VarCorr(gmm4),comp="Variance") %>%
+  as.data.frame() %>%
   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
   dplyr::select(., c(grp, vcov, PVE)) %>%
   dplyr::rename(., Group = grp,
                 Variance = vcov)
 
+# export percent variance explained
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_Floweringsuccess_glmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
 
-write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_JuneHeight_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_JuneHeight_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
+# export ranova
+sink(here::here("./Figures_Tables/ranova_PVE/2020_Floweringsuccess_glmer_ranova.csv"))
+print("POPULATION", sep="\n\n")
+print(ranova_pop, sep="\n\n")
+  cat("\n")
+print("FAMILY", sep="\n\n")
+print(ranova_fam, sep="\n\n")
+  cat("\n")
+if (ranova_pop[1] <= 0.05){
+  print ('There is variance among populations')}
+if (ranova_pop[1] > 0.05){
+  print ("There is not much variance among populations")}
+if (ranova_fam[1] <= 0.05){
+  print ("There is variance among families")}
+if (ranova_fam[1] > 0.05){
+  print ("There is not much variance among families")}
+sink()
+
+# write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_Floweringsuccess_glmer_PVE.csv", col.names=TRUE, sep=",")
+
 ```
 
 ###### Urb_score
@@ -4011,30 +4174,77 @@ summary(Height_Jun20_urbsubs_usc_m2_ME)
 car::Anova(Height_Jun20_gr_city_m5) # marg sig
 
 
-car::Anova(lm(sqrt(Total_Height_June) ~ (Population/Family),
-  data = heights_both_2020), REML = T)
+
 
 # ANy variation within families or populations?
 m.1 <- lmer(sqrt(Total_Height_June) ~ (1|Population/Family), data = heights_both_2020, REML = T)
 
 ranova(m.1)
-# YES for within families
-
+# YES for among families
 
 
 sum.1 <- summary(m.1)
 
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
+variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+  as.data.frame() %>%
   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
   dplyr::select(., c(grp, vcov, PVE)) %>%
   dplyr::rename(., Group = grp,
                 Variance = vcov)
 
 
-write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_JuneHeight_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_JuneHeight_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
+write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_JuneHeight_lmer_PVE.csv"), col.names=TRUE, sep=",")
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_JuneHeight_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+
+
+# METHOD 2
+# pbnm_m1 <- lmer(sqrt(Total_Height_June) ~ (1|Population/Family) + City_dist, data = heights_both_2020, REML = T)
+# 
+# pbnm_m2 <- lm(sqrt(Total_Height_June) ~  City_dist, data = heights_both_2020 , REML = T)
+# 
+# anova(pbnm_m1, pbnm_m2) # sig: p = 0.014*
+# 
+# 
+# ##### use anova to test significance of terms (this isn't what we want, though): #####
+# # JUST POPULATION
+# gmm <-  lmer(sqrt(Total_Height_June) ~ City_dist + (1|Population),
+#               data = heights_both_2020, REML = T)
+# 
+# # IDEAL MODEL (DOESN'T WORK for glmer THOUGH)
+# gmm1 <-  lmer(sqrt(Total_Height_June) ~ City_dist + (1|Population/Family), 
+#               data = heights_both_2020, REML = T)
+# 
+# # POP:FAMILY
+# gmm2 <-  lmer(sqrt(Total_Height_June) ~ City_dist + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+#               data = heights_both_2020, REML = T)
+# 
+# # UNIQUE FAMILIES
+# heights_both_2020$Family_unique <- paste(heights_both_2020$Population, heights_both_2020$Family)
+# gmm3 <-  lmer(sqrt(Total_Height_June) ~ City_dist + (1|Family_unique),
+#               data = heights_both_2020, REML = T)
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP
+# gmm4 <-  lmer(sqrt(Total_Height_June) ~ City_dist + (1|Population:Family) + (1|Population),
+#               data = heights_both_2020, REML = T)
+# 
+# 
+# 
+# # test Pop/Fam
+# anova(gmm1, pbnm_m2) # p = 0.014* - POP/FAM IS SIGNIFICANT
+# 
+# ## test Pop/Fam but expanded
+# anova(gmm4, pbnm_m2) # p = 0.014*      SAME AS ABOVE
+# 
+# ## test Pop
+# anova(gmm, pbnm_m2) # p = 0.131 - POP IS *NOT* SIGNIFICANT
+# 
+# ## test Fam
+# anova(gmm3, pbnm_m2) # p = 0.004*  - FAM IS SIGNIFICANT
+# 
+# ## test pop:fam
+# anova(gmm2, pbnm_m2) # p = 0.004*     SAME AS ABOVE
+
+
 ```
 
 ##### Urb_score
@@ -4244,25 +4454,26 @@ summary(Height_Sept20_urbsubs_usc_m2_ME)
 car::Anova(Height_Sept20_gr_city_m2) #marginally sig
 
 
-
 # ANy variation within families or populations?
 m.1 <- lmer(Total_Height_Sept ~ (1|Population/Family), data = heights_both_2020, REML = T)
 
 ranova(m.1)
-# YES for among families (marginally sig)
+# YES for among families
+
+
 sum.1 <- summary(m.1)
 
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
+variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+  as.data.frame() %>%
   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
   dplyr::select(., c(grp, vcov, PVE)) %>%
   dplyr::rename(., Group = grp,
                 Variance = vcov)
 
 
-write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_SeptHeight_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_SeptHeight_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
+write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_SeptHeight_lmer_PVE.csv"), col.names=TRUE, sep=",")
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_SeptHeight_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+
 ```
 
 ###### Urb_score
@@ -4700,30 +4911,28 @@ car::Anova(weev_stn_gr_city_m3) # binomial: not sig
 car::Anova(weev_stn_gr_city_m11) # quantitative: not sig
 
 
+
 # ANy variation within families or populations?
-m.1 <- lmer(scar_div_Juneheight ~ (1|Population/Family), data = weevil_both, REML = T)
+m.1 <- lmer(log(scar_div_Juneheight) ~ (1|Population/Family),
+            data = weevil_both %>% filter(scar_div_Juneheight_binary == 1),
+            REML = T)
 
 ranova(m.1)
-# nope
+# No for both
+
+
 sum.1 <- summary(m.1)
 
-ranova( lmer(log(scar_div_Juneheight + 1) ~ (1|Population/Family),
-  data = weevil_both,
-  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5))),
-  REML = T)
-
-
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
+variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+  as.data.frame() %>%
   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
   dplyr::select(., c(grp, vcov, PVE)) %>%
   dplyr::rename(., Group = grp,
                 Variance = vcov)
 
 
-write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_Weevildivheight_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_Weevildivheight_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
+write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_Weevildivheight_lmer_PVE.csv"), col.names=TRUE, sep=",")
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_Weevildivheight_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
 ```
 
 #### Urb_score
@@ -5167,24 +5376,28 @@ car::Anova(weev_gr_city_m11) # quantitative: not sig
 
 
 # ANy variation within families or populations?
-m.1 <- lmer(Scar_length_cm ~ (1|Population/Family), data = weevil_both, REML = T)
+m.1 <- lmer(log(Scar_length_cm) ~ (1|Population/Family),
+            data = weevil_both %>% filter(Scar_length_cm_binary == 1),
+            REML = T)
 
 ranova(m.1)
-# nope
+# No for both
+
+
 sum.1 <- summary(m.1)
 
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
+variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+  as.data.frame() %>%
   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
   dplyr::select(., c(grp, vcov, PVE)) %>%
   dplyr::rename(., Group = grp,
                 Variance = vcov)
 
 
-write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_Weevil_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_Weevil_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
+write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_Weevil_lmer_PVE.csv"), col.names=TRUE, sep=",")
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_Weevil_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
 ```
+
 
 #### Urb_score
 ```{r}
@@ -5664,6 +5877,31 @@ herb2020_urb_usc_m8_ME <- lmer(log(Herbivory.July_mean) ~ (1|Block) + (1|Populat
 car::Anova(herb2020_gr_dist_m5) # binomial: not sig
 car::Anova(herb2020_gr_dist_m8) # quantitative: not sig
 
+
+
+
+# ANy variation within families or populations?
+m.1 <- lmer(log(Herbivory.July_mean) ~ (1|Population/Family),
+            data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1),
+            REML = T,
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
+ranova(m.1)
+# No for both
+
+
+sum.1 <- summary(m.1)
+
+variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+  as.data.frame() %>%
+  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+  dplyr::select(., c(grp, vcov, PVE)) %>%
+  dplyr::rename(., Group = grp,
+                Variance = vcov)
+
+
+write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_HerbivoryJuly_lmer_PVE.csv"), col.names=TRUE, sep=",")
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_HerbivoryJuly_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
 ```
 
 ##### Urb_score
@@ -6200,6 +6438,32 @@ herb2020.S_urb_usc_m12_ME <- glmmTMB(log(Herbivory.Sept_mean) ~ (1|Population/Fa
 car::Anova(herb2020.S_gr_dist_m5) # binomial: marginally sig
 car::Anova(herb2020.S_gr_dist_m12) # quantitative: not sig
 
+
+# ANy variation within families or populations?
+m.1 <- lmer(log(Herbivory.Sept_mean) ~ (1|Population/Family),
+            data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1),
+            REML = T,
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
+ranova(m.1)
+# No for both
+
+
+sum.1 <- summary(m.1)
+
+variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+  as.data.frame() %>%
+  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+  dplyr::select(., c(grp, vcov, PVE)) %>%
+  dplyr::rename(., Group = grp,
+                Variance = vcov)
+
+# even when I use glmmTMB model, I still get tiny variances- on par with the singular model.
+## print(VarCorr(herb2020.S_gr_dist_m12),comp="Variance") 
+
+
+write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_HerbivorySept_lmer_PVE.csv"), col.names=TRUE, sep=",")
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_HerbivorySept_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
 ```
 
 ##### Urb_score
@@ -6585,23 +6849,27 @@ car::Anova(rgr_gr_city_m8) # not sig
 
 
 # ANy variation within families or populations?
-m.1 <- lmer(rel_growth_rate ~ (1|Population/Family), data = heights_both_2020, REML = T)
+m.1 <- lmer(sqrt(rel_growth_rate) ~ (1|Population/Family),
+            data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1),
+            control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+            REML = T)
+
 
 ranova(m.1)
 # nope
 sum.1 <- summary(m.1)
 
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
+
+variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+  as.data.frame() %>%
   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
   dplyr::select(., c(grp, vcov, PVE)) %>%
   dplyr::rename(., Group = grp,
                 Variance = vcov)
 
 
-write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_growthrate_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_growthrate_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
+write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_growthrate_lmer_PVE.csv"), col.names=TRUE, sep=",")
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_growthrate_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
 ```
 
 #### Urb_score
@@ -6855,6 +7123,153 @@ rametsJ_urbsubs_urbsubs_m7_ME <- glmmTMB(Ramets_June ~ (1|Block) +(1|Population/
 ##### City_dist
 ```{r}
 car::Anova(rametsJ_gr_city_m2) # not sig
+
+
+# ANy variation within families or populations?
+
+##### TACTIC 1: try bootstrapping #####
+# NOT PERFECT b/c can't nest family within pop but trying a few ways to get at the correct answer.
+# https://www.ssc.wisc.edu/sscc/pubs/MM/MM_TestEffects.html#test-of-random-parameter
+library(pbkrtest)
+library(pbnm)
+
+
+# JUST POPULATION
+gmm <-  glmer(Ramets_June ~ City_dist + (1|Population), # can't leave in Family... doesn't work
+  family = poisson,
+              data = heights_both_2020,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+
+
+# IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+gmm1 <-  glmer(Ramets_June ~ City_dist + (1|Population/Family), 
+  family = poisson,
+              data = heights_both_2020,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+
+# POP:FAMILY
+gmm2 <-  glmer(Ramets_June ~ City_dist + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+  family = poisson,
+              data = heights_both_2020,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+
+# UNIQUE FAMILIES
+heights_both_2020$Family_unique <- paste(heights_both_2020$Population, heights_both_2020$Family)
+gmm3 <-  glmer(Ramets_June ~ City_dist + (1|Family_unique),
+  family = poisson,
+              data = heights_both_2020,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+
+# EQUIVALENT TO FAM NESTED W/IN POP
+gmm4 <-  glmer(Ramets_June ~ City_dist + (1|Population:Family) + (1|Population),
+  family = poisson,
+              data = heights_both_2020,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+
+
+# REDUCED MODEL
+gmmDG1 <- glm(Ramets_June ~ City_dist,
+  family = poisson,
+              data = heights_both_2020)
+
+### RESULTS ###
+# POPULATION (so, results are about populations)
+pbgmmDg1 <- pbnm(gmm,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) %T>%
+  summary() %>%
+  print()   # p = 0.396 ... no var among pops
+
+# EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+pbgmmDg4 <- pbnm(gmm4,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_pop <- summary(pbgmmDg4) %T>%
+  print() # p =  0.159... no var among pops accounting for fams
+
+# POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+pbgmmDg2 <- pbnm(gmm2,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_fam <- summary(pbgmmDg2) %T>%
+  print() # p = 0.441 ... little var among families crossed w/ pops
+
+# UNIQUE FAMILIES (so, results are about families)
+pbgmmDg3 <- pbnm(gmm3,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) %T>%
+  summary() %>%
+  print() # p = 0.441 ... little var among families, period
+
+
+
+##### use anova to test significance of terms (this isn't what we want, though): #####
+## test Pop/Fam
+anova(gmm1, gmmDG1) # p = 0.0001594 ***
+
+## test Pop/Fam but expanded
+anova(gmm4, gmmDG1) # p = 0.0001594 ***      # SAME AS ABOVE
+
+## test Pop
+anova(gmm, gmmDG1) # p = 0.024*
+
+## test Fam
+anova(gmm3, gmmDG1) # p =  3.155e-05 ***
+
+## test pop:fam
+anova(gmm2, gmmDG1) # p =  3.155e-05 ***    # SAME AS ABOVE
+
+
+
+#--------- FINAL RESULTS: ----------#
+# Bootstrapping:
+# - Pop:    NOT SIGNIFICANT
+# - Family: NOT SIGNIFICANT
+# anova:
+# - Pop:    SIGNIFICANT
+# - Family: SIGNIFICANT
+
+# --- DO THE 2 METHODS MATCH? ---#
+#       [ ]    NO
+#             
+
+
+
+##### old code #####
+
+sum.1 <- summary(gmm4)
+
+variances1 <- print(VarCorr(gmm4),comp="Variance") %>%
+  as.data.frame() %>%
+  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+  dplyr::select(., c(grp, vcov, PVE)) %>%
+  dplyr::rename(., Group = grp,
+                Variance = vcov)
+
+# export percent variance explained
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_Ramets_June_glmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+
+# export ranova
+sink(here::here("./Figures_Tables/ranova_PVE/2020_Ramets_June_glmer_ranova.csv"))
+print("POPULATION", sep="\n\n")
+print(ranova_pop, sep="\n\n")
+  cat("\n")
+print("FAMILY", sep="\n\n")
+print(ranova_fam, sep="\n\n")
+  cat("\n")
+if (ranova_pop[1] <= 0.05){
+  print ('There is variance among populations')}
+if (ranova_pop[1] > 0.05){
+  print ("There is not much variance among populations")}
+if (ranova_fam[1] <= 0.05){
+  print ("There is variance among families")}
+if (ranova_fam[1] > 0.05){
+  print ("There is not much variance among families")}
+sink()
+
+
 ```
 
 ##### Urb_score
@@ -7086,6 +7501,151 @@ rametsS_urbsubs_usc_m5_ME <- glmmTMB(Ramets_Sept ~ (1|Block) + (1|Population/Fam
 ```{r}
 car::Anova(rametsS_gr_city_m5) # sig
 
+
+
+# ANy variation within families or populations?
+
+##### TACTIC 1: try bootstrapping #####
+# NOT PERFECT b/c can't nest family within pop but trying a few ways to get at the correct answer.
+# https://www.ssc.wisc.edu/sscc/pubs/MM/MM_TestEffects.html#test-of-random-parameter
+library(pbkrtest)
+library(pbnm)
+
+# can't handle glmmTMB so switching back to glmer
+
+# JUST POPULATION
+gmm <-  glmer(Ramets_Sept ~ City_dist + (1|Population), # can't leave in Family... doesn't work
+  family = poisson,
+              data = heights_both_2020)
+
+
+
+# IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+gmm1 <-  glmer(Ramets_Sept ~ City_dist + (1|Population/Family), 
+  family = poisson,
+              data = heights_both_2020,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+
+# POP:FAMILY
+gmm2 <-  glmer(Ramets_Sept ~ City_dist + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+  family = poisson,
+              data = heights_both_2020,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+
+# UNIQUE FAMILIES
+# heights_both_2020$Family_unique <- paste(heights_both_2020$Population, heights_both_2020$Family)
+gmm3 <-  glmer(Ramets_Sept ~ City_dist + (1|Family_unique),
+  family = poisson,
+              data = heights_both_2020,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+
+# EQUIVALENT TO FAM NESTED W/IN POP
+gmm4 <-  glmer(Ramets_Sept ~ City_dist + (1|Population:Family) + (1|Population),
+  family = poisson,
+              data = heights_both_2020)
+
+
+
+# REDUCED MODEL
+gmmDG1 <- glm(Ramets_Sept ~ City_dist,
+  family = poisson,
+              data = heights_both_2020)
+
+### RESULTS ###
+# POPULATION (so, results are about populations)
+pbgmmDg1 <- pbnm(gmm,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+pbgmmDg1  %>%
+  summary() %>%
+  print()   # p = 1  ... no var among pops
+
+# EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+pbgmmDg4 <- pbnm(gmm4,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_pop <- summary(pbgmmDg4) %T>%
+  print() # p =  0.738  ... no var among pops accounting for fams
+
+# POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+pbgmmDg2 <- pbnm(gmm2,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_fam <- summary(pbgmmDg2) %T>%
+  print() # p = 1  ... little var among families crossed w/ pops
+
+# UNIQUE FAMILIES (so, results are about families)
+pbgmmDg3 <- pbnm(gmm3,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835)
+pbgmmDg3 %>%
+  summary() %>%
+  print() # p = 1  ... little var among families, period
+
+
+
+##### use anova to test significance of terms (this isn't what we want, though): #####
+## test Pop/Fam
+anova(gmm1, gmmDG1) # p =  1
+
+## test Pop/Fam but expanded
+anova(gmm4, gmmDG1) # p =   1    # SAME AS ABOVE
+
+## test Pop
+anova(gmm, gmmDG1) # p =  1
+
+## test Fam
+anova(gmm3, gmmDG1) # p =   1
+
+## test pop:fam
+anova(gmm2, gmmDG1) # p =   1    # SAME AS ABOVE
+
+
+
+#--------- FINAL RESULTS: ----------#
+# Bootstrapping:
+# - Pop:    NOT SIGNIFICANT
+# - Family: NOT SIGNIFICANT
+# anova:
+# - Pop:    NOT SIGNIFICANT
+# - Family: NOT SIGNIFICANT
+
+# --- DO THE 2 METHODS MATCH? ---#
+#       [X]    YES
+#             
+
+
+
+##### old code #####
+
+sum.1 <- summary(gmm4)
+
+variances1 <- print(VarCorr(gmm4),comp="Variance") %>%
+  as.data.frame() %>%
+  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+  dplyr::select(., c(grp, vcov, PVE)) %>%
+  dplyr::rename(., Group = grp,
+                Variance = vcov)
+
+# export percent variance explained
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_Ramets_Sept_glmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+
+# export ranova
+sink(here::here("./Figures_Tables/ranova_PVE/2020_Ramets_Sept_glmer_ranova.csv"))
+print("POPULATION", sep="\n\n")
+print(ranova_pop, sep="\n\n")
+  cat("\n")
+print("FAMILY", sep="\n\n")
+print(ranova_fam, sep="\n\n")
+  cat("\n")
+# if (ranova_pop[1] <= 0.05){
+#   print ('There is variance among populations')}
+# if (ranova_pop[1] > 0.05){
+  print ("There is not much variance among populations") #}
+# if (ranova_fam[1] <= 0.05){
+#   print ("There is variance among families")}
+# if (ranova_fam[1] > 0.05){
+  print ("There is not much variance among families") #}
+sink()
+
 ```
 
 ##### Urb_score
@@ -7212,6 +7772,152 @@ surv20_urbsubs_usc_m1_ME <- glmer(dead_2020 ~ (1|Block) + (1|Population/Family) 
 #### City_dist
 ```{r}
 car::Anova(surv20_gr_city_m1) # not sig
+
+
+
+
+# ANy variation within families or populations?
+
+##### TACTIC 1: try bootstrapping #####
+# NOT PERFECT b/c can't nest family within pop but trying a few ways to get at the correct answer.
+# https://www.ssc.wisc.edu/sscc/pubs/MM/MM_TestEffects.html#test-of-random-parameter
+library(pbkrtest)
+library(pbnm)
+
+# can't handle glmmTMB so switching back to glmer
+
+# JUST POPULATION
+gmm <-  glmer(dead_2020 ~ City_dist + (1|Population), # can't leave in Family... doesn't work
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+  data = survival_2020)
+
+
+
+# IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+gmm1 <-  glmer(dead_2020 ~ City_dist + (1|Population/Family), 
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+  data = survival_2020)
+
+
+# POP:FAMILY
+gmm2 <-  glmer(dead_2020 ~ City_dist + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+  data = survival_2020)
+
+
+# UNIQUE FAMILIES
+survival_2020$Family_unique <- paste(survival_2020$Population, survival_2020$Family)
+gmm3 <-  glmer(dead_2020 ~ City_dist + (1|Family_unique),
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+  data = survival_2020)
+
+
+# EQUIVALENT TO FAM NESTED W/IN POP
+gmm4 <-  glmer(dead_2020 ~ City_dist + (1|Population:Family) + (1|Population),
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+  data = survival_2020)
+
+
+
+# REDUCED MODEL
+gmmDG1 <- glm(dead_2020 ~ City_dist,
+  family = binomial(link = "logit"),
+  data = survival_2020)
+
+### RESULTS ###
+# POPULATION (so, results are about populations)
+pbgmmDg1 <- pbnm(gmm,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+pbgmmDg1  %>%
+  summary() %>%
+  print()   # p = 0.063  ... MARG SIG- questionable var among pops
+
+# EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+pbgmmDg4 <- pbnm(gmm4,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_pop <- summary(pbgmmDg4) %T>%
+  print() # p =  0.098  ... MARG SIG- questionable var among pops accounting for fams
+
+# POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+pbgmmDg2 <- pbnm(gmm2,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_fam <- summary(pbgmmDg2) %T>%
+  print() # p = 0.237  ... little var among families crossed w/ pops
+
+# UNIQUE FAMILIES (so, results are about families)
+pbgmmDg3 <- pbnm(gmm3,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835)
+pbgmmDg3 %>%
+  summary() %>%
+  print() # p = 0.237  ... little var among families, period
+
+
+
+##### use anova to test significance of terms (this isn't what we want, though): #####
+## test Pop/Fam
+anova(gmm1, gmmDG1) # p =  0.51
+
+## test Pop/Fam but expanded
+anova(gmm4, gmmDG1) # p =   0.51    # SAME AS ABOVE
+
+## test Pop
+anova(gmm, gmmDG1) # p =  0.2462
+
+## test Fam
+anova(gmm3, gmmDG1) # p =   0.7278
+
+## test pop:fam
+anova(gmm2, gmmDG1) # p =  0.7278    # SAME AS ABOVE
+
+
+
+#--------- FINAL RESULTS: ----------#
+# Bootstrapping:
+# - Pop:    MARGINALLY SIGNIFICANT
+# - Family: NOT SIGNIFICANT
+# anova:
+# - Pop:    NOT SIGNIFICANT
+# - Family: NOT SIGNIFICANT
+
+# --- DO THE 2 METHODS MATCH? ---#
+#       [...]    Mostly
+#             
+
+
+
+##### old code #####
+
+sum.1 <- summary(gmm4)
+
+variances1 <- print(VarCorr(gmm4),comp="Variance") %>%
+  as.data.frame() %>%
+  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+  dplyr::select(., c(grp, vcov, PVE)) %>%
+  dplyr::rename(., Group = grp,
+                Variance = vcov)
+
+# export percent variance explained
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_Survival_glmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+
+# export ranova
+sink(here::here("./Figures_Tables/ranova_PVE/2020_Survival_glmer_ranova.csv"))
+print("POPULATION", sep="\n\n")
+print(ranova_pop, sep="\n\n")
+  cat("\n")
+print("FAMILY", sep="\n\n")
+print(ranova_fam, sep="\n\n")
+  cat("\n")
+if (ranova_pop[1] <= 0.05){
+  print ('There is variance among populations')}
+if (ranova_pop[1] > 0.05){
+  print ("There is not much variance among populations") }
+if (ranova_fam[1] <= 0.05){
+  print ("There is variance among families")}
+if (ranova_fam[1] > 0.05){
+  print ("There is not much variance among families") }
+sink()
+
 ```
 
 #### Urb_score
