@@ -4262,34 +4262,41 @@ car::Anova(Height_Jun20_urbsubs_city_m2_ME) # nothing sig
 
 
 # ANy variation among families or populations?
-m.1 <- lmer(Total_Height_June ~ (1|Population/Family), data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
+m.1 <- lmer(sqrt(Total_Height_June) ~ (1|Population/Family),
+            data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+            REML = T)
 ranova(m.1)
-# YES for among families
+# YES? (marg sig) for among families
 
-m.2 <- lmer(Total_Height_June ~ (1|Population/Family) + Transect_ID, data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+m.2 <- lmer(sqrt(Total_Height_June) ~ (1|Population/Family) + Transect_ID,
+            data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+            REML = F)
 car::Anova(m.2)
 # not among transects though
 
 
-m.3 <- lmer(Total_Height_June ~ (1|Population/Family) + Transect_ID, data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
+m.3 <- lmer(sqrt(Total_Height_June) ~ (1|Population/Family) + Transect_ID,
+            data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+            REML = T)
 car::Anova(m.3)
 # not sig in this or m.2
 
 
 sum.1 <- summary(m.1)
 
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
+variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+  as.data.frame() %>%
   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
   dplyr::select(., c(grp, vcov, PVE)) %>%
   dplyr::rename(., Group = grp,
                 Variance = vcov)
 
 
-write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_JuneHeight_urban_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_JuneHeight_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
-write.table(car::Anova(m.2), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_JuneHeight_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
+write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_JuneHeight_urban_lmer_PVE.csv"), col.names=TRUE, sep=",")
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_JuneHeight_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+write.table(car::Anova(m.2), here::here("./Figures_Tables/ranova_PVE/2020_JuneHeight_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+
+
 ```
 
 ##### Urb_score
@@ -4490,34 +4497,39 @@ car::Anova(Height_Sept20_urbsubs_city_m5_ME)# not sig
 
 
 # ANy variation among families or populations?
-m.1 <- lmer(Total_Height_Sept ~ (1|Population/Family), data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
+m.1 <- lmer(sqrt(Total_Height_Sept) ~ (1|Population/Family),
+            data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+            REML = T)
 ranova(m.1)
-# YES for among families (marg sig)
+# no
 
-m.2 <- lmer(Total_Height_Sept ~ (1|Population/Family) + Transect_ID, data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+m.2 <- lmer(sqrt(Total_Height_Sept) ~ (1|Population/Family) + Transect_ID,
+            data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+            REML = F)
 car::Anova(m.2)
-# not among transects though
+# not among transects either
 
 
-m.3 <- lmer(Total_Height_Sept ~ (1|Population/Family) + Transect_ID, data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
+m.3 <- lmer(sqrt(Total_Height_Sept) ~ (1|Population/Family) + Transect_ID,
+            data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+            REML = T)
 car::Anova(m.3)
 # not sig in this or m.2
 
 
 sum.1 <- summary(m.1)
 
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
+variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+  as.data.frame() %>%
   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
   dplyr::select(., c(grp, vcov, PVE)) %>%
   dplyr::rename(., Group = grp,
                 Variance = vcov)
 
 
-write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_SeptHeight_urban_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_SeptHeight_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
-write.table(car::Anova(m.2), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_SeptHeight_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
+write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_SeptHeight_urban_lmer_PVE.csv"), col.names=TRUE, sep=",")
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_SeptHeight_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+write.table(car::Anova(m.2), here::here("./Figures_Tables/ranova_PVE/2020_SeptHeight_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
 ```
 
 
@@ -4954,36 +4966,44 @@ car::Anova(weev_stn_urbsubs_city_m11_ME.2) #quant main effects: transect marg si
 AIC(weev_stn_urbsubs_city_m11, weev_stn_urbsubs_city_m11_ME.2) # main effects has sig lower AIC
 
 
-
 # ANy variation among families or populations?
-m.1 <- lmer(scar_div_Juneheight ~ (1|Population/Family), data = weevil_both %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
+m.1 <- lmer(log(scar_div_Juneheight) ~ (1|Population/Family),
+            data = weevil_both %>%
+              filter(scar_div_Juneheight_binary == 1 & Urb_Rur == "Urban"),
+            REML = T)
 ranova(m.1)
 # no, is singular
 
-m.2 <- lmer(scar_div_Juneheight ~ (1|Population/Family) + Transect_ID, data = weevil_both %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+
+m.2 <- lmer(log(scar_div_Juneheight) ~ (1|Population/Family) + Transect_ID,
+            data = weevil_both %>%
+              filter(scar_div_Juneheight_binary == 1 & Urb_Rur == "Urban"),
+            REML = F)
 car::Anova(m.2)
-# not among transects though
+# not among transects either
 
 
-m.3 <- lmer(scar_div_Juneheight ~ (1|Population/Family) + Transect_ID, data = weevil_both %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
+m.3 <- lmer(log(scar_div_Juneheight) ~ (1|Population/Family) + Transect_ID,
+              data = weevil_both %>%
+              filter(scar_div_Juneheight_binary == 1 & Urb_Rur == "Urban"),
+            REML = T)
 car::Anova(m.3)
 # not sig in this or m.2
 
 
 sum.1 <- summary(m.1)
 
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
+variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+  as.data.frame() %>%
   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
   dplyr::select(., c(grp, vcov, PVE)) %>%
   dplyr::rename(., Group = grp,
                 Variance = vcov)
 
 
-write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_Weevildivheight_urban_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_Weevildivheight_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
-write.table(car::Anova(m.2), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_Weevildivheight_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
+write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_Weevildivheight_urban_lmer_PVE.csv"), col.names=TRUE, sep=",")
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_Weevildivheight_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+write.table(car::Anova(m.2), here::here("./Figures_Tables/ranova_PVE/2020_Weevildivheight_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
 ```
 
 #### Urb_score
@@ -5419,36 +5439,42 @@ AIC(weev_urbsubs_city_m11, weev_urbsubs_city_m11_ME)# main effects lower AIC (le
 
 
 
-
 # ANy variation among families or populations?
-m.1 <- lmer(Scar_length_cm ~ (1|Population/Family), data = weevil_both %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
+m.1 <- lmer(log(Scar_length_cm) ~ (1|Population/Family),
+              data = weevil_both %>% filter(Scar_length_cm_binary == 1 & Urb_Rur == "Urban"),
+            REML = T)
 ranova(m.1)
 # no
 
-m.2 <- lmer(Scar_length_cm ~ (1|Population/Family) + Transect_ID, data = weevil_both %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+m.2 <- lmer(log(Scar_length_cm) ~ (1|Population/Family) + Transect_ID,
+              data = weevil_both %>% filter(Scar_length_cm_binary == 1 & Urb_Rur == "Urban"),
+
+            REML = F)
 car::Anova(m.2)
-# not among transects either
+# YES among transects 
 
 
-m.3 <- lmer(Scar_length_cm ~ (1|Population/Family) + Transect_ID, data = weevil_both %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
+m.3 <- lmer(log(Scar_length_cm) ~ (1|Population/Family) + Transect_ID,
+              data = weevil_both %>% filter(Scar_length_cm_binary == 1 & Urb_Rur == "Urban"),
+            REML = T)
 car::Anova(m.3)
-# not sig in this or m.2
+# YES among transects
 
 
 sum.1 <- summary(m.1)
 
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
+variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+  as.data.frame() %>%
   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
   dplyr::select(., c(grp, vcov, PVE)) %>%
   dplyr::rename(., Group = grp,
                 Variance = vcov)
 
 
-write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_Weevil_urban_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_Weevil_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
-write.table(car::Anova(m.2), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_Weevil_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
+write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_Weevil_urban_lmer_PVE.csv"), col.names=TRUE, sep=",")
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_Weevil_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+write.table(car::Anova(m.2), here::here("./Figures_Tables/ranova_PVE/2020_Weevil_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+
 ```
 
 #### Urb_score
@@ -5757,26 +5783,31 @@ herb2020_urb_dist_m5_ME <- glmer((Herbivory.July_mean_binary) ~ (1|Block) + (1|P
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 # herb2020_urb_dist_m6 <- lmer(Herbivory.July_mean ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-#   data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1),
+#   data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1 & Transect_ID != "Rural"),
 #   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 # sjPlot::plot_model(herb2020_urb_dist_m6, type='diag') #very right-skewed... try cube root
 # 
 # herb2020_urb_dist_m7 <- lmer(Herbivory.July_mean^(1/3) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-#   data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1),
+#   data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1 & Transect_ID != "Rural"),
 #   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 # sjPlot::plot_model(herb2020_urb_dist_m7, type='diag') # still right-skewed... try log
 
-herb2020_urb_dist_m8 <- lmer(log(Herbivory.July_mean) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-  data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1),
-  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# herb2020_urb_dist_m8 <- lmer(log(Herbivory.July_mean) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+#   data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1 & Transect_ID != "Rural"),
+#   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(herb2020_urb_dist_m8, type='diag') # looks great! but stil singular... try glmmTMB
+
+herb2020_urb_dist_m8 <- glmmTMB(log(Herbivory.July_mean) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+  data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1 & Transect_ID != "Rural"),
+  family = gaussian)
 sjPlot::plot_model(herb2020_urb_dist_m8, type='diag') # looks great!
 
-car::Anova(herb2020_urb_dist_m8) # interaction sig
+car::Anova(herb2020_urb_dist_m8) # interaction not sig
 
 # main effects
-herb2020_urb_dist_m8_ME <- lmer(log(Herbivory.July_mean) ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
-  data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1),
-  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+herb2020_urb_dist_m8_ME <- glmmTMB(log(Herbivory.July_mean) ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+  data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1 & Transect_ID != "Rural"),
+  family = gaussian)
 
 
 
@@ -5847,17 +5878,17 @@ herb2020_urb_usc_m5_ME <- glmer((Herbivory.July_mean_binary) ~ (1|Block) + (1|Po
   control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 # herb2020_urb_usc_m6 <- lmer(Herbivory.July_mean ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-#   data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1),
+#   data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1 & Transect_ID != "Rural"),
 #   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 # sjPlot::plot_model(herb2020_urb_usc_m6, type='diag') #very right-skewed... try cube root
 # 
 # herb2020_urb_usc_m7 <- lmer(Herbivory.July_mean^(1/3) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-#   data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1),
+#   data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1 & Transect_ID != "Rural"),
 #   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 # sjPlot::plot_model(herb2020_urb_usc_m7, type='diag') # still right-skewed... try log
 
 herb2020_urb_usc_m8 <- lmer(log(Herbivory.July_mean) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-  data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1),
+  data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1 & Transect_ID != "Rural"),
   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 sjPlot::plot_model(herb2020_urb_usc_m8, type='diag') # looks great!
 
@@ -5865,7 +5896,7 @@ car::Anova(herb2020_urb_usc_m8) # nothing sig
 
 # main effects
 herb2020_urb_usc_m8_ME <- lmer(log(Herbivory.July_mean) ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
-  data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1),
+  data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1 & Transect_ID != "Rural"),
   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
 
 
@@ -5917,13 +5948,51 @@ car::Anova(herb2020_gr_usc_m8) # quantitative: not sig
 ```{r}
 car::Anova(herb2020_urb_dist_m5) # binomial: city_dist sig
 car::Anova(herb2020_urb_dist_m5_ME) # binomial: city_dist sig
-car::Anova(herb2020_urb_dist_m8) # quantitative: interaxn sig
-car::Anova(herb2020_urb_dist_m8_ME) # quantitative main effects: not sig
+car::Anova(herb2020_urb_dist_m8) # quantitative: city_dist sig
+car::Anova(herb2020_urb_dist_m8_ME) # quantitative main effects: city_dist sig
 
 AIC(herb2020_urb_dist_m5, herb2020_urb_dist_m5_ME) # very close
 AIC(herb2020_urb_dist_m8, herb2020_urb_dist_m8_ME) # main effects has lower AIC ... but the interaxn is sig so ME model isn't relevant
 
 
+
+# ANy variation among families or populations?
+m.1 <- lmer(log(Herbivory.July_mean) ~  (1|Population/Family) + City_dist ,
+  data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1 & Transect_ID != "Rural"),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+  REML = T)
+
+ranova(m.1)
+# no
+
+m.2 <- lmer(log(Herbivory.July_mean) ~ (1|Population/Family) + Transect_ID,
+              data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1 & Urb_Rur == "Urban"),
+
+            REML = F)
+car::Anova(m.2)
+# not among transects either
+
+
+m.3 <- lmer(log(Herbivory.July_mean) ~ (1|Population/Family) + Transect_ID,
+              data = herbivory_both_2020 %>% filter(Herbivory.July_mean_binary == 1 & Urb_Rur == "Urban"),
+            REML = T)
+car::Anova(m.3)
+# also not sig among transects
+
+
+sum.1 <- summary(m.1)
+
+variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+  as.data.frame() %>%
+  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+  dplyr::select(., c(grp, vcov, PVE)) %>%
+  dplyr::rename(., Group = grp,
+                Variance = vcov)
+
+
+write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_HerbivoryJuly_urban_lmer_PVE.csv"), col.names=TRUE, sep=",")
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_HerbivoryJuly_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+write.table(car::Anova(m.2), here::here("./Figures_Tables/ranova_PVE/2020_HerbivoryJuly_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
 ```
 
 ##### Urb_score
@@ -6486,6 +6555,44 @@ AIC(herb2020.S_urb_dist_m12, herb2020.S_urb_dist_m12_ME)
 # main effects has lower AIC
 
 
+
+# ANy variation among families or populations?
+m.1 <- lmer(log(Herbivory.Sept_mean) ~  (1|Population/Family) + City_dist ,
+  data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1 & Transect_ID != "Rural"),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+  REML = T)
+
+ranova(m.1)
+# no
+
+m.2 <- lmer(log(Herbivory.Sept_mean) ~ (1|Population/Family) + Transect_ID,
+              data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1 & Urb_Rur == "Urban"),
+
+            REML = F)
+car::Anova(m.2)
+# not among transects either
+
+
+m.3 <- lmer(log(Herbivory.Sept_mean) ~ (1|Population/Family) + Transect_ID,
+              data = herbivory_both_2020 %>% filter(Herbivory.Sept_mean_binary == 1 & Urb_Rur == "Urban"),
+            REML = T)
+car::Anova(m.3)
+# also not sig among transects
+
+
+sum.1 <- summary(m.1)
+
+variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+  as.data.frame() %>%
+  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+  dplyr::select(., c(grp, vcov, PVE)) %>%
+  dplyr::rename(., Group = grp,
+                Variance = vcov)
+
+
+write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_HerbivorySept_urban_lmer_PVE.csv"), col.names=TRUE, sep=",")
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_HerbivorySept_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+write.table(car::Anova(m.2), here::here("./Figures_Tables/ranova_PVE/2020_HerbivorySept_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
 ```
 
 ##### Urb_score
@@ -6893,34 +7000,40 @@ AIC(rgr_urbsubs_city_m8, rgr_urbsubs_city_m8_ME.1) # ME model lower AIC
 summary(rgr_urbsubs_city_m8_ME.1)
 
 # ANy variation among families or populations?
-m.1 <- lmer(rel_growth_rate ~ (1|Population/Family), data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
+m.1 <- lmer(sqrt(rel_growth_rate) ~  (1|Population/Family) + City_dist ,
+  data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 & Urb_Rur == "Urban"),
+  REML = T)
+
 ranova(m.1)
 # no
 
-m.2 <- lmer(rel_growth_rate ~ (1|Population/Family) + Transect_ID, data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = F)
+m.2 <- lmer(sqrt(rel_growth_rate) ~ (1|Population/Family) + Transect_ID,
+  data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 & Urb_Rur == "Urban"),
+            REML = F)
 car::Anova(m.2)
 # not among transects either
 
 
-m.3 <- lmer(rel_growth_rate ~ (1|Population/Family) + Transect_ID, data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"), REML = T)
+m.3 <- lmer(sqrt(rel_growth_rate) ~ (1|Population/Family) + Transect_ID,
+  data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+  REML = T)
 car::Anova(m.3)
-# not sig in this or m.2
+# also not sig among transects
 
 
 sum.1 <- summary(m.1)
 
-variances1 <- print(VarCorr(m.1),comp="Variance")
-variances1 <- as.data.frame(variances1)
-variances1 <- variances1 %>%
+variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+  as.data.frame() %>%
   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
   dplyr::select(., c(grp, vcov, PVE)) %>%
   dplyr::rename(., Group = grp,
                 Variance = vcov)
 
 
-write.table(ranova(m.1), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_growthrate_urban_lmer_PVE.csv", col.names=TRUE, sep=",")
-write.table(variances1, "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_growthrate_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
-write.table(car::Anova(m.2), "~/R_Projects/Chapter2_KSR/Figures_Tables/ranova_PVE/2020_growthrate_urban_lmer_PVE.csv", col.names=TRUE, sep=",", append=TRUE)
+write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_growthrate_urban_lmer_PVE.csv"), col.names=TRUE, sep=",")
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_growthrate_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+write.table(car::Anova(m.2), here::here("./Figures_Tables/ranova_PVE/2020_growthrate_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
 ```
 
 #### Urb_score
