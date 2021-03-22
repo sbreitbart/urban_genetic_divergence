@@ -1,0 +1,30 @@
+[1] "POPULATION"
+Parametric bootstrap testing: (Intercept) | Population:Family (Intercept) | Population = 0 
+from: glmer(formula = Ramets_June ~ City_dist + (1 | Population:Family) +  (1 | Population), data = heights_both_2020 %>% filter(Urb_Rur ==  "Urban"), family = poisson, control = glmerControl(optimizer = "bobyqa",  optCtrl = list(maxfun = 2e+05))) 
+1000 samples were taken Tue Mar 16 20:46:01 2021 
+97 samples had warnings, 97 in alternate model 0 in null model 
+97 unused samples.  0.001 <= P(LRT stat > |9.881709|) <= 0.098
+
+[1] "FAMILY"
+Parametric bootstrap testing: (Intercept) | Population:Family = 0 
+from: glmer(formula = Ramets_June ~ City_dist + (1 | Population:Family),  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),  family = poisson, control = glmerControl(optimizer = "bobyqa",  optCtrl = list(maxfun = 2e+05))) 
+1000 samples were taken Tue Mar 16 20:47:52 2021 
+440 samples had warnings, 440 in alternate model 0 in null model 
+440 unused samples.  0.001 <= P(abs((Intercept) | Population:Family) > |0.03194105|) <= 0.441
+
+
+
+[1] "POPULATION"
+Parametric bootstrap testing: (Intercept) | Population:Family (Intercept) | Population = 0 
+from: glmer(formula = Ramets_June ~ Transect_ID + (1 | Population:Family) +  (1 | Population), data = heights_both_2020 %>% filter(Urb_Rur ==  "Urban"), family = poisson) 
+1000 samples were taken Tue Mar 16 21:01:27 2021 
+26 samples had warnings, 26 in alternate model 0 in null model 
+26 unused samples.  0 <= P(LRT stat > |9.662527|) <= 0.026
+
+[1] "FAMILY"
+Parametric bootstrap testing: (Intercept) | Population:Family = 0 
+from: glmer(formula = Ramets_June ~ Transect_ID + (1 | Population:Family),  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),  family = poisson, control = glmerControl(optimizer = "bobyqa",  optCtrl = list(maxfun = 2e+05))) 
+1000 samples were taken Tue Mar 16 20:56:54 2021 
+P(abs((Intercept) | Population:Family) > |0.03173864|) = 0.001
+
+[1] "Variance among families differs by urban subtransect"

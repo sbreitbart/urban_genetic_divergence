@@ -95,6 +95,61 @@ library(stringi)
 
 ## Make functions
 ```{r}
+
+# copied from "KSR_2020_analysis.Rmd"
+## makes a flextable from anova output
+anova_table_flx <- function(mod1) {
+
+  flx_1 <-  car::Anova(mod1) %>% 
+  tidy() %>%
+  dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("City_dist"),
+            replacement = c("Distance to City Center")) %>%
+    dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("Urb_score"),
+            replacement = c("Urbanization Score")) %>%
+    dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("Transect_ID"),
+            replacement = c("Subtransect")) %>%
+  rename_at(1, ~ "Effect") %>%
+  rename_at(2, ~ "Chi Square" ) %>%
+  rename_at(4, ~ "P" ) %>%
+  # dplyr::select(-3) %>%
+    flextable()  %>%
+    colformat_num(j = c(2,4), digits = 3) %>%
+    flextable::bold(., ~ P  == "< 0.001" | P <= 0.05, ~ P, bold = TRUE) %>%
+    flextable::italic(., ~ P > 0.05 & P <= 0.1, ~ P, italic = TRUE) %>%
+  # set_caption(., caption = "Does Urbanization Affect Year 2 Flowering?") %>%
+  # align(., i = 1, part = "header", align = "center") %>%
+  # add_footer_lines(., paste("Model formula: ", paste0(toString(formula(mod1)[3])))) %>%
+  # italic(., italic = TRUE, part = "footer") %>%
+  align_text_col(., align = "left") %>%
+  align_nottext_col(., align = "center") %>%
+  autofit(., add_w = 0.1, add_h = 0.1) 
+
+  
+      # make filename a string (from symbol)
+  # filename1 <- toString(formula(mod1)[[2]])
+
+  # can't figure out how to remove space from filename so it's staying for now...
+  path_out = here::here("./Figures_Tables/ANOVA_tables_images/ ")
+  
+  save_as_image(flx_1,
+                gsub(" ", "",
+                     paste(path_out,
+                      # filename1,
+                      print(substitute(mod1)),
+                      "_ANOVA.png")))
+
+}
+
+
 # perform all tasks associated with ANOVA and export results to csv
 Anova_etc <- function(full_model_dist.gradient,
                       full_model_dist.urbsubs,
@@ -1327,6 +1382,11 @@ Anova_etc(m1_LA.nb,
 
 
 ```
+### Export models with sig/marg sig effects
+```{r}
+anova_table_flx(m2_LA.urb.nb)
+```
+
 ## Aphis nerii- no & no
 ### Diagnostics
 #### All sites
@@ -1854,7 +1914,7 @@ r.squaredGLMM(glmmTMB(Myzocallis_asclepiadis ~
               REML = F))
 # very small r-sq.
 ```
-## Euchaetes egle- sig diff along gradient for urban sites w/urbanization score. High r-squared too!
+## Euchaetes egle- sig diff along gradient for urban sites w/urbanization score. High r-squared too! but it might be due to a couple outliers not detected in diagnostics...
 ### Diagnostics
 #### All sites
 ```{r}
@@ -2020,6 +2080,10 @@ Anova_etc( m1_EE.nb,
 ## -Urb_score significant! With pretty high R-sq too- 0.45!
 
 
+```
+### Export models with sig/marg sig effects
+```{r}
+anova_table_flx(m2_EE.urb.nb)
 ```
 ## Lygaeus kalmii- no and no
 ### Diagnostics
@@ -2395,6 +2459,10 @@ car::Anova(m2_LC.nb) # not sig
 car::Anova(m2_LC.urb.nb) # nothing near sig
 
 ```
+### Export models with sig/marg sig effects
+```{r}
+anova_table_flx(m1_LC.urb.nb)
+```
 ## Rhyssomatus lineaticollis- sig diff along gradient for urban subs
 ### Make binary column
 ```{r}
@@ -2701,87 +2769,113 @@ AIC(glmer(Rhyssomatus_lineaticollis ~
 # AICs <2 apart but just main effects is smaller
 ```
 
+### Export models with sig/marg sig effects
+```{r}
+anova_table_flx(m1_RL.urb_ME)
+```
 # Regression: Plots
 ```{r}
 # ggplot: limit y axis
-ggplot(herbivores2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = mean_Liriomyza_asclepiadis)) + 
+ggplot(herbivores2020_popmeans %>% filter(Transect_ID != "Rural"),
+       aes(x = Urb_score, y = mean_Euchaetes_egle)) + 
   labs(x = "Urbanization Score", 
-    y = "Mean Liriomyza asclepiadis count") +
-  ylim(0,20) +
-  theme_urbansubs_1 +
-  xlim(-2, 4)
+    y = "Mean Euchaetes egle count") +
+  # ylim(0,0.5) +
+  geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
+                scale_shape(solid = F) +
+                geom_smooth(aes(linetype = Sample,
+                                color = Transect_ID,
+                                fill = Transect_ID) ,
+                            size=0.75, method = lm, alpha=.15, se = T) +
+    xlim(-2, 4) # +
+                # scale_shape_manual(values = c(1, 2),
+                #                    breaks = c("North", "South"),
+                #                    labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                #                    name = "Sample Site Subtransect") +
+                # scale_color_manual(values = c("red", "blue"),
+                #                    breaks = c("North", "South"),
+                #                    labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                #                    name = "Sample Site Subtransect") +
+                # scale_linetype_manual(values = c("solid", "dashed"),
+                #                    breaks = c("North", "South"),
+                #                    labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                #                    name = "Sample Site Subtransect") +
+                # scale_fill_manual(values = c("red", "blue"),
+                #                    breaks = c("North", "South"),
+                #                    labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                #                    name = "Sample Site Subtransect") +
 
 
-sjPlot::set_theme(
-  geom.outline.color = "gray", 
-  geom.outline.size = 5, 
-  geom.label.size = 2,
-  title.size = 1.5,
-  base = theme_bw()
-)
+# sjPlot::set_theme(
+#   geom.outline.color = "gray", 
+#   geom.outline.size = 5, 
+#   geom.label.size = 2,
+#   title.size = 1.5,
+#   base = theme_bw()
+# )
+# # 
+# # sjPlot::plot_model(m2_LA.urb.nb,
+# #                    type = "pred",
+# #                    terms = c("Urb_score", "Transect_ID")) +
+# #   labs(x = "Urbanization Score") +
+# #   ylim(0, 0.35) +
+# #   xlim(-2, 4)
 # 
+# # sjPlot: don't show points
 # sjPlot::plot_model(m2_LA.urb.nb,
 #                    type = "pred",
-#                    terms = c("Urb_score", "Transect_ID")) +
+#                    terms = c("Urb_score", "Transect_ID"),
+#                    show.data = F) +
 #   labs(x = "Urbanization Score") +
-#   ylim(0, 0.35) +
-#   xlim(-2, 4)
-
-# sjPlot: don't show points
-sjPlot::plot_model(m2_LA.urb.nb,
-                   type = "pred",
-                   terms = c("Urb_score", "Transect_ID"),
-                   show.data = F) +
-  labs(x = "Urbanization Score") +
-  ylim(0, 20) +
-  xlim(-2, 4) +
-  scale_shape_discrete(labels = c("Urban: Non-Corridor", "Urban: Corridor")) +
-  scale_color_discrete(labels = c("Urban: Non-Corridor", "Urban: Corridor")) +
-  geom_point(data = herbivores2020_popmeans %>% filter(Transect_ID != "Rural"),
-             aes(x = Urb_score,
-                 y = mean_Liriomyza_asclepiadis,
-                 color = Transect_ID,
-                 shape = Transect_ID),
-             inherit.aes = F) 
-
-# sjPlot: show points
-sjPlot::plot_model(m2_LA.urb.nb,
-                   type = "pred",
-                   terms = c("Urb_score", "Transect_ID"),
-                   show.data = T,
-                   geom_size = 1) +
-  labs(x = "Urbanization Score",
-       color = "Urban Subtransect") +
-  # ylim(0, 10) +
-  xlim(-2, 4) +
-  scale_color_discrete(labels = c("Urban: Non-Corridor", "Urban: Corridor"))
-
-#   
+#   ylim(0, 20) +
+#   xlim(-2, 4) +
+#   scale_shape_discrete(labels = c("Urban: Non-Corridor", "Urban: Corridor")) +
+#   scale_color_discrete(labels = c("Urban: Non-Corridor", "Urban: Corridor")) +
+#   geom_point(data = herbivores2020_popmeans %>% filter(Transect_ID != "Rural"),
+#              aes(x = Urb_score,
+#                  y = mean_Liriomyza_asclepiadis,
+#                  color = Transect_ID,
+#                  shape = Transect_ID),
+#              inherit.aes = F) 
 # 
+# # sjPlot: show points
 # sjPlot::plot_model(m2_LA.urb.nb,
-#                    type = "int",
-#                    terms = c("Urb_score", "Transect_ID")) +
-#   labs(x = "Urbanization Score") +
-#   ylim(0, 0.35) +
-#   xlim(-2, 4)
+#                    type = "pred",
+#                    terms = c("Urb_score", "Transect_ID"),
+#                    show.data = T,
+#                    geom_size = 1) +
+#   labs(x = "Urbanization Score",
+#        color = "Urban Subtransect") +
+#   # ylim(0, 10) +
+#   xlim(-2, 4) +
+#   scale_color_discrete(labels = c("Urban: Non-Corridor", "Urban: Corridor"))
 # 
-
-
-  pval_citydist <- car::Anova(m2_LA.urb.nb)$'Pr(>Chisq)'[1] # City_dist p-val
-  pval_transect <- car::Anova(m2_LA.urb.nb)$'Pr(>Chisq)'[2] # Transect p-val
-  pval_citydist <- ifelse(pval_citydist < 0.001, "< 0.001", round(pval_citydist, 3))
-  pval_transect <- ifelse(pval_transect < 0.001, "< 0.001", round(pval_transect, 3))
-
-  # shows the difference between the general intercept or slope value found in your model summary and the estimate for this specific level of random effect.
-sjPlot::plot_model(m2_LA.urb.nb, type = "pred", show.values = TRUE)
-summary(m2_LA.urb.nb)
-
-
-
-TT_fit1 <- ggeffects::ggpredict(m2_TT.urb, terms = c("Urb_score"))
-ggplot(TT_fit1, aes(x, predicted)) +
-  geom_line() +
-  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .1) 
+# #   
+# # 
+# # sjPlot::plot_model(m2_LA.urb.nb,
+# #                    type = "int",
+# #                    terms = c("Urb_score", "Transect_ID")) +
+# #   labs(x = "Urbanization Score") +
+# #   ylim(0, 0.35) +
+# #   xlim(-2, 4)
+# # 
+# 
+# 
+#   pval_citydist <- car::Anova(m2_LA.urb.nb)$'Pr(>Chisq)'[1] # City_dist p-val
+#   pval_transect <- car::Anova(m2_LA.urb.nb)$'Pr(>Chisq)'[2] # Transect p-val
+#   pval_citydist <- ifelse(pval_citydist < 0.001, "< 0.001", round(pval_citydist, 3))
+#   pval_transect <- ifelse(pval_transect < 0.001, "< 0.001", round(pval_transect, 3))
+# 
+#   # shows the difference between the general intercept or slope value found in your model summary and the estimate for this specific level of random effect.
+# sjPlot::plot_model(m2_LA.urb.nb, type = "pred", show.values = TRUE)
+# summary(m2_LA.urb.nb)
+# 
+# 
+# 
+# TT_fit1 <- ggeffects::ggpredict(m2_TT.urb, terms = c("Urb_score"))
+# ggplot(TT_fit1, aes(x, predicted)) +
+#   geom_line() +
+#   geom_ribbon(aes(ymin = conf.low, ymax = conf.high), alpha = .1) 
 ```
 
 

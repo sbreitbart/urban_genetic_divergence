@@ -1,0 +1,32 @@
+[1] "POPULATION"
+Parametric bootstrap testing: (Intercept) | Population:Family (Intercept) | Population = 0 
+from: glmer(formula = Ramets_Sept ~ City_dist + (1 | Population:Family) +  (1 | Population), data = heights_both_2020 %>% filter(Urb_Rur ==  "Urban"), family = poisson, control = glmerControl(optimizer = "bobyqa",  optCtrl = list(maxfun = 2e+05))) 
+1000 samples were taken Tue Mar 16 21:38:32 2021 
+50 samples had warnings, 50 in alternate model 0 in null model 
+50 unused samples.  0.95 <= P(LRT stat > |0|) <= 1
+
+[1] "FAMILY"
+Parametric bootstrap testing: (Intercept) | Population:Family = 0 
+from: glmer(formula = Ramets_Sept ~ City_dist + (1 | Population:Family),  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),  family = poisson, control = glmerControl(optimizer = "bobyqa",  optCtrl = list(maxfun = 2e+05))) 
+1000 samples were taken Tue Mar 16 21:15:21 2021 
+289 samples had warnings, 289 in alternate model 0 in null model 
+289 unused samples.  0.711 <= P(abs((Intercept) | Population:Family) > |0|) <= 1
+
+[1] "There is not much variance among populations"
+
+
+[1] "POPULATION"
+Parametric bootstrap testing: (Intercept) | Population:Family (Intercept) | Population = 0 
+from: glmer(formula = Ramets_Sept ~ Transect_ID + (1 | Population:Family) +  (1 | Population), data = heights_both_2020 %>% filter(Urb_Rur ==  "Urban"), family = poisson) 
+1000 samples were taken Tue Mar 16 21:24:09 2021 
+40 samples had warnings, 40 in alternate model 0 in null model 
+40 unused samples.  0.96 <= P(LRT stat > |0|) <= 1
+
+[1] "FAMILY"
+Parametric bootstrap testing: (Intercept) | Population:Family = 0 
+from: glmer(formula = Ramets_Sept ~ Transect_ID + (1 | Population:Family),  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),  family = poisson, control = glmerControl(optimizer = "bobyqa",  optCtrl = list(maxfun = 2e+05))) 
+1000 samples were taken Tue Mar 16 21:25:06 2021 
+P(abs((Intercept) | Population:Family) > |6.714447e-19|) = 0.488
+
+[1] "Variance among populations does not differ by urban subtransect"
+[1] "Variance among families does not differ by urban subtransect"

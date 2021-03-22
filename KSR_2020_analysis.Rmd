@@ -34,6 +34,8 @@ library(reshape)
 library(reshape2)
 library(DHARMa)
 library(flextable)
+library(pbkrtest)
+library(pbnm)
 library(glmmTMB)
 library(redres)
 library(tidyr)
@@ -106,18 +108,6 @@ diagnostic<-function(x){
   print(paste("Kurtosis=", kurtosis(x), sep=""))
   print(paste("Skew=", skew(x), sep=""))
 }
-
-
-# lmer_diagnostic <- function(model) {
-#  p1 <- plot(model, type = c("p", "smooth"))
-#  p2 <- plot(model, sqrt(abs(resid(.))) ~ fitted(.), type = c("p", "smooth"))
-#  p3 <- qqnorm(residuals(model))
-#  p4 <- qqline(residuals(model))
-#  
-#  return( list(p1, p2, p3, p4) )
-#     
-# }
-
 
 
 ##### Export ANOVAs ##### 
@@ -4044,6 +4034,188 @@ car::Anova(flowering_urbsubs_city_m1) # nothing sig
 car::Anova(flowering_urbsubs_city_m1_ME) # nothing sig
 
 AIC(flowering_urbsubs_city_m1, flowering_urbsubs_city_m1_ME) # <2 away
+
+
+
+
+# ANy variation within families or populations?
+
+##### TACTIC 1: try bootstrapping #####
+# NOT PERFECT b/c can't nest family within pop but trying a few ways to get at the correct answer.
+# https://www.ssc.wisc.edu/sscc/pubs/MM/MM_TestEffects.html#test-of-random-parameter
+
+
+### MODEL 1: CITY_DIST ###
+##########################
+
+# JUST POPULATION
+gmm <-  glmer(Flowered2020 ~ City_dist + (1|Population), # can't leave in Family... doesn't work
+              family = binomial(link = "logit"),
+  data = reproductive %>% filter(Urb_Rur == "Urban"),
+  nAGQ = 0)
+
+# IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+gmm1 <-  glmer(Flowered2020 ~ City_dist + (1|Population/Family), 
+              family = binomial(link = "logit"),
+  data = reproductive %>% filter(Urb_Rur == "Urban"),
+             nAGQ = 0)
+
+# POP:FAMILY
+gmm2 <-  glmer(Flowered2020 ~ City_dist + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+              family = binomial(link = "logit"),
+  data = reproductive %>% filter(Urb_Rur == "Urban"),
+             nAGQ = 0)
+
+# UNIQUE FAMILIES
+gmm3 <-  glmer(Flowered2020 ~ City_dist + (1|Family_unique),
+              family = binomial(link = "logit"),
+  data = reproductive %>% filter(Urb_Rur == "Urban"),
+             nAGQ = 0)
+
+# EQUIVALENT TO FAM NESTED W/IN POP
+gmm4 <-  glmer(Flowered2020 ~ City_dist + (1|Population:Family) + (1|Population),
+              family = binomial(link = "logit"),
+  data = reproductive %>% filter(Urb_Rur == "Urban"),
+             nAGQ = 0)
+
+
+# REDUCED MODEL 1
+gmmDG1 <- glm(Flowered2020 ~ City_dist,
+              family = binomial(link = "logit"),
+  data = reproductive %>% filter(Urb_Rur == "Urban"))
+
+
+
+### RESULTS ###
+# POPULATION (so, results are about populations)
+pbgmmDg1 <- pbnm(gmm,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+summary(pbgmmDg1) # p = 0.032...  var among pops
+
+# EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+pbgmmDg4 <- pbnm(gmm4,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_pop <- summary(pbgmmDg4) %T>%
+  print() # p = 0.049... var among pops accounting for fams
+
+# POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+pbgmmDg2 <- pbnm(gmm2,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_fam <- summary(pbgmmDg2) %T>%
+  print() # p = 0.23... little var among families crossed w/ pops
+
+# UNIQUE FAMILIES (so, results are about families)
+pbgmmDg3 <- pbnm(gmm3,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+summary(pbgmmDg3) # p = 0.23... little var among families, period
+
+
+
+### MODEL 2: TRANSECT_ID ###
+##########################
+
+# JUST POPULATION
+gmm.2 <-  glmer(Flowered2020 ~ Transect_ID + (1|Population), # can't leave in Family... doesn't work
+              family = binomial(link = "logit"),
+  data = reproductive %>% filter(Urb_Rur == "Urban"),
+  nAGQ = 0)
+
+# IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+gmm1.2 <-  glmer(Flowered2020 ~ Transect_ID + (1|Population/Family), 
+              family = binomial(link = "logit"),
+  data = reproductive %>% filter(Urb_Rur == "Urban"),
+             nAGQ = 0)
+
+# POP:FAMILY
+gmm2.2 <-  glmer(Flowered2020 ~ Transect_ID + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+              family = binomial(link = "logit"),
+  data = reproductive %>% filter(Urb_Rur == "Urban"),
+             nAGQ = 0)
+
+# UNIQUE FAMILIES
+gmm3.2 <-  glmer(Flowered2020 ~ Transect_ID + (1|Family_unique),
+              family = binomial(link = "logit"),
+  data = reproductive %>% filter(Urb_Rur == "Urban"),
+             nAGQ = 0)
+
+# EQUIVALENT TO FAM NESTED W/IN POP
+gmm4.2 <-  glmer(Flowered2020 ~ Transect_ID + (1|Population:Family) + (1|Population),
+              family = binomial(link = "logit"),
+  data = reproductive %>% filter(Urb_Rur == "Urban"),
+             nAGQ = 0)
+
+# REDUCED MODEL 2
+gmmDG1.2 <- glm(Flowered2020 ~ Transect_ID,
+              family = binomial(link = "logit"),
+  data = reproductive %>% filter(Urb_Rur == "Urban"))
+
+
+
+### RESULTS ###
+# POPULATION (so, results are about populations)
+pbgmmDg1.2 <- pbnm(gmm.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+summary(pbgmmDg1.2) # p = 0.027...  var among pops
+
+# EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+pbgmmDg4.2 <- pbnm(gmm4.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_pop.2 <- summary(pbgmmDg4.2) %T>%
+  print() # p = 0.049... var among pops accounting for fams
+
+# POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+pbgmmDg2.2 <- pbnm(gmm2.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_fam.2 <- summary(pbgmmDg2.2) %T>%
+  print() # p = 0.216... little var among families crossed w/ pops
+
+# UNIQUE FAMILIES (so, results are about families)
+pbgmmDg3.2 <- pbnm(gmm3.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+summary(pbgmmDg3.2) # p = 0.216... little var among families, period
+
+
+
+
+sum.1 <- summary(gmm4)
+
+variances1 <- print(VarCorr(gmm4),comp="Variance") %>%
+  as.data.frame() %>%
+  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+  dplyr::select(., c(grp, vcov, PVE)) %>%
+  dplyr::rename(., Group = grp,
+                Variance = vcov)
+
+# export percent variance explained
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_Floweringsuccess_urban_glmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+
+# export ranova
+sink(here::here("./Figures_Tables/ranova_PVE/2020_Floweringsuccess_urban_glmer_ranova.csv"))
+print("POPULATION", sep="\n\n")
+print(ranova_pop, sep="\n\n")
+  cat("\n")
+print("FAMILY", sep="\n\n")
+print(ranova_fam, sep="\n\n")
+  cat("\n")
+if (ranova_pop[1] <= 0.05){
+  print ('There is variance among populations')}
+if (ranova_pop[1] > 0.05){
+  print ("There is not much variance among populations")}
+if (ranova_fam[1] <= 0.05){
+  print ("There is variance among families")}
+if (ranova_fam[1] > 0.05){
+  print ("There is not much variance among families")}
+  
+cat("\n")
+cat("\n")
+
+print("POPULATION", sep="\n\n")
+print(ranova_pop.2, sep="\n\n")
+  cat("\n")
+print("FAMILY", sep="\n\n")
+print(ranova_fam.2, sep="\n\n")
+  cat("\n")
+if (ranova_pop.2[1] <= 0.05){
+  print ('Variance among populations differs by urban subtransect')}
+if (ranova_pop.2[1] > 0.05){
+  print ("Variance among populations does not differ by urban subtransect")}
+if (ranova_fam.2[1] <= 0.05){
+  print ("Variance among families differs by urban subtransect")}
+if (ranova_fam.2[1] > 0.05){
+  print ("Variance among families does not differ by urban subtransect")}
+sink()
 ```
 
 ###### Urb_score
@@ -7400,6 +7572,195 @@ car::Anova(rametsJ_urbsubs_city_m1_ME) # not sig
 
 AIC(rametsJ_urbsubs_city_m1, rametsJ_urbsubs_city_m1_ME) # ME has lower aic but <2
 
+
+# ANy variation within families or populations?
+
+##### TACTIC 1: try bootstrapping #####
+# NOT PERFECT b/c can't nest family within pop but trying a few ways to get at the correct answer.
+# https://www.ssc.wisc.edu/sscc/pubs/MM/MM_TestEffects.html#test-of-random-parameter
+
+
+### MODEL 1: CITY_DIST ###
+##########################
+
+# JUST POPULATION
+gmm <-  glmer(Ramets_June ~ City_dist + (1|Population), # can't leave in Family... doesn't work
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+gmm1 <-  glmer(Ramets_June ~ City_dist + (1|Population/Family), 
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# POP:FAMILY
+gmm2 <-  glmer(Ramets_June ~ City_dist + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+  family = poisson,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# UNIQUE FAMILIES
+heights_both_2020$Family_unique <- paste(heights_both_2020$Population, heights_both_2020$Family)
+gmm3 <-  glmer(Ramets_June ~ City_dist + (1|Family_unique),
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# EQUIVALENT TO FAM NESTED W/IN POP
+gmm4 <-  glmer(Ramets_June ~ City_dist + (1|Population:Family) + (1|Population),
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+
+# REDUCED MODEL 1
+gmmDG1 <- glm(Ramets_June ~ City_dist,
+                data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson)
+
+
+
+### RESULTS ###
+# POPULATION (so, results are about populations)
+pbgmmDg1 <- pbnm(gmm,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+summary(pbgmmDg1) # p = 0.375...  little var among pops
+
+# EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+pbgmmDg4 <- pbnm(gmm4,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_pop <- summary(pbgmmDg4) %T>%
+  print() # p = 0.098... (some?) var among pops accounting for fams
+
+# POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+pbgmmDg2 <- pbnm(gmm2,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_fam <- summary(pbgmmDg2) %T>%
+  print() # p = 0.441... little var among families crossed w/ pops
+
+# UNIQUE FAMILIES (so, results are about families)
+pbgmmDg3 <- pbnm(gmm3,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+summary(pbgmmDg3) # p = 0.44... little var among families, period
+
+
+
+### MODEL 2: TRANSECT_ID ###
+##########################
+
+# JUST POPULATION
+gmm.2 <-  glmer(Ramets_June ~ Transect_ID + (1|Population), # can't leave in Family... doesn't work
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+gmm1.2 <-  glmer(Ramets_June ~ Transect_ID + (1|Population/Family), 
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# POP:FAMILY
+gmm2.2 <-  glmer(Ramets_June ~ Transect_ID + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# UNIQUE FAMILIES
+gmm3.2 <-  glmer(Ramets_June ~ Transect_ID + (1|Family_unique),
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# EQUIVALENT TO FAM NESTED W/IN POP
+gmm4.2 <-  glmer(Ramets_June ~ Transect_ID + (1|Population:Family) + (1|Population),
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"))
+
+# REDUCED MODEL 2
+gmmDG1.2 <- glm(Ramets_June ~ Transect_ID,
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"))
+
+
+
+### RESULTS ###
+# POPULATION (so, results are about populations)
+pbgmmDg1.2 <- pbnm(gmm.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+summary(pbgmmDg1.2) # p = 0.023...  var among pops
+
+# EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+pbgmmDg4.2 <- pbnm(gmm4.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_pop.2 <- summary(pbgmmDg4.2) %T>%
+  print() # p = 0.026... var among pops accounting for fams
+
+# POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+pbgmmDg2.2 <- pbnm(gmm2.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_fam.2 <- summary(pbgmmDg2.2) %T>%
+  print() # p = 0.001...  var among families crossed w/ pops
+
+# UNIQUE FAMILIES (so, results are about families)
+pbgmmDg3.2 <- pbnm(gmm3.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+summary(pbgmmDg3.2) # p = 0.001.. var among families
+
+
+
+
+sum.1 <- summary(gmm4)
+
+variances1 <- print(VarCorr(gmm4),comp="Variance") %>%
+  as.data.frame() %>%
+  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+  dplyr::select(., c(grp, vcov, PVE)) %>%
+  dplyr::rename(., Group = grp,
+                Variance = vcov)
+
+# export percent variance explained
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_RametsJune_urban_glmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+
+# export ranova
+sink(here::here("./Figures_Tables/ranova_PVE/2020_RametsJune_urban_glmer_ranova.csv"))
+print("POPULATION", sep="\n\n")
+print(ranova_pop, sep="\n\n")
+  cat("\n")
+print("FAMILY", sep="\n\n")
+print(ranova_fam, sep="\n\n")
+  cat("\n")
+if (ranova_pop[1] <= 0.05){
+  print ('There is variance among populations')}
+if (ranova_pop[1] > 0.05){
+  print ("There is not much variance among populations")}
+if (ranova_fam[1] <= 0.05){
+  print ("There is variance among families")}
+if (ranova_fam[1] > 0.05){
+  print ("There is not much variance among families")}
+  
+cat("\n")
+cat("\n")
+
+print("POPULATION", sep="\n\n")
+print(ranova_pop.2, sep="\n\n")
+  cat("\n")
+print("FAMILY", sep="\n\n")
+print(ranova_fam.2, sep="\n\n")
+  cat("\n")
+if (ranova_pop.2[1] <= 0.05){
+  print ('Variance among populations differs by urban subtransect')}
+if (ranova_pop.2[1] > 0.05){
+  print ("Variance among populations does not differ by urban subtransect")}
+if (ranova_fam.2[1] <= 0.05){
+  print ("Variance among families differs by urban subtransect")}
+if (ranova_fam.2[1] > 0.05){
+  print ("Variance among families does not differ by urban subtransect")}
+sink()
+
 ```
 
 ##### Urb_score
@@ -7774,6 +8135,195 @@ car::Anova(rametsS_urbsubs_city_m5) # city_dist sig
 car::Anova(rametsS_urbsubs_city_m5_ME) # city_dist sig
 
 AIC(rametsS_urbsubs_city_m5, rametsS_urbsubs_city_m5_ME) # <2 away from e.o. though ME is lower
+
+
+# ANy variation among families or populations?
+
+##### TACTIC 1: try bootstrapping #####
+# NOT PERFECT b/c can't nest family within pop but trying a few ways to get at the correct answer.
+# https://www.ssc.wisc.edu/sscc/pubs/MM/MM_TestEffects.html#test-of-random-parameter
+
+
+### MODEL 1: CITY_DIST ###
+##########################
+
+# JUST POPULATION
+gmm <-  glmer(Ramets_Sept ~ City_dist + (1|Population), # can't leave in Family... doesn't work
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+gmm1 <-  glmer(Ramets_Sept ~ City_dist + (1|Population/Family), 
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban") ,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# POP:FAMILY
+gmm2 <-  glmer(Ramets_Sept ~ City_dist + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+  family = poisson,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# UNIQUE FAMILIES
+heights_both_2020$Family_unique <- paste(heights_both_2020$Population, heights_both_2020$Family)
+gmm3 <-  glmer(Ramets_Sept ~ City_dist + (1|Family_unique),
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# EQUIVALENT TO FAM NESTED W/IN POP
+gmm4 <-  glmer(Ramets_Sept ~ City_dist + (1|Population:Family) + (1|Population),
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+
+# REDUCED MODEL 1
+gmmDG1 <- glm(Ramets_Sept ~ City_dist,
+                data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson)
+
+
+
+### RESULTS ###
+# POPULATION (so, results are about populations)
+pbgmmDg1 <- pbnm(gmm,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+summary(pbgmmDg1) # p = 1 ...  no var among pops
+
+# EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+pbgmmDg4 <- pbnm(gmm4,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_pop <- summary(pbgmmDg4) %T>%
+  print() # p = 1 ... no var among pops accounting for fams
+
+# POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+pbgmmDg2 <- pbnm(gmm2,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_fam <- summary(pbgmmDg2) %T>%
+  print() # p = 1 ... no var among families crossed w/ pops
+
+# UNIQUE FAMILIES (so, results are about families)
+pbgmmDg3 <- pbnm(gmm3,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+summary(pbgmmDg3) # p = 1 ... no var among families
+
+
+
+### MODEL 2: TRANSECT_ID ###
+##########################
+
+# JUST POPULATION
+gmm.2 <-  glmer(Ramets_Sept ~ Transect_ID + (1|Population), # can't leave in Family... doesn't work
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+gmm1.2 <-  glmer(Ramets_Sept ~ Transect_ID + (1|Population/Family), 
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# POP:FAMILY
+gmm2.2 <-  glmer(Ramets_Sept ~ Transect_ID + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# UNIQUE FAMILIES
+gmm3.2 <-  glmer(Ramets_Sept ~ Transect_ID + (1|Family_unique),
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# EQUIVALENT TO FAM NESTED W/IN POP
+gmm4.2 <-  glmer(Ramets_Sept ~ Transect_ID + (1|Population:Family) + (1|Population),
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"))
+
+# REDUCED MODEL 2
+gmmDG1.2 <- glm(Ramets_Sept ~ Transect_ID,
+  family = poisson,
+    data = heights_both_2020 %>% filter(Urb_Rur == "Urban"))
+
+
+
+### RESULTS ###
+# POPULATION (so, results are about populations)
+pbgmmDg1.2 <- pbnm(gmm.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+summary(pbgmmDg1.2) # p = 1 ...  no var among pops
+
+# EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+pbgmmDg4.2 <- pbnm(gmm4.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_pop.2 <- summary(pbgmmDg4.2) %T>%
+  print() # p = 1 ... no var among pops accounting for fams
+
+# POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+pbgmmDg2.2 <- pbnm(gmm2.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_fam.2 <- summary(pbgmmDg2.2) %T>%
+  print() # p = 0.488...  little var among families crossed w/ pops
+
+# UNIQUE FAMILIES (so, results are about families)
+pbgmmDg3.2 <- pbnm(gmm3.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+summary(pbgmmDg3.2) # p = 0.487... little var among families
+
+
+
+
+sum.1 <- summary(gmm4)
+
+variances1 <- print(VarCorr(gmm4),comp="Variance") %>%
+  as.data.frame() %>%
+  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+  dplyr::select(., c(grp, vcov, PVE)) %>%
+  dplyr::rename(., Group = grp,
+                Variance = vcov)
+
+# export percent variance explained
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_RametsSept_urban_glmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+
+# export ranova
+sink(here::here("./Figures_Tables/ranova_PVE/2020_RametsSept_urban_glmer_ranova.csv"))
+print("POPULATION", sep="\n\n")
+print(ranova_pop, sep="\n\n")
+  cat("\n")
+print("FAMILY", sep="\n\n")
+print(ranova_fam, sep="\n\n")
+  cat("\n")
+# if (ranova_pop[1] <= 0.05){
+#   print ('There is variance among populations')}
+# if (ranova_pop[1] > 0.05){
+  print ("There is not much variance among populations") #}
+if (ranova_fam[1] <= 0.05){
+  print ("There is variance among families")}
+if (ranova_fam[1] > 0.05){
+  print ("There is not much variance among families")}
+  
+cat("\n")
+cat("\n")
+
+print("POPULATION", sep="\n\n")
+print(ranova_pop.2, sep="\n\n")
+  cat("\n")
+print("FAMILY", sep="\n\n")
+print(ranova_fam.2, sep="\n\n")
+  cat("\n")
+# if (ranova_pop.2[1] <= 0.05){
+#   print ('Variance among populations differs by urban subtransect')}
+# if (ranova_pop.2[1] > 0.05){
+  print ("Variance among populations does not differ by urban subtransect") #}
+if (ranova_fam.2[1] <= 0.05){
+  print ("Variance among families differs by urban subtransect")}
+if (ranova_fam.2[1] > 0.05){
+  print ("Variance among families does not differ by urban subtransect")}
+sink()
 ```
 
 
@@ -8046,6 +8596,207 @@ car::Anova(surv20_urbsubs_city_m1) # not sig
 car::Anova(surv20_urbsubs_city_m1_ME) # not sig
 AIC(surv20_urbsubs_city_m1, surv20_urbsubs_city_m1_ME)
 # AIC <2 apart; both "best models" though just main effects lower AIC
+
+
+# ANy variation among families or populations?
+
+##### TACTIC 1: try bootstrapping #####
+# NOT PERFECT b/c can't nest family within pop but trying a few ways to get at the correct answer.
+# https://www.ssc.wisc.edu/sscc/pubs/MM/MM_TestEffects.html#test-of-random-parameter
+
+
+### MODEL 1: CITY_DIST ###
+##########################
+
+# JUST POPULATION
+gmm <-  glmer(dead_2020 ~ City_dist + (1|Population), # can't leave in Family... doesn't work
+  data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+    control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+gmm1 <-  glmer(dead_2020 ~ City_dist + (1|Population/Family), 
+  data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+    control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# POP:FAMILY
+gmm2 <-  glmer(dead_2020 ~ City_dist + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+  data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+    control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# UNIQUE FAMILIES
+survival_2020$Family_unique <- paste(survival_2020$Population, survival_2020$Family)
+gmm3 <-  glmer(dead_2020 ~ City_dist + (1|Family_unique),
+  data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+    control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# EQUIVALENT TO FAM NESTED W/IN POP
+gmm4 <-  glmer(dead_2020 ~ City_dist + (1|Population:Family) + (1|Population),
+  data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+    control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+
+# REDUCED MODEL 1
+gmmDG1 <- glm(dead_2020 ~ City_dist,
+  data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+  family = binomial(link = "logit"))
+
+
+
+### RESULTS ###
+# POPULATION (so, results are about populations)
+pbgmmDg1 <- pbnm(gmm,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+summary(pbgmmDg1) # p = 0.383 ...  little var among pops
+
+# EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+pbgmmDg4 <- pbnm(gmm4,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_pop <- summary(pbgmmDg4) %T>%
+  print() # p = 0.785 ... little var among pops accounting for fams
+
+# POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+pbgmmDg2 <- pbnm(gmm2,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_fam <- summary(pbgmmDg2) %T>%
+  print() # p = 0.413 ... little var among families crossed w/ pops
+
+# UNIQUE FAMILIES (so, results are about families)
+pbgmmDg3 <- pbnm(gmm3,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+summary(pbgmmDg3) # p = 0.431 ... little var among families
+
+
+
+### MODEL 2: TRANSECT_ID ###
+##########################
+
+# JUST POPULATION
+gmm.2 <-  glmer(dead_2020 ~ Transect_ID + (1|Population), # can't leave in Family... doesn't work
+  data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+    control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+gmm1.2 <-  glmer(dead_2020 ~ Transect_ID + (1|Population/Family), 
+  data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+    control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# POP:FAMILY
+gmm2.2 <-  glmer(dead_2020 ~ Transect_ID + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+  data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+    control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# UNIQUE FAMILIES
+gmm3.2 <-  glmer(dead_2020 ~ Transect_ID + (1|Family_unique),
+  data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+    control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# EQUIVALENT TO FAM NESTED W/IN POP
+gmm4.2 <-  glmer(dead_2020 ~ Transect_ID + (1|Population:Family) + (1|Population),
+  data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+    control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# REDUCED MODEL 2
+gmmDG1.2 <- glm(dead_2020 ~ Transect_ID,
+  data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+  family = binomial(link = "logit"))
+
+
+
+### RESULTS ###
+# POPULATION (so, results are about populations)
+pbgmmDg1.2 <- pbnm(gmm.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+summary(pbgmmDg1.2) # p = 0.722 ...  little var among pops
+
+# EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+pbgmmDg4.2 <- pbnm(gmm4.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_pop.2 <- summary(pbgmmDg4.2) %T>%
+  print() # p = 0.564... little var among pops accounting for fams
+
+# POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+pbgmmDg2.2 <- pbnm(gmm2.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+ranova_fam.2 <- summary(pbgmmDg2.2) %T>%
+  print() # p = 0.47...  little var among families crossed w/ pops
+
+# UNIQUE FAMILIES (so, results are about families)
+pbgmmDg3.2 <- pbnm(gmm3.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+summary(pbgmmDg3.2) # p = 0.463... little var among families
+
+
+
+
+sum.1 <- summary(gmm4)
+
+variances1 <- print(VarCorr(gmm4),comp="Variance") %>%
+  as.data.frame() %>%
+  dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+  dplyr::select(., c(grp, vcov, PVE)) %>%
+  dplyr::rename(., Group = grp,
+                Variance = vcov)
+
+# export percent variance explained
+write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_Survival_urban_glmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+
+# export ranova
+sink(here::here("./Figures_Tables/ranova_PVE/2020_Survival_urban_glmer_ranova.csv"))
+print("POPULATION", sep="\n\n")
+print(ranova_pop, sep="\n\n")
+  cat("\n")
+print("FAMILY", sep="\n\n")
+print(ranova_fam, sep="\n\n")
+  cat("\n")
+if (ranova_pop[1] <= 0.05){
+  print ('There is variance among populations')}
+if (ranova_pop[1] > 0.05){
+  print ("There is not much variance among populations") }
+if (ranova_fam[1] <= 0.05){
+  print ("There is variance among families")}
+if (ranova_fam[1] > 0.05){
+  print ("There is not much variance among families")}
+  
+cat("\n")
+cat("\n")
+
+print("POPULATION", sep="\n\n")
+print(ranova_pop.2, sep="\n\n")
+  cat("\n")
+print("FAMILY", sep="\n\n")
+print(ranova_fam.2, sep="\n\n")
+  cat("\n")
+if (ranova_pop.2[1] <= 0.05){
+  print ('Variance among populations differs by urban subtransect')}
+if (ranova_pop.2[1] > 0.05){
+  print ("Variance among populations does not differ by urban subtransect") }
+if (ranova_fam.2[1] <= 0.05){
+  print ("Variance among families differs by urban subtransect")}
+if (ranova_fam.2[1] > 0.05){
+  print ("Variance among families does not differ by urban subtransect")}
+sink()
 ```
 
 #### Urb_score
@@ -8348,6 +9099,58 @@ capture.output(lapply(model_list, r.squaredGLMM), file = here::here("./Figures_T
 
 # library(jtools)
 # export_summs(model_list, digits = 3, to.file = "xlsx", file.name = here::here("./Figures_Tables/ANOVA_tables_images/R_sq_2020.xlsx"))
+
+```
+
+## Find change in var estimates along gradient/across subtransects
+```{r}
+
+################
+### GRADIENT ###
+################
+
+intercept1 <- fixef(rametsS_gr_city_m5)$cond[1] %>%
+  as.numeric() # gives intercept for city_dist = 0.71385548
+slope1 <- fixef(rametsS_gr_city_m5)$cond[2] %>%
+  as.numeric() # gives slope for city_dist = 0.002606745
+urban_terminus = 3.5 # km; most urban pop is close to this distance
+rural_terminus = 67 # km; most rural pop is close to this distance
+midpoint = 35.25 # km; midpoint of urban and rural terminii
+# y = mx + b
+
+# y(urban terminus)
+urban_estimate <- slope1 * urban_terminus + intercept1  %T>%
+  print()
+paste(noquote(c("There are an average of", round(urban_estimate, 3), "ramets/plant in Sept at the urban terminus")), collapse = ' ')
+
+# y(rural terminus)
+rural_estimate <- slope1 * rural_terminus + intercept1 %T>%
+  print()
+paste(noquote(c("There are an average of", round(rural_estimate, 3), "ramets/plant in Sept at the rural terminus")), collapse = ' ')
+
+# AVG NUM. OF RAMETS FROM URBAN TO RURAL TERMINUS:
+avg_diff <- (  urban_estimate - rural_estimate )  /     (0.5*       (  urban_estimate + rural_estimate  )  ) %T>%
+  print()
+
+# % CHANGE
+percent_change <- (((rural_estimate - urban_estimate) / urban_estimate) * 100) %T>%
+  print()
+paste(noquote(c("On average, the most rural plants produced", round(percent_change, 1), "% more ramets/plant in Sept than the most urban plants")), collapse = ' ')
+
+
+
+
+################
+### URB SUBS ###
+################
+
+summary(weev_urbsubs_city_m11)
+car::Anova(weev_urbsubs_city_m11)
+
+intercept2 <- (fixef(weev_urbsubs_city_m11)$cond[3] * 100) %>%
+  as.numeric() %T>%
+  print() # gives estimate of difference btwn 2 subs
+paste(noquote(c("On average, plants from the corridor subtransect experienced", round(intercept2, 1), "% more weevil damage than plants from the non-corridor subtransect")), collapse = ' ')
 
 ```
 
