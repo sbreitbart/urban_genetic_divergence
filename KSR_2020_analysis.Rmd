@@ -9063,6 +9063,15 @@ surv20_urbsubs_usc_m1_ME)
 
 
 # get model formulas --> export -----
+
+# make list of model summaries
+# summaries <- lapply(model_list, summary)
+# summaries_table1 <- sjPlot::tab_model(model_list,
+#                                       auto.label = FALSE,
+#                                       show.ci = FALSE)
+
+
+
 all_models_2020_formulas <- lapply(model_list, formula) %>%
   lapply(., toString) %>%
   as.character()
@@ -9100,15 +9109,36 @@ capture.output(lapply(model_list, r.squaredGLMM), file = here::here("./Figures_T
 # library(jtools)
 # export_summs(model_list, digits = 3, to.file = "xlsx", file.name = here::here("./Figures_Tables/ANOVA_tables_images/R_sq_2020.xlsx"))
 
+# these models have at least one significant effect:
+# model_list_sig <- model_list[c(7,13,25,26,37,38,41,42,47,48,49,50,51,52,55,71,72,74,77,83,84,85,87,88)]
+model_list_sig <- modsum_merge2[c(7,13,25,26,37,38,41,42,47,48,49,50,51,52,55,71,72,74,77,83,84,85,87,88),] %>%
+  dplyr::pull(., Model_Name1)
+
+# these models had city_dist as a significant main effect:
+# model_list_sig.citydist <- model_list_sig[c(7,13,47:50,55,71,72,74,85,87:88)]
+model_list_sig.citydist <- modsum_merge2[c(7,13,47:50,55,71,72,74,85,87:88),] %>%
+  dplyr::pull(., Model_Name1)
+
+# these models had Urb_score as a significant main effect:
+# model_list_sig.urbscore <- model_list_sig[c(51:52, 83:84)]
+model_list_sig.urbscore <- modsum_merge2[c(51:52, 83:84),] %>%
+  dplyr::pull(., Model_Name1)
+
+# these models had Transect_ID as a significant main effect:
+# model_list_sig.transect <- model_list_sig[c(25:26, 37:38, 41:42, 74, 83:84)]
+model_list_sig.transect <- modsum_merge2[c(25:26, 37:38, 41:42, 74, 83:84),] %>%
+  dplyr::pull(., Model_Name1)
+
+# this model had its interaction as the significant main effect:
+model_list_sig.interaxn <- model_list_sig[77]
+
 ```
 
 ## Find change in var estimates along gradient/across subtransects
+### Change along gradient: Entire gradient models
 ```{r}
 
-################
-### GRADIENT ###
-################
-
+# code outside of function -----
 intercept1 <- fixef(rametsS_gr_city_m5)$cond[1] %>%
   as.numeric() # gives intercept for city_dist = 0.71385548
 slope1 <- fixef(rametsS_gr_city_m5)$cond[2] %>%
@@ -9139,18 +9169,235 @@ paste(noquote(c("On average, the most rural plants produced", round(percent_chan
 
 
 
+# Function -----
+Perc_change_gradient <- function(city_dist_model){
 
-################
-### URB SUBS ###
-################
+  urban_terminus = 3.5 # km; most urban pop is close to this distance
+  rural_terminus = 67 # km; most rural pop is close to this distance
+  midpoint = 35.25 # km; midpoint of urban and rural terminii
 
-summary(weev_urbsubs_city_m11)
-car::Anova(weev_urbsubs_city_m11)
+  intercept1 <- fixef(city_dist_model)$cond[1] %>%
+  as.numeric() # gives intercept for city_dist
+  
+  slope1 <- fixef(city_dist_model)$cond[2] %>%
+  as.numeric() # gives slope for city_dist
+  
+  response_var <- names(city_dist_model$modelInfo$respCol) %>%
+    str_remove(., "[()]")
+      
 
-intercept2 <- (fixef(weev_urbsubs_city_m11)$cond[3] * 100) %>%
-  as.numeric() %T>%
-  print() # gives estimate of difference btwn 2 subs
-paste(noquote(c("On average, plants from the corridor subtransect experienced", round(intercept2, 1), "% more weevil damage than plants from the non-corridor subtransect")), collapse = ' ')
+# y(urban terminus)
+  urban_estimate <- slope1 * urban_terminus + intercept1 #  %T>%
+  # print()
+  
+  print(paste(noquote(c("There are an average of", round(urban_estimate, 3), response_var, "per plant at the urban terminus")), collapse = ' '))
+
+# y(rural terminus)
+   rural_estimate <- slope1 * rural_terminus + intercept1 # %T>%
+  # print()
+  
+  print(paste(noquote(c("There are an average of", round(rural_estimate, 3), response_var, "per plant at the rural terminus")), collapse = ' '))
+
+# AVG NUM. OF RAMETS FROM URBAN TO RURAL TERMINUS:
+  avg_diff <- ( urban_estimate - rural_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
+  # print()
+
+# % CHANGE
+  percent_change <- (((rural_estimate - urban_estimate) / urban_estimate) * 100) # %T>%
+  # print()
+  
+  print(paste(noquote(c("On average, the most rural plants produced", round(percent_change, 1), "% more", response_var, " per plant than the most urban plants")), collapse = ' '))
+
+}
+
+## for the models that don't work with the original function, try this:
+Perc_change_gradient.2 <- function(city_dist_model){
+
+  urban_terminus = 3.5 # km; most urban pop is close to this distance
+  rural_terminus = 67 # km; most rural pop is close to this distance
+  midpoint = 35.25 # km; midpoint of urban and rural terminii
+
+  intercept1 <- fixef(city_dist_model)[1] %>%
+  as.numeric() # gives intercept for city_dist
+  
+  slope1 <- fixef(city_dist_model)[2] %>%
+  as.numeric() # gives slope for city_dist
+  
+  response_var <- names(city_dist_model@frame)[1] 
+      
+
+# y(urban terminus)
+  urban_estimate <- slope1 * urban_terminus + intercept1 #  %T>%
+  # print()
+  
+  print(paste(noquote(c("There are an average of", round(urban_estimate, 3), response_var, "per plant at the urban terminus")), collapse = ' '))
+
+# y(rural terminus)
+   rural_estimate <- slope1 * rural_terminus + intercept1 # %T>%
+  # print()
+  
+  print(paste(noquote(c("There are an average of", round(rural_estimate, 3), response_var, "per plant at the rural terminus")), collapse = ' '))
+
+# AVG NUM. OF RAMETS FROM URBAN TO RURAL TERMINUS:
+  avg_diff <- ( urban_estimate - rural_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
+  # print()
+
+# % CHANGE
+  percent_change <- (((rural_estimate - urban_estimate) / urban_estimate) * 100) # %T>%
+  # print()
+  
+  print(paste(noquote(c("On average, the most rural plants produced", round(percent_change, 1), "% more", response_var, " per plant than the most urban plants")), collapse = ' '))
+
+}
+
+## can't get these automated functions to work so I'll do this manually...
+# lapply(as.name(model_list_sig), Perc_change_gradient)
+# 
+# for (model in model_list_sig) {
+#   Perc_change_gradient(as.numeric(model))
+# }
+
+
+Perc_change_gradient  (  Height_Jun20_gr_city_m5          )
+Perc_change_gradient.2(  Height_Sept20_gr_city_m2         )
+Perc_change_gradient  (  rametsS_gr_city_m5               )
+
+# these are binary so this type of analysis doesn't make sense...
+# Perc_change_gradient.2(  herb2020.S_gr_dist_m5            )
+```
+
+### Change along gradient: Just urban sites models
+```{r}
+# Function -----
+Perc_change_gradient.urbansites <- function(city_dist_model){
+
+  urban_terminus = 3.5 # km; most urban pop is close to this distance
+  rural_terminus =  32 # km; most rural pop is close to this distance
+
+  intercept1 <- fixef(city_dist_model)$cond[1] %>%
+  as.numeric() # gives intercept for city_dist
+  
+  slope1 <- fixef(city_dist_model)$cond[2] %>%
+  as.numeric() # gives slope for city_dist
+  
+  response_var <- names(city_dist_model$modelInfo$respCol) %>%
+    str_remove(., "[()]")
+      
+
+# y(urban terminus)
+  urban_estimate <- slope1 * urban_terminus + intercept1 #  %T>%
+  # print()
+  
+  print(paste(noquote(c("There are an average of", round(urban_estimate, 3), response_var, "per plant at the urban terminus")), collapse = ' '))
+
+# y(rural terminus)
+   rural_estimate <- slope1 * rural_terminus + intercept1 # %T>%
+  # print()
+  
+  print(paste(noquote(c("There are an average of", round(rural_estimate, 3), response_var, "per plant at the rural terminus")), collapse = ' '))
+
+# AVG NUM. OF RAMETS FROM URBAN TO RURAL TERMINUS:
+  avg_diff <- ( urban_estimate - rural_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
+  # print()
+
+# % CHANGE
+  percent_change <- (((rural_estimate - urban_estimate) / urban_estimate) * 100) # %T>%
+  # print()
+  
+  print(paste(noquote(c("On average, the most rural plants produced", round(percent_change, 1), "% more", response_var, " per plant than the most urban plants")), collapse = ' '))
+
+}
+
+## for the models that don't work with the original function, try this:
+Perc_change_gradient.2.urbansites <- function(city_dist_model){
+
+  urban_terminus = 3.5 # km; most urban pop is close to this distance
+  rural_terminus =  32 # km; most rural pop is close to this distance
+
+  intercept1 <- fixef(city_dist_model)[1] %>%
+  as.numeric() # gives intercept for city_dist
+  
+  slope1 <- fixef(city_dist_model)[2] %>%
+  as.numeric() # gives slope for city_dist
+  
+  response_var <- names(city_dist_model@frame)[1] 
+      
+
+# y(urban terminus)
+  urban_estimate <- slope1 * urban_terminus + intercept1 #  %T>%
+  # print()
+  
+  print(paste(noquote(c("There are an average of", round(urban_estimate, 3), response_var, "per plant at the urban terminus")), collapse = ' '))
+
+# y(rural terminus)
+   rural_estimate <- slope1 * rural_terminus + intercept1 # %T>%
+  # print()
+  
+  print(paste(noquote(c("There are an average of", round(rural_estimate, 3), response_var, "per plant at the rural terminus")), collapse = ' '))
+
+# AVG NUM. OF RAMETS FROM URBAN TO RURAL TERMINUS:
+  avg_diff <- ( urban_estimate - rural_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
+  # print()
+
+# % CHANGE
+  percent_change <- (((rural_estimate - urban_estimate) / urban_estimate) * 100) # %T>%
+  # print()
+  
+  print(paste(noquote(c("On average, the most rural plants produced", round(percent_change, 1), "% more", response_var, " per plant than the most urban plants")), collapse = ' '))
+
+}
+
+
+Perc_change_gradient.urbansites  (  herb2020_urb_dist_m8             )
+Perc_change_gradient.urbansites  (  rametsS_urbsubs_city_m5          )
+Perc_change_gradient.urbansites  (  herb2020_urb_dist_m8_ME          )
+Perc_change_gradient.urbansites  (  rgr_urbsubs_city_m8_ME.1         )
+Perc_change_gradient.urbansites  (  rametsS_urbsubs_city_m5_ME       )
+
+# these are binary so this type of analysis doesn't make sense...
+# Perc_change_gradient.2.urbansites(  herb2020_urb_dist_m5             )
+# Perc_change_gradient.2.urbansites(  rgr_urbsubs_city_m5_ME           )
+# Perc_change_gradient.2.urbansites(  herb2020_urb_dist_m5_ME          )
+# Perc_change_gradient.2.urbansites(  rgr_urbsubs_city_m5              )
+
+```
+
+### Difference between urban subtransects models
+```{r}
+
+# code outside of function -----
+# summary(weev_urbsubs_city_m11)
+# car::Anova(weev_urbsubs_city_m11)
+# 
+# intercept2 <- (fixef(weev_urbsubs_city_m11)$cond[3] * 100) %>%
+#   as.numeric() %T>%
+#   print() # gives estimate of difference btwn 2 subs
+# paste(noquote(c("On average, plants from the corridor subtransect experienced", round(intercept2, 1), "% more weevil damage than plants from the non-corridor subtransect")), collapse = ' ')
+
+
+# Function -----
+Perc_change_subtransects <- function(urban_model) {
+  
+    response_var <- names(urban_model$modelInfo$respCol) %>%
+    str_remove(., "[()]")
+    
+    intercept2 <- (fixef(urban_model)$cond[3] * 100) %>%
+  as.numeric() # %T>% print() # gives estimate of difference btwn 2 subs
+    
+    print(paste(noquote(c("On average, plants from the corridor subtransect experienced", round(intercept2, 1), "% more ", response_var, "than plants from the non-corridor subtransect")), collapse = ' '))
+
+}
+
+
+Perc_change_subtransects(  weev_stn_urbsubs_city_m11      )
+Perc_change_subtransects(  weev_urbsubs_city_m11          )
+Perc_change_subtransects(  weev_urbsubs_usc_m11           )
+Perc_change_subtransects(  rgr_urbsubs_city_m8_ME.1       )
+Perc_change_subtransects(  rametsJ_urbsubs_urbsubs_m7_ME  )
+Perc_change_subtransects(  weev_stn_urbsubs_city_m11_ME.2 )
+Perc_change_subtransects(  weev_urbsubs_city_m11_ME       )
+Perc_change_subtransects(  weev_urbsubs_usc_m11_ME        )
+Perc_change_subtransects(  rametsJ_urbsubs_urbsubs_m7     )
 
 ```
 
