@@ -1607,19 +1607,30 @@ ggplot() +
 #### Urban subtransects
 ```{r}
 # JULY HERBIVORY
+## one line: city_dist
 ggplot(herbivory2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = Herbivory.July_mean)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Mean Herbivory") +
-  theme_urbansubs_1 +
-  xlim(0, 35) +
-  ylim(0, 15) 
+  geom_point(size=2) +
+        scale_shape(solid = F) +
+        geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black')
 
+# split by subtransect: city_dist
+  ggplot(herbivory2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = Herbivory.July_mean)) + 
+  labs(x = "Distance to urban center (km)", 
+    y = "Mean Herbivory") +
+  theme_urbansubs_1 +
+  xlim(0, 35) 
+  
+# split by subtransect: urb-score
 ggplot(herbivory2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = Herbivory.July_mean)) + 
   labs(x = "Urbanization Score", 
     y = "Mean Herbivory") +
   theme_urbansubs_1 +
   ylim(0, 15) +
   scale_x_reverse()
+
+
 
 
 # sept herbivory

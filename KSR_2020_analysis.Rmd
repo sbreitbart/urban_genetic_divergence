@@ -9199,11 +9199,11 @@ Perc_change_gradient <- function(city_dist_model){
   print(paste(noquote(c("There are an average of", round(rural_estimate, 3), response_var, "per plant at the rural terminus")), collapse = ' '))
 
 # AVG NUM. OF RAMETS FROM URBAN TO RURAL TERMINUS:
-  avg_diff <- ( urban_estimate - rural_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
+  avg_diff <- abs( urban_estimate - rural_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
   # print()
 
 # % CHANGE
-  percent_change <- (((rural_estimate - urban_estimate) / urban_estimate) * 100) # %T>%
+  percent_change <- (((rural_estimate - urban_estimate) / abs(urban_estimate)) * 100) # %T>%
   # print()
   
   print(paste(noquote(c("On average, the most rural plants produced", round(percent_change, 1), "% more", response_var, " per plant than the most urban plants")), collapse = ' '))
@@ -9239,11 +9239,11 @@ Perc_change_gradient.2 <- function(city_dist_model){
   print(paste(noquote(c("There are an average of", round(rural_estimate, 3), response_var, "per plant at the rural terminus")), collapse = ' '))
 
 # AVG NUM. OF RAMETS FROM URBAN TO RURAL TERMINUS:
-  avg_diff <- ( urban_estimate - rural_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
+  avg_diff <- abs( urban_estimate - rural_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
   # print()
 
 # % CHANGE
-  percent_change <- (((rural_estimate - urban_estimate) / urban_estimate) * 100) # %T>%
+  percent_change <- (((rural_estimate - urban_estimate) / abs(urban_estimate)) * 100) # %T>%
   # print()
   
   print(paste(noquote(c("On average, the most rural plants produced", round(percent_change, 1), "% more", response_var, " per plant than the most urban plants")), collapse = ' '))
@@ -9297,14 +9297,24 @@ Perc_change_gradient.urbansites <- function(city_dist_model){
   print(paste(noquote(c("There are an average of", round(rural_estimate, 3), response_var, "per plant at the rural terminus")), collapse = ' '))
 
 # AVG NUM. OF RAMETS FROM URBAN TO RURAL TERMINUS:
-  avg_diff <- ( urban_estimate - rural_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
+  avg_diff <- abs( urban_estimate - rural_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
   # print()
 
 # % CHANGE
-  percent_change <- (((rural_estimate - urban_estimate) / urban_estimate) * 100) # %T>%
+  percent_change <- (((rural_estimate - urban_estimate) / abs(urban_estimate)) * 100) # %T>%
   # print()
   
   print(paste(noquote(c("On average, the most rural plants produced", round(percent_change, 1), "% more", response_var, " per plant than the most urban plants")), collapse = ' '))
+  
+  # AVG NUM. OF RAMETS FROM RURAL TO URBAN TERMINUS:
+  avg_diff.1 <- abs( rural_estimate - urban_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
+  # print()
+
+# % CHANGE
+  percent_change.1 <- (((urban_estimate - rural_estimate ) / abs(rural_estimate)) * 100) # %T>%
+  # print()
+  
+  print(paste(noquote(c("On average, the most urban plants produced", round(percent_change.1, 1), "% more", response_var, " per plant than the most rural plants")), collapse = ' '))
 
 }
 
@@ -9336,29 +9346,39 @@ Perc_change_gradient.2.urbansites <- function(city_dist_model){
   print(paste(noquote(c("There are an average of", round(rural_estimate, 3), response_var, "per plant at the rural terminus")), collapse = ' '))
 
 # AVG NUM. OF RAMETS FROM URBAN TO RURAL TERMINUS:
-  avg_diff <- ( urban_estimate - rural_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
+  avg_diff <- abs( urban_estimate - rural_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
   # print()
 
 # % CHANGE
-  percent_change <- (((rural_estimate - urban_estimate) / urban_estimate) * 100) # %T>%
+  percent_change <- (((rural_estimate - urban_estimate) / abs(urban_estimate)) * 100) # %T>%
   # print()
   
   print(paste(noquote(c("On average, the most rural plants produced", round(percent_change, 1), "% more", response_var, " per plant than the most urban plants")), collapse = ' '))
+  
+  # AVG NUM. OF RAMETS FROM RURAL TO URBAN TERMINUS:
+  avg_diff.1 <- abs( rural_estimate - urban_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
+  # print()
 
+# % CHANGE
+  percent_change.1 <- (((urban_estimate - rural_estimate ) / abs(rural_estimate)) * 100) # %T>%
+  # print()
+  
+  print(paste(noquote(c("On average, the most urban plants produced", round(percent_change.1, 1), "% more", response_var, " per plant than the most rural plants")), collapse = ' '))
+  
 }
 
 
 Perc_change_gradient.urbansites  (  herb2020_urb_dist_m8             )
-Perc_change_gradient.urbansites  (  rametsS_urbsubs_city_m5          )
 Perc_change_gradient.urbansites  (  herb2020_urb_dist_m8_ME          )
 Perc_change_gradient.urbansites  (  rgr_urbsubs_city_m8_ME.1         )
+Perc_change_gradient.urbansites  (  rametsS_urbsubs_city_m5          )
 Perc_change_gradient.urbansites  (  rametsS_urbsubs_city_m5_ME       )
 
 # these are binary so this type of analysis doesn't make sense...
 # Perc_change_gradient.2.urbansites(  herb2020_urb_dist_m5             )
-# Perc_change_gradient.2.urbansites(  rgr_urbsubs_city_m5_ME           )
 # Perc_change_gradient.2.urbansites(  herb2020_urb_dist_m5_ME          )
 # Perc_change_gradient.2.urbansites(  rgr_urbsubs_city_m5              )
+# Perc_change_gradient.2.urbansites(  rgr_urbsubs_city_m5_ME           )
 
 ```
 
