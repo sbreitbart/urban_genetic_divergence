@@ -894,8 +894,7 @@ makeRDAplot_scaling2(RDA_Aug_urbscore.urb)
 ```
 
 # Regression
-## Does the abundance of individual herbivore species change along the gradient?
-## Or does it vary between urban subtransects?
+## Does the abundance of individual herbivore species change along the gradient? Or does it vary between urban subtransects?
 ## Monarchs- no and no
 ### Diagnostics
 #### All sites
@@ -1384,7 +1383,9 @@ Anova_etc(m1_LA.nb,
 ```
 ### Export models with sig/marg sig effects
 ```{r}
+AIC(m2_LA.urb.nb, m2_LA.urb.nb_ME) # ME has lower AIC (not sig diff)
 anova_table_flx(m2_LA.urb.nb)
+anova_table_flx(m2_LA.urb.nb_ME)
 ```
 
 ## Aphis nerii- no & no
@@ -2083,7 +2084,11 @@ Anova_etc( m1_EE.nb,
 ```
 ### Export models with sig/marg sig effects
 ```{r}
+AIC(m2_EE.urb.nb, m2_EE.urb.nb_ME)
+
 anova_table_flx(m2_EE.urb.nb)
+anova_table_flx(m2_EE.urb.nb_ME) # lower AIC (not sig lower) but still
+
 ```
 ## Lygaeus kalmii- no and no
 ### Diagnostics
@@ -2461,7 +2466,9 @@ car::Anova(m2_LC.urb.nb) # nothing near sig
 ```
 ### Export models with sig/marg sig effects
 ```{r}
+AIC(m1_LC.urb.nb, m1_LC.urb.nb_ME) # ME has lower aic (not sig diff)
 anova_table_flx(m1_LC.urb.nb)
+anova_table_flx(m1_LC.urb.nb_ME)
 ```
 ## Rhyssomatus lineaticollis- sig diff along gradient for urban subs
 ### Make binary column
@@ -2773,6 +2780,154 @@ AIC(glmer(Rhyssomatus_lineaticollis ~
 ```{r}
 anova_table_flx(m1_RL.urb_ME)
 ```
+## Find change in var estimates along gradient/across subtransects
+### Models w/sig effects:
+```{r}
+m2_LA.urb.nb_ME # had lower AIC than full model but not less than 2
+# Differs by subtransect
+
+m2_EE.urb.nb_ME # had lower AIC than full model but not less than 2
+# Difference along ***URB SCORE- DON'T PUT IN FUNCTIONS-*** for urban sites
+
+m1_LC.urb.nb_ME # had lower AIC than full model but not less than 2
+# Difference along gradient for urban sites
+
+m1_RL.urb_ME # BINARY: OBSERVED OR NOT
+# Difference along gradient for urban sites
+
+```
+
+### Change along gradient: Just urban sites models
+```{r}
+# Function -----
+Perc_change_gradient.urbansites <- function(city_dist_model){
+
+  urban_terminus = 3.5 # km; most urban pop is close to this distance
+  rural_terminus =  32 # km; most rural pop is close to this distance
+
+  intercept1 <- fixef(city_dist_model)$cond[1] %>%
+  as.numeric() # gives intercept for city_dist
+  
+  slope1 <- fixef(city_dist_model)$cond[2] %>%
+  as.numeric() # gives slope for city_dist
+  
+  response_var <- names(city_dist_model$modelInfo$respCol) %>%
+    str_remove(., "[()]")
+      
+
+# y(urban terminus)
+  urban_estimate <- slope1 * urban_terminus + intercept1 #  %T>%
+  # print()
+  
+  print(paste(noquote(c("There are an average of", round(urban_estimate, 3), response_var, "per plant at the urban terminus")), collapse = ' '))
+
+# y(rural terminus)
+   rural_estimate <- slope1 * rural_terminus + intercept1 # %T>%
+  # print()
+  
+  print(paste(noquote(c("There are an average of", round(rural_estimate, 3), response_var, "per plant at the rural terminus")), collapse = ' '))
+
+# AVG NUM. OF RAMETS FROM URBAN TO RURAL TERMINUS:
+  avg_diff <- abs( urban_estimate - rural_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
+  # print()
+
+# % CHANGE
+  percent_change <- (((rural_estimate - urban_estimate) / abs(urban_estimate)) * 100) # %T>%
+  # print()
+  
+  print(paste(noquote(c("On average, the most rural plants produced", round(percent_change, 1), "% more", response_var, " per plant than the most urban plants")), collapse = ' '))
+  
+  # AVG NUM. OF RAMETS FROM RURAL TO URBAN TERMINUS:
+  avg_diff.1 <- abs( rural_estimate - urban_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
+  # print()
+
+# % CHANGE
+  percent_change.1 <- (((urban_estimate - rural_estimate ) / abs(rural_estimate)) * 100) # %T>%
+  # print()
+  
+  print(paste(noquote(c("On average, the most urban plants produced", round(percent_change.1, 1), "% more", response_var, " per plant than the most rural plants")), collapse = ' '))
+
+}
+
+## for the models that don't work with the original function, try this:
+Perc_change_gradient.2.urbansites <- function(city_dist_model){
+
+  urban_terminus = 3.5 # km; most urban pop is close to this distance
+  rural_terminus =  32 # km; most rural pop is close to this distance
+
+  intercept1 <- fixef(city_dist_model)[1] %>%
+  as.numeric() # gives intercept for city_dist
+  
+  slope1 <- fixef(city_dist_model)[2] %>%
+  as.numeric() # gives slope for city_dist
+  
+  response_var <- names(city_dist_model@frame)[1] 
+      
+
+# y(urban terminus)
+  urban_estimate <- slope1 * urban_terminus + intercept1 #  %T>%
+  # print()
+  
+  print(paste(noquote(c("There are an average of", round(urban_estimate, 3), response_var, "per plant at the urban terminus")), collapse = ' '))
+
+# y(rural terminus)
+   rural_estimate <- slope1 * rural_terminus + intercept1 # %T>%
+  # print()
+  
+  print(paste(noquote(c("There are an average of", round(rural_estimate, 3), response_var, "per plant at the rural terminus")), collapse = ' '))
+
+# AVG NUM. OF RAMETS FROM URBAN TO RURAL TERMINUS:
+  avg_diff <- abs( urban_estimate - rural_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
+  # print()
+
+# % CHANGE
+  percent_change <- (((rural_estimate - urban_estimate) / abs(urban_estimate)) * 100) # %T>%
+  # print()
+  
+  print(paste(noquote(c("On average, the most rural plants produced", round(percent_change, 1), "% more", response_var, " per plant than the most urban plants")), collapse = ' '))
+  
+  # AVG NUM. OF RAMETS FROM RURAL TO URBAN TERMINUS:
+  avg_diff.1 <- abs( rural_estimate - urban_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
+  # print()
+
+# % CHANGE
+  percent_change.1 <- (((urban_estimate - rural_estimate ) / abs(rural_estimate)) * 100) # %T>%
+  # print()
+  
+  print(paste(noquote(c("On average, the most urban plants produced", round(percent_change.1, 1), "% more", response_var, " per plant than the most rural plants")), collapse = ' '))
+  
+}
+
+
+Perc_change_gradient.urbansites  (  m1_LC.urb.nb_ME             )
+
+
+# these are binary so this type of analysis doesn't make sense...
+# Perc_change_gradient.urbansites(  m1_RL.urb_ME             )
+
+```
+
+### Difference between urban subtransects models
+```{r}
+
+# Function -----
+Perc_change_subtransects <- function(urban_model) {
+  
+    response_var <- names(urban_model$modelInfo$respCol) %>%
+    str_remove(., "[()]")
+    
+    intercept2 <- (fixef(urban_model)$cond[3] * 100) %>%
+  as.numeric() # %T>% print() # gives estimate of difference btwn 2 subs
+    
+    print(paste(noquote(c("On average, plants from the corridor subtransect experienced", round(intercept2, 1), "% more ", response_var, "than plants from the non-corridor subtransect")), collapse = ' '))
+
+}
+
+
+Perc_change_subtransects(  m2_LA.urb.nb_ME ) 
+
+```
+
 # Regression: Plots
 ```{r}
 # ggplot: limit y axis
