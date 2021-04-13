@@ -8528,6 +8528,44 @@ AIC(surv20_urbsubs_usc_m1, surv20_urbsubs_usc_m1_ME)
 # AIC_compare.urb_score(surv20_urbsubs_usc_m1,
 #                       surv20_urbsubs_usc_m1_ME) 
 
+
+# test1 <- car::Anova(surv20_urbsubs_city_m1) %>%
+#   tidy() %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(.,
+#                 Response = as.character(formula(surv20_urbsubs_city_m1)[[2]]),
+#                 .before = term) %>%
+#   dplyr::mutate(Sites = case_when( str_detect(as.character(formula(surv20_urbsubs_city_m1)[3]), "Transect_ID") == TRUE ~ "Urban Only",
+#  str_detect(as.character(formula(surv20_urbsubs_city_m1)[3]), "Transect_ID") == FALSE ~ "All"),
+#                 .before = term) %>%
+#   dplyr::mutate(Significance = case_when(p.value <= 0.1 ~ "Marginal",
+#                                          p.value <= 0.05 ~ "*", 
+#                                 p.value < 0.01 ~ "**",
+#                                 p.value < 0.001 ~ "***")) %>%
+#   dplyr::mutate(., AIC = AIC(surv20_gr_city_m1)) %>%
+#   dplyr::select(., -df) %>%
+#   dplyr::rename(., Chi_sq = statistic,
+#                 Predictor = term,
+#                 p = p.value) %>%
+#   dplyr::mutate_if(.,
+#             is.character,
+#             str_replace_all,
+#             pattern = c("City_dist"),
+#             replacement = c("Distance to City Center")) %>%
+#     dplyr::mutate_if(.,
+#             is.character,
+#             str_replace_all,
+#             pattern = c("Urb_score"),
+#             replacement = c("Urbanization Score")) %>%
+#     dplyr::mutate_if(.,
+#             is.character,
+#             str_replace_all,
+#             pattern = c("Transect_ID"),
+#             replacement = c("Subtransect")) %>%
+#   mutate_if(is.numeric, round, 3)
+# 
+# 
+
 ```
 
 
@@ -8830,6 +8868,140 @@ model_list_sig.transect <- modsum_merge2[c(26, 37:38, 41:42, 74, 83:84),] %>%
 # this model had its interaction as the significant main effect:
 model_list_sig.interaxn <- model_list_sig[77]
 
+
+
+# Export table w/model summaries-----
+tidy_sb <- function(model){
+  
+  return(
+    car::Anova(model) %>%
+      tidy() %>%
+      as.data.frame() %>%
+      dplyr::mutate(Response = as.character(formula(model)[2]),
+                    .before = term) %>%
+      # dplyr::mutate(Model = paste(n(model)),
+      #               .before = term) %>%
+      dplyr::mutate(Sites = case_when(
+        str_detect(as.character(formula(model)[3]), "Transect_ID") == TRUE ~ "Urban Only",
+        str_detect(as.character(formula(model)[3]), "Transect_ID") == FALSE ~ "All"),
+                    .before = term) %>%
+      dplyr::mutate(Significance = case_when(p.value < 0.001 ~ "***",
+                                             p.value < 0.01 ~ "**",
+                                             p.value <= 0.05 ~ "*", 
+                                             p.value <= 0.1 ~ "Marginal")) %>%
+      dplyr::mutate(., AIC = AIC(model)) %>%
+      dplyr::select(., -df) %>%
+      dplyr::rename(., Chi_sq = statistic,
+                    Predictor = term,
+                    p = p.value) %>%
+      dplyr::mutate_if(.,
+                is.character,
+                str_replace_all,
+                pattern = c("City_dist"),
+                replacement = c("Distance to City Center")) %>%
+        dplyr::mutate_if(.,
+                is.character,
+                str_replace_all,
+                pattern = c("Urb_score"),
+                replacement = c("Urbanization Score")) %>%
+        dplyr::mutate_if(.,
+                is.character,
+                str_replace_all,
+                pattern = c("Transect_ID"),
+                replacement = c("Subtransect")) %>%
+      mutate_if(is.numeric, round, 3))
+  }
+
+
+test1 <- do.call(rbind, lapply(model_list, tidy_sb))
+test2 <- test1 %>%
+      dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("Flowered2020"),
+            replacement = c("Flowering Success")) %>%
+  dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("sqrt(Total_Height_June)"),
+            replacement = c("Height (June)")) %>%
+  dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("sqrt(Total_Height_Sept)"),
+            replacement = c("Height (Sept)")) %>%
+  dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = "(Herbivory.July_mean_binary)",
+            replacement = "Herbivory (July) (Binary)") %>%
+  dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("(Herbivory.Sept_mean_binary)"),
+            replacement = c("Herbivory (Sept) (Binary)")) %>%
+  dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("(rel_growth_rate_binary)"),
+            replacement = c("Relative growth rate (Binary)")) %>%
+  dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("(scar_div_Juneheight_binary)"),
+            replacement = c("Weevil scar length (per cm height) (Binary)")) %>%
+  dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("(scar_length_cm_binary)"),
+            replacement = c("Weevil scar length (Binary)")) %>%
+  dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("dead_2020"),
+            replacement = c("Survival")) %>%
+  dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("log(Herbivory.July_mean)"),
+            replacement = c("Herbivory (July)")) %>%
+  dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("log(Herbivory.Sept_mean)"),
+            replacement = c("Herbivory (Sept)")) %>%
+  dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("log(scar_div_Juneheight)"),
+            replacement = c("Weevil scar length (per cm height)")) %>%
+  dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("log(Scar_length_cm + 0.1)"),
+            replacement = c("Weevil scar length")) %>%
+  dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("Ramets_June"),
+            replacement = c("No. Ramets (June)")) %>%
+  dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("Ramets_Sept"),
+            replacement = c("No. Ramets (Sept)")) %>%
+  dplyr::mutate_if(.,
+            is.character,
+            str_replace_all,
+            pattern = c("sqrt(rel_growth_rate)"),
+            replacement = c("Relative growth rate")) 
+
+test2.q1 <- test2 %>% filter(Sites == "All")
+test2.q2 <- test2 %>% filter(Sites == "Urban Only") %>%
+  dcast(.,  Response + Chi_sq + p + Predictor ~ Predictor , value.var = "AIC")
+
+
+write.csv(test1,  here::here("./Figures_Tables/ANOVA_tables_images/model_summaries.csv"))
 ```
 
 ## Find change in var estimates along gradient/across subtransects

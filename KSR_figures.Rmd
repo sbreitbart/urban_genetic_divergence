@@ -845,6 +845,38 @@ print(blocks)
 dev.off()
 ```
 
+### Origin of plants (urban, rural)
+```{r}
+# ALL PLANTS
+ggplot(data =  heights_both_2020, aes(x = Column, y = Row)) + 
+      geom_tile(aes(fill = Transect_ID), colour = "black") +
+      scale_y_reverse() +
+  # theme_minimal()
+  theme_pubclean() +
+  scale_fill_manual(values = c("orange", "orange", "orange"),
+                           breaks = c("North", "South", "Rural"),
+                           labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
+                           name = "Sample Site Subtransect")
+
+ggsave(here::here("./Figures_Tables/Spatial_patterns/all_plants.png"),
+         width = 18, height = 8, units = "cm")
+
+
+# JUST URBAN PLANTS
+ggplot(data =  heights_both_2020 %>% filter(., Urb_Rur == "Urban"), aes(x = Column, y = Row)) + 
+      geom_tile(aes(fill = Urb_Rur), colour = "black") +
+      scale_y_reverse() +
+  # theme_minimal()
+  theme_pubclean() +
+  scale_fill_manual(values = ("light blue"),
+                           breaks = ("Urban"),
+                           name = "Sample Site Subtransect")
+
+ggsave(here::here("./Figures_Tables/Spatial_patterns/urban_plants.png"),
+         width = 18, height = 8, units = "cm")
+```
+
+
 ### Weevil damage
 ```{r}
 # binary: damaged or not during first weevil damage assessment
@@ -1255,7 +1287,9 @@ ggplot() +
   scale_fill_manual(values = c("blue", "orange"),
                      breaks = c("June", "September"),
                        labels = c("June", "September"),
-                       name = "Legend") 
+                       name = "Legend")
+ggsave(here::here("./Figures_Tables/Figures/2020/2020_heights_allsites_distance.png"),
+         width = 14, height = 8, units = "cm")
 
 
 
@@ -1285,6 +1319,8 @@ ggplot() +
                        labels = c("June", "September"),
                        name = "Legend") +
   scale_x_reverse()
+ggsave(here::here("./Figures_Tables/Figures/2020/2020_heights_allsites_urbscore.png"),
+         width = 14, height = 8, units = "cm")
 ```
 
 ##### Urban subtransects
@@ -1321,6 +1357,28 @@ ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb
   ylim(0, 120) +
   scale_x_reverse()
 
+# Combine city_dist figures into one
+ggarrange(
+  (ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_height_June)) + 
+  labs(x = "Distance to urban center (km)", 
+    y = "June: Mean height (cm)") +
+  theme_urbansubs_1 +
+  xlim(0, 35) +
+  ylim(0, 60) ),
+  
+  (ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = mean_height_Sept)) + 
+  labs(x = "Distance to urban center (km)", 
+    y = "Sept: Mean height (cm)") +
+  theme_urbansubs_1 +
+  xlim(0, 35) +
+  ylim(0, 120)),
+  
+  labels = c("A", "B"),
+  common.legend = TRUE,
+  legend = "bottom")
+
+ggsave(here::here("./Figures_Tables/Figures/2020/2020_heights_urbansites_distance.png"),
+         width = 14, height = 8, units = "cm")
 ```
 
 #### Each point is a family mean
@@ -1713,7 +1771,9 @@ ggplot() +
   scale_fill_manual(values = c("blue", "orange"),
                      breaks = c("June", "September"),
                        labels = c("June", "September"),
-                       name = "Legend") 
+                       name = "Legend")
+ggsave(here::here("./Figures_Tables/Figures/2020/2020_Ramets_allsites_distance.png"),
+         width = 14, height = 8, units = "cm")
 ```
 
 ##### Urban subtransects
@@ -1878,7 +1938,9 @@ ggplot(heights_both2020_popmeans, aes(x = City_dist, y = mean_rel_growth_rate)) 
     y = "Relative Growth Rate") +
   theme_gradient_1 +
   xlim(0, 71) +
-  ylim(-0.01, 0.015) 
+  ylim(-0.01, 0.015)
+ggsave(here::here("./Figures_Tables/Figures/2020/2020_RGR_allsites_distance.png"),
+         width = 14, height = 8, units = "cm")
 
 ggplot(heights_both2020_popmeans, aes(x = Urb_score, y = mean_rel_growth_rate)) + 
   labs(x = "Urbanization Score", 
@@ -1896,7 +1958,9 @@ ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Cit
   labs(x = "Distance to urban center (km)", 
     y = "Relative Growth Rate") +
   theme_urbansubs_1 +
-  xlim(0, 35) 
+  xlim(0, 35)
+ggsave(here::here("./Figures_Tables/Figures/2020/2020_RGR_urbansites_distance.png"),
+         width = 14, height = 8, units = "cm")
 
 ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = mean_rel_growth_rate)) + 
   labs(x = "Urbanization Score", 

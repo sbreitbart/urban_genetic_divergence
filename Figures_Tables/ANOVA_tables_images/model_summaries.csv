@@ -1,0 +1,193 @@
+"","Response","Sites","Predictor","Chi_sq","p","Significance","AIC"
+"1","Flowered2020","All","Distance to City Center",0.833,0.361,NA,221.644
+"2","Flowered2020","All","Urbanization Score",0.34,0.56,NA,222.202
+"3","Flowered2020","Urban Only","Distance to City Center",0.815,0.367,NA,188.988
+"4","Flowered2020","Urban Only","Subtransect",0.04,0.842,NA,188.988
+"5","Flowered2020","Urban Only","Distance to City Center:Subtransect",0.563,0.453,NA,188.988
+"6","Flowered2020","Urban Only","Distance to City Center",0.898,0.343,NA,187.573
+"7","Flowered2020","Urban Only","Subtransect",0.033,0.855,NA,187.573
+"8","Flowered2020","Urban Only","Urbanization Score",1.239,0.266,NA,189.26
+"9","Flowered2020","Urban Only","Subtransect",0.01,0.921,NA,189.26
+"10","Flowered2020","Urban Only","Urbanization Score:Subtransect",0.001,0.976,NA,189.26
+"11","Flowered2020","Urban Only","Urbanization Score",1.24,0.266,NA,187.26
+"12","Flowered2020","Urban Only","Subtransect",0.01,0.921,NA,187.26
+"13","sqrt(Total_Height_June)","All","Distance to City Center",2.985,0.084,"Marginal",4081.588
+"14","sqrt(Total_Height_June)","All","Urbanization Score",1.213,0.271,NA,4083.308
+"15","sqrt(Total_Height_June)","Urban Only","Distance to City Center",1.831,0.176,NA,2724.627
+"16","sqrt(Total_Height_June)","Urban Only","Subtransect",0.741,0.389,NA,2724.627
+"17","sqrt(Total_Height_June)","Urban Only","Distance to City Center:Subtransect",0.229,0.632,NA,2724.627
+"18","sqrt(Total_Height_June)","Urban Only","Distance to City Center",1.827,0.176,NA,2722.856
+"19","sqrt(Total_Height_June)","Urban Only","Subtransect",0.739,0.39,NA,2722.856
+"20","sqrt(Total_Height_June)","Urban Only","Urbanization Score",0.126,0.723,NA,2726.409
+"21","sqrt(Total_Height_June)","Urban Only","Subtransect",1.105,0.293,NA,2726.409
+"22","sqrt(Total_Height_June)","Urban Only","Urbanization Score:Subtransect",0.132,0.716,NA,2726.409
+"23","sqrt(Total_Height_June)","Urban Only","Urbanization Score",0.123,0.725,NA,2724.54
+"24","sqrt(Total_Height_June)","Urban Only","Subtransect",1.097,0.295,NA,2724.54
+"25","sqrt(Total_Height_Sept)","All","Distance to City Center",4.479,0.034,"*",4937.712
+"26","sqrt(Total_Height_Sept)","All","Urbanization Score",1.341,0.247,NA,4940.824
+"27","sqrt(Total_Height_Sept)","Urban Only","Distance to City Center",2.349,0.125,NA,3318.147
+"28","sqrt(Total_Height_Sept)","Urban Only","Subtransect",0.953,0.329,NA,3318.147
+"29","sqrt(Total_Height_Sept)","Urban Only","Distance to City Center:Subtransect",0.105,0.746,NA,3318.147
+"30","sqrt(Total_Height_Sept)","Urban Only","Distance to City Center",2.351,0.125,NA,3316.252
+"31","sqrt(Total_Height_Sept)","Urban Only","Subtransect",0.953,0.329,NA,3316.252
+"32","sqrt(Total_Height_Sept)","Urban Only","Urbanization Score",0.006,0.939,NA,3320.07
+"33","sqrt(Total_Height_Sept)","Urban Only","Subtransect",1.198,0.274,NA,3320.07
+"34","sqrt(Total_Height_Sept)","Urban Only","Urbanization Score:Subtransect",0.533,0.465,NA,3320.07
+"35","sqrt(Total_Height_Sept)","Urban Only","Urbanization Score",0.006,0.937,NA,3318.601
+"36","sqrt(Total_Height_Sept)","Urban Only","Subtransect",1.186,0.276,NA,3318.601
+"37","(scar_div_Juneheight_binary)","All","Distance to City Center",0.045,0.833,NA,1191.94
+"38","log(scar_div_Juneheight)","All","Distance to City Center",0.069,0.793,NA,1392.979
+"39","(scar_div_Juneheight_binary)","All","Urbanization Score",0.086,0.769,NA,1191.898
+"40","log(scar_div_Juneheight)","All","Urbanization Score",0.763,0.382,NA,1392.284
+"41","(scar_div_Juneheight_binary)","Urban Only","Distance to City Center",0.179,0.673,NA,805.521
+"42","(scar_div_Juneheight_binary)","Urban Only","Subtransect",0,0.991,NA,805.521
+"43","(scar_div_Juneheight_binary)","Urban Only","Distance to City Center:Subtransect",0.19,0.663,NA,805.521
+"44","(scar_div_Juneheight_binary)","Urban Only","Distance to City Center",0.179,0.673,NA,803.711
+"45","(scar_div_Juneheight_binary)","Urban Only","Subtransect",0,0.992,NA,803.711
+"46","log(scar_div_Juneheight)","Urban Only","Distance to City Center",0.036,0.849,NA,954.556
+"47","log(scar_div_Juneheight)","Urban Only","Subtransect",2.893,0.089,"Marginal",954.556
+"48","log(scar_div_Juneheight)","Urban Only","Distance to City Center:Subtransect",1.124,0.289,NA,954.556
+"49","log(scar_div_Juneheight)","Urban Only","Distance to City Center",0.036,0.849,NA,951.679
+"50","log(scar_div_Juneheight)","Urban Only","Subtransect",2.883,0.09,"Marginal",951.679
+"51","(scar_div_Juneheight_binary)","Urban Only","Urbanization Score",0.312,0.577,NA,804.658
+"52","(scar_div_Juneheight_binary)","Urban Only","Subtransect",0.028,0.866,NA,804.658
+"53","(scar_div_Juneheight_binary)","Urban Only","Urbanization Score:Subtransect",0.932,0.334,NA,804.658
+"54","(scar_div_Juneheight_binary)","Urban Only","Urbanization Score",0.306,0.58,NA,803.582
+"55","(scar_div_Juneheight_binary)","Urban Only","Subtransect",0.027,0.87,NA,803.582
+"56","log(scar_div_Juneheight)","Urban Only","Urbanization Score",1.018,0.313,NA,952.672
+"57","log(scar_div_Juneheight)","Urban Only","Subtransect",2.184,0.139,NA,952.672
+"58","log(scar_div_Juneheight)","Urban Only","Urbanization Score:Subtransect",2.04,0.153,NA,952.672
+"59","log(scar_div_Juneheight)","Urban Only","Urbanization Score",1.011,0.315,NA,950.705
+"60","log(scar_div_Juneheight)","Urban Only","Subtransect",2.169,0.141,NA,950.705
+"61","(Scar_length_cm_binary)","All","Distance to City Center",0.008,0.927,NA,1239.432
+"62","log(Scar_length_cm)","All","Distance to City Center",0.367,0.544,NA,1024.739
+"63","(Scar_length_cm_binary)","All","Urbanization Score",0.326,0.568,NA,1239.111
+"64","log(Scar_length_cm)","All","Urbanization Score",0.022,0.882,NA,1025.083
+"65","(Scar_length_cm_binary)","Urban Only","Distance to City Center",0.131,0.718,NA,839.013
+"66","(Scar_length_cm_binary)","Urban Only","Subtransect",0.066,0.797,NA,839.013
+"67","(Scar_length_cm_binary)","Urban Only","Distance to City Center:Subtransect",0.081,0.776,NA,839.013
+"68","(Scar_length_cm_binary)","Urban Only","Distance to City Center",0.131,0.718,NA,837.096
+"69","(Scar_length_cm_binary)","Urban Only","Subtransect",0.066,0.798,NA,837.096
+"70","log(Scar_length_cm + 0.1)","Urban Only","Distance to City Center",0.145,0.703,NA,992.242
+"71","log(Scar_length_cm + 0.1)","Urban Only","Subtransect",4.862,0.027,"*",992.242
+"72","log(Scar_length_cm + 0.1)","Urban Only","Distance to City Center:Subtransect",0.179,0.672,NA,992.242
+"73","log(Scar_length_cm + 0.1)","Urban Only","Distance to City Center",0.145,0.703,NA,990.421
+"74","log(Scar_length_cm + 0.1)","Urban Only","Subtransect",4.86,0.027,"*",990.421
+"75","(Scar_length_cm_binary)","Urban Only","Urbanization Score",0.533,0.465,NA,837.467
+"76","(Scar_length_cm_binary)","Urban Only","Subtransect",0.005,0.944,NA,837.467
+"77","(Scar_length_cm_binary)","Urban Only","Urbanization Score:Subtransect",1.217,0.27,NA,837.467
+"78","(Scar_length_cm_binary)","Urban Only","Urbanization Score",0.521,0.47,NA,836.695
+"79","(Scar_length_cm_binary)","Urban Only","Subtransect",0.005,0.943,NA,836.695
+"80","log(Scar_length_cm + 0.1)","Urban Only","Urbanization Score",0.327,0.567,NA,991.903
+"81","log(Scar_length_cm + 0.1)","Urban Only","Subtransect",5.43,0.02,"*",991.903
+"82","log(Scar_length_cm + 0.1)","Urban Only","Urbanization Score:Subtransect",0.337,0.562,NA,991.903
+"83","log(Scar_length_cm + 0.1)","Urban Only","Urbanization Score",0.327,0.567,NA,990.24
+"84","log(Scar_length_cm + 0.1)","Urban Only","Subtransect",5.424,0.02,"*",990.24
+"85","(Herbivory.July_mean_binary)","All","Distance to City Center",0.999,0.317,NA,829.717
+"86","log(Herbivory.July_mean)","All","Distance to City Center",1.412,0.235,NA,2112.874
+"87","(Herbivory.July_mean_binary)","All","Urbanization Score",0.799,0.371,NA,829.918
+"88","log(Herbivory.July_mean)","All","Urbanization Score",0,0.996,NA,2110.081
+"89","(Herbivory.July_mean_binary)","Urban Only","Distance to City Center",4.613,0.032,"*",550.605
+"90","(Herbivory.July_mean_binary)","Urban Only","Subtransect",0.099,0.753,NA,550.605
+"91","(Herbivory.July_mean_binary)","Urban Only","Distance to City Center:Subtransect",1.538,0.215,NA,550.605
+"92","(Herbivory.July_mean_binary)","Urban Only","Distance to City Center",4.539,0.033,"*",550.175
+"93","(Herbivory.July_mean_binary)","Urban Only","Subtransect",0.094,0.76,NA,550.175
+"94","log(Herbivory.July_mean)","Urban Only","Distance to City Center",4.773,0.029,"*",1410.457
+"95","log(Herbivory.July_mean)","Urban Only","Subtransect",0.177,0.674,NA,1410.457
+"96","log(Herbivory.July_mean)","Urban Only","Distance to City Center:Subtransect",1.537,0.215,NA,1410.457
+"97","log(Herbivory.July_mean)","Urban Only","Distance to City Center",4.75,0.029,"*",1409.994
+"98","log(Herbivory.July_mean)","Urban Only","Subtransect",0.181,0.67,NA,1409.994
+"99","(Herbivory.July_mean_binary)","Urban Only","Urbanization Score",3.62,0.057,"Marginal",552.137
+"100","(Herbivory.July_mean_binary)","Urban Only","Subtransect",0.303,0.582,NA,552.137
+"101","(Herbivory.July_mean_binary)","Urban Only","Urbanization Score:Subtransect",0.959,0.327,NA,552.137
+"102","(Herbivory.July_mean_binary)","Urban Only","Urbanization Score",3.629,0.057,"Marginal",551.106
+"103","(Herbivory.July_mean_binary)","Urban Only","Subtransect",0.301,0.583,NA,551.106
+"104","log(Herbivory.July_mean)","Urban Only","Urbanization Score",0.518,0.472,NA,1426.127
+"105","log(Herbivory.July_mean)","Urban Only","Subtransect",0.694,0.405,NA,1426.127
+"106","log(Herbivory.July_mean)","Urban Only","Urbanization Score:Subtransect",2.175,0.14,NA,1426.127
+"107","log(Herbivory.July_mean)","Urban Only","Urbanization Score",0.501,0.479,NA,1423.774
+"108","log(Herbivory.July_mean)","Urban Only","Subtransect",0.707,0.4,NA,1423.774
+"109","(Herbivory.Sept_mean_binary)","All","Distance to City Center",2.814,0.093,"Marginal",515.616
+"110","log(Herbivory.Sept_mean)","All","Distance to City Center",1.213,0.271,NA,2550.899
+"111","(Herbivory.Sept_mean_binary)","All","Urbanization Score",1.311,0.252,NA,517.255
+"112","log(Herbivory.Sept_mean)","All","Urbanization Score",0.001,0.981,NA,2554.089
+"113","(Herbivory.Sept_mean_binary)","Urban Only","Distance to City Center",0.184,0.668,NA,374.996
+"114","(Herbivory.Sept_mean_binary)","Urban Only","Subtransect",0.047,0.828,NA,374.996
+"115","(Herbivory.Sept_mean_binary)","Urban Only","Distance to City Center:Subtransect",0.001,0.98,NA,374.996
+"116","(Herbivory.Sept_mean_binary)","Urban Only","Distance to City Center",0.185,0.667,NA,372.996
+"117","(Herbivory.Sept_mean_binary)","Urban Only","Subtransect",0.047,0.828,NA,372.996
+"118","log(Herbivory.Sept_mean)","Urban Only","Distance to City Center",0.9,0.343,NA,1659.076
+"119","log(Herbivory.Sept_mean)","Urban Only","Subtransect",1.203,0.273,NA,1659.076
+"120","log(Herbivory.Sept_mean)","Urban Only","Distance to City Center:Subtransect",0.96,0.327,NA,1659.076
+"121","log(Herbivory.Sept_mean)","Urban Only","Distance to City Center",0.899,0.343,NA,1658.035
+"122","log(Herbivory.Sept_mean)","Urban Only","Subtransect",1.201,0.273,NA,1658.035
+"123","(Herbivory.Sept_mean_binary)","Urban Only","Urbanization Score",0.56,0.454,NA,374.377
+"124","(Herbivory.Sept_mean_binary)","Urban Only","Subtransect",0,0.994,NA,374.377
+"125","(Herbivory.Sept_mean_binary)","Urban Only","Urbanization Score:Subtransect",0.263,0.608,NA,374.377
+"126","(Herbivory.Sept_mean_binary)","Urban Only","Urbanization Score",0.542,0.462,NA,372.638
+"127","(Herbivory.Sept_mean_binary)","Urban Only","Subtransect",0,0.998,NA,372.638
+"128","log(Herbivory.Sept_mean)","Urban Only","Urbanization Score",0.619,0.432,NA,1660.175
+"129","log(Herbivory.Sept_mean)","Urban Only","Subtransect",1.798,0.18,NA,1660.175
+"130","log(Herbivory.Sept_mean)","Urban Only","Urbanization Score:Subtransect",0.139,0.709,NA,1660.175
+"131","log(Herbivory.Sept_mean)","Urban Only","Urbanization Score",0.618,0.432,NA,1658.315
+"132","log(Herbivory.Sept_mean)","Urban Only","Subtransect",1.797,0.18,NA,1658.315
+"133","(rel_growth_rate_binary)","All","Distance to City Center",0.807,0.369,NA,813.769
+"134","sqrt(rel_growth_rate)","All","Distance to City Center",0.19,0.663,NA,-2911.634
+"135","(rel_growth_rate_binary)","All","Urbanization Score",0.065,0.798,NA,814.537
+"136","sqrt(rel_growth_rate)","All","Urbanization Score",0,0.998,NA,-2915.624
+"137","(rel_growth_rate_binary)","Urban Only","Distance to City Center",3.131,0.077,"Marginal",552
+"138","(rel_growth_rate_binary)","Urban Only","Subtransect",1.149,0.284,NA,552
+"139","(rel_growth_rate_binary)","Urban Only","Distance to City Center:Subtransect",0.446,0.504,NA,552
+"140","(rel_growth_rate_binary)","Urban Only","Distance to City Center",3.201,0.074,"Marginal",550.459
+"141","(rel_growth_rate_binary)","Urban Only","Subtransect",1.174,0.279,NA,550.459
+"142","sqrt(rel_growth_rate)","Urban Only","Distance to City Center",3.854,0.05,"*",-1959.3
+"143","sqrt(rel_growth_rate)","Urban Only","Subtransect",3.532,0.06,"Marginal",-1959.3
+"144","sqrt(rel_growth_rate)","Urban Only","Distance to City Center:Subtransect",0.836,0.36,NA,-1959.3
+"145","sqrt(rel_growth_rate)","Urban Only","Distance to City Center",3.721,0.054,"Marginal",-1962.473
+"146","sqrt(rel_growth_rate)","Urban Only","Subtransect",3.442,0.064,"Marginal",-1962.473
+"147","(rel_growth_rate_binary)","Urban Only","Urbanization Score",1.424,0.233,NA,551.893
+"148","(rel_growth_rate_binary)","Urban Only","Subtransect",1.218,0.27,NA,551.893
+"149","(rel_growth_rate_binary)","Urban Only","Urbanization Score:Subtransect",2.27,0.132,NA,551.893
+"150","(rel_growth_rate_binary)","Urban Only","Urbanization Score",1.408,0.235,NA,552.311
+"151","(rel_growth_rate_binary)","Urban Only","Subtransect",1.279,0.258,NA,552.311
+"152","sqrt(rel_growth_rate)","Urban Only","Urbanization Score",0.004,0.951,NA,-1958.506
+"153","sqrt(rel_growth_rate)","Urban Only","Subtransect",2.698,0.1,NA,-1958.506
+"154","sqrt(rel_growth_rate)","Urban Only","Urbanization Score:Subtransect",3.801,0.051,"Marginal",-1958.506
+"155","sqrt(rel_growth_rate)","Urban Only","Urbanization Score",0.004,0.947,NA,-1959.054
+"156","sqrt(rel_growth_rate)","Urban Only","Subtransect",2.348,0.125,NA,-1959.054
+"157","Ramets_June","All","Distance to City Center",1.25,0.264,NA,3492.765
+"158","Ramets_June","All","Urbanization Score",0,0.983,NA,3493.989
+"159","Ramets_June","Urban Only","Distance to City Center",0.874,0.35,NA,2339.698
+"160","Ramets_June","Urban Only","Subtransect",1.513,0.219,NA,2339.698
+"161","Ramets_June","Urban Only","Distance to City Center:Subtransect",1.079,0.299,NA,2339.698
+"162","Ramets_June","Urban Only","Distance to City Center",0.86,0.354,NA,2338.754
+"163","Ramets_June","Urban Only","Subtransect",1.477,0.224,NA,2338.754
+"164","Ramets_June","Urban Only","Urbanization Score",5.56,0.018,"*",2332.591
+"165","Ramets_June","Urban Only","Subtransect",3.199,0.074,"Marginal",2332.591
+"166","Ramets_June","Urban Only","Urbanization Score:Subtransect",1.89,0.169,NA,2332.591
+"167","Ramets_June","Urban Only","Urbanization Score",5.369,0.02,"*",2332.451
+"168","Ramets_June","Urban Only","Subtransect",3.207,0.073,"Marginal",2332.451
+"169","Ramets_Sept","All","Distance to City Center",3.743,0.053,"Marginal",3079.365
+"170","Ramets_Sept","All","Urbanization Score",0.223,0.636,NA,3082.481
+"171","Ramets_Sept","Urban Only","Distance to City Center",5.591,0.018,"*",2058.945
+"172","Ramets_Sept","Urban Only","Subtransect",0.012,0.914,NA,2058.945
+"173","Ramets_Sept","Urban Only","Distance to City Center:Subtransect",1.318,0.251,NA,2058.945
+"174","Ramets_Sept","Urban Only","Distance to City Center",5.521,0.019,"*",2058.258
+"175","Ramets_Sept","Urban Only","Subtransect",0.011,0.917,NA,2058.258
+"176","Ramets_Sept","Urban Only","Urbanization Score",0.233,0.63,NA,2064.401
+"177","Ramets_Sept","Urban Only","Subtransect",0.055,0.815,NA,2064.401
+"178","Ramets_Sept","Urban Only","Urbanization Score:Subtransect",1.193,0.275,NA,2064.401
+"179","Ramets_Sept","Urban Only","Urbanization Score",0.225,0.636,NA,2063.584
+"180","Ramets_Sept","Urban Only","Subtransect",0.059,0.809,NA,2063.584
+"181","dead_2020","All","Distance to City Center",0.214,0.643,NA,228.604
+"182","dead_2020","All","Urbanization Score",1.225,0.268,NA,227.512
+"183","dead_2020","Urban Only","Distance to City Center",0.511,0.475,NA,157.596
+"184","dead_2020","Urban Only","Subtransect",0.855,0.355,NA,157.596
+"185","dead_2020","Urban Only","Distance to City Center:Subtransect",1.795,0.18,NA,157.596
+"186","dead_2020","Urban Only","Distance to City Center",0.709,0.4,NA,157.565
+"187","dead_2020","Urban Only","Subtransect",1.078,0.299,NA,157.565
+"188","dead_2020","Urban Only","Urbanization Score",1.177,0.278,NA,159.084
+"189","dead_2020","Urban Only","Subtransect",0.851,0.356,NA,159.084
+"190","dead_2020","Urban Only","Urbanization Score:Subtransect",0.038,0.845,NA,159.084
+"191","dead_2020","Urban Only","Urbanization Score",1.141,0.285,NA,157.122
+"192","dead_2020","Urban Only","Subtransect",0.862,0.353,NA,157.122

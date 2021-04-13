@@ -1,0 +1,161 @@
+,Response,Sites,Predictor,X²,p,Significance,AIC,,Response,Sites,Predictor,X²,p,Significance,AIC
+1,Flowering Success,Urban Only,Distance to City Center,0.815,0.367,,188.988,,Flowering Success,Urban Only,Distance to City Center,0.815,0.367,,188.988
+1,,,Subtransect,0.04,0.842,,,,,,Subtransect,0.04,0.842,,
+1,,,Distance to City Center:Subtransect,0.563,0.453,,,,,,Distance to City Center:Subtransect,0.563,0.453,,
+1,Flowering Success,Urban Only,Distance to City Center,0.898,0.343,,187.573,,Flowering Success,Urban Only,Distance to City Center,0.898,0.343,,187.573
+1,,,Subtransect,0.033,0.855,,,,,,Subtransect,0.033,0.855,,
+2,Flowering Success,Urban Only,Urbanization Score,1.239,0.266,,189.26,,Flowering Success,Urban Only,Urbanization Score,1.239,0.266,,189.26
+2,,,Subtransect,0.01,0.921,,,,,,Subtransect,0.01,0.921,,
+2,,,Urbanization Score:Subtransect,0.001,0.976,,,,,,Urbanization Score:Subtransect,0.001,0.976,,
+2,Flowering Success,Urban Only,Urbanization Score,1.24,0.266,,187.26,,Flowering Success,Urban Only,Urbanization Score,1.24,0.266,,187.26
+2,,,Subtransect,0.01,0.921,,,,,,Subtransect,0.01,0.921,,
+1,June Height,Urban Only,Distance to City Center,1.831,0.176,,2724.627,,June Height,Urban Only,Distance to City Center,1.831,0.176,,2724.627
+1,,,Subtransect,0.741,0.389,,,,,,Subtransect,0.741,0.389,,
+1,,,Distance to City Center:Subtransect,0.229,0.632,,,,,,Distance to City Center:Subtransect,0.229,0.632,,
+1,June Height,Urban Only,Distance to City Center,1.827,0.176,,2722.856,,June Height,Urban Only,Distance to City Center,1.827,0.176,,2722.856
+1,,,Subtransect,0.739,0.39,,,,,,Subtransect,0.739,0.39,,
+2,June Height,Urban Only,Urbanization Score,0.126,0.723,,2726.409,,June Height,Urban Only,Urbanization Score,0.126,0.723,,2726.409
+2,,,Subtransect,1.105,0.293,,,,,,Subtransect,1.105,0.293,,
+2,,,Urbanization Score:Subtransect,0.132,0.716,,,,,,Urbanization Score:Subtransect,0.132,0.716,,
+2,June Height,Urban Only,Urbanization Score,0.123,0.725,,2724.54,,June Height,Urban Only,Urbanization Score,0.123,0.725,,2724.54
+2,,,Subtransect,1.097,0.295,,,,,,Subtransect,1.097,0.295,,
+1,Sept Height,Urban Only,Distance to City Center,2.349,0.125,,3318.147,,Sept Height,Urban Only,Distance to City Center,2.349,0.125,,3318.147
+1,,,Subtransect,0.953,0.329,,,,,,Subtransect,0.953,0.329,,
+1,,,Distance to City Center:Subtransect,0.105,0.746,,,,,,Distance to City Center:Subtransect,0.105,0.746,,
+1,Sept Height,Urban Only,Distance to City Center,2.351,0.125,,3316.252,,Sept Height,Urban Only,Distance to City Center,2.351,0.125,,3316.252
+1,,,Subtransect,0.953,0.329,,,,,,Subtransect,0.953,0.329,,
+2,Sept Height,Urban Only,Urbanization Score,0.006,0.939,,3320.07,,Sept Height,Urban Only,Urbanization Score,0.006,0.939,,3320.07
+2,,,Subtransect,1.198,0.274,,,,,,Subtransect,1.198,0.274,,
+2,,,Urbanization Score:Subtransect,0.533,0.465,,,,,,Urbanization Score:Subtransect,0.533,0.465,,
+2,Sept Height,Urban Only,Urbanization Score,0.006,0.937,,3318.601,,Sept Height,Urban Only,Urbanization Score,0.006,0.937,,3318.601
+2,,,Subtransect,1.186,0.276,,,,,,Subtransect,1.186,0.276,,
+1,Weevil scar length (per cm height) (binary),Urban Only,Distance to City Center,0.179,0.673,,805.521,,Weevil scar length (per cm height) (binary),Urban Only,Distance to City Center,0.179,0.673,,805.521
+1,,,Subtransect,0,0.991,,,,,,Subtransect,0,0.991,,
+1,,,Distance to City Center:Subtransect,0.19,0.663,,,,,,Distance to City Center:Subtransect,0.19,0.663,,
+1,Weevil scar length (per cm height) (binary),Urban Only,Distance to City Center,0.179,0.673,,803.711,,Weevil scar length (per cm height) (binary),Urban Only,Distance to City Center,0.179,0.673,,803.711
+1,,,Subtransect,0,0.992,,,,,,Subtransect,0,0.992,,
+1,Weevil scar length (per cm height),Urban Only,Distance to City Center,0.036,0.849,,954.556,,Weevil scar length (per cm height),Urban Only,Distance to City Center,0.036,0.849,,954.556
+1,,,Subtransect,2.893,0.089,Marginal,954.556,,,,Subtransect,2.893,0.089,Marginal,954.556
+1,,,Distance to City Center:Subtransect,1.124,0.289,,954.556,,,,Distance to City Center:Subtransect,1.124,0.289,,954.556
+1,Weevil scar length (per cm height),Urban Only,Distance to City Center,0.036,0.849,,951.679,,Weevil scar length (per cm height),Urban Only,Distance to City Center,0.036,0.849,,951.679
+1,,,Subtransect,2.883,0.09,Marginal,951.679,,,,Subtransect,2.883,0.09,Marginal,951.679
+2,Weevil scar length (per cm height) (binary),Urban Only,Urbanization Score,0.312,0.577,,804.658,,Weevil scar length (per cm height) (binary),Urban Only,Urbanization Score,0.312,0.577,,804.658
+2,,,Subtransect,0.028,0.866,,804.658,,,,Subtransect,0.028,0.866,,804.658
+2,,,Urbanization Score:Subtransect,0.932,0.334,,804.658,,,,Urbanization Score:Subtransect,0.932,0.334,,804.658
+2,Weevil scar length (per cm height) (binary),Urban Only,Urbanization Score,0.306,0.58,,803.582,,Weevil scar length (per cm height) (binary),Urban Only,Urbanization Score,0.306,0.58,,803.582
+2,,,Subtransect,0.027,0.87,,803.582,,,,Subtransect,0.027,0.87,,803.582
+2,Weevil scar length (per cm height),Urban Only,Urbanization Score,1.018,0.313,,952.672,,Weevil scar length (per cm height),Urban Only,Urbanization Score,1.018,0.313,,952.672
+2,,,Subtransect,2.184,0.139,,952.672,,,,Subtransect,2.184,0.139,,952.672
+2,,,Urbanization Score:Subtransect,2.04,0.153,,952.672,,,,Urbanization Score:Subtransect,2.04,0.153,,952.672
+2,Weevil scar length (per cm height),Urban Only,Urbanization Score,1.011,0.315,,950.705,,Weevil scar length (per cm height),Urban Only,Urbanization Score,1.011,0.315,,950.705
+2,,,Subtransect,2.169,0.141,,950.705,,,,Subtransect,2.169,0.141,,950.705
+1,Weevil scar length (binary),Urban Only,Distance to City Center,0.131,0.718,,839.013,,Weevil scar length (binary),Urban Only,Distance to City Center,0.131,0.718,,839.013
+1,,Urban Only,Subtransect,0.066,0.797,,839.013,,,Urban Only,Subtransect,0.066,0.797,,839.013
+1,,Urban Only,Distance to City Center:Subtransect,0.081,0.776,,839.013,,,Urban Only,Distance to City Center:Subtransect,0.081,0.776,,839.013
+1,Weevil scar length (binary),Urban Only,Distance to City Center,0.131,0.718,,837.096,,Weevil scar length (binary),Urban Only,Distance to City Center,0.131,0.718,,837.096
+1,,Urban Only,Subtransect,0.066,0.798,,837.096,,,Urban Only,Subtransect,0.066,0.798,,837.096
+1,Weevil scar length ,Urban Only,Distance to City Center,0.145,0.703,,992.242,,Weevil scar length ,Urban Only,Distance to City Center,0.145,0.703,,992.242
+1,,Urban Only,Subtransect,4.862,0.027,*,992.242,,,Urban Only,Subtransect,4.862,0.027,*,992.242
+1,,Urban Only,Distance to City Center:Subtransect,0.179,0.672,,992.242,,,Urban Only,Distance to City Center:Subtransect,0.179,0.672,,992.242
+1,Weevil scar length ,Urban Only,Distance to City Center,0.145,0.703,,990.421,,Weevil scar length ,Urban Only,Distance to City Center,0.145,0.703,,990.421
+1,,Urban Only,Subtransect,4.86,0.027,*,990.421,,,Urban Only,Subtransect,4.86,0.027,*,990.421
+2,Weevil scar length (binary),Urban Only,Urbanization Score,0.533,0.465,,837.467,,Weevil scar length (binary),Urban Only,Urbanization Score,0.533,0.465,,837.467
+2,,Urban Only,Subtransect,0.005,0.944,,837.467,,,Urban Only,Subtransect,0.005,0.944,,837.467
+2,,Urban Only,Urbanization Score:Subtransect,1.217,0.27,,837.467,,,Urban Only,Urbanization Score:Subtransect,1.217,0.27,,837.467
+2,Weevil scar length (binary),Urban Only,Urbanization Score,0.521,0.47,,836.695,,Weevil scar length (binary),Urban Only,Urbanization Score,0.521,0.47,,836.695
+2,,Urban Only,Subtransect,0.005,0.943,,836.695,,,Urban Only,Subtransect,0.005,0.943,,836.695
+2,Weevil scar length ,Urban Only,Urbanization Score,0.327,0.567,,991.903,,Weevil scar length ,Urban Only,Urbanization Score,0.327,0.567,,991.903
+2,,Urban Only,Subtransect,5.43,0.02,*,991.903,,,Urban Only,Subtransect,5.43,0.02,*,991.903
+2,,Urban Only,Urbanization Score:Subtransect,0.337,0.562,,991.903,,,Urban Only,Urbanization Score:Subtransect,0.337,0.562,,991.903
+2,Weevil scar length ,Urban Only,Urbanization Score,0.327,0.567,,990.24,,Weevil scar length ,Urban Only,Urbanization Score,0.327,0.567,,990.24
+2,,Urban Only,Subtransect,5.424,0.02,*,990.24,,,Urban Only,Subtransect,5.424,0.02,*,990.24
+1,July Herbivory (binary),Urban Only,Distance to City Center,4.613,0.032,*,550.605,,July Herbivory (binary),Urban Only,Distance to City Center,4.613,0.032,*,550.605
+1,July Herbivory (binary),Urban Only,Subtransect,0.099,0.753,,550.605,,July Herbivory (binary),Urban Only,Subtransect,0.099,0.753,,550.605
+1,July Herbivory (binary),Urban Only,Distance to City Center:Subtransect,1.538,0.215,,550.605,,July Herbivory (binary),Urban Only,Distance to City Center:Subtransect,1.538,0.215,,550.605
+1,July Herbivory (binary),Urban Only,Distance to City Center,4.539,0.033,*,550.175,,July Herbivory (binary),Urban Only,Distance to City Center,4.539,0.033,*,550.175
+1,July Herbivory (binary),Urban Only,Subtransect,0.094,0.76,,550.175,,July Herbivory (binary),Urban Only,Subtransect,0.094,0.76,,550.175
+1,July Herbivory,Urban Only,Distance to City Center,4.773,0.029,*,1410.457,,July Herbivory,Urban Only,Distance to City Center,4.773,0.029,*,1410.457
+1,July Herbivory,Urban Only,Subtransect,0.177,0.674,,1410.457,,July Herbivory,Urban Only,Subtransect,0.177,0.674,,1410.457
+1,July Herbivory,Urban Only,Distance to City Center:Subtransect,1.537,0.215,,1410.457,,July Herbivory,Urban Only,Distance to City Center:Subtransect,1.537,0.215,,1410.457
+1,July Herbivory,Urban Only,Distance to City Center,4.75,0.029,*,1409.994,,July Herbivory,Urban Only,Distance to City Center,4.75,0.029,*,1409.994
+1,July Herbivory,Urban Only,Subtransect,0.181,0.67,,1409.994,,July Herbivory,Urban Only,Subtransect,0.181,0.67,,1409.994
+2,July Herbivory (binary),Urban Only,Urbanization Score,3.62,0.057,Marginal,552.137,,July Herbivory (binary),Urban Only,Urbanization Score,3.62,0.057,Marginal,552.137
+2,July Herbivory (binary),Urban Only,Subtransect,0.303,0.582,,552.137,,July Herbivory (binary),Urban Only,Subtransect,0.303,0.582,,552.137
+2,July Herbivory (binary),Urban Only,Urbanization Score:Subtransect,0.959,0.327,,552.137,,July Herbivory (binary),Urban Only,Urbanization Score:Subtransect,0.959,0.327,,552.137
+2,July Herbivory (binary),Urban Only,Urbanization Score,3.629,0.057,Marginal,551.106,,July Herbivory (binary),Urban Only,Urbanization Score,3.629,0.057,Marginal,551.106
+2,July Herbivory (binary),Urban Only,Subtransect,0.301,0.583,,551.106,,July Herbivory (binary),Urban Only,Subtransect,0.301,0.583,,551.106
+2,July Herbivory,Urban Only,Urbanization Score,0.518,0.472,,1426.127,,July Herbivory,Urban Only,Urbanization Score,0.518,0.472,,1426.127
+2,July Herbivory,Urban Only,Subtransect,0.694,0.405,,1426.127,,July Herbivory,Urban Only,Subtransect,0.694,0.405,,1426.127
+2,July Herbivory,Urban Only,Urbanization Score:Subtransect,2.175,0.14,,1426.127,,July Herbivory,Urban Only,Urbanization Score:Subtransect,2.175,0.14,,1426.127
+2,July Herbivory,Urban Only,Urbanization Score,0.501,0.479,,1423.774,,July Herbivory,Urban Only,Urbanization Score,0.501,0.479,,1423.774
+2,July Herbivory,Urban Only,Subtransect,0.707,0.4,,1423.774,,July Herbivory,Urban Only,Subtransect,0.707,0.4,,1423.774
+1,Sept Herbivory (binary),Urban Only,Distance to City Center,0.184,0.668,,374.996,,Sept Herbivory (binary),Urban Only,Distance to City Center,0.184,0.668,,374.996
+1,Sept Herbivory (binary),Urban Only,Subtransect,0.047,0.828,,374.996,,Sept Herbivory (binary),Urban Only,Subtransect,0.047,0.828,,374.996
+1,Sept Herbivory (binary),Urban Only,Distance to City Center:Subtransect,0.001,0.98,,374.996,,Sept Herbivory (binary),Urban Only,Distance to City Center:Subtransect,0.001,0.98,,374.996
+1,Sept Herbivory (binary),Urban Only,Distance to City Center,0.185,0.667,,372.996,,Sept Herbivory (binary),Urban Only,Distance to City Center,0.185,0.667,,372.996
+1,Sept Herbivory (binary),Urban Only,Subtransect,0.047,0.828,,372.996,,Sept Herbivory (binary),Urban Only,Subtransect,0.047,0.828,,372.996
+1,Sept Herbivory,Urban Only,Distance to City Center,0.9,0.343,,1659.076,,Sept Herbivory,Urban Only,Distance to City Center,0.9,0.343,,1659.076
+1,Sept Herbivory,Urban Only,Subtransect,1.203,0.273,,1659.076,,Sept Herbivory,Urban Only,Subtransect,1.203,0.273,,1659.076
+1,Sept Herbivory,Urban Only,Distance to City Center:Subtransect,0.96,0.327,,1659.076,,Sept Herbivory,Urban Only,Distance to City Center:Subtransect,0.96,0.327,,1659.076
+1,Sept Herbivory,Urban Only,Distance to City Center,0.899,0.343,,1658.035,,Sept Herbivory,Urban Only,Distance to City Center,0.899,0.343,,1658.035
+1,Sept Herbivory,Urban Only,Subtransect,1.201,0.273,,1658.035,,Sept Herbivory,Urban Only,Subtransect,1.201,0.273,,1658.035
+2,Sept Herbivory (binary),Urban Only,Urbanization Score,0.56,0.454,,374.377,,Sept Herbivory (binary),Urban Only,Urbanization Score,0.56,0.454,,374.377
+2,Sept Herbivory (binary),Urban Only,Subtransect,0,0.994,,374.377,,Sept Herbivory (binary),Urban Only,Subtransect,0,0.994,,374.377
+2,Sept Herbivory (binary),Urban Only,Urbanization Score:Subtransect,0.263,0.608,,374.377,,Sept Herbivory (binary),Urban Only,Urbanization Score:Subtransect,0.263,0.608,,374.377
+2,Sept Herbivory (binary),Urban Only,Urbanization Score,0.542,0.462,,372.638,,Sept Herbivory (binary),Urban Only,Urbanization Score,0.542,0.462,,372.638
+2,Sept Herbivory (binary),Urban Only,Subtransect,0,0.998,,372.638,,Sept Herbivory (binary),Urban Only,Subtransect,0,0.998,,372.638
+2,Sept Herbivory,Urban Only,Urbanization Score,0.619,0.432,,1660.175,,Sept Herbivory,Urban Only,Urbanization Score,0.619,0.432,,1660.175
+2,Sept Herbivory,Urban Only,Subtransect,1.798,0.18,,1660.175,,Sept Herbivory,Urban Only,Subtransect,1.798,0.18,,1660.175
+2,Sept Herbivory,Urban Only,Urbanization Score:Subtransect,0.139,0.709,,1660.175,,Sept Herbivory,Urban Only,Urbanization Score:Subtransect,0.139,0.709,,1660.175
+2,Sept Herbivory,Urban Only,Urbanization Score,0.618,0.432,,1658.315,,Sept Herbivory,Urban Only,Urbanization Score,0.618,0.432,,1658.315
+2,Sept Herbivory,Urban Only,Subtransect,1.797,0.18,,1658.315,,Sept Herbivory,Urban Only,Subtransect,1.797,0.18,,1658.315
+1,Relative growth rate (binary),Urban Only,Distance to City Center,3.131,0.077,Marginal,552,,Relative growth rate (binary),Urban Only,Distance to City Center,3.131,0.077,Marginal,552
+1,Relative growth rate (binary),Urban Only,Subtransect,1.149,0.284,,552,,Relative growth rate (binary),Urban Only,Subtransect,1.149,0.284,,552
+1,Relative growth rate (binary),Urban Only,Distance to City Center:Subtransect,0.446,0.504,,552,,Relative growth rate (binary),Urban Only,Distance to City Center:Subtransect,0.446,0.504,,552
+1,Relative growth rate (binary),Urban Only,Distance to City Center,3.201,0.074,Marginal,550.459,,Relative growth rate (binary),Urban Only,Distance to City Center,3.201,0.074,Marginal,550.459
+1,Relative growth rate (binary),Urban Only,Subtransect,1.174,0.279,,550.459,,Relative growth rate (binary),Urban Only,Subtransect,1.174,0.279,,550.459
+1,Relative growth rate,Urban Only,Distance to City Center,3.854,0.05,*,-1959.3,,Relative growth rate,Urban Only,Distance to City Center,3.854,0.05,*,-1959.3
+1,Relative growth rate,Urban Only,Subtransect,3.532,0.06,Marginal,-1959.3,,Relative growth rate,Urban Only,Subtransect,3.532,0.06,Marginal,-1959.3
+1,Relative growth rate,Urban Only,Distance to City Center:Subtransect,0.836,0.36,,-1959.3,,Relative growth rate,Urban Only,Distance to City Center:Subtransect,0.836,0.36,,-1959.3
+1,Relative growth rate,Urban Only,Distance to City Center,3.721,0.054,Marginal,-1962.473,,Relative growth rate,Urban Only,Distance to City Center,3.721,0.054,Marginal,-1962.473
+1,Relative growth rate,Urban Only,Subtransect,3.442,0.064,Marginal,-1962.473,,Relative growth rate,Urban Only,Subtransect,3.442,0.064,Marginal,-1962.473
+2,Relative growth rate (binary),Urban Only,Urbanization Score,1.424,0.233,,551.893,,Relative growth rate (binary),Urban Only,Urbanization Score,1.424,0.233,,551.893
+2,Relative growth rate (binary),Urban Only,Subtransect,1.218,0.27,,551.893,,Relative growth rate (binary),Urban Only,Subtransect,1.218,0.27,,551.893
+2,Relative growth rate (binary),Urban Only,Urbanization Score:Subtransect,2.27,0.132,,551.893,,Relative growth rate (binary),Urban Only,Urbanization Score:Subtransect,2.27,0.132,,551.893
+2,Relative growth rate (binary),Urban Only,Urbanization Score,1.408,0.235,,552.311,,Relative growth rate (binary),Urban Only,Urbanization Score,1.408,0.235,,552.311
+2,Relative growth rate (binary),Urban Only,Subtransect,1.279,0.258,,552.311,,Relative growth rate (binary),Urban Only,Subtransect,1.279,0.258,,552.311
+2,Relative growth rate,Urban Only,Urbanization Score,0.004,0.951,,-1958.506,,Relative growth rate,Urban Only,Urbanization Score,0.004,0.951,,-1958.506
+2,Relative growth rate,Urban Only,Subtransect,2.698,0.1,,-1958.506,,Relative growth rate,Urban Only,Subtransect,2.698,0.1,,-1958.506
+2,Relative growth rate,Urban Only,Urbanization Score:Subtransect,3.801,0.051,Marginal,-1958.506,,Relative growth rate,Urban Only,Urbanization Score:Subtransect,3.801,0.051,Marginal,-1958.506
+2,Relative growth rate,Urban Only,Urbanization Score,0.004,0.947,,-1959.054,,Relative growth rate,Urban Only,Urbanization Score,0.004,0.947,,-1959.054
+2,Relative growth rate,Urban Only,Subtransect,2.348,0.125,,-1959.054,,Relative growth rate,Urban Only,Subtransect,2.348,0.125,,-1959.054
+1,No. Ramets June,Urban Only,Distance to City Center,0.874,0.35,,2339.698,,No. Ramets June,Urban Only,Distance to City Center,0.874,0.35,,2339.698
+1,,Urban Only,Subtransect,1.513,0.219,,2339.698,,,Urban Only,Subtransect,1.513,0.219,,2339.698
+1,,Urban Only,Distance to City Center:Subtransect,1.079,0.299,,2339.698,,,Urban Only,Distance to City Center:Subtransect,1.079,0.299,,2339.698
+1,No. Ramets June,Urban Only,Distance to City Center,0.86,0.354,,2338.754,,No. Ramets June,Urban Only,Distance to City Center,0.86,0.354,,2338.754
+1,,Urban Only,Subtransect,1.477,0.224,,2338.754,,,Urban Only,Subtransect,1.477,0.224,,2338.754
+2,No. Ramets June,Urban Only,Urbanization Score,5.56,0.018,*,2332.591,,No. Ramets June,Urban Only,Urbanization Score,5.56,0.018,*,2332.591
+2,,Urban Only,Subtransect,3.199,0.074,Marginal,2332.591,,,Urban Only,Subtransect,3.199,0.074,Marginal,2332.591
+2,,Urban Only,Urbanization Score:Subtransect,1.89,0.169,,2332.591,,,Urban Only,Urbanization Score:Subtransect,1.89,0.169,,2332.591
+2,No. Ramets June,Urban Only,Urbanization Score,5.369,0.02,*,2332.451,,No. Ramets June,Urban Only,Urbanization Score,5.369,0.02,*,2332.451
+2,,Urban Only,Subtransect,3.207,0.073,Marginal,2332.451,,,Urban Only,Subtransect,3.207,0.073,Marginal,2332.451
+1,No. Ramets Sept,Urban Only,Distance to City Center,5.591,0.018,*,2058.945,,No. Ramets Sept,Urban Only,Distance to City Center,5.591,0.018,*,2058.945
+1,,Urban Only,Subtransect,0.012,0.914,,2058.945,,,Urban Only,Subtransect,0.012,0.914,,2058.945
+1,,Urban Only,Distance to City Center:Subtransect,1.318,0.251,,2058.945,,,Urban Only,Distance to City Center:Subtransect,1.318,0.251,,2058.945
+1,No. Ramets Sept,Urban Only,Distance to City Center,5.521,0.019,*,2058.258,,No. Ramets Sept,Urban Only,Distance to City Center,5.521,0.019,*,2058.258
+1,,Urban Only,Subtransect,0.011,0.917,,2058.258,,,Urban Only,Subtransect,0.011,0.917,,2058.258
+2,No. Ramets Sept,Urban Only,Urbanization Score,0.233,0.63,,2064.401,,No. Ramets Sept,Urban Only,Urbanization Score,0.233,0.63,,2064.401
+2,,Urban Only,Subtransect,0.055,0.815,,2064.401,,,Urban Only,Subtransect,0.055,0.815,,2064.401
+2,,Urban Only,Urbanization Score:Subtransect,1.193,0.275,,2064.401,,,Urban Only,Urbanization Score:Subtransect,1.193,0.275,,2064.401
+2,No. Ramets Sept,Urban Only,Urbanization Score,0.225,0.636,,2063.584,,No. Ramets Sept,Urban Only,Urbanization Score,0.225,0.636,,2063.584
+2,,Urban Only,Subtransect,0.059,0.809,,2063.584,,,Urban Only,Subtransect,0.059,0.809,,2063.584
+1,Survival,Urban Only,Distance to City Center,0.511,0.475,,157.596,,Survival,Urban Only,Distance to City Center,0.511,0.475,,157.596
+1,,Urban Only,Subtransect,0.855,0.355,,,,,Urban Only,Subtransect,0.855,0.355,,
+1,,Urban Only,Distance to City Center:Subtransect,1.795,0.18,,,,,Urban Only,Distance to City Center:Subtransect,1.795,0.18,,
+1,Survival,Urban Only,Distance to City Center,0.709,0.4,,157.565,,Survival,Urban Only,Distance to City Center,0.709,0.4,,157.565
+1,,Urban Only,Subtransect,1.078,0.299,,,,,Urban Only,Subtransect,1.078,0.299,,
+2,Survival,Urban Only,Urbanization Score,1.177,0.278,,159.084,,Survival,Urban Only,Urbanization Score,1.177,0.278,,159.084
+2,,Urban Only,Subtransect,0.851,0.356,,,,,Urban Only,Subtransect,0.851,0.356,,
+2,,Urban Only,Urbanization Score:Subtransect,0.038,0.845,,,,,Urban Only,Urbanization Score:Subtransect,0.038,0.845,,
+2,Survival,Urban Only,Urbanization Score,1.141,0.285,,157.122,,Survival,Urban Only,Urbanization Score,1.141,0.285,,157.122
+2,,Urban Only,Subtransect,0.862,0.353,,,,,Urban Only,Subtransect,0.862,0.353,,
