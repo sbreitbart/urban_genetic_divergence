@@ -834,15 +834,15 @@ theme_urbansubs_1 <- list(theme_gradient_1_init,
 ## Visualize spatial patterns
 ### Blocks in plot
 ```{r}
-blocks <- ggplot(data =  weevil_both, aes(x = Column, y = Row)) + 
+weevil_both$Block <- as.factor(weevil_both$Block 
+)
+ggplot(data =  weevil_both, aes(x = Column, y = Row)) + 
       geom_tile(aes(fill = Block), colour = "black") +
       scale_y_reverse() +
   theme_minimal()
-blocks
 
-png(here::here("./Figures_Tables/Spatial_patterns/blocks.png"), width = 800, height = 400)
-print(blocks)
-dev.off()
+ggsave(here::here("./Figures_Tables/Spatial_patterns/blocks.png"),
+         width = 18, height = 8, units = "cm")
 ```
 
 ### Origin of plants (urban, rural)
