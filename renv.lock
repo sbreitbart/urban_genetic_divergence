@@ -184,6 +184,13 @@
       "Repository": "CRAN",
       "Hash": "543776ae6848fde2f48ff3816d0628bc"
     },
+    "bayestestR": {
+      "Package": "bayestestR",
+      "Version": "0.9.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "af326db9a2494422ede70ee4b7676297"
+    },
     "boot": {
       "Package": "boot",
       "Version": "1.3-20",
@@ -394,6 +401,13 @@
       "Repository": "CRAN",
       "Hash": "728e85416ffc90743054c1ac04486d69"
     },
+    "effectsize": {
+      "Package": "effectsize",
+      "Version": "0.4.4-1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "e016ad1ec716f9e64de86e98da56033a"
+    },
     "ellipsis": {
       "Package": "ellipsis",
       "Version": "0.3.0",
@@ -524,6 +538,13 @@
       "RemoteRef": "master",
       "RemoteSha": "7325e880485bea4c07465a0304c470608fffb5d9",
       "Hash": "72b58923c795a7fa482b285bb6427c0c"
+    },
+    "ggeffects": {
+      "Package": "ggeffects",
+      "Version": "1.0.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "f7501589603ef13922dc557206010afc"
     },
     "ggforce": {
       "Package": "ggforce",
@@ -700,10 +721,10 @@
     },
     "insight": {
       "Package": "insight",
-      "Version": "0.8.3",
+      "Version": "0.13.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "6f0c79d3214b8d2f38ad0e66ae3cb53c"
+      "Hash": "b83ce8d0ff3ae0cb853f662f20e2f6c3"
     },
     "isoband": {
       "Package": "isoband",
@@ -971,6 +992,13 @@
       "Repository": "CRAN",
       "Hash": "664378f856aceb385eabbce0f202abd8"
     },
+    "parameters": {
+      "Package": "parameters",
+      "Version": "0.13.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "fbf297210397ae386c5ddc2714df1c77"
+    },
     "patchwork": {
       "Package": "patchwork",
       "Version": "1.0.1",
@@ -984,6 +1012,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "e82f00720ce2bf002222c623ca5458c3"
+    },
+    "performance": {
+      "Package": "performance",
+      "Version": "0.7.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "579c2d82e6b62b90ab3d701e94edee47"
     },
     "permute": {
       "Package": "permute",
@@ -1293,6 +1328,13 @@
       "Repository": "CRAN",
       "Hash": "b40a5207b6624f6e2b8cdb50689cdb69"
     },
+    "sjPlot": {
+      "Package": "sjPlot",
+      "Version": "2.8.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "fa3f6fed4ee188cdf887c16e5c78f0c6"
+    },
     "sjlabelled": {
       "Package": "sjlabelled",
       "Version": "1.1.3",
@@ -1306,6 +1348,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "948acec8e474c215d8ae7cef4de51fc0"
+    },
+    "sjstats": {
+      "Package": "sjstats",
+      "Version": "0.18.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "30c55099bbe117030d8649b4ba8fc01b"
     },
     "sourcetools": {
       "Package": "sourcetools",

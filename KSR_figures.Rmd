@@ -93,6 +93,15 @@ heights_both_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/clea
 herbivory_both_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_herbivory_clean.csv")) %>%
   dplyr::select(., -c(1:2))
 
+# recode plants as having experienced  herbivory or not
+herbivory_both_2020$Herbivory.July_mean_binary <- herbivory_both_2020$Herbivory.July_mean
+herbivory_both_2020$Herbivory.July_mean_binary[herbivory_both_2020$Herbivory.July_mean_binary > 0] <- 1
+
+herbivory_both_2020$Herbivory.Sept_mean_binary <- herbivory_both_2020$Herbivory.Sept_mean
+herbivory_both_2020$Herbivory.Sept_mean_binary[herbivory_both_2020$Herbivory.Sept_mean_binary > 0] <- 1
+
+
+
 survival_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_survival_clean.csv")) %>%
   dplyr::select(., -c(1:2))
 
@@ -454,6 +463,8 @@ herbivory2020_familymeans <- herbivory_both_2020 %>%
       sum_replicates = n_distinct(Replicate),
       Herbivory.July_mean = mean(Herbivory.July_mean, na.rm = T),
       Herbivory.Sept_mean = mean(Herbivory.Sept_mean, na.rm = T),
+      Herbivory.July_mean_binary = mean(Herbivory.July_mean_binary, na.rm = T),
+      Herbivory.Sept_mean_binary = mean(Herbivory.Sept_mean_binary, na.rm = T),
       City_dist = first(City_dist),
       Transect_ID = first(Transect_ID),
       Urb_score = first(Urb_score),
@@ -468,6 +479,8 @@ herbivory2020_popmeans <- herbivory2020_familymeans %>%
       sum_replicates = sum(sum_replicates),
       Herbivory.July_mean = mean(Herbivory.July_mean, na.rm = T),
       Herbivory.Sept_mean = mean(Herbivory.Sept_mean, na.rm = T),
+      Herbivory.July_mean_binary = mean(Herbivory.July_mean_binary, na.rm = T),
+      Herbivory.Sept_mean_binary = mean(Herbivory.Sept_mean_binary, na.rm = T),
       City_dist = first(City_dist),
       Transect_ID = first(Transect_ID),
       Urb_score = first(Urb_score))
@@ -1555,6 +1568,12 @@ ggplot(weevil_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City
   theme_urbansubs_1 +
   ylim(0, 0.2) 
 
+# sjPlot::plot_model(weev_urbsubs_city_m11_ME)
+ggplot(weevil_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Transect_ID, y = mean_scar_div_Juneheight)) + 
+  geom_boxplot(aes(color = Transect_ID), outlier.shape = NA) +
+  geom_jitter(aes(color = Transect_ID),width = 0.1) +
+  theme_pubr()
+
 
 ggplot(weevil_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = mean_scar_div_Juneheight)) + 
   labs(x = "Urbanization Score", 
@@ -1587,6 +1606,8 @@ ggplot(weevil_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City
   labs(x = "Distance to urban center (km)", 
     y = "Total weevil scar length") +
   theme_urbansubs_1
+ggsave(here::here("./Figures_Tables/Figures/2020/2020_weevdamage_urbansites_distance.png"),
+       width = 18, height = 8, units = "cm")
 
 ggplot(weevil_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = mean_scar)) + 
   labs(x = "Urbanization Score", 
@@ -1600,7 +1621,7 @@ ggplot(weevil_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_
 #### Entire gradient
 ```{r}
 # JULY HERBIVORY
-## NO TRANSFORMATIONS OR OUTLIERS REMOVED-----
+# NO TRANSFORMATIONS OR OUTLIERS REMOVED-----
 ## Multiple R-squared: 0.08834
 ggplot(herbivory2020_popmeans, aes(x = City_dist, y = Herbivory.July_mean)) + 
   labs(x = "Distance to urban center (km)", 
@@ -1618,13 +1639,42 @@ ggplot(herbivory2020_popmeans, aes(x = Urb_score, y = Herbivory.July_mean)) +
 
 
 
-# SEPT HEIGHT-----
+# SEPT HERBIVORY-----
 # Multiple R-squared:  0.01975
 ggplot(herbivory2020_popmeans, aes(x = City_dist, y = Herbivory.Sept_mean)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Mean Herbivory") +
   theme_gradient_1 +
   xlim(0, 71) 
+
+# LOGISTIC REGRESSION: IMPORT PLANT-LEVEL DATA FROM MAIN SCRIPT FIRST (not done in this script yet)
+ggplot() + 
+  labs(x = "Distance to urban center (km)", 
+    y = "Mean Herbivory (Binary)") +
+  geom_point(aes(x = City_dist, y = Herbivory.July_mean_binary, fill = 'July', shape = 'July'), size=2, data = herbivory2020_popmeans) +
+  geom_point(aes(x = City_dist, y = Herbivory.Sept_mean_binary, fill = 'September', shape = 'September' ), size=2, data = herbivory2020_popmeans) +
+  xlim(0, 71) +
+  # ylim(0, 120) +
+  geom_smooth(aes(x = City_dist, y = Herbivory.July_mean_binary, fill = 'July', color = 'July'), size=0.75, method = lm, alpha=.15, se = T, data = herbivory2020_popmeans) +
+  geom_smooth(aes(x = City_dist, y = Herbivory.Sept_mean_binary, fill = 'September', color = 'September'), size=0.75, method = lm, alpha=.15, se = T, data = herbivory2020_popmeans) +
+  theme_bw() +
+  theme(text = element_text(size=12)) +
+  scale_shape_manual(values = c(21, 24),
+                     breaks = c("July", "September"),
+                       labels = c("July", "September"),
+                       name = "Legend") +
+  scale_color_manual(values = c("blue", "orange"),
+                     breaks = c("July", "September"),
+                       labels = c("July", "September"),
+                       name = "Legend") +
+  scale_fill_manual(values = c("blue", "orange"),
+                     breaks = c("July", "September"),
+                       labels = c("July", "September"),
+                       name = "Legend") 
+ggsave(here::here("./Figures_Tables/Figures/2020/2020_herbiv_bin_allsites_distance.png"),
+         width = 14, height = 8, units = "cm")
+
+
 
 ggplot(herbivory2020_popmeans, aes(x = Urb_score, y = Herbivory.Sept_mean)) + 
   labs(x = "Urbanization Score", 
@@ -1674,11 +1724,14 @@ ggplot(herbivory2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_d
         geom_smooth(size=0.75, method = lm, alpha=.15, se = T, color = 'black')
 
 # split by subtransect: city_dist
-  ggplot(herbivory2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = City_dist, y = Herbivory.July_mean)) + 
+ggplot(herbivory2020_popmeans %>% filter(Transect_ID != "Rural"),
+       aes(x = City_dist, y = Herbivory.July_mean)) + 
   labs(x = "Distance to urban center (km)", 
     y = "Mean Herbivory") +
   theme_urbansubs_1 +
   xlim(0, 35) 
+ggsave(here::here("./Figures_Tables/Figures/2020/2020_herbiv_urbansites_distance.png"),
+       width = 18, height = 8, units = "cm")
   
 # split by subtransect: urb-score
 ggplot(herbivory2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y = Herbivory.July_mean)) + 
