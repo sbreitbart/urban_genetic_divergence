@@ -1616,6 +1616,34 @@ ggplot(weevil_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_
   scale_x_reverse()
 ```
 
+#### Boxplot
+##### Urban subtransects
+```{r}
+weevil_both2020_popmeans %>% 
+  filter(Transect_ID != "Rural") %>%
+  ggplot(aes(x=Transect_ID,
+             y=mean_scar,
+             fill=Transect_ID,
+         alpha=0.999)) +
+    geom_boxplot(outlier.shape = NA) +
+    geom_jitter(aes(color = Transect_ID),
+                size=1.5,
+                width = 0.25) +
+  labs(x = "", 
+    y = "Total weevil scar length") +
+  theme_classic() +
+  theme(text = element_text(size=12)) +
+  scale_color_manual(values = c("maroon4", "blue"),
+                     labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                     name = "Sample Site Subtransect") +
+  scale_fill_manual(values = c("firebrick1", "dodgerblue"),
+                    breaks = c("North", "South"),
+                    labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                     name = "Sample Site Subtransect") 
+  
+ggsave(here::here("./Figures_Tables/Figures/2020/2020_weevtotal_urbansites_distance.png"),
+         width = 14, height = 8, units = "cm")
+```
 ## Herbivory
 ### Regressions
 #### Entire gradient

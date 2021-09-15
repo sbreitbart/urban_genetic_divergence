@@ -1,0 +1,10 @@
+# CARDENOLIDE ANALYSIS #
+########################
+
+# Import data
+```{r}
+# cardenolides per population (pooled)
+cards <-  read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_cardenolides_clean.csv")) %>%
+  dplyr::select(., -1)
+
+```

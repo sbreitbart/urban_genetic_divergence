@@ -14,30 +14,27 @@ output:
     toc_depth: '2'
 editor_options: 
   chunk_output_type: console
-
 NOTES:
   -Still to do--
     -try to do an RDA (or PCA?) with all the traits
     -make a ReadMe file for each level
     -calculate heritability coefficients
-    
 WHEN TOTALLY DONE, type this:
 renv::activate()
 renv::snapshot()
-
 ---
 # Set up notebook
 ## Load packages
 ```{r}
 library(dplyr)
-library(reshape)
-library(reshape2)
+# library(reshape)
+# library(reshape2)
 library(DHARMa)
 library(flextable)
 library(pbkrtest)
-library(pbnm)
+# library(pbnm)
 library(glmmTMB)
-library(redres)
+# library(redres)
 library(tidyr)
 library(broom.mixed)
 library(tidyverse)
@@ -45,42 +42,35 @@ library(readxl)
 library(broom)
 library(knitr)
 library(ggplot2)
-library(ggExtra)
-library("ggpubr")
+# library(ggExtra)
+# library("ggpubr")
 library(devtools)
-library(rpart)
+# library(rpart)
 library("tibble", lib.loc="~/R/win-library/3.5")
-library(ISLR)
+# library(ISLR)
 library(MASS)
 library(car)
 library(data.table)
 library(plyr)
-library(dplyr)
-library(MuMIn)
+# library(MuMIn)
 library(ggplot2)
 library(gridExtra)
 library(Hmisc)
 library(lme4)
 library(nlme)
-library(reshape)
 library(lmerTest)
-library(tidyverse)
 library(vegan)
-library(lindia)
-library(e1071)
+# library(lindia)
+# library(e1071)
 library(ggpubr)
 library(forcats)
-library(car)
 library(multcomp)
 library(lsmeans)
-library(ggbiplot)
-library(ggplot2)
+# library(ggbiplot)
 require(MASS)
 require(scales)
-require(car)
-require(ggplot2)
-require(ggiraph)
-require(ggiraphExtra)
+# require(ggiraph)
+# require(ggiraphExtra)
 library(geosphere)
 library(vctrs)
 library(here)
@@ -432,6 +422,12 @@ reproductive <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_dat
 
 flowering_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_floweringplants_clean.csv")) %>%
   dplyr::select(., -c(1:2))
+
+sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv")) %>%
+  dplyr::select(., -c(1:2))
+
+cards <-  read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/Cardenolides_forR.csv")) %>%
+  
 ```
 
 ## Make combined 2019/2020 dfs
@@ -871,6 +867,48 @@ survival2020_popmeans <- survival2020_familymeans %>%
       Transect_ID = first(Transect_ID),
       Urb_score = first(Urb_score))
 survival2020_popmeans <- as.data.frame(survival2020_popmeans)
+
+
+# Use SummarySE to get stats per family & population
+
+### NOT TRANSFORMED
+# SSE_fams_height_2020 <- summarySE(DC7_2020_heights, measurevar="Total_Height", groupvars=c("Population", "Family"), na.rm=TRUE)
+# SSE_fams_height_2020 <- merge(x = SSE_fams_height_2020, y = Distances, by = "Population", all.x = TRUE)
+# 
+# SSE_pops_height_2020 <- summarySE(SSE_fams_height_2020, measurevar="Total_Height", groupvars=c("Population"), na.rm=TRUE)
+# ## removing pops with only 1 representative (4 pops)
+# SSE_pops_height_2020 <- merge(x = SSE_pops_height_2020 %>% filter(N > 1), y = Distances, by = "Population", all.x = TRUE)
+
+
+```
+
+## SLA & LDMC
+```{r}
+# Find family means
+sla_ldmc2020_familymeans <- sla_ldmc %>%
+  group_by(Population, Family) %>%
+    dplyr::summarise(
+      sum_replicates = n_distinct(Replicate),
+      sla_mean = mean(SLA, na.rm = T),
+      ldmc_mean = mean(LDMC, na.rm = T),
+      City_dist = first(City_dist),
+      Transect_ID = first(Transect_ID),
+      Urb_score = first(Urb_score),
+      nPlants=n()) %>%
+  as.data.frame()
+
+
+# Find population means
+sla_ldmc2020_popmeans <- sla_ldmc2020_familymeans %>%
+  group_by(Population) %>%
+    dplyr::summarise(
+      sum_replicates = sum(sum_replicates),
+      sla_mean = mean(sla_mean, na.rm = T),
+      ldmc_mean = mean(ldmc_mean, na.rm = T),
+      City_dist = first(City_dist),
+      Transect_ID = first(Transect_ID),
+      Urb_score = first(Urb_score)) %>%
+  as.data.frame()
 
 
 # Use SummarySE to get stats per family & population
@@ -2809,40 +2847,39 @@ AIC(glmer(Dead  ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID,
 
 
 # How many plants flowered per subtransect? using 2020 alive plants
-reproductive <- anti_join(reproductive, dead_2020, by = c("Row", "Column"))
 
 tib2 <- reproductive %>%
+  filter(Alive_DC1 == 1) %>%
   group_by(Flowered2020, Urb_Rur) %>%
   tally()
 tib2
 
 
 Flowered_ttest2 <- matrix(c(
-  as.integer(tib2[3,3]),
+  as.integer(tib2[2,3]),
   as.integer(tib2[4,3]),
-  as.integer(tib2[1,3]),
-  as.integer(tib2[2,3])),
+  as.integer(tib2[4,3]),
+  as.integer(tib2[3,3])),
   nrow = 2,
   dimnames = list(
-    c("Urban", "Rural"),
+    c("Rural", "Urban"),
     c("Flowered", "Didn't Flower")))
 
 fisher.test(Flowered_ttest2, alternative = "two.sided")
-# odds ratio = 3.5148
-# p = 0.0445
-# medium effect size
+# odds ratio = 3.761
+# p = 0.0655
+# Medium effect size
 
 chisq.test(Flowered_ttest2)
-# X-squared = 3.7416, df = 1, p-value = 0.05307
+# X-squared = 3.823, df = 1, p-value = 0.05055
 
 
 
 
 
 # How many populations had at least one plant flower per subtransect? using 2020 alive plants
-reproductive <- anti_join(reproductive, dead_2020, by = c("Row", "Column"))
 
-tib3 <- reproductive[,c(1:6, 78:86)] %>%
+tib3 <- reproductive %>%
   group_by(Population, Flowered2020, Urb_Rur) %>%
   dplyr::summarise(Pops = n_distinct(Population),
                    Urb_Rur = first(Urb_Rur)) %>%
@@ -2853,29 +2890,29 @@ tib3 <- reproductive[,c(1:6, 78:86)] %>%
   dplyr::summarise(Pops = n_distinct(Population))
   
 tib3
-# Flowered = 1: Didn't flower
-# Flowered = 3: Did flower
+# Flowered = 1: Flowered
+# Flowered = 0: Didn't flower
 
 
 
 Flowered_ttest3 <- matrix(c(
   as.integer(tib3[2,3]),
   as.integer(tib3[4,3]),
-  as.integer(tib3[3,3]),
-  as.integer(tib3[2,3])),
+  as.integer(tib3[4,3]),
+  as.integer(tib3[3,3])),
   nrow = 2,
   dimnames = list(
-    c("Urban", "Rural"),
+    c("Rural", "Urban"),
     c("Flowered", "Didn't Flower")))
 
 fisher.test(Flowered_ttest3, alternative = "two.sided")
-# odds ratio = 3.5750
-# p = 0.1006 (NOT SIGNIFICANT; CAN'T REJECT NULL)
-# medium effect size
+# odds ratio = 0.5064
+# p = 0.5034
+# Medium effect size
 
 
 chisq.test(Flowered_ttest3)
-# X-squared = 2.0551, df = 1, p-value = 0.1517
+# X-squared = 0.3782, df = 1, p-value = 0.5386
 ```
 
 
@@ -2883,7 +2920,6 @@ chisq.test(Flowered_ttest3)
 ##### Sig difference between urb:north vs urb:south? (Odds ratio)
 ```{r}
 # How many plants flowered per subtransect? using 2020 alive plants
-reproductive <- anti_join(reproductive, dead_2020, by = c("Row", "Column"))
 
 tib4 <- reproductive %>%
   filter(., Transect_ID != 'Rural') %>%
@@ -2900,11 +2936,12 @@ Flowered_ttest4 <- matrix(c(
   nrow = 2,
   dimnames = list(
     c("North", "South"),
-    c("Flowered", "Didn't Flower")))
+    c("Flowered", "Didn't Flower"))) %T>%
+  print()
 
 fisher.test(Flowered_ttest4, alternative = "two.sided")
-# odds ratio = 0.7970 (inverted = 1.2547)
-# p = 0.6618 (CAN'T REJECT THE NULL)
+# odds ratio = 0.782
+# p = 0.660 (CAN'T REJECT THE NULL)
 # negligible effect size
 
 chisq.test(Flowered_ttest4)
@@ -2916,9 +2953,8 @@ chisq.test(Flowered_ttest4)
 
 
 # How many populations had at least one plant flower per subtransect? using 2020 alive plants
-reproductive <- anti_join(reproductive, dead_2020, by = c("Row", "Column"))
 
-tib5 <- reproductive[,c(1:6, 78:86)] %>%
+tib5 <- reproductive %>%
   filter(., Transect_ID != "Rural") %>%
   group_by(Population, Flowered2020, Transect_ID) %>%
   dplyr::summarise(Pops = n_distinct(Population),
@@ -2930,24 +2966,25 @@ tib5 <- reproductive[,c(1:6, 78:86)] %>%
   dplyr::summarise(Pops = n_distinct(Population))
   
 tib5
-# Flowered = 1: Didn't flower
-# Flowered = 3: Did flower
+# Flowered = 0: Didn't flower
+# Flowered = 1: Did flower
 
 
 
 Flowered_ttest5 <- matrix(c(
-  as.integer(tib5[2,3]),
-  as.integer(tib5[4,3]),
+  as.integer(tib5[1,3]),
   as.integer(tib5[3,3]),
-  as.integer(tib5[2,3])),
+  as.integer(tib5[2,3]),
+  as.integer(tib5[4,3])),
   nrow = 2,
   dimnames = list(
     c("North", "South"),
-    c("Flowered", "Didn't Flower")))
+    c("Didn't Flower", "Flowered"))) %T>%
+  print()
 
 fisher.test(Flowered_ttest5, alternative = "two.sided")
-# odds ratio = 0.4737 (reciprocal = 2.1110)
-# p = 0.4521 (NOT SIGNIFICANT; CAN'T REJECT NULL)
+# odds ratio = 0.851
+# p = 1 (NOT SIGNIFICANT; CAN'T REJECT NULL)
 # small effect size
 
 chisq.test(Flowered_ttest5)
@@ -2980,22 +3017,20 @@ summary(glmer(Flowered2020 ~ Block + (1|Population/Family),
 #### Flower count: HOLD OFF until 2021- too few plants and will probably overfit all models
 ##### Mean flower count/inflorescence
 ###### Sig difference along gradient?
-####### glmer: diagnostics (**YES: Both city_dist and urb_score significant)
+####### glmer: diagnostics (No)
 ```{r}
-flowercount_2020_lmer_gradient <- glmer(mean_flower_count ~
+flowercount_2020_lmer_gradient <- glmmTMB(mean_flower_count ~
                                           (1|Block) +
                                           (1|Population/Family) +
                                           City_dist, 
-                                        REML = F,
                                         data = flowering_2020,
-                                        family = "poisson")
+                                        family = nbinom1())
 res <- simulateResiduals(flowercount_2020_lmer_gradient)
 plot(res)
 testDispersion(flowercount_2020_lmer_gradient)
 hist(flowering_2020$mean_flower_count, breaks = 20)
 
-# is singular
-summary(flowercount_2020_lmer_gradient)
+
 ```
 
 ####### City_dist
@@ -3004,23 +3039,23 @@ summary(flowercount_2020_lmer_gradient)
 
 # ANOVA
 car::Anova(flowercount_2020_lmer_gradient)
-# distance is sig
+# distance is not sig
 
-library(MuMIn)
-r.squaredGLMM(flowercount_2020_lmer_gradient)
-
-
-### CROSSED RANDOM EFFECTS-----
-lmer(mean_flower_count ~ (1|Block) + (1|Population:Family) + City_dist, data = flowering_2020, REML = F)
-# singular
-
-car::Anova(lmer(mean_flower_count ~ (1|Block) + (1|Population:Family) + City_dist, data = flowering_2020, REML = F))
-# distance is sig
+# library(MuMIn)
+# r.squaredGLMM(flowercount_2020_lmer_gradient)
 
 
-# ANy variation among families or populations?
-ranova(lmer(mean_flower_count ~ (1|Population/Family), data = flowering_2020, REML = T))
-# no... is singular
+# ### CROSSED RANDOM EFFECTS-----
+# lmer(mean_flower_count ~ (1|Block) + (1|Population:Family) + City_dist, data = flowering_2020, REML = F)
+# # singular
+# 
+# car::Anova(lmer(mean_flower_count ~ (1|Block) + (1|Population:Family) + City_dist, data = flowering_2020, REML = F))
+# # distance is sig
+# 
+# 
+# # ANy variation among families or populations?
+# ranova(lmer(mean_flower_count ~ (1|Population/Family), data = flowering_2020, REML = T))
+# # no... is singular
 ```
 
 ####### Urb_score
@@ -3129,30 +3164,33 @@ car::Anova(lmer(mean_flower_count ~ (1|Block) + (1|Population:Family) + Urb_scor
 
 ##### Total flower count
 ###### Sig difference along gradient?
-####### glmer: *Marginally sig for city_dist, insig for urb_score
+####### glmer: *sig for city_dist, insig for urb_score
 ######## City_dist
 ```{r}
 ### nested RANDOM EFFECTS-----
-flowercountsum_2020_glmer_gradient <- glmer(total_flower_count ~ (1|Block) + (1|Population/Family) + City_dist, data = flowering_2020, family = 'poisson')
-# is singular...
+flowercountsum_2020_glmer_gradient <- glmmTMB(total_flower_count ~
+                                                # (1|Block) +
+                                                (1|Population/Family) +
+                                                City_dist,
+                                              data = flowering_2020,
+                                              family = nbinom1())
 
 
 # ANOVA
 car::Anova(flowercountsum_2020_glmer_gradient)
-# distance is marginally sig
+# distance is sig
 
 r.squaredGLMM(flowercountsum_2020_glmer_gradient)
 
 
-### CROSSED RANDOM EFFECTS-----
-glmer(total_flower_count ~ (1|Block) + (1|Population:Family) + City_dist, data = flowering_2020, family = 'poisson')
-# NOT singular!
 
-
-# ANOVA
-car::Anova(glmer(total_flower_count ~ (1|Block) + (1|Population:Family) + City_dist, data = flowering_2020, family = 'poisson')
-)
-# distance is marginally sig
+# sjPlot: show points
+sjPlot::plot_model(flowercountsum_2020_glmer_gradient,
+                   type = "pred",
+                   terms = c("City_dist"),
+                   show.data = T,
+                   geom_size = 1) +
+  labs(x = "Dist CC") 
 
 
 
@@ -4463,10 +4501,10 @@ Height_Sept20_urbsubs_usc_m2_ME <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1
 
 summary(Height_Sept20_urbsubs_usc_m2_ME)
 ```
-#### Entire gradient: *marginally sig for city_dist, not for urb_score
+#### Entire gradient: *sig for city_dist, not for urb_score
 ###### City_dist
 ```{r}
-car::Anova(Height_Sept20_gr_city_m2) #marginally sig
+car::Anova(Height_Sept20_gr_city_m2) # sig
 
 # 
 # # ANy variation within families or populations?
@@ -4495,7 +4533,6 @@ car::Anova(Height_Sept20_gr_city_m2) #marginally sig
 ```{r}
 car::Anova(Height_Sept20_gr_usc_m5) # not sig
 ```
-
 
 #### Urban subtransects: *Not sig for either
 ###### City_dist
@@ -8568,6 +8605,545 @@ AIC(surv20_urbsubs_usc_m1, surv20_urbsubs_usc_m1_ME)
 
 ```
 
+
+## SLA
+### lmer: diagnostics
+```{r}
+# GRADIENT / CITY_DIST-----
+
+# sla_gr_city_m1 <- lmer(SLA ~ (1|Block) + (1|Population/Family) + City_dist,
+#   data = sla_ldmc,
+#   REML = F)
+# sjPlot::plot_model(sla_gr_city_m1, type = "diag") # is singular, looks normal except for long right tail
+# 
+# diagnostic(resid(sla_gr_city_m1)) # very kurtotic and skewed
+# 
+# sla_gr_city_m2 <- lmer(SLA ~ (1|Population/Family) + City_dist,
+#   data = sla_ldmc,
+#   REML = F) # still singular... take out Fam
+# 
+# sla_gr_city_m3 <- lmer(SLA ~ (1|Population) + City_dist,
+#   data = sla_ldmc,
+#   REML = F) # still singular... take out block
+ 
+
+# # try glmmtmb
+# sla_gr_city_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + City_dist,
+#   data = sla_ldmc,
+#   family = gaussian) # NOT singular!
+# sjPlot::plot_model(sla_gr_city_m1, type='diag') #very right-skewed... try sqrt
+
+
+sla_gr_city_m1 <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = sla_ldmc,
+  family = gaussian) # NOT singular!
+sjPlot::plot_model(sla_gr_city_m1, type='diag') # looks good enough
+
+hist(sla_ldmc$SLA)
+boxplot.stats(sla_ldmc$SLA)$out
+
+
+# GRADIENT / URB SCORE-----
+
+# sla_gr_usc_m1 <- lmer(SLA ~ (1|Block) + (1|Population/Family) + Urb_score,
+#   data = sla_ldmc,
+#   REML = F)
+# sjPlot::plot_model(sla_gr_city_m1, type = "diag") # is singular, looks normal except for long right tail
+# 
+# diagnostic(resid(sla_gr_usc_m1)) # very kurtotic and skewed
+# 
+# sla_gr_usc_m1 <- lmer(SLA ~ (1|Population/Family) + Urb_score,
+#   data = sla_ldmc,
+#   REML = F) # still singular... take out Fam
+# 
+# sla_gr_usc_m1 <- lmer(SLA ~ (1|Population) + Urb_score,
+#   data = sla_ldmc,
+#   REML = F) # still singular... take out block
+ 
+
+# # try glmmtmb
+# sla_gr_usc_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + Urb_score,
+#   data = sla_ldmc,
+#   family = gaussian) # NOT singular!
+# sjPlot::plot_model(sla_gr_usc_m1, type='diag') #very right-skewed... try sqrt
+
+
+sla_gr_usc_m1 <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = sla_ldmc,
+  family = gaussian) # NOT singular!
+sjPlot::plot_model(sla_gr_usc_m1, type='diag') # looks good enough
+
+
+
+
+
+# URB SUBTRANSECTS / CITY_DIST-----
+
+# SLA_urbsubs_city_m1 <- lmer(SLA ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+#   data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+#   REML = F)
+# sjPlot::plot_model(SLA_urbsubs_city_m1, type = "diag") # is singular, looks normal except for right tail (but otherwise looks fine... I think it's kurtotic)... take out block
+# 
+# SLA_urbsubs_city_m2 <- lmer(SLA ~  (1|Population/Family) + City_dist * Transect_ID,
+#   data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+#   REML = F) # is singular,  take out Fam
+# 
+# SLA_urbsubs_city_m3 <- lmer(SLA ~ (1|Population) + City_dist * Transect_ID,
+#   data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+#   REML = F)  # NOT singular... try glmmTMB though
+# 
+# 
+# SLA_urbsubs_city_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) +  City_dist * Transect_ID,
+#   data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+#   family = gaussian) # it works! use this
+# sjPlot::plot_model(SLA_urbsubs_city_m1, type = "diag") # is singular, looks normal except for right tail (but otherwise looks fine... I think it's kurtotic)... try sqrt transf
+
+SLA_urbsubs_city_m1 <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population/Family) +  City_dist * Transect_ID,
+  data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+  family = gaussian) # it works! use this
+sjPlot::plot_model(SLA_urbsubs_city_m1, type = "diag") # good enough
+
+
+# main effects
+SLA_urbsubs_city_m1_ME <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population/Family) +  City_dist + Transect_ID,
+  data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+  family = gaussian) 
+
+
+
+# URB SUBTRANSECTS / URB SCORE-----
+
+# SLA_urbsubs_usc_m1 <- lmer(SLA ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+#   data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+#   REML = F)
+# sjPlot::plot_model(SLA_urbsubs_usc_m1, type = "diag") # is singular, looks normal except for right tail (but otherwise looks fine... I think it's kurtotic)... take out block
+# 
+# SLA_urbsubs_usc_m2 <- lmer(SLA ~  (1|Population/Family) + Urb_score * Transect_ID,
+#   data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+#   REML = F) # is singular,  take out Fam
+# 
+# SLA_urbsubs_usc_m3 <- lmer(SLA ~ (1|Population) + Urb_score * Transect_ID,
+#   data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+#   REML = F)  # NOT singular... try glmmTMB though
+# 
+# 
+# SLA_urbsubs_usc_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) +  Urb_score * Transect_ID,
+#   data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+#   family = gaussian) # it works! use this
+# sjPlot::plot_model(SLA_urbsubs_usc_m1, type = "diag") # is singular, looks normal except for right tail (but otherwise looks fine... I think it's kurtotic)... try sqrt transf
+
+SLA_urbsubs_usc_m1 <- glmmTMB(sqrt(SLA) ~ (1|Population/Family) +  Urb_score * Transect_ID,
+  data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+  family = gaussian) # convergence issue... take out block
+sjPlot::plot_model(SLA_urbsubs_usc_m1, type = "diag") # good enough
+
+
+# main effects
+SLA_urbsubs_usc_m1_ME <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population/Family) +  Urb_score + Transect_ID,
+  data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+  family = gaussian) # fine with block included
+
+
+```
+
+### Entire gradient: *Not sig for either
+#### City_dist
+```{r}
+car::Anova(sla_gr_city_m1) # not sig
+
+
+# ANy variation within families or populations?
+# m.1 <- glmmTMB(sqrt(SLA) ~ (1|Population/Family),
+#             data = sla_ldmc,
+#             REML = T)
+# 
+# 
+# ranova(m.1)
+# # nope
+# sum.1 <- summary(m.1)
+# 
+# 
+# variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+#   dplyr::select(., c(grp, vcov, PVE)) %>%
+#   dplyr::rename(., Group = grp,
+#                 Variance = vcov)
+# 
+# 
+# write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_growthrate_lmer_PVE.csv"), col.names=TRUE, sep=",")
+# write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_growthrate_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+```
+
+#### Urb_score
+```{r}
+car::Anova(sla_gr_usc_m1) #not sig
+
+```
+
+
+### Urban subtransects: *Not sig for city_dist, transect sig for urb_score
+#### City_dist
+```{r}
+car::Anova(SLA_urbsubs_city_m1) #  Not sig
+car::Anova(SLA_urbsubs_city_m1_ME) #  Not sig
+
+AIC(SLA_urbsubs_city_m1, SLA_urbsubs_city_m1_ME) # ME model lower AIC (only by 1)
+summary(SLA_urbsubs_city_m1_ME)
+
+
+
+# # ANy variation among families or populations?
+# m.1 <- lmer(sqrt(rel_growth_rate) ~  (1|Population/Family) + City_dist ,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 & Urb_Rur == "Urban"),
+#   REML = T)
+# 
+# ranova(m.1)
+# # no
+# 
+# m.2 <- lmer(sqrt(rel_growth_rate) ~ (1|Population/Family) + Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 & Urb_Rur == "Urban"),
+#             REML = F)
+# car::Anova(m.2)
+# # not among transects either
+# 
+# 
+# m.3 <- lmer(sqrt(rel_growth_rate) ~ (1|Population/Family) + Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+#   REML = T)
+# car::Anova(m.3)
+# # also not sig among transects
+# 
+# 
+# sum.1 <- summary(m.1)
+# 
+# variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+#   dplyr::select(., c(grp, vcov, PVE)) %>%
+#   dplyr::rename(., Group = grp,
+#                 Variance = vcov)
+# 
+# 
+# write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_growthrate_urban_lmer_PVE.csv"), col.names=TRUE, sep=",")
+# write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_growthrate_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+# write.table(car::Anova(m.2), here::here("./Figures_Tables/ranova_PVE/2020_growthrate_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+```
+
+#### Urb_score
+```{r}
+car::Anova(SLA_urbsubs_usc_m1) #  transect sig
+car::Anova(SLA_urbsubs_usc_m1_ME) #  transect marg sig
+
+AIC(SLA_urbsubs_usc_m1, SLA_urbsubs_usc_m1_ME) # ME model lower AIC
+summary(SLA_urbsubs_usc_m1_ME)
+```
+
+
+### Export ANOVA
+```{r}
+# anova_table_flx(rgr_gr_city_m6)
+# anova_table_flx(rgr_gr_city_m8)
+# anova_table_flx(rgr_gr_usc_m6)
+# anova_table_flx(rgr_gr_usc_m8)
+# 
+# anova_table_flx(rgr_urbsubs_city_m5)
+# anova_table_flx(rgr_urbsubs_city_m5_ME)
+# anova_table_flx(rgr_urbsubs_city_m8)
+# anova_table_flx(rgr_urbsubs_city_m8_ME.1)
+# anova_table_flx(rgr_urbsubs_usc_m5)
+# anova_table_flx(rgr_urbsubs_usc_m5_ME)
+# anova_table_flx(rgr_urbsubs_usc_m8)
+# anova_table_flx(rgr_urbsubs_usc_m8_ME.1)
+# 
+# AIC_compare.city_dist_transf_binomial(rgr_urbsubs_city_m5 ,
+#                        rgr_urbsubs_city_m5_ME)
+#     
+# AIC_compare.city_dist_transf_quantitative( rgr_urbsubs_city_m8,
+#                        rgr_urbsubs_city_m8_ME.1) 
+# 
+# AIC_compare.urb_score_transf_binomial(rgr_urbsubs_usc_m5 ,
+#                        rgr_urbsubs_usc_m5_ME)
+#     
+# AIC_compare.urb_score_transf_quantitative( rgr_urbsubs_usc_m8,
+#                        rgr_urbsubs_usc_m8_ME.1) 
+
+```
+
+
+## LDMC- NOT DONE AT ALL
+### lmer: diagnostics
+```{r}
+# GRADIENT / CITY_DIST-----
+
+ldmc_gr_city_m1 <- lmer(LDMC ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = sla_ldmc %>% filter(LDMC < 1),
+  REML = F)
+sjPlot::plot_model(ldmc_gr_city_m1, type = "diag") # is singular, looks normal except for long right tail
+# 
+# diagnostic(resid(sla_gr_city_m1)) # very kurtotic and skewed
+# 
+# sla_gr_city_m2 <- lmer(SLA ~ (1|Population/Family) + City_dist,
+#   data = sla_ldmc,
+#   REML = F) # still singular... take out Fam
+# 
+# sla_gr_city_m3 <- lmer(SLA ~ (1|Population) + City_dist,
+#   data = sla_ldmc,
+#   REML = F) # still singular... take out block
+ 
+
+# # try glmmtmb
+# sla_gr_city_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + City_dist,
+#   data = sla_ldmc,
+#   family = gaussian) # NOT singular!
+# sjPlot::plot_model(sla_gr_city_m1, type='diag') #very right-skewed... try sqrt
+
+
+sla_gr_city_m1 <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = sla_ldmc,
+  family = gaussian) # NOT singular!
+sjPlot::plot_model(sla_gr_city_m1, type='diag') # looks good enough
+
+
+
+
+# GRADIENT / URB SCORE-----
+
+# sla_gr_usc_m1 <- lmer(SLA ~ (1|Block) + (1|Population/Family) + Urb_score,
+#   data = sla_ldmc,
+#   REML = F)
+# sjPlot::plot_model(sla_gr_city_m1, type = "diag") # is singular, looks normal except for long right tail
+# 
+# diagnostic(resid(sla_gr_usc_m1)) # very kurtotic and skewed
+# 
+# sla_gr_usc_m1 <- lmer(SLA ~ (1|Population/Family) + Urb_score,
+#   data = sla_ldmc,
+#   REML = F) # still singular... take out Fam
+# 
+# sla_gr_usc_m1 <- lmer(SLA ~ (1|Population) + Urb_score,
+#   data = sla_ldmc,
+#   REML = F) # still singular... take out block
+ 
+
+# # try glmmtmb
+# sla_gr_usc_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + Urb_score,
+#   data = sla_ldmc,
+#   family = gaussian) # NOT singular!
+# sjPlot::plot_model(sla_gr_usc_m1, type='diag') #very right-skewed... try sqrt
+
+
+sla_gr_usc_m1 <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = sla_ldmc,
+  family = gaussian) # NOT singular!
+sjPlot::plot_model(sla_gr_usc_m1, type='diag') # looks good enough
+
+
+
+
+
+# URB SUBTRANSECTS / CITY_DIST-----
+
+# SLA_urbsubs_city_m1 <- lmer(SLA ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+#   data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+#   REML = F)
+# sjPlot::plot_model(SLA_urbsubs_city_m1, type = "diag") # is singular, looks normal except for right tail (but otherwise looks fine... I think it's kurtotic)... take out block
+# 
+# SLA_urbsubs_city_m2 <- lmer(SLA ~  (1|Population/Family) + City_dist * Transect_ID,
+#   data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+#   REML = F) # is singular,  take out Fam
+# 
+# SLA_urbsubs_city_m3 <- lmer(SLA ~ (1|Population) + City_dist * Transect_ID,
+#   data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+#   REML = F)  # NOT singular... try glmmTMB though
+# 
+# 
+# SLA_urbsubs_city_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) +  City_dist * Transect_ID,
+#   data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+#   family = gaussian) # it works! use this
+# sjPlot::plot_model(SLA_urbsubs_city_m1, type = "diag") # is singular, looks normal except for right tail (but otherwise looks fine... I think it's kurtotic)... try sqrt transf
+
+SLA_urbsubs_city_m1 <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population/Family) +  City_dist * Transect_ID,
+  data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+  family = gaussian) # it works! use this
+sjPlot::plot_model(SLA_urbsubs_city_m1, type = "diag") # good enough
+
+
+# main effects
+SLA_urbsubs_city_m1_ME <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population/Family) +  City_dist + Transect_ID,
+  data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+  family = gaussian) 
+
+
+
+# URB SUBTRANSECTS / URB SCORE-----
+
+# SLA_urbsubs_usc_m1 <- lmer(SLA ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+#   data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+#   REML = F)
+# sjPlot::plot_model(SLA_urbsubs_usc_m1, type = "diag") # is singular, looks normal except for right tail (but otherwise looks fine... I think it's kurtotic)... take out block
+# 
+# SLA_urbsubs_usc_m2 <- lmer(SLA ~  (1|Population/Family) + Urb_score * Transect_ID,
+#   data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+#   REML = F) # is singular,  take out Fam
+# 
+# SLA_urbsubs_usc_m3 <- lmer(SLA ~ (1|Population) + Urb_score * Transect_ID,
+#   data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+#   REML = F)  # NOT singular... try glmmTMB though
+# 
+# 
+# SLA_urbsubs_usc_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) +  Urb_score * Transect_ID,
+#   data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+#   family = gaussian) # it works! use this
+# sjPlot::plot_model(SLA_urbsubs_usc_m1, type = "diag") # is singular, looks normal except for right tail (but otherwise looks fine... I think it's kurtotic)... try sqrt transf
+
+SLA_urbsubs_usc_m1 <- glmmTMB(sqrt(SLA) ~ (1|Population/Family) +  Urb_score * Transect_ID,
+  data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+  family = gaussian) # convergence issue... take out block
+sjPlot::plot_model(SLA_urbsubs_usc_m1, type = "diag") # good enough
+
+
+# main effects
+SLA_urbsubs_usc_m1_ME <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population/Family) +  Urb_score + Transect_ID,
+  data = sla_ldmc %>% filter(Urb_Rur == "Urban"),
+  family = gaussian) # fine with block included
+
+
+```
+
+### Entire gradient: *Not sig for either
+#### City_dist
+```{r}
+car::Anova(sla_gr_city_m1) # not sig
+
+
+# ANy variation within families or populations?
+# m.1 <- glmmTMB(sqrt(SLA) ~ (1|Population/Family),
+#             data = sla_ldmc,
+#             REML = T)
+# 
+# 
+# ranova(m.1)
+# # nope
+# sum.1 <- summary(m.1)
+# 
+# 
+# variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+#   dplyr::select(., c(grp, vcov, PVE)) %>%
+#   dplyr::rename(., Group = grp,
+#                 Variance = vcov)
+# 
+# 
+# write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_growthrate_lmer_PVE.csv"), col.names=TRUE, sep=",")
+# write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_growthrate_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+```
+
+#### Urb_score
+```{r}
+car::Anova(sla_gr_usc_m1) #not sig
+
+```
+
+
+### Urban subtransects: *Not sig for city_dist, Marg sig for urb_score
+#### City_dist
+```{r}
+car::Anova(SLA_urbsubs_city_m1) #  not sig
+car::Anova(SLA_urbsubs_city_m1_ME) #  not sig
+
+AIC(SLA_urbsubs_city_m1, SLA_urbsubs_city_m1_ME) # ME model lower AIC (only by 1)
+summary(SLA_urbsubs_city_m1_ME)
+
+
+
+# # ANy variation among families or populations?
+# m.1 <- lmer(sqrt(rel_growth_rate) ~  (1|Population/Family) + City_dist ,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 & Urb_Rur == "Urban"),
+#   REML = T)
+# 
+# ranova(m.1)
+# # no
+# 
+# m.2 <- lmer(sqrt(rel_growth_rate) ~ (1|Population/Family) + Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 & Urb_Rur == "Urban"),
+#             REML = F)
+# car::Anova(m.2)
+# # not among transects either
+# 
+# 
+# m.3 <- lmer(sqrt(rel_growth_rate) ~ (1|Population/Family) + Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+#   REML = T)
+# car::Anova(m.3)
+# # also not sig among transects
+# 
+# 
+# sum.1 <- summary(m.1)
+# 
+# variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+#   dplyr::select(., c(grp, vcov, PVE)) %>%
+#   dplyr::rename(., Group = grp,
+#                 Variance = vcov)
+# 
+# 
+# write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_growthrate_urban_lmer_PVE.csv"), col.names=TRUE, sep=",")
+# write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_growthrate_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+# write.table(car::Anova(m.2), here::here("./Figures_Tables/ranova_PVE/2020_growthrate_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+```
+
+#### Urb_score
+```{r}
+car::Anova(SLA_urbsubs_usc_m1) #  transect sig
+car::Anova(SLA_urbsubs_usc_m1_ME) #  transect marg sig
+
+AIC(SLA_urbsubs_usc_m1, SLA_urbsubs_usc_m1_ME) # ME model lower AIC
+summary(SLA_urbsubs_usc_m1_ME)
+```
+
+
+### Export ANOVA
+```{r}
+# anova_table_flx(rgr_gr_city_m6)
+# anova_table_flx(rgr_gr_city_m8)
+# anova_table_flx(rgr_gr_usc_m6)
+# anova_table_flx(rgr_gr_usc_m8)
+# 
+# anova_table_flx(rgr_urbsubs_city_m5)
+# anova_table_flx(rgr_urbsubs_city_m5_ME)
+# anova_table_flx(rgr_urbsubs_city_m8)
+# anova_table_flx(rgr_urbsubs_city_m8_ME.1)
+# anova_table_flx(rgr_urbsubs_usc_m5)
+# anova_table_flx(rgr_urbsubs_usc_m5_ME)
+# anova_table_flx(rgr_urbsubs_usc_m8)
+# anova_table_flx(rgr_urbsubs_usc_m8_ME.1)
+# 
+# AIC_compare.city_dist_transf_binomial(rgr_urbsubs_city_m5 ,
+#                        rgr_urbsubs_city_m5_ME)
+#     
+# AIC_compare.city_dist_transf_quantitative( rgr_urbsubs_city_m8,
+#                        rgr_urbsubs_city_m8_ME.1) 
+# 
+# AIC_compare.urb_score_transf_binomial(rgr_urbsubs_usc_m5 ,
+#                        rgr_urbsubs_usc_m5_ME)
+#     
+# AIC_compare.urb_score_transf_quantitative( rgr_urbsubs_usc_m8,
+#                        rgr_urbsubs_usc_m8_ME.1) 
+
+```
+
+
+
+## Latex
+```{r}
+
+```
+## Cardenolide concentration
+```{r}
+
+```
 
 ## Export all models & model formulas as a key
 ```{r}

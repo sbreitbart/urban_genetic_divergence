@@ -29,6 +29,11 @@ reproductive <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially
 flowering_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_floweringplants_partialclean.csv")) %>%
   dplyr::select(., -1)
 
+sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_sla_ldmc_partialclean.csv")) %>%
+  dplyr::select(., -1)
+
+cards <-  read.csv(here::here("./CommonGardenExperiment_2020Data/raw_data/Latex_Cardenolides/Cardenolides_forR.csv")) %>%
+  rename(., Population = 1)
 
 #-------------------
 # Clean data- step 2
@@ -226,6 +231,8 @@ weevil_both <- merge(weevil_both, y = Distances, by = "Population", all.x = TRUE
 herbivores <- merge(herbivores, y = Distances, by = "Population", all.x = TRUE)
 reproductive <- merge(reproductive, y = Distances, by = "Population", all.x = TRUE)
 flowering_2020 <- merge(flowering_2020, y = Distances, by = "Population", all.x = TRUE)
+sla_ldmc <- merge(sla_ldmc, y = Distances, by = "Population", all.x = TRUE)
+cards <- merge(cards, y = Distances, by = "Population", all.x = TRUE)
 
 
 # recode North & South as urban (CAN'T MAKE THIS WORK SO DOING IT MANUALLY)
@@ -293,8 +300,20 @@ flowering_2020 <- flowering_2020 %>%
                                         'South' = "Urban",
                                         'Rural' = "Rural"))
 
+sla_ldmc <- sla_ldmc %>% 
+  dplyr::mutate(Urb_Rur = Transect_ID) %>%
+  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
+                                        'North' = "Urban",
+                                        'South' = "Urban",
+                                        'Rural' = "Rural"))
 
 
+cards <- cards %>% 
+  dplyr::mutate(Urb_Rur = Transect_ID) %>%
+  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
+                                        'North' = "Urban",
+                                        'South' = "Urban",
+                                        'Rural' = "Rural"))
 
 ### Add urb_score data
 # Import urb_index values for each of these rows
@@ -315,6 +334,8 @@ weevil_both <- merge(weevil_both, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 herbivores <- merge(herbivores, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 reproductive <- merge(reproductive, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 flowering_2020 <- merge(flowering_2020, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+sla_ldmc <- merge(sla_ldmc, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+cards <- merge(cards, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 
 
 # ----------------
@@ -335,3 +356,7 @@ write.csv(reproductive,
           here::here("./CommonGardenExperiment_2020Data/clean_data/2020_reproductive_clean.csv"))
 write.csv(flowering_2020,
           here::here("./CommonGardenExperiment_2020Data/clean_data/2020_floweringplants_clean.csv"))
+write.csv(sla_ldmc,
+          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv"))
+write.csv(cards,
+          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_cardenolides_clean.csv"))
