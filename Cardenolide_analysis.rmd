@@ -4,10 +4,10 @@
 # Set up notebook
 ## Load libraries
 ```{r}
-library(performance)
-library(here)
-library(tidyverse)
-library(ggplot2)
+library(performance) # Assessment of Regression Models Performance
+library(here) # A Simpler Way to Find Your Files
+library(tidyverse) # Easily Install and Load the 'Tidyverse'
+library(ggplot2) # Create Elegant Data Visualisations Using the Grammar of Graphics
 ```
 
 
@@ -104,7 +104,7 @@ m2_176_usc <- lm(log(X17.6_main) ~ Urb_score, data = cards)
 performance::model_performance(m2_176_usc) # low R2
 ```
 
-# ANOVA
+# Linear Regression with ANOVA tables
 ## Distance from city center
 ### total cardenolides
 ```{r}
@@ -156,6 +156,33 @@ car::Anova(m1_176_usc) # not sig
 # Figures
 ## Distance from city center
 ```{r}
+
+# make vector of response variables
+responses <- c("total", "X6.6_main", "X15_main"
+               #, "log(X17.6_main)"
+               )
+
+y_labels <- c("Total Cardenolides", "Digitoxin peak 6.6", "Digitoxin peak 15"
+              #, "log(Digitoxin peak 17.6)"
+              )
+
+make_figures <- function(df, response_vec, y_labels){
+  for (i in 1:length(response_vec)) {
+    print(
+    ggplot(df, aes(x = City_dist, y = df[,response_vec[i]])) +
+    geom_point(size = 2) +
+    geom_smooth(method = lm) +
+    labs(x = "Distance to urban center (km)",
+         y = y_labels[i]) +
+    xlim(0, 71)  +
+    ylim(1.15*min(df[,response_vec[i]], na.rm=T),
+         1.15*max(df[,response_vec[i]], na.rm=T)) +  
+    theme_light())
+  }
+}
+make_figures(cards, responses, y_labels)
+
+
 # Total cards
 ggplot(cards, aes(x = City_dist, y = total)) +
   geom_point(size = 2) +
@@ -238,3 +265,4 @@ ggplot(cards, aes(x = Urb_score, y = log(X17.6_main))) +
     y = "log(Digitoxin peak 17.6") +
   xlim(4, -4) 
 ```
+

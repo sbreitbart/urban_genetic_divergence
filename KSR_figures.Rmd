@@ -24,60 +24,60 @@ renv::snapshot()
 # Set up notebook
 ## Load packages
 ```{r}
-library(dplyr)
-library(reshape)
-library(reshape2)
-library(DHARMa)
-library(flextable)
-library(glmmTMB)
-library(redres)
-library(tidyr)
-library(broom.mixed)
-library(tidyverse)
-library(readxl)
-library(broom)
-library(knitr)
-library(ggplot2)
-library(ggExtra)
-library("ggpubr")
-library(devtools)
-library(rpart)
-library("tibble", lib.loc="~/R/win-library/3.5")
-library(ISLR)
-library(MASS)
-library(car)
-library(data.table)
-library(plyr)
-library(dplyr)
-library(MuMIn)
-library(ggplot2)
-library(gridExtra)
-library(Hmisc)
-library(lme4)
-library(nlme)
-library(reshape)
-library(lmerTest)
-library(tidyverse)
-library(vegan)
-library(lindia)
-library(e1071)
-library(ggpubr)
-library(forcats)
-library(car)
-library(multcomp)
-library(lsmeans)
-library(ggbiplot)
-library(ggplot2)
-require(MASS)
-require(scales)
-require(car)
-require(ggplot2)
-require(ggiraph)
-require(ggiraphExtra)
-library(geosphere)
-library(vctrs)
-library(here)
-library(stringi)
+library(dplyr) # A Grammar of Data Manipulation # A Grammar of Data Manipulation
+library(reshape) # not installed on this machine # not installed on this machine
+library(reshape2) # not installed on this machine
+library(DHARMa) # Residual Diagnostics for Hierarchical (Multi-Level / Mixed) Regression Models
+library(flextable) # Functions for Tabular Reporting
+library(glmmTMB) # Generalized Linear Mixed Models using Template Model Builder
+library(redres) # not installed on this machine
+library(tidyr) # Tidy Messy Data
+library(broom.mixed) # Tidying Methods for Mixed Models
+library(tidyverse) # Easily Install and Load the 'Tidyverse' # Easily Install and Load the 'Tidyverse'
+library(readxl) # Read Excel Files
+library(broom) # Convert Statistical Objects into Tidy Tibbles
+library(knitr) # A General-Purpose Package for Dynamic Report Generation in R
+library(ggplot2) # Create Elegant Data Visualisations Using the Grammar of Graphics # Create Elegant Data Visualisations Using the Grammar of Graphics # Create Elegant Data Visualisations Using the Grammar of Graphics
+library(ggExtra) # not installed on this machine
+library("ggpubr") # 'ggplot2' Based Publication Ready Plots
+library(devtools) # Tools to Make Developing R Packages Easier
+library(rpart) # Recursive Partitioning and Regression Trees
+library("tibble", lib.loc="~/R/win-library/3.5") # not installed on this machine
+library(ISLR) # not installed on this machine
+library(MASS) # Support Functions and Datasets for Venables and Ripley's MASS
+library(car) # Companion to Applied Regression # Companion to Applied Regression
+library(data.table) # Extension of `data.frame`
+library(plyr) # Tools for Splitting, Applying and Combining Data
+library(dplyr) # A Grammar of Data Manipulation # A Grammar of Data Manipulation
+library(MuMIn) # Multi-Model Inference
+library(ggplot2) # Create Elegant Data Visualisations Using the Grammar of Graphics # Create Elegant Data Visualisations Using the Grammar of Graphics # Create Elegant Data Visualisations Using the Grammar of Graphics
+library(gridExtra) # Miscellaneous Functions for "Grid" Graphics
+library(Hmisc) # Harrell Miscellaneous
+library(lme4) # Linear Mixed-Effects Models using 'Eigen' and S4
+library(nlme) # Linear and Nonlinear Mixed Effects Models
+library(reshape) # not installed on this machine # not installed on this machine
+library(lmerTest) # Tests in Linear Mixed Effects Models
+library(tidyverse) # Easily Install and Load the 'Tidyverse' # Easily Install and Load the 'Tidyverse'
+library(vegan) # Community Ecology Package
+library(lindia) # not installed on this machine
+library(e1071) # not installed on this machine
+library(ggpubr) # 'ggplot2' Based Publication Ready Plots
+library(forcats) # Tools for Working with Categorical Variables (Factors)
+library(car) # Companion to Applied Regression # Companion to Applied Regression
+library(multcomp) # Simultaneous Inference in General Parametric Models
+library(lsmeans) # Least-Squares Means
+library(ggbiplot) # not installed on this machine
+library(ggplot2) # Create Elegant Data Visualisations Using the Grammar of Graphics # Create Elegant Data Visualisations Using the Grammar of Graphics # Create Elegant Data Visualisations Using the Grammar of Graphics
+require(MASS) # Support Functions and Datasets for Venables and Ripley's MASS
+require(scales) # Scale Functions for Visualization
+require(car) # Companion to Applied Regression
+require(ggplot2) # Create Elegant Data Visualisations Using the Grammar of Graphics
+require(ggiraph) # not installed on this machine
+require(ggiraphExtra) # not installed on this machine
+library(geosphere) # Spherical Trigonometry
+library(vctrs) # Vector Helpers
+library(here) # A Simpler Way to Find Your Files
+library(stringi) # Character String Processing Facilities
 ```
 
 ## Import data
@@ -1219,7 +1219,7 @@ ggplot(flowering_2020 %>% filter(Transect_ID != "Rural"), aes(x = Urb_score, y =
 #### Mean flower count
 ##### Urban subtransects
 ```{r}
-library(viridis)
+library(viridis) # Colorblind-Friendly Color Maps for R
 
 flowering_2020 %>%
   filter(Transect_ID != "Rural") %>%
@@ -1892,7 +1892,7 @@ ggplot(heights_both2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb
 
 
 
-library(patchwork)
+library(patchwork) # The Composer of Plots
 p1 + p2
 ```
 
@@ -2082,3 +2082,4 @@ ggplot(survival2020_popmeans %>% filter(Transect_ID != "Rural"), aes(x = Urb_sco
   theme_urbansubs_1 +
   scale_x_reverse()
 ```
+
