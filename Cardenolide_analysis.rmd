@@ -1,9 +1,24 @@
-# CARDENOLIDE ANALYSIS #
-########################
+---
+title: "Cardenolide Analysis (KSR 2020)"
+author: "Sophie Breitbart"
+output:
+  html_document:
+    number_sections: false
+    df_print: paged
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapsed: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
+editor_options: 
+  chunk_output_type: console
+---
 
 # Set up notebook
 ## Load libraries
-```{r}
+```{r message=FALSE, warning=FALSE}
 library(performance) # Assessment of Regression Models Performance
 library(here) # A Simpler Way to Find Your Files
 library(tidyverse) # Easily Install and Load the 'Tidyverse'
@@ -11,6 +26,7 @@ library(ggplot2) # Create Elegant Data Visualisations Using the Grammar of Graph
 library(broom)
 library(magrittr)
 library(lme4)
+library(ggpubr)
 ```
 
 
@@ -21,7 +37,8 @@ cards <-  read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020
   dplyr::select(., -1) 
 ```
 
-# Create function (diagnostics + anova)
+# Diagnostics + anova
+## Create function
 ```{r}
 DoLinearReg <- function(response_var, predictor_var, input_data){
 
@@ -50,7 +67,7 @@ cards_vars <- cards %>%
   as.list()
 ```
 
-## perform function w/all resp. vars with predictor = City_dist
+## Predictor: City_dist
 ```{r}
 city_dist_list <- lapply(cards_vars,
        DoLinearReg,
@@ -59,12 +76,16 @@ city_dist_list <- lapply(cards_vars,
 names(city_dist_list) <- cards_vars
 # Num 3 doesn't look normal... try transformation. Residuals look bimodal
 
+```
+
+## Investigate non-normal-looking models
+```{r}
 DoLinearReg("X17.6_main", "City_dist", cards)
 DoLinearReg("log(X17.6_main)", "City_dist", cards)
 car::Anova(lm(log(X17.6_main) ~ City_dist, cards)) # still isn't near p = 0.05 so maybe not worth worrying about
 ```
 
-## perform function w/all resp. vars with predictor = Urb_score
+## Predictor: Urb_score
 ```{r}
 urb_score_list <- lapply(cards_vars,
        DoLinearReg,
@@ -72,7 +93,10 @@ urb_score_list <- lapply(cards_vars,
        input_data = cards)
 names(urb_score_list) <- cards_vars
 # Num 3 doesn't look normal... try transformation. Looks bimodal
+```
 
+## Investigate non-normal-looking models
+```{r}
 DoLinearReg("X17.6_main", "Urb_score", cards)
 DoLinearReg("log(X17.6_main)", "Urb_score", cards)
 car::Anova(lm(log(X17.6_main) ~ Urb_score, cards)) # now it's near p = 0.05 (it's 0.068)... so investigate further
@@ -80,114 +104,183 @@ car::Anova(lm(log(X17.6_main) ~ Urb_score, cards)) # now it's near p = 0.05 (it'
 
 # Figures
 ## Distance from city center
-```{r}
+### Automated plot code (not using)
+```{r include=FALSE }
 
-# make vector of response variables
-responses <- c("total", "X6.6_main", "X15_main"
-               #, "log(X17.6_main)"
-               )
+# # make vector of response variables
+# responses <- c("total", "X6.6_main", "X15_main"
+#                #, "log(X17.6_main)"
+#                )
+# 
+# y_labels <- c("Total Cardenolides", "Digitoxin peak 6.6", "Digitoxin peak 15"
+#               #, "log(Digitoxin peak 17.6)"
+#               )
+# 
+# make_figures <- function(df, response_vec, y_labels){
+#   for (i in 1:length(response_vec)) {
+#     print(
+#     ggplot(df, aes(x = City_dist, y = df[,response_vec[i]])) +
+#     geom_point(size = 2) +
+#     geom_smooth(method = lm) +
+#     labs(x = "Distance to urban center (km)",
+#          y = y_labels[i]) +
+#     xlim(0, 71)  +
+#     # ylim(1.15*min(df[,response_vec[i]], na.rm=T),
+#     #      1.15*max(df[,response_vec[i]], na.rm=T)) +  
+#     theme_light())
+#   }
+# }
+# 
+# make_figures(cards, responses, y_labels)
 
-y_labels <- c("Total Cardenolides", "Digitoxin peak 6.6", "Digitoxin peak 15"
-              #, "log(Digitoxin peak 17.6)"
-              )
+```
 
-make_figures <- function(df, response_vec, y_labels){
-  for (i in 1:length(response_vec)) {
-    print(
-    ggplot(df, aes(x = City_dist, y = df[,response_vec[i]])) +
-    geom_point(size = 2) +
-    geom_smooth(method = lm) +
-    labs(x = "Distance to urban center (km)",
-         y = y_labels[i]) +
-    xlim(0, 71)  +
-    ylim(1.15*min(df[,response_vec[i]], na.rm=T),
-         1.15*max(df[,response_vec[i]], na.rm=T)) +  
-    theme_light())
-  }
-}
-make_figures(cards, responses, y_labels)
-
-
+### Plots
+```{r warning=FALSE, message=FALSE}
 # Total cards
-ggplot(cards, aes(x = City_dist, y = total)) +
-  geom_point(size = 2) +
-  geom_smooth(method = lm) +
-  labs(x = "Distance to urban center (km)", 
+cd_total <- ggplot(cards, aes(x = City_dist, y = total)) +
+  geom_point(size = 2,
+             shape = 1) +
+  geom_smooth(method = lm,
+              color = "black",
+              size = 0.5) +
+  labs(x = "Distance to urban center (km)",
     y = "Total Cardenolides") +
+  theme_pubr() +
   xlim(0, 71) +
-  ylim(0,0.8)
+  ylim(0,0.8) 
 
 
 # 6.6
-ggplot(cards, aes(x = City_dist, y = X6.6_main)) +
-  geom_point(size = 2) +
-  geom_smooth(method = lm) +
-  labs(x = "Distance to urban center (km)", 
+cd_66 <- ggplot(cards, aes(x = City_dist, y = X6.6_main)) +
+  geom_point(size = 2,
+             shape = 1) +
+  geom_smooth(method = lm,
+              color = "black",
+              size = 0.5) +
+  labs(x = "Distance to urban center (km)",
     y = "Digitoxin peak 6.6") +
+    theme_pubr() +
   xlim(0, 71) +
   ylim(0,0.6)
 
 
 # 15
-ggplot(cards, aes(x = City_dist, y = X15_main)) +
-  geom_point(size = 2) +
-  geom_smooth(method = lm) +
-  labs(x = "Distance to urban center (km)", 
+cd_15 <-ggplot(cards, aes(x = City_dist, y = X15_main)) +
+  geom_point(size = 2,
+             shape = 1) +
+  geom_smooth(method = lm,
+              color = "black",
+              size = 0.5) +
+  labs(x = "Distance to urban center (km)",
     y = "Digitoxin peak 15") +
+    theme_pubr() +
   xlim(0, 71) +
   ylim(0,0.2)
 
 
 # 17.6
-ggplot(cards, aes(x = City_dist, y = log(X17.6_main))) +
-  geom_point(size = 2) +
-  geom_smooth(method = lm) +
-  labs(x = "Distance to urban center (km)", 
+cd_176 <- ggplot(cards, aes(x = City_dist, y = log(X17.6_main))) +
+  geom_point(size = 2,
+             shape = 1) +
+  geom_smooth(method = lm,
+              color = "black",
+              size = 0.5) +
+  labs(x = "Distance to urban center (km)",
     y = "log(Digitoxin peak 17.6)") +
+    theme_pubr() +
   xlim(0, 71)
 
+
+# arrange plots in grid
+ggarrange(cd_total, cd_66, cd_15, cd_176, 
+          labels = c("A", "B", "C", "D"),
+          ncol = 2, nrow = 2)
 ```
 
 
 ## Urbanization score
-```{r}
+```{r warning=FALSE, message=FALSE}
 # Total cards
-ggplot(cards, aes(x = Urb_score, y = total)) +
-  geom_point(size = 2) +
-  geom_smooth(method = lm) +
+us_total <- ggplot(cards, aes(x = Urb_score, y = total)) +
+  geom_point(size = 2,
+             shape = 1) +
+  geom_smooth(method = lm,
+              color = "black",
+              size = 0.5) +
   labs(x = "Urbanization Score", 
     y = "Total Cardenolides") +
+      theme_pubr() +
   xlim(4, -4) +
   ylim(0,0.8)
 
 
 
 # 6.6
-ggplot(cards, aes(x = Urb_score, y = X6.6_main)) +
-  geom_point(size = 2) +
-  geom_smooth(method = lm) +
+us_66 <- ggplot(cards, aes(x = Urb_score, y = X6.6_main)) +
+  geom_point(size = 2,
+             shape = 1) +
+  geom_smooth(method = lm,
+              color = "black",
+              size = 0.5) +
   labs(x = "Urbanization Score", 
     y = "Digitoxin peak 6.6") +
+      theme_pubr() +
   xlim(4, -4) +
   ylim(0,0.6)
 
 
 # 15
-ggplot(cards, aes(x = Urb_score, y = X15_main)) +
-  geom_point(size = 2) +
-  geom_smooth(method = lm) +
+us_15 <- ggplot(cards, aes(x = Urb_score, y = X15_main)) +
+  geom_point(size = 2,
+             shape = 1) +
+  geom_smooth(method = lm,
+              color = "black",
+              size = 0.5) +
   labs(x = "Urbanization Score", 
     y = "Digitoxin peak 15") +
+      theme_pubr() +
   xlim(4, -4) +
   ylim(0,0.2)
 
 
 # 17.6
-ggplot(cards, aes(x = Urb_score, y = log(X17.6_main))) +
-  geom_point(size = 2) +
-  geom_smooth(method = lm) +
+us_176 <- ggplot(cards, aes(x = Urb_score, y = log(X17.6_main))) +
+  geom_point(size = 2,
+             shape = 1) +
+  geom_smooth(method = lm,
+              color = "black",
+              size = 0.5) +
   labs(x = "Urbanization Score", 
     y = "log(Digitoxin peak 17.6") +
+      theme_pubr() +
   xlim(4, -4) 
+
+
+# arrange plots in grid
+ggarrange(us_total, us_66, us_15, us_176, 
+          labels = c("A", "B", "C", "D"),
+          ncol = 2, nrow = 2)
+```
+
+
+# RDA
+```{r warning=FALSE, message=FALSE}
+library(vegan)
+
+pairs(cards[,c(3,5,7,10, 17)],
+      lower.panel = NULL)
+
+my.rda <- rda(cards[,c(3,5,7,10)])
+biplot(my.rda)
+
+ordihull(my.rda,
+         group = cards$Urb_Rur,
+         col = c("Orange", "Green"))
+
+legend("topright",
+       col = c("Orange", "Green"),
+       lty = 1,
+       legend = unique(cards$Urb_Rur))
 ```
 
