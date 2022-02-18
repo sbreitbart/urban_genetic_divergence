@@ -4,7 +4,7 @@
 #-------------------
 library(dplyr)
 library(here)
-
+library(magrittr)
 
 
 #-------------------
@@ -44,6 +44,20 @@ survival[factor_cols] <- lapply(survival[factor_cols], factor)
 
 str(survival)
 
+# check options for survival
+unique(survival$Alive)
+# change "." into NA
+
+survival %<>%
+  dplyr::mutate(.,
+                Alive = ifelse(survival$Alive == ".",
+                                      NA,
+                                      2)) %>%
+# then change NA into 0
+  dplyr::mutate(.,
+                Alive = ifelse(is.na(survival$Alive == TRUE),
+                               1,
+                               0))
 
 
 #-------------------

@@ -3,8 +3,9 @@
 # Load packages
 #-------------------
 library(dplyr)
+library(tidyr)
 library(here)
-
+library(magrittr)
 
 
 #-------------------
@@ -12,7 +13,7 @@ library(here)
 #-------------------
 # Data about flowering, pollen removal, inflor and follicle count, + other reproductive traits (Data collection 2)-----
 reproductive <- read.csv(here(
-  "./CommonGardenExperiment_2020Data/raw_data/Reproductive_Traits/2020_Datacollection2_20210110.csv"),
+  "./CommonGardenExperiment_2021Data/raw_data/2021_DC2_FloralTraits_final.csv"),
   header=T,
   stringsAsFactors=FALSE,
   na.strings=c("NO PLANT", "none", "", "NA"),
@@ -41,8 +42,6 @@ rm(c, c2)
 # Make certain columns factors / check classes are correct-----
 str(reproductive)
 
-# remove columns that were temporary
-reproductive <- reproductive[,-c(9:10)]
 
 # make these columns into factors
 factor_cols <- c("Block", "Population", "Family", "Replicate", "Comment")
@@ -51,73 +50,38 @@ reproductive[factor_cols] <- lapply(reproductive[factor_cols], factor)
 
 
 
-
-
 # Add col to indicate if plant flowered
-reproductive$Flowered2020 <- reproductive$Flower_count_I1
+reproductive %<>%
+  dplyr::mutate(.,
+         Flowered2021 = ifelse(is.na(reproductive$Flower_count_I1) == TRUE,
+                               0,
+                               1)) %>%
+  dplyr::mutate(.,
+         Flowered2021 = as.factor(Flowered2021))
 
-## Now change all instances of >0 to 1. If >=1, the plant flowered.
-reproductive <- reproductive %>% mutate(reproductive,
-                                        Flowered2020 = ifelse(Flowered2020 == "0", "0", "1"))
-## Change NAs to 0's.
-reproductive$Flowered2020[is.na(reproductive$Flowered2020)] <- 0
+unique(reproductive$Flowered2021)
 
-### make new binary flowering column factor
-reproductive$Flowered2020 <- as.factor(reproductive$Flowered2020)
 
 # Make subset of only flowering plants
-flowering_2020 <- reproductive %>% filter(!is.na(Flower_count_I1))
+flowering_2021 <- reproductive %>%
+  filter(!is.na(Flower_count_I1))
 
 # Remove flowering data from df of all plants
-reproductive <- reproductive[,-c(9:81)]
+reproductive %<>%
+  dplyr::select(-c(13:78))
 
 
-
+str(flowering_2021)
 
 # Make certain columns factors / check classes are correct
-# THIS ISN'T WORKING, SO DOING IT MANUALLY
-# # make these columns into numeric
-# flowering_2020 <- flowering_2020 %>%
-#   dplyr::mutate_at(vars(contains(c("Hood", "Corolla", "Flower"))),
-#                    funs(as.character()))
-#                     %>%
-#   dplyr::mutate_at(vars(starts_with(c("Hood", "Corolla", "Flower"))),
-#                    funs(as.numeric())) %>%
-#   
-#   # make these columns into integers
-#   dplyr::mutate_at(vars(starts_with(c("Flower_count", "Poll_rem", "Pods", "Peduncles"))),
-#                    dplyr::funs(as.character())) %>%
-#   dplyr::mutate_at(vars(starts_with(c("Flower_count", "Poll_rem", "Pods", "Peduncles"))),
-#                    dplyr::funs(as.integer()))
-
-
 
 # Pods, Peduncles, Flower_count, Poll_rem: int
 # Hood, Corolla, Flower width/length:      numeric
 
-# Convert appropriate column types to integer.
-to_int <- c(14:15, # pods, peduncles
-            16, 38, 60, # flower count
-            23, 30, 37, 45, 52, 59, 67, 74, 81) # pollinaria removed)
-flowering_2020[to_int] <- lapply(flowering_2020[to_int], as.integer)
-str(flowering_2020)
-
-# Convert appropriate column types to character and then numeric.
-to_char_num <- c(17:22, 24:29, 31:36, 39:44, 46:51, 53:58, 61:66, 68:73, 75:80)
-flowering_2020[to_char_num] <- lapply(flowering_2020[to_char_num], as.character)
-flowering_2020[to_char_num] <- lapply(flowering_2020[to_char_num], as.numeric)
-str(flowering_2020)
-
-
-
-
-
-
-
 
 
 # find mean flower size
-flowering_2020 <- flowering_2020 %>% rowwise() %>%
+flowering_2021 <- flowering_2021 %>% rowwise() %>%
   # start with hood size
   dplyr::mutate(., Hood.I1F1 = Hood_L.I1F1 * Hood_W.I1F1,
                 Hood.I1F2 = Hood_L.I1F2 * Hood_W.I1F2,
@@ -164,8 +128,8 @@ flowering_2020 <- flowering_2020 %>% rowwise() %>%
     dplyr::mutate(., Overall_mean = mean(c(Hood_mean, Corolla_mean, Flower_mean), na.rm = T)) 
 
 # compute mean flower count
-flowering_2020$mean_flower_count <- NA
-flowering_2020 <- flowering_2020 %>%
+flowering_2021$mean_flower_count <- NA
+flowering_2021 <- flowering_2021 %>%
   rowwise() %>% 
   dplyr::mutate(., mean_flower_count = mean(c(Flower_count_I1,
                                               Flower_count_I2,
@@ -173,7 +137,7 @@ flowering_2020 <- flowering_2020 %>%
                                             na.rm = TRUE))
 
 # compute total flower count
-flowering_2020 <- flowering_2020 %>%
+flowering_2021 <- flowering_2021 %>%
   rowwise() %>% 
   dplyr::mutate(., total_flower_count = sum(c(Flower_count_I1,
                                               Flower_count_I2,
@@ -184,6 +148,6 @@ flowering_2020 <- flowering_2020 %>%
 # Export to new csv
 #-------------------
 write.csv(reproductive,
-          here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_reproductive_partialclean.csv"))
-write.csv(flowering_2020,
-          here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_floweringplants_partialclean.csv"))
+          here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_reproductive_partialclean.csv"))
+write.csv(flowering_2021,
+          here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_floweringplants_partialclean.csv"))

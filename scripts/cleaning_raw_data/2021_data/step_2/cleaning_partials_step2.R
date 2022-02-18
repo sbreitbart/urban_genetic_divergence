@@ -29,92 +29,127 @@ reproductive <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially
 flowering_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_floweringplants_partialclean.csv")) %>%
   dplyr::select(., -1)
 
-sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_sla_ldmc_partialclean.csv")) %>%
+
+
+# 2021 data-----
+heights_both2 <- read.csv(here::here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_heights_partialclean.csv")) %>%
   dplyr::select(., -1)
 
-cards <-  read.csv(here::here("./CommonGardenExperiment_2020Data/raw_data/Latex_Cardenolides/Cardenolides_forR.csv")) %>%
-  rename(., Population = 1)
+herbivory_both2 <- read.csv(here::here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_herbivory_partialclean.csv")) %>%
+  dplyr::select(., -1)
+
+survival2 <- read.csv(here::here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_survival_partialclean.csv")) %>%
+  dplyr::select(., -1)
+
+weevil_both2 <- read.csv(here::here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_weevil_damage_partialclean.csv")) %>%
+  dplyr::select(., -1)
+
+herbivores2 <- read.csv(here::here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_insect_herbivores_partialclean.csv")) %>%
+  dplyr::select(., -1)
+
+reproductive2 <- read.csv(here::here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_reproductive_partialclean.csv")) %>%
+  dplyr::select(., -1)
+
+flowering_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_floweringplants_partialclean.csv")) %>%
+  dplyr::select(., -1)
+
+
+
 
 #-------------------
 # Clean data- step 2
 #-------------------
 
-
-## Assess survival: Need cleaned heights csv to do this, so I made a second cleaning step.
-#-----------------------------------------------------------------------------------------
-### Find which plants had grown at season start --> make new survival_both df
-# Isn't a foolproof method for assessing overwinter mortality, but will tell which plants had no visible growth during first data collection in June
-
-# Make new column signifying if pots contained zero alive plants, or at least one- 0 or 1
-## First, copy first height column associaed with first ramet (if 0, that means pot was empty/had no alive ramets)
-
-survival_overwinter <- heights_both[,c(1:10)]
-survival_overwinter$Mortality_binary <- survival_overwinter$Total_Height_June
-
-## Now change all instances of >0 to 1. If >=0, then at least one ramet present.
-survival_overwinter <- survival_overwinter %>%
-mutate(., Mortality_binary = ifelse((Mortality_binary == 0 & Ramets_June < 1), "1", "0"))
-
-### make new binary mortality column factor
-survival_overwinter$Mortality_binary <- as.factor(survival_overwinter$Mortality_binary)
-
-# check appropriate columns are factors
-str(survival_overwinter)
+# SB NOTE 2022: For 2021 (and maybe previous years), I’m doubting my
+#  ability to characterize plants as dead. For my previous analyses,
+#   I tried to identify which plants had died throughout different
+#    parts of the year (initially, after the first summer, after the
+#     first winter, etc.) but what I think happens is that the plants
+#      shrivel up at different points and then oftentimes come back the
+#       next year. I don’t think there’s a big risk of milkweed seeds 
+#       from the surrounding non-garden plants getting into the pots 
+#       and then germinating, so I think I should abandon my attempt
+#        to figure out who’s been dead the whole time and just judge
+#         by my end-of-summer surveys. Stop trying to compare the
+#          years. Because I end up with “zombies”: plants that I 
+#          thought were dead, but weren’t...
 
 
-# extract mortality column from survival_overwinter df and add to survival df
-survival_both <- left_join(survival, survival_overwinter, by = c("Row", "Column", "Block", "Population", "Family", "Replicate"))
-# rename cols
-survival_both <- dplyr::rename(survival_both, Dead_Sept = Dead)
-survival_both <- dplyr::rename(survival_both, Dead_June = Mortality_binary)
-survival_both <- dplyr::rename(survival_both, Comment_Sept = Comment)
-# get rid of date columns & June height and # ramets cols
-survival_both <- survival_both[,-c(8, 11:13)]
-# reorder cols
-survival_both <- survival_both[, c(1:6, 10,9,8,7)]
-
-
-
-
-### find plants deemed dead during both data collection assessments and years
-
-# these plants were DEAD for all data collections in 2020
-dead_2020 <- survival_both %>% filter(., Dead_June == 1 & Dead_Sept == 1)
-
-# shows which plants were dead or alive throughout all data collections in 2020
-survival_both <- transform(survival_both,
-                           dead_2020 = ifelse(Dead_June == 1 & Dead_Sept == 1, 1,0))
-
-# these plants were dead for all data collections in 2019
-dead_2019 <- data_clean_2019 %>%
-  dplyr::filter(., Dead_2019 == 1)
-
-# these plants were dead either throughout 2019 OR 2020
-dead_either_2019or2020_fullyear <- full_join(dead_2019[,c(1:6, 31)],
-                                             dead_2020,
-                                             by = c("Row", "Column", "Block", "Population", "Family", "Replicate"))
-
-# these plants were dead throughout 2019 AND 2020
-# # THESE ARE THE PLANTS THAT HAVE BEEN DEAD FROM THE START, PRESUMABLY
-dead_bothyears <- inner_join(dead_2019[,c(1:6, 31)], dead_2020[,c(1:7,9)],
-                             by = c("Row", "Column", "Block", "Population", "Family", "Replicate")) 
-
-# new df to see which plants I thought were dead in 2019 but really weren't in 2020
-# SO: should be in dead2019 but NOT in dead2020
-zombies <- anti_join(dead_2019, dead_2020, by = c("Row", "Column"))
-
-
-
-### Remove plants that were dead since early 2019 from ALL dfs
-#-------------------------------------------------------------------------
-heights_both <- anti_join(heights_both, dead_bothyears, by = c("Row", "Column"))
-herbivory_both <- anti_join(herbivory_both, dead_bothyears, by = c("Row", "Column"))
-survival_2020 <- anti_join(survival_both, dead_bothyears, by = c("Row", "Column"))
-weevil_both <- anti_join(weevil_both, dead_bothyears, by = c("Row", "Column"))
-herbivores <- anti_join(herbivores, dead_bothyears, by = c("Row", "Column"))
-reproductive <- anti_join(reproductive, dead_bothyears, by = c("Row", "Column"))
-
-
+# 
+# ## Assess survival: Need cleaned heights csv to do this, so I made a second cleaning step.
+# #-----------------------------------------------------------------------------------------
+# ### Find which plants had grown at season start --> make new survival_both df
+# # Isn't a foolproof method for assessing overwinter mortality, but will tell which plants had no visible growth during first data collection in June
+# 
+# # Make new column signifying if pots contained zero alive plants, or at least one- 0 or 1
+# ## First, copy first height column associaed with first ramet (if 0, that means pot was empty/had no alive ramets)
+# 
+# survival_overwinter <- heights_both[,c(1:10)]
+# survival_overwinter$Mortality_binary <- survival_overwinter$Total_Height_June
+# 
+# ## Now change all instances of >0 to 1. If >=0, then at least one ramet present.
+# survival_overwinter <- survival_overwinter %>%
+# mutate(., Mortality_binary = ifelse((Mortality_binary == 0 & Ramets_June < 1), "1", "0"))
+# 
+# ### make new binary mortality column factor
+# survival_overwinter$Mortality_binary <- as.factor(survival_overwinter$Mortality_binary)
+# 
+# # check appropriate columns are factors
+# str(survival_overwinter)
+# 
+# 
+# # extract mortality column from survival_overwinter df and add to survival df
+# survival_both <- left_join(survival, survival_overwinter, by = c("Row", "Column", "Block", "Population", "Family", "Replicate"))
+# # rename cols
+# survival_both <- dplyr::rename(survival_both, Dead_Sept = Dead)
+# survival_both <- dplyr::rename(survival_both, Dead_June = Mortality_binary)
+# survival_both <- dplyr::rename(survival_both, Comment_Sept = Comment)
+# # get rid of date columns & June height and # ramets cols
+# survival_both <- survival_both[,-c(8, 11:13)]
+# # reorder cols
+# survival_both <- survival_both[, c(1:6, 10,9,8,7)]
+# 
+# 
+# 
+# 
+# ### find plants deemed dead during both data collection assessments and years
+# 
+# # these plants were DEAD for all data collections in 2020
+# dead_2020 <- survival_both %>% filter(., Dead_June == 1 & Dead_Sept == 1)
+# 
+# # shows which plants were dead or alive throughout all data collections in 2020
+# survival_both <- transform(survival_both,
+#                            dead_2020 = ifelse(Dead_June == 1 & Dead_Sept == 1, 1,0))
+# 
+# # these plants were dead for all data collections in 2019
+# dead_2019 <- data_clean_2019 %>%
+#   dplyr::filter(., Dead_2019 == 1)
+# 
+# # these plants were dead either throughout 2019 OR 2020
+# dead_either_2019or2020_fullyear <- full_join(dead_2019[,c(1:6, 31)],
+#                                              dead_2020,
+#                                              by = c("Row", "Column", "Block", "Population", "Family", "Replicate"))
+# 
+# # these plants were dead throughout 2019 AND 2020
+# # # THESE ARE THE PLANTS THAT HAVE BEEN DEAD FROM THE START, PRESUMABLY
+# dead_bothyears <- inner_join(dead_2019[,c(1:6, 31)], dead_2020[,c(1:7,9)],
+#                              by = c("Row", "Column", "Block", "Population", "Family", "Replicate")) 
+# 
+# # new df to see which plants I thought were dead in 2019 but really weren't in 2020
+# # SO: should be in dead2019 but NOT in dead2020
+# zombies <- anti_join(dead_2019, dead_2020, by = c("Row", "Column"))
+# 
+# 
+# 
+# ### Remove plants that were dead since early 2019 from ALL dfs
+# #-------------------------------------------------------------------------
+# heights_both <- anti_join(heights_both, dead_bothyears, by = c("Row", "Column"))
+# herbivory_both <- anti_join(herbivory_both, dead_bothyears, by = c("Row", "Column"))
+# survival_2020 <- anti_join(survival_both, dead_bothyears, by = c("Row", "Column"))
+# weevil_both <- anti_join(weevil_both, dead_bothyears, by = c("Row", "Column"))
+# herbivores <- anti_join(herbivores, dead_bothyears, by = c("Row", "Column"))
+# reproductive <- anti_join(reproductive, dead_bothyears, by = c("Row", "Column"))
+# 
 
 
 #----------------------------------------------------------------
@@ -158,41 +193,41 @@ dplyr::select(., -Scar_length_mm)
 # Clean columns to get average herbivory
 # JULY------
 ### Replace non-numeric entries with NA and remove dashes (which symbolize no leaf) 
-herbivory_both$Herbivory.July_mean <- herbivory_both$Herbivory.July
-herbivory_both$Herbivory.July_mean <- gsub('too small', NA, herbivory_both$Herbivory.July_mean)
+herbivory_both$Herbivory.Early_mean <- herbivory_both$Herbivory.Early
+herbivory_both$Herbivory.Early_mean <- gsub('too small', NA, herbivory_both$Herbivory.Early_mean)
 
 # converts plants we weren't able to assess to NA (from 0)- represents either a lack of plant 
 # or no leaves
 herbivory_both <- herbivory_both %>%
-  mutate(Herbivory.July_mean = na_if(Herbivory.July_mean, "0"))
+  mutate(Herbivory.July_mean = na_if(Herbivory.Early_mean, "0"))
 
-herbivory_both$Herbivory.July_mean <- gsub('-', "", herbivory_both$Herbivory.July_mean)
-herbivory_both$Herbivory.July_mean <- gsub(' ', "", herbivory_both$Herbivory.July_mean)
+herbivory_both$Herbivory.Early_mean <- gsub('-', "", herbivory_both$Herbivory.Early_mean)
+herbivory_both$Herbivory.Early_mean <- gsub(' ', "", herbivory_both$Herbivory.Early_mean)
 
 ### Calculate mean herbivory for ramet 1 in new column
 herbivory_both$Herbivory.July_mean <- sapply(strsplit(
-  as.character(herbivory_both$Herbivory.July_mean), ",", fixed=T),
+  as.character(herbivory_both$Herbivory.Early_mean), ",", fixed=T),
   function(x) mean(as.numeric(x)))
 
 # SEPT------
 ### Replace non-numeric entries with NA and remove dashes (which symbolize no leaf) 
-herbivory_both$Herbivory.Sept_mean <- herbivory_both$Herbivory.Sept
-herbivory_both$Herbivory.Sept_mean <- gsub('too small', NA, herbivory_both$Herbivory.Sept_mean)
+herbivory_both$Herbivory.Late_mean <- herbivory_both$Herbivory.Late
+herbivory_both$Herbivory.Late_mean <- gsub('too small', NA, herbivory_both$Herbivory.Late_mean)
 
 # converts plants we weren't able to assess to NA (from 0)- represents either a lack of plant or no leaves
 herbivory_both <- herbivory_both %>%
-  mutate(Herbivory.Sept_mean = na_if(Herbivory.Sept_mean, "0"))
+  mutate(Herbivory.Late_mean = na_if(Herbivory.Late_mean, "0"))
 
-herbivory_both$Herbivory.Sept_mean <- gsub('-', "", herbivory_both$Herbivory.Sept_mean)
-herbivory_both$Herbivory.Sept_mean <- gsub(' ', "", herbivory_both$Herbivory.Sept_mean)
+herbivory_both$Herbivory.Late_mean <- gsub('-', "", herbivory_both$Herbivory.Late_mean)
+herbivory_both$Herbivory.Late_mean <- gsub(' ', "", herbivory_both$Herbivory.Late_mean)
 
 ### Calculate mean herbivory for ramet 1 in new column
-herbivory_both$Herbivory.Sept_mean <- sapply(strsplit(as.character(herbivory_both$Herbivory.Sept_mean), ",", fixed=T), function(x) mean(as.numeric(x)))
+herbivory_both$Herbivory.Late_mean <- sapply(strsplit(as.character(herbivory_both$Herbivory.Sept_mean), ",", fixed=T), function(x) mean(as.numeric(x)))
 
 
 # Divide herbivory values by 100 to get percentage to use in glmers later w/binomial distr.
-herbivory_both$Herbivory.July_mean <- herbivory_both$Herbivory.July_mean/100
-herbivory_both$Herbivory.Sept_mean <- herbivory_both$Herbivory.Sept_mean/100
+herbivory_both$Herbivory.Early_mean <- herbivory_both$Herbivory.Early_mean/100
+herbivory_both$Herbivory.Late_mean <- herbivory_both$Herbivory.Late_mean/100
 
 
 
@@ -229,11 +264,8 @@ herbivory_both <- merge(herbivory_both, y = Distances, by = "Population", all.x 
 survival_2020 <- merge(survival_2020, y = Distances, by = "Population", all.x = TRUE)
 weevil_both <- merge(weevil_both, y = Distances, by = "Population", all.x = TRUE)
 herbivores <- merge(herbivores, y = Distances, by = "Population", all.x = TRUE)
-reproductive <- merge(reproductive, y = Distances, by = "Population", all.x = TRUE)
-flowering_2020 <- merge(flowering_2020, y = Distances, by = "Population", all.x = TRUE)
-sla_ldmc <- merge(sla_ldmc, y = Distances, by = "Population", all.x = TRUE)
-cards <- merge(cards, y = Distances, by = "Population", all.x = TRUE)
-
+reproductive2 <- merge(reproductive2, y = Distances, by = "Population", all.x = TRUE)
+flowering_2021 <- merge(flowering_2021, y = Distances, by = "Population", all.x = TRUE)
 
 # recode North & South as urban (CAN'T MAKE THIS WORK SO DOING IT MANUALLY)
 # df.list <- purrr::lmap(df.list, function(x) 
@@ -286,34 +318,20 @@ herbivores <- herbivores %>%
                                         'South' = "Urban",
                                         'Rural' = "Rural"))
 
-reproductive <- reproductive %>% 
+reproductive2 %<>% 
   dplyr::mutate(Urb_Rur = Transect_ID) %>%
   dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
                                         'North' = "Urban",
                                         'South' = "Urban",
                                         'Rural' = "Rural"))
 
-flowering_2020 <- flowering_2020 %>% 
+flowering_2021 <- flowering_2021 %>% 
   dplyr::mutate(Urb_Rur = Transect_ID) %>%
   dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
                                         'North' = "Urban",
                                         'South' = "Urban",
                                         'Rural' = "Rural"))
 
-sla_ldmc <- sla_ldmc %>% 
-  dplyr::mutate(Urb_Rur = Transect_ID) %>%
-  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
-                                        'North' = "Urban",
-                                        'South' = "Urban",
-                                        'Rural' = "Rural"))
-
-
-cards <- cards %>% 
-  dplyr::mutate(Urb_Rur = Transect_ID) %>%
-  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
-                                        'North' = "Urban",
-                                        'South' = "Urban",
-                                        'Rural' = "Rural"))
 
 ### Add urb_score data
 # Import urb_index values for each of these rows
@@ -332,10 +350,8 @@ herbivory_both <- merge(herbivory_both, y = urb_scores, by = "Pop_ID", all.x = T
 survival_2020 <- merge(survival_2020, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 weevil_both <- merge(weevil_both, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 herbivores <- merge(herbivores, y = urb_scores, by = "Pop_ID", all.x = TRUE)
-reproductive <- merge(reproductive, y = urb_scores, by = "Pop_ID", all.x = TRUE)
-flowering_2020 <- merge(flowering_2020, y = urb_scores, by = "Pop_ID", all.x = TRUE)
-sla_ldmc <- merge(sla_ldmc, y = urb_scores, by = "Pop_ID", all.x = TRUE)
-cards <- merge(cards, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+reproductive2 <- merge(reproductive2, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+flowering_2021 <- merge(flowering_2021, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 
 
 # ----------------
@@ -352,11 +368,7 @@ write.csv(weevil_both,
           here::here("./CommonGardenExperiment_2020Data/clean_data/2020_weevil_damage_clean.csv"))
 write.csv(herbivores,
           here::here("./CommonGardenExperiment_2020Data/clean_data/2020_herbivores_clean.csv"))
-write.csv(reproductive,
-          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_reproductive_clean.csv"))
-write.csv(flowering_2020,
-          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_floweringplants_clean.csv"))
-write.csv(sla_ldmc,
-          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv"))
-write.csv(cards,
-          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_cardenolides_clean.csv"))
+write.csv(reproductive2,
+          here::here("./CommonGardenExperiment_2021Data/clean_data/2021_reproductive_clean.csv"))
+write.csv(flowering_2021,
+          here::here("./CommonGardenExperiment_2021Data/clean_data/2021_floweringplants_clean.csv"))
