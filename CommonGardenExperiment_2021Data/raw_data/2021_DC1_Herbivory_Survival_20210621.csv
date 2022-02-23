@@ -381,7 +381,7 @@ Row,Column,Block,Population,Family,Replicate,Comment,Date,Alive,Herbivory,Survey
 9,12,1,51,4,2,,6/23/2022,1,"0,0,0,0,0",Sophie
 9,13,1,79,1,1,,6/23/2022,1,"0,0,0,0,0",Sophie
 9,14,1,5,5,5,,6/23/2022,0,NA,Sophie
-9,15,1,13,5,2,NO POT,6/23/2022,na,,Sophie
+9,15,1,13,5,2,NO POT,6/23/2022,na,NA,Sophie
 9,16,1,30,5,3,,6/23/2022,1,"0,0,0,0,0",Sophie
 9,17,1,39,3,2,,6/23/2022,1,"28,2,25,60,72",Sophie
 9,18,1,20,1,2,,6/23/2022,0,NA,Sophie

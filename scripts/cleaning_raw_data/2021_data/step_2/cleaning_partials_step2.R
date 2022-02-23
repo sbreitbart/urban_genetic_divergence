@@ -14,7 +14,7 @@ heights_both <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially
 herbivory_both <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_herbivory_partialclean.csv")) %>%
   dplyr::select(., -1)
 
-survival <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_survival_partialclean.csv")) %>%
+survival_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_survival_partialclean.csv")) %>%
   dplyr::select(., -1)
 
 weevil_both <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_weevil_damage_partialclean.csv")) %>%
@@ -38,7 +38,7 @@ heights_both2 <- read.csv(here::here("./CommonGardenExperiment_2021Data/partiall
 herbivory_both2 <- read.csv(here::here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_herbivory_partialclean.csv")) %>%
   dplyr::select(., -1)
 
-survival2 <- read.csv(here::here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_survival_partialclean.csv")) %>%
+survival_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_survival_partialclean.csv")) %>%
   dplyr::select(., -1)
 
 weevil_both2 <- read.csv(here::here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_weevil_damage_partialclean.csv")) %>%
@@ -164,6 +164,8 @@ flowering_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/partial
 ## If they were 0 in June but >0 in September: June = 1, since ln(1)=0.
 # If they were >0 in June but 0 in September: Sept = 1.
 # If June = 0 and Sept = 0, it will be NA.
+
+# 2020
 heights_both <- heights_both %>%
   dplyr::mutate(.,
                 rel_growth_rate = case_when(
@@ -171,14 +173,26 @@ heights_both <- heights_both %>%
                  Total_Height_June > 0 & Total_Height_Sept == 0  ~ (1 - log(Total_Height_June)) / date_diff,
                  Total_Height_June == 0 & Total_Height_Sept > 0  ~ (log(Total_Height_Sept) - 1) / date_diff))
 
+# 2021
+heights_both2 <- heights_both2 %>%
+  dplyr::mutate(.,
+                rel_growth_rate = case_when(
+                  Total_Height_early > 0 & Total_Height_late > 0 ~ (log(Total_Height_late) - log(Total_Height_early))/ date_diff,
+                  Total_Height_early > 0 & Total_Height_late == 0  ~ (1 - log(Total_Height_early)) / date_diff,
+                  Total_Height_early == 0 & Total_Height_late > 0  ~ (log(Total_Height_late) - 1) / date_diff))
+
 
 
 
 ## weevil damage: standardize weevil scar length by total height
 ## ------------------------------------------------------------
+# 2020
+
 # add June height so I can standardize weevil scar length by total height
 weevil_both <- weevil_both %>%
-  left_join(., heights_both[,-c(7, 9:15)], by = c("Row", "Column", "Block", "Population", "Family", "Replicate")) %>%
+  left_join(., heights_both[,-c(7, 9:15)],
+            by = c("Row", "Column", "Block", "Population",
+                   "Family", "Replicate")) %>%
   mutate(Scar_length_cm = Scar_length_mm / 10) %>%
   
 # standardize weevil scar length by total height
@@ -186,11 +200,29 @@ weevil_both <- weevil_both %>%
 mutate(scar_div_Juneheight = Scar_length_cm / (Total_Height_June)) %>%
 dplyr::select(., -Scar_length_mm)
 
+# 2021
+weevil_both2 %<>%
+  left_join(., heights_both2[,c(1:9, 11)],
+            by = c("Row", "Column", "Block", "Population",
+                   "Family", "Replicate")) %>%
+  mutate(Scar_length_cm = Scar_length_mm / 10) %>%
+  
+  # standardize weevil scar length by total height
+  ## value may be over 1 because 1) oftentimes there were multiple scars per
+  ## ramet on different sides, and 2) height was measured in June and scars
+  ## in July, so the plants were likely taller when scars were measured
+  mutate(scar_div_earlyheight = Scar_length_cm / (Total_Height_early)) %>%
+  dplyr::select(., -Scar_length_mm)
+
+
+
 
 
 ## herbivory: calculate average herbivory
 ## ---------------------------------------------
 # Clean columns to get average herbivory
+# 2020
+
 # JULY------
 ### Replace non-numeric entries with NA and remove dashes (which symbolize no leaf) 
 herbivory_both$Herbivory.Early_mean <- herbivory_both$Herbivory.Early
@@ -221,6 +253,7 @@ herbivory_both <- herbivory_both %>%
 herbivory_both$Herbivory.Late_mean <- gsub('-', "", herbivory_both$Herbivory.Late_mean)
 herbivory_both$Herbivory.Late_mean <- gsub(' ', "", herbivory_both$Herbivory.Late_mean)
 
+
 ### Calculate mean herbivory for ramet 1 in new column
 herbivory_both$Herbivory.Late_mean <- sapply(strsplit(as.character(herbivory_both$Herbivory.Sept_mean), ",", fixed=T), function(x) mean(as.numeric(x)))
 
@@ -228,6 +261,60 @@ herbivory_both$Herbivory.Late_mean <- sapply(strsplit(as.character(herbivory_bot
 # Divide herbivory values by 100 to get percentage to use in glmers later w/binomial distr.
 herbivory_both$Herbivory.Early_mean <- herbivory_both$Herbivory.Early_mean/100
 herbivory_both$Herbivory.Late_mean <- herbivory_both$Herbivory.Late_mean/100
+
+
+
+
+
+# 2021
+
+# JULY------
+herbivory_both2$Herbivory.early_mean <- herbivory_both2$Herbivory.early
+unique(herbivory_both2$Herbivory.early)
+
+# converts plants we weren't able to assess to NA
+herbivory_both2 %<>%
+  mutate(Herbivory.early_mean = na_if(Herbivory.early_mean, "too small")) %>%
+  mutate(Herbivory.early_mean = na_if(Herbivory.early_mean, "too withered")) %>%
+  mutate(Herbivory.early_mean = na_if(Herbivory.early_mean, "no pot"))
+
+herbivory_both2$Herbivory.early_mean <- gsub('-', "", herbivory_both2$Herbivory.early_mean)
+herbivory_both2$Herbivory.early_mean <- gsub(' ', "", herbivory_both2$Herbivory.early_mean)
+
+### Calculate mean herbivory for ramet 1 in new column
+herbivory_both2$Herbivory.early_mean <- sapply(strsplit(
+  as.character(herbivory_both2$Herbivory.early_mean), ",", fixed=T),
+  function(x) mean(as.numeric(x)))
+
+
+
+
+
+# SEPT------
+### Replace non-numeric entries with NA and remove dashes (which symbolize no leaf) 
+herbivory_both2$Herbivory.late_mean <- herbivory_both2$Herbivory.late
+unique(herbivory_both2$Herbivory.late_mean)
+
+# converts plants we weren't able to assess to NA
+herbivory_both2  %<>%
+  mutate(Herbivory.late_mean = na_if(Herbivory.late_mean, ""))
+
+herbivory_both2$Herbivory.late_mean <- gsub('-', "", herbivory_both2$Herbivory.late_mean)
+herbivory_both2$Herbivory.late_mean <- gsub(' ', "", herbivory_both2$Herbivory.late_mean)
+
+
+### Calculate mean herbivory for ramet 1 in new column
+herbivory_both2$Herbivory.late_mean <- sapply(strsplit(
+  as.character(herbivory_both2$Herbivory.late_mean), ",", fixed=T),
+  function(x) mean(as.numeric(x)))
+
+
+# Divide herbivory values by 100 to get percentage to use in glmers later w/binomial distr.
+herbivory_both2$Herbivory.early_mean <- herbivory_both2$Herbivory.early_mean/100
+herbivory_both2$Herbivory.late_mean <- herbivory_both2$Herbivory.late_mean/100
+
+
+
 
 
 
@@ -246,15 +333,27 @@ Distances <- read.csv(here::here(
 ### Add transect data to all dfs via merge
 # TRIED TO AUTOMATE WITH LAPPLY AND PURRR BUT NOT WORKING YET
 # # make list of dfs
-# df.list <- list(heights_both,
-#                 herbivory_both,
-#                 survival_2020,
-#                 weevil_both,
-#                 herbivores,
-#                 reproductive,
-#                 flowering_2020)
+df.list <- list(heights_both,
+                herbivory_both,
+                survival_2020,
+                weevil_both,
+                herbivores,
+                reproductive,
+                flowering_2020,
+
+                heights_both2,
+                herbivory_both2,
+                survival_2021,
+                weevil_both2,
+                herbivores2,
+                reproductive2,
+                flowering_2021)
 # 
 # # Add distances to city center
+# for (df in length(df.list)){
+#   df %<>% merge(., y = Distances, by = "Population", all.x = TRUE)
+# }
+# 
 # df.list <- lapply(df.list, function(x)
 #   x <- merge(x, y = Distances, by = "Population", all.x = TRUE))
 
@@ -264,23 +363,64 @@ herbivory_both <- merge(herbivory_both, y = Distances, by = "Population", all.x 
 survival_2020 <- merge(survival_2020, y = Distances, by = "Population", all.x = TRUE)
 weevil_both <- merge(weevil_both, y = Distances, by = "Population", all.x = TRUE)
 herbivores <- merge(herbivores, y = Distances, by = "Population", all.x = TRUE)
+reproductive <- merge(reproductive, y = Distances, by = "Population", all.x = TRUE)
+flowering_2020 <- merge(flowering_2020, y = Distances, by = "Population", all.x = TRUE)
+
+heights_both2 <- merge(heights_both2, y = Distances, by = "Population", all.x = TRUE)
+herbivory_both2 <- merge(herbivory_both2, y = Distances, by = "Population", all.x = TRUE)
+survival_2021 <- merge(survival_2021, y = Distances, by = "Population", all.x = TRUE)
+weevil_both2 <- merge(weevil_both2, y = Distances, by = "Population", all.x = TRUE)
+herbivores2 <- merge(herbivores2, y = Distances, by = "Population", all.x = TRUE)
 reproductive2 <- merge(reproductive2, y = Distances, by = "Population", all.x = TRUE)
 flowering_2021 <- merge(flowering_2021, y = Distances, by = "Population", all.x = TRUE)
 
-# recode North & South as urban (CAN'T MAKE THIS WORK SO DOING IT MANUALLY)
-# df.list <- purrr::lmap(df.list, function(x) 
-#   x$Urb_Rur <- x$Transect_ID %>%
-#     dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
-#                                           'North' = "Urban",
-#                                           'South' = "Urban",
-#                                           'Rural' = "Rural")))
-#                                           
-# lapply(df.list, function(x)
-# dplyr::mutate(Urb_Rur = Transect_ID) %>%
-# dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
-#                                       'North' = "Urban",
-#                                       'South' = "Urban",
-#                                       'Rural' = "Rural")))
+
+# # make list of dfs
+df.list <- list(heights_both,
+                herbivory_both,
+                survival_2020,
+                weevil_both,
+                herbivores,
+                reproductive,
+                flowering_2020,
+                
+                heights_both2,
+                herbivory_both2,
+                survival_2021,
+                weevil_both2,
+                herbivores2,
+                reproductive2,
+                flowering_2021)
+
+
+list_names <- list("heights_both"   ,
+                   "herbivory_both" ,
+                   "survival_2020"  ,
+                   "weevil_both"    ,
+                   "herbivores"     ,
+                   "reproductive"   ,
+                   "flowering_2020" ,
+                   
+                   "heights_both2"  ,
+                   "herbivory_both2",
+                   "survival_2021"  ,
+                   "weevil_both2"   ,
+                   "herbivores2"    ,
+                   "reproductive2"  ,
+                   "flowering_2021")
+
+names(df.list) <- list_names
+
+
+df.list <- lapply(df.list, function(i) {
+  i %>% mutate(Urb_Rur = 
+                 ifelse(Transect_ID == "Rural", "Rural", "Urban"))
+})
+
+
+df.list %>%
+  list2env(.GlobalEnv)
+
 
 
 heights_both <- heights_both %>% 
