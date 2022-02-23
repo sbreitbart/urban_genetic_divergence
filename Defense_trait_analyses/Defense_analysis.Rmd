@@ -1,0 +1,63 @@
+---
+title: "Defense Trait Analysis"
+author: "Sophie Breitbart"
+output:
+  html_document:
+    number_sections: true
+    df_print: paged
+    toc: yes
+    toc_depth: 6
+    toc_float:
+      collapsed: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
+editor_options: 
+  chunk_output_type: console
+NOTES:
+  -Still to do--
+    -try to do an RDA (or PCA?) with all the traits
+    -make a ReadMe file for each level
+    -calculate heritability coefficients
+WHEN TOTALLY DONE, type this:
+renv::activate()
+renv::snapshot()
+---
+# Set up notebook
+## Load libraries and add functions
+```{r}
+source("libraries.R")
+source("functions.R")
+```
+
+## Import data
+```{r}
+# 2019 data-----
+data_2019 <- read.csv(here::here("./CommonGardenExperiment_2019Data/clean_data/clean_data_2019KSR.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::select(., -c(1:2))
+
+# 2020 data-----
+herbivory_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_herbivory_clean.csv")) %>%
+  dplyr::select(., -c(1:2))
+
+weevil_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_weevil_damage_clean.csv")) %>%
+  dplyr::select(., -c(1:2))
+
+sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv")) %>%
+  dplyr::select(., -c(1:2))
+
+cards <-  read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/Cardenolides_forR.csv"))
+
+  
+# 2021 data
+
+herbivory_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_herbivory_clean.csv")) %>%
+  dplyr::select(., -c(1, 21))
+
+weevil_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_weevil_damage_clean.csv")) %>%
+  dplyr::select(., -c(1, 18))
+```
+
+
+## MAKE DIAGNOSTIC RMD NEXT, THEN FIGURE OUT HOW TO STRUCTURE REST OF THIS
+
