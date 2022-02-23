@@ -423,55 +423,6 @@ df.list %>%
 
 
 
-heights_both <- heights_both %>% 
-  dplyr::mutate(Urb_Rur = Transect_ID) %>%
-  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
-                                        'North' = "Urban",
-                                        'South' = "Urban",
-                                        'Rural' = "Rural"))
-
-herbivory_both <- herbivory_both %>% 
-  dplyr::mutate(Urb_Rur = Transect_ID) %>%
-  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
-                                        'North' = "Urban",
-                                        'South' = "Urban",
-                                        'Rural' = "Rural"))
-
-survival_2020 <- survival_2020 %>% 
-  dplyr::mutate(Urb_Rur = Transect_ID) %>%
-  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
-                                        'North' = "Urban",
-                                        'South' = "Urban",
-                                        'Rural' = "Rural"))
-
-weevil_both <- weevil_both %>% 
-  dplyr::mutate(Urb_Rur = Transect_ID) %>%
-  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
-                                        'North' = "Urban",
-                                        'South' = "Urban",
-                                        'Rural' = "Rural"))
-
-herbivores <- herbivores %>% 
-  dplyr::mutate(Urb_Rur = Transect_ID) %>%
-  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
-                                        'North' = "Urban",
-                                        'South' = "Urban",
-                                        'Rural' = "Rural"))
-
-reproductive2 %<>% 
-  dplyr::mutate(Urb_Rur = Transect_ID) %>%
-  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
-                                        'North' = "Urban",
-                                        'South' = "Urban",
-                                        'Rural' = "Rural"))
-
-flowering_2021 <- flowering_2021 %>% 
-  dplyr::mutate(Urb_Rur = Transect_ID) %>%
-  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
-                                        'North' = "Urban",
-                                        'South' = "Urban",
-                                        'Rural' = "Rural"))
-
 
 ### Add urb_score data
 # Import urb_index values for each of these rows
@@ -482,7 +433,6 @@ urb_scores <- read.csv(
 urb_scores <- urb_scores[,c(2,8)]
 names(urb_scores)[1] <- "Pop_ID"
 
-# urb_scores <- dplyr::inner_join(urb_scores, urb_scores, by = "Pop_ID") 
 
 # doing it manually
 heights_both <- merge(heights_both, y = urb_scores, by = "Pop_ID", all.x = TRUE)
@@ -490,9 +440,16 @@ herbivory_both <- merge(herbivory_both, y = urb_scores, by = "Pop_ID", all.x = T
 survival_2020 <- merge(survival_2020, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 weevil_both <- merge(weevil_both, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 herbivores <- merge(herbivores, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+reproductive <- merge(reproductive, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+flowering_2020 <- merge(flowering_2020, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+
+heights_both2 <- merge(heights_both2, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+herbivory_both2 <- merge(herbivory_both2, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+survival_2021 <- merge(survival_2020, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+weevil_both2 <- merge(weevil_both2, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+herbivores2 <- merge(herbivores2, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 reproductive2 <- merge(reproductive2, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 flowering_2021 <- merge(flowering_2021, y = urb_scores, by = "Pop_ID", all.x = TRUE)
-
 
 # ----------------
 # Export to new csvs
@@ -508,6 +465,24 @@ write.csv(weevil_both,
           here::here("./CommonGardenExperiment_2020Data/clean_data/2020_weevil_damage_clean.csv"))
 write.csv(herbivores,
           here::here("./CommonGardenExperiment_2020Data/clean_data/2020_herbivores_clean.csv"))
+write.csv(reproductive,
+          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_reproductive_clean.csv"))
+write.csv(flowering_2020,
+          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_floweringplants_clean.csv"))
+
+
+
+
+write.csv(heights_both2,
+          here::here("./CommonGardenExperiment_2021Data/clean_data/2021_heights_clean.csv"))
+write.csv(herbivory_both2,
+          here::here("./CommonGardenExperiment_2021Data/clean_data/2021_herbivory_clean.csv"))
+write.csv(survival_2021,
+          here::here("./CommonGardenExperiment_2021Data/clean_data/2021_survival_clean.csv"))
+write.csv(weevil_both2,
+          here::here("./CommonGardenExperiment_2021Data/clean_data/2021_weevil_damage_clean.csv"))
+write.csv(herbivores2,
+          here::here("./CommonGardenExperiment_2021Data/clean_data/2021_herbivores_clean.csv"))
 write.csv(reproductive2,
           here::here("./CommonGardenExperiment_2021Data/clean_data/2021_reproductive_clean.csv"))
 write.csv(flowering_2021,
