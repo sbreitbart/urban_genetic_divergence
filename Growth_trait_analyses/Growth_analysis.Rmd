@@ -19,10 +19,18 @@ NOTES:
     -try to do an RDA (or PCA?) with all the traits
     -make a ReadMe file for each level
     -calculate heritability coefficients
-WHEN TOTALLY DONE, type this:
-renv::activate()
-renv::snapshot()
+# WHEN TOTALLY DONE, type this:
+# renv::activate()
+# renv::snapshot()
 ---
+
++-----------------------------+-----------+-----------+-----------+
+| Trait                       | 2019 Data | 2020 Data | 2021 Data |
++=============================+:=========:+:=========:+:=========:+
+| All growth-related traits   | X         | X         | X         |
++-----------------------------+-----------+-----------+-----------+
+
+
 # Set up notebook
 ## Load libraries and add functions
 ```{r}

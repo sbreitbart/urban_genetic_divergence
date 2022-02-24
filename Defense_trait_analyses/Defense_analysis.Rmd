@@ -19,18 +19,41 @@ NOTES:
     -try to do an RDA (or PCA?) with all the traits
     -make a ReadMe file for each level
     -calculate heritability coefficients
-WHEN TOTALLY DONE, type this:
-renv::activate()
-renv::snapshot()
+
+# WHEN TOTALLY DONE, type this:
+# renv::activate()
+# renv::snapshot()
 ---
+
++-----------------------------+-----------+-----------+-----------+
+| Trait                       | 2019 Data | 2020 Data | 2021 Data |
++=============================+:=========:+:=========:+:=========:+
+| Herbivory                   | X         | X         | X         |
++-----------------------------+-----------+-----------+-----------+
+| Weevil damage: Quantitative |           | X         | X         |
++-----------------------------+-----------+-----------+-----------+
+| Weevil damage: Binary       |           | X         |           |
++-----------------------------+-----------+-----------+-----------+
+| Specific Leaf Area          |           | X         |           |
++-----------------------------+-----------+-----------+-----------+
+| Dry Leaf Matter Content     |           | X         |           |
++-----------------------------+-----------+-----------+-----------+
+| Cardenolide Concentration   |           | X         |           |
++-----------------------------+-----------+-----------+-----------+
+| Latex Volume                |           | X         |           |
++-----------------------------+-----------+-----------+-----------+
+
 # Set up notebook
+
 ## Load libraries and add functions
+
 ```{r}
 source("libraries.R")
 source("functions.R")
 ```
 
 ## Import data
+
 ```{r}
 # 2019 data-----
 data_2019 <- read.csv(here::here("./CommonGardenExperiment_2019Data/clean_data/clean_data_2019KSR.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
@@ -58,6 +81,61 @@ weevil_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data
   dplyr::select(., -c(1, 18))
 ```
 
-
 ## MAKE DIAGNOSTIC RMD NEXT, THEN FIGURE OUT HOW TO STRUCTURE REST OF THIS
+### Herbivory
+#### Entire gradient: *NOT sig for city_dist or urb_score
+##### City_dist
+```{r}
+car::Anova(herbivory_gr_dist_m5)
+# doesn't converge with all terms... 
+
+r.squaredGLMM(herbivory_gr_dist_m5)
+```
+
+##### Urb_score
+```{r}
+car::Anova(ramets_gr_usc_m1)
+# dist not significant
+
+r.squaredGLMM(ramets_gr_usc_m1)
+
+```
+
+#### Urban subtransects: nothing sig
+##### City_dist
+```{r}
+car::Anova(ramets_urb_dist_m1)
+# nothing sig
+
+r.squaredGLMM(ramets_urb_dist_m1)
+
+
+# just main effects
+car::Anova(ramets_urb_dist_m2_ME)
+# nothing sig
+
+r.squaredGLMM(ramets_urb_dist_m2_ME)
+
+AIC((ramets_urb_dist_m1),
+    (ramets_urb_dist_m2_ME)) # better but <2 AIC from full model
+```
+
+##### Urb_score
+```{r}
+car::Anova(ramets_urb_usc_m1)
+# nothing sig
+
+r.squaredGLMM(ramets_urb_usc_m1)
+
+
+# just main effects
+car::Anova(ramets_urb_usc_m2_ME)
+# nothing sig
+
+r.squaredGLMM(ramets_urb_usc_m2_ME)
+
+AIC((ramets_urb_usc_m1),
+    (ramets_urb_usc_m2_ME)) # better but <2 AIC from full model
+```
+
 
