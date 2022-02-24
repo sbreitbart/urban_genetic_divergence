@@ -33,7 +33,7 @@ sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cle
   dplyr::select(., -1)
 
 cards <-  read.csv(here::here("./CommonGardenExperiment_2020Data/raw_data/Latex_Cardenolides/Cardenolides_forR.csv")) %>%
-  rename(., Population = 1)
+  dplyr::rename(., Population = 1)
 
 #-------------------
 # Clean data- step 2
