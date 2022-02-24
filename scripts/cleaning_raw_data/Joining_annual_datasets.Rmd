@@ -61,7 +61,7 @@ weevil_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data
 
 # REPRODUCTIVE
 reproductive_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_reproductive_clean.csv")) %>%
-  dplyr::select(., -c(1:2)) %>%
+  dplyr::select(., -c(1:2, 12)) %>%
   anti_join(., repeats)
 
 flowering_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_floweringplants_clean.csv")) %>%
@@ -96,7 +96,7 @@ weevil_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data
 
 # REPRODUCTIVE
 reproductive_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_reproductive_clean.csv")) %>%
-  dplyr::select(., -1) %>%
+  dplyr::select(., -c(1, 16)) %>%
   anti_join(., repeats)
 
 flowering_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_floweringplants_clean.csv")) %>%
@@ -178,13 +178,31 @@ weevil_20_21 <- rbind.fill(weev_2020, weevil_2021[,-c(8:13)])
 ## Reproductive traits
 ```{r}
 # not measured in 2019
+reproductive_2020 %<>%
+  dplyr::rename(., Flowered = Flowered2020) %>%
+  dplyr::select(-7)
+
+reproductive_2021 %<>%
+  dplyr::rename(., Flowered = Flowered2021) %>%
+  dplyr::select(-c(9:13))
+
+reprod_20_21 <- rbind.fill(reproductive_2020, reproductive_2021)
 
 ```
 
 ## Flowering
 ```{r}
 # not measured in 2019
+flowering_2020 %<>%
+  dplyr::rename(., Flowered = Flowered2020) %>%
+  dplyr::select(-"X") %>%
+  dplyr::select(-c(7, 12, 13))
 
+flowering_2021 %<>%
+  dplyr::rename(., Flowered = Flowered2021) %>%
+  dplyr::select(-"X")
+
+flowering_20_21 <- rbind.fill(flowering_2020, flowering_2021)
 ```
 
 ## Height
@@ -257,5 +275,11 @@ write.csv(herbivory_19_20_21,
 
 write.csv(weevil_20_21,
           here::here("./Joined_annual_data/weevil.csv"))
+
+write.csv(reprod_20_21,
+          here::here("./Joined_annual_data/reproductive.csv"))
+
+write.csv(flowering_20_21,
+          here::here("./Joined_annual_data/flowering.csv"))
 
 ```

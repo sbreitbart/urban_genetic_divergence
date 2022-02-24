@@ -58,7 +58,7 @@ source("functions.R")
 herbivory <- read.csv(here::here("./Joined_annual_data/herbivory.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
   dplyr::select(., -1)
 
-weevil <- read.csv(here::here("./Joined_annual_data/weevil.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",")%>%
+weevil <- read.csv(here::here("./Joined_annual_data/weevil.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
   dplyr::select(., -1)
 
 
