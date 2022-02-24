@@ -1,0 +1,231 @@
+---
+title: "Joining Annual Datasets"
+author: "Sophie Breitbart"
+date: "2/24/2022"
+output: html_document
+---
+
+In this script, datasets from each year are merged so that (almost) each trait has its own full dataset. I also remove some (14) rows that have the same Population, Family, and Replicate ID (in pairs of 2 rows each). These duplication errors probably occurred while plant pots were being labelled and/or recorded during the first field season.
+
+# Create duplicate data table
+```{r}
+# Row 7,  Col 39: 19  5 3
+# Row 20, Col 6 : 19  5 3
+# 
+# Row 1,  Col 41: 23  1 5
+# Row 5,  Col 12: 23  1 5
+# 
+# Row 14, Col 37: 35  4 2
+# Row 21, Col 33: 35  4 2
+# 
+# Row 14, Col 12:	35	3	1
+# Row 21, Col 25:	35	3	1
+# 
+# Row 14, Col 43:	41	1	2
+# Row 16, Col 13:	41	1	2
+# 
+# Row 12, Col 29:	41	1	3
+# Row 15, Col 3	: 41	1	3
+# 
+# Row 11, Col 43:	41	1	4
+# Row 13, Col 4	: 41	1	4
+
+repeats <- data.frame(Population  = c(19, 23, 35, 35, 41, 41, 41),
+                      Family =      c(5, 1, 4, 3, 1, 1, 1),
+                      Replicate =   c(3, 5, 2, 1, 2, 3, 4)
+                      )
+```
+
+
+# Import data
+## 2019
+```{r}
+data_2019 <- read.csv(here::here("./CommonGardenExperiment_2019Data/clean_data/clean_data_2019KSR.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::select(., -c(1:2)) %>%
+  anti_join(., repeats)
+
+```
+
+## 2020
+```{r}
+# DEFENSE
+herbivory_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_herbivory_clean.csv")) %>%
+  dplyr::select(., -c(1:2)) %>%
+  anti_join(., repeats)
+
+weevil_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_weevil_damage_clean.csv")) %>%
+  dplyr::select(., -c(1:2)) %>%
+  anti_join(., repeats)
+
+
+
+# REPRODUCTIVE
+reproductive_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_reproductive_clean.csv")) %>%
+  dplyr::select(., -c(1:2)) %>%
+  anti_join(., repeats)
+
+flowering_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_floweringplants_clean.csv")) %>%
+  dplyr::select(., -c(1:2)) %>%
+  anti_join(., repeats)
+
+
+
+
+# GROWTH
+heights_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_heights_clean.csv")) %>%
+  dplyr::select(., -c(1:2)) %>%
+  anti_join(., repeats)
+
+survival_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_survival_clean.csv")) %>%
+  dplyr::select(., -c(1:2)) %>%
+  anti_join(., repeats)
+```
+
+## 2021
+```{r}
+# DEFENSE
+herbivory_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_herbivory_clean.csv")) %>%
+  dplyr::select(., -c(1, 21)) %>%
+  anti_join(., repeats)
+
+weevil_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_weevil_damage_clean.csv")) %>%
+  dplyr::select(., -c(1, 18)) %>%
+  anti_join(., repeats)
+
+
+
+# REPRODUCTIVE
+reproductive_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_reproductive_clean.csv")) %>%
+  dplyr::select(., -1) %>%
+  anti_join(., repeats)
+
+flowering_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_floweringplants_clean.csv")) %>%
+  dplyr::select(-1) %>%
+  anti_join(., repeats)
+
+
+
+# GROWTH
+heights_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_heights_clean.csv")) %>%
+  dplyr::select(., -c(1, 22)) %>%
+  anti_join(., repeats)
+
+survival_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_survival_clean.csv")) %>%
+  dplyr::select(., -c(1, 12)) %>%
+  anti_join(., repeats)
+```
+
+
+# Join datasets
+## Herbivory
+```{r}
+## first make copy of data_clean_2019 with colnames that match heights_both_2020's
+herb_2019 <- data_clean_2019 %>%
+  dplyr::select(., c(1:6, 18:19, 21, 32, 35:41)) %>%
+  dplyr::filter(., Dead_2019 == 0) %>%
+  dplyr::rename(., Dead = Dead_2019,
+                Herbivory_mean_Sept = Herbivory_mean_DC3 # doing this to compare btwn years
+                )
+herb_2019$Year = 2019
+herb_2019$Herbivory_mean_Sept <- as.character(herb_2019$Herbivory_mean_Sept)
+herb_2019$Herbivory_mean_Sept <- as.numeric(herb_2019$Herbivory_mean_Sept)
+
+# copy of 2020 data w/colnames that match 2019's
+herb_2020 <- herbivory_both_2020 %>%
+  dplyr::select(., -c(18)) %>%
+  dplyr::rename(., Herbivory_mean_Sept = Herbivory.Sept_mean # doing thisto compare btwn years
+                )
+herb_2020$Year = 2020
+
+# combine yearly dfs
+herbivory_19_20 <- rbind.fill(herb_2019, herb_2020)
+
+# rm(herb_2019, herb_2020)
+
+herbivory_19_20$Population <- as.factor(herbivory_19_20$Population)
+herbivory_19_20$Family <- as.factor(herbivory_19_20$Family)
+
+```
+
+## Weevil damage
+```{r}
+
+```
+
+## Reproductive traits
+```{r}
+
+```
+
+## Flowering
+```{r}
+
+```
+
+## Height
+```{r}
+## first make copy of data_clean_2019 with colnames that match heights_both_2020's
+heights_2019 <- data_clean_2019 %>%
+  dplyr::select(., c(1:6, 11:13, 18:19, 25:41)) %>%
+  dplyr::filter(., Dead_2019 == 0) %>%
+  dplyr::rename(., Dead = Dead_2019,
+                Ramets_midJune = Num_Ramets_DC2, # doing this & following rows to compare btwn years
+                Ramets_Sept = Num_Ramets_DC3,
+                Total_Height_midJune = Total_Height_DC2,
+                Total_Height_Sept = Total_height_DC3)
+heights_2019$Year = 2019
+heights_2019$rel_growth_rate <- as.character(heights_2019$rel_growth_rate)
+heights_2019$rel_growth_rate <- as.numeric(heights_2019$rel_growth_rate)
+
+
+# copy of 2020 data w/colnames that match 2019's
+heights_2020 <- heights_both_2020 %>%
+  dplyr::select(., -c(16)) %>%
+  dplyr::rename(., Ramets_midJune = Ramets_June, # doing this & following rows to compare btwn years
+                Total_Height_midJune = Total_Height_June)
+heights_2020$Year = 2020
+
+# combine yearly dfs
+heights_19_20 <- rbind.fill(heights_2019, heights_2020)
+heights_19_20$Year <- as.factor(heights_19_20$Year)
+heights_19_20$Family <- as.factor(heights_19_20$Family)
+heights_19_20$Population <- as.factor(heights_19_20$Population)
+heights_19_20$rel_growth_rate <- as.numeric(heights_19_20$rel_growth_rate)
+
+# rm(heights_2019, heights_2020)
+
+heights_19_20$Population <- as.factor(heights_19_20$Population)
+heights_19_20$Family <- as.factor(heights_19_20$Family)
+```
+
+## Survival
+```{r}
+## first make copy of data_clean_2019 with colnames that match heights_both_2020's
+surv_2019 <- data_clean_2019 %>%
+  dplyr::select(., c(1:6, 14:16, 25, 32, 35:41)) %>%
+  dplyr::rename(., Dead = Dead_2019                )
+surv_2019$Year = 2019
+
+# copy of 2020 data w/colnames that match 2019's
+surv_2020 <- survival_2020 %>%
+  dplyr::select(., -c(12)) %>%
+  dplyr::rename(., Dead = dead_2020 # doing thisto compare btwn years
+                )
+surv_2020$Year = 2020
+
+# combine yearly dfs
+survival_19_20 <- rbind.fill(surv_2019, surv_2020)
+
+# rm(surv_2019, surv_2020)
+
+survival_19_20$Population <- as.factor(survival_19_20$Population)
+survival_19_20$Family <- as.factor(survival_19_20$Family)
+survival_19_20$Block <- as.factor(survival_19_20$Block)
+survival_19_20$Year <- as.factor(survival_19_20$Year)
+
+```
+
+# Export
+```{r}
+
+```
