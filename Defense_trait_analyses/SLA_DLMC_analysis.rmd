@@ -1,0 +1,78 @@
+---
+title: "Cardenolide Analysis (KSR 2020)"
+author: "Sophie Breitbart"
+output:
+  html_document:
+    number_sections: false
+    df_print: paged
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapsed: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
+editor_options: 
+  chunk_output_type: console
+---
+
+# Set up notebook
+## Load libraries & functions
+```{r}
+source("libraries.R")
+source("functions.R")
+```
+
+## Import data
+```{r}
+sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv")) %>%
+  dplyr::select(., -c(1:2))
+```
+
+# Diagnostics
+## Gradient
+### City_dist
+```{r}
+
+```
+
+### Urb_score
+```{r}
+
+```
+
+## Urban Subtransects
+### City_dist
+```{r}
+
+```
+
+### Urb_score
+```{r}
+
+```
+
+# ANOVA
+## Gradient
+### City_dist
+```{r}
+
+```
+
+### Urb_score
+```{r}
+
+```
+
+## Urban Subtransects
+### City_dist
+```{r}
+
+```
+
+### Urb_score
+```{r}
+
+```
+
+# Figures

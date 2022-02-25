@@ -445,7 +445,7 @@ flowering_2020 <- merge(flowering_2020, y = urb_scores, by = "Pop_ID", all.x = T
 
 heights_both2 <- merge(heights_both2, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 herbivory_both2 <- merge(herbivory_both2, y = urb_scores, by = "Pop_ID", all.x = TRUE)
-survival_2021 <- merge(survival_2020, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+survival_2021 <- merge(survival_2021, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 weevil_both2 <- merge(weevil_both2, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 herbivores2 <- merge(herbivores2, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 reproductive2 <- merge(reproductive2, y = urb_scores, by = "Pop_ID", all.x = TRUE)

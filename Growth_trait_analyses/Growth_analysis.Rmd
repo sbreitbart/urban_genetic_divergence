@@ -42,6 +42,9 @@ source("functions.R")
 ```{r}
 heights <- read.csv(here::here("./Joined_annual_data/heights.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
   dplyr::select(., -1)
+
+survival <- read.csv(here::here("./Joined_annual_data/survival.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::select(., -1)
 ```
 
 ## MAKE DIAGNOSTIC RMD NEXT, THEN FIGURE OUT HOW TO STRUCTURE REST OF THIS

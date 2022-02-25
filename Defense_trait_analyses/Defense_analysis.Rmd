@@ -60,12 +60,6 @@ herbivory <- read.csv(here::here("./Joined_annual_data/herbivory.csv"), na.strin
 
 weevil <- read.csv(here::here("./Joined_annual_data/weevil.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
   dplyr::select(., -1)
-
-
-sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv")) %>%
-  dplyr::select(., -c(1:2))
-
-cards <-  read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/Cardenolides_forR.csv"))
 ```
 
 ## MAKE DIAGNOSTIC RMD NEXT, THEN FIGURE OUT HOW TO STRUCTURE REST OF THIS

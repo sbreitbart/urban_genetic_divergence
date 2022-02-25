@@ -263,29 +263,32 @@ heights_19_20_21 <- rbind.fill(height_2019, height_2020, height_2021)
 
 ## Survival
 ```{r}
-## first make copy of data_clean_2019 with colnames that match heights_both_2020's
-surv_2019 <- data_clean_2019 %>%
-  dplyr::select(., c(1:6, 14:16, 25, 32, 35:41)) %>%
-  dplyr::rename(., Dead = Dead_2019                )
-surv_2019$Year = 2019
+# make copy of data_2019 with consistent colnames
+surv_2019 <- data_2019 %>%
+  dplyr::select(., c(1:6, 25, 32, 35:41)) %>%
+  dplyr::rename(., Dead = Dead_2019) %>%
+  dplyr::mutate(Year = "2019") %>%
+  dplyr::mutate_at(vars(Population, Family, Replicate, Year), as.factor)
 
-# copy of 2020 data w/colnames that match 2019's
+# copy of 2020 data w/consistent colnames
 surv_2020 <- survival_2020 %>%
-  dplyr::select(., -c(12)) %>%
-  dplyr::rename(., Dead = dead_2020 # doing thisto compare btwn years
-                )
-surv_2020$Year = 2020
+  dplyr::select(., -c(10)) %>%
+  dplyr::mutate(Year = "2020")%>%
+  dplyr::mutate_at(vars(Population, Family, Replicate, Year), as.factor)
+
+# copy of 2021 data w/consistent colnames
+surv_2021 <- survival_2021 %>%
+  dplyr::select(., -c(9:12)) %>%
+  dplyr::mutate(Year = "2021",
+                Dead = recode(Alive,
+                              "1" = "0",
+                              "0" = "1")) %>%
+  dplyr::mutate_at(vars(Population, Family, Replicate, Year), as.factor) %>%
+  dplyr::select(-"Alive")
 
 # combine yearly dfs
-survival_19_20 <- rbind.fill(surv_2019, surv_2020)
-
-# rm(surv_2019, surv_2020)
-
-survival_19_20$Population <- as.factor(survival_19_20$Population)
-survival_19_20$Family <- as.factor(survival_19_20$Family)
-survival_19_20$Block <- as.factor(survival_19_20$Block)
-survival_19_20$Year <- as.factor(survival_19_20$Year)
-
+survival_19_20_21 <- rbind.fill(surv_2019, surv_2020, surv_2021) %>%
+  dplyr::select(-c(7, 17:18))
 ```
 
 # Export
@@ -304,4 +307,7 @@ write.csv(flowering_20_21,
 
 write.csv(heights_19_20_21,
           here::here("./Joined_annual_data/heights.csv"))
+
+write.csv(survival_19_20_21,
+          here::here("./Joined_annual_data/survival.csv"))
 ```
