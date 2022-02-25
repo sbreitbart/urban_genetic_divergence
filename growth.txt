@@ -1,0 +1,2412 @@
+## Heights
+### June height
+#### lmer: diagnostics
+```{r}
+# GRADIENT / CITY_DIST-----
+
+# Height_Jun20_gr_city_m1 <- lmer(Total_Height_June ~ (1|Block) + (1|Population/Family) + City_dist,
+#   data = heights_both_2020, REML = F)
+# sjPlot::plot_model(Height_Jun20_gr_city_m1, type = "diag") # is singular & right-skewed
+# 
+# Height_Jun20_gr_city_m2 <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + City_dist,
+#   data = heights_both_2020, REML = F)
+# sjPlot::plot_model(Height_Jun20_gr_city_m2, type = "diag") # looks good though singular... take out block
+# 
+# Height_Jun20_gr_city_m3 <- lmer(sqrt(Total_Height_June) ~  (1|Population/Family) + City_dist,
+#   data = heights_both_2020, REML = F)
+# sjPlot::plot_model(Height_Jun20_gr_city_m3, type = "diag") # looks good
+# 
+# AIC(Height_Jun20_gr_city_m2, Height_Jun20_gr_city_m3) #model with block has significantly lower AIC, so I should leave in block
+# 
+# Height_Jun20_gr_city_m4 <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population) +  City_dist,
+#   data = heights_both_2020, REML = F)
+# sjPlot::plot_model(Height_Jun20_gr_city_m4, type = "diag") # looks good 
+# 
+# AIC(Height_Jun20_gr_city_m2, Height_Jun20_gr_city_m4) #model with Pop/Fam has >4  lower AIC, so I should leave in Pop/Fam
+# 
+# car::Anova(Height_Jun20_gr_city_m2) # very similar results to anova below!
+# car::Anova(Height_Jun20_gr_city_m4)
+
+# try glmmTMB
+Height_Jun20_gr_city_m5 <- glmmTMB(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_both_2020,
+  family = gaussian) # it works! use this
+
+
+
+
+# GRADIENT / URB SCORE-----
+
+# Height_Jun20_gr_usc_m1 <- lmer(Total_Height_June ~ (1|Block) + (1|Population/Family) + Urb_score,
+#   data = heights_both_2020, REML = F)
+# sjPlot::plot_model(Height_Jun20_gr_usc_m1, type = "diag") # right-skewed
+
+Height_Jun20_gr_usc_m2 <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_both_2020, REML = F)
+sjPlot::plot_model(Height_Jun20_gr_usc_m2, type = "diag") # looks good
+
+
+
+# URB SUBTRANSECTS / CITY_DIST-----
+
+# Height_Jun20_urbsubs_city_m1 <- lmer(Total_Height_June ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F)
+# sjPlot::plot_model(Height_Jun20_urbsubs_city_m1, type = "diag") # right-skewed
+
+Height_Jun20_urbsubs_city_m2 <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)
+sjPlot::plot_model(Height_Jun20_urbsubs_city_m2, type = "diag") # looks good
+
+# main effects
+Height_Jun20_urbsubs_city_m2_ME <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)
+
+
+
+
+# URB SUBTRANSECTS / URB SCORE-----
+
+# Height_Jun20_urbsubs_usc_m1 <- lmer(Total_Height_June ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F)
+# sjPlot::plot_model(Height_Jun20_urbsubs_usc_m1, type = "diag") # right-skewed & singular
+
+Height_Jun20_urbsubs_usc_m2 <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F,
+      control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(Height_Jun20_urbsubs_usc_m2, type = "diag") # looks good
+
+# main effects
+Height_Jun20_urbsubs_usc_m2_ME <- lmer(sqrt(Total_Height_June) ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F,
+    control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
+summary(Height_Jun20_urbsubs_usc_m2_ME)
+```
+
+#### Entire gradient: *Marg sig for City_dist, not for urb_score
+##### City_dist
+```{r}
+car::Anova(Height_Jun20_gr_city_m5) # marg sig
+
+
+
+# 
+# # ANy variation within families or populations?
+# m.1 <- lmer(sqrt(Total_Height_June) ~ (1|Population/Family), data = heights_both_2020, REML = T)
+# 
+# ranova(m.1)
+# # YES for among families
+# 
+# 
+# sum.1 <- summary(m.1)
+# 
+# variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+#   dplyr::select(., c(grp, vcov, PVE)) %>%
+#   dplyr::rename(., Group = grp,
+#                 Variance = vcov)
+# 
+# 
+# write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_JuneHeight_lmer_PVE.csv"), col.names=TRUE, sep=",")
+# write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_JuneHeight_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+
+
+```
+
+##### Urb_score
+```{r}
+car::Anova(Height_Jun20_gr_usc_m2) # not sig
+```
+
+#### Urban subtransects: *Not sig for either
+##### City_dist
+```{r}
+car::Anova(Height_Jun20_urbsubs_city_m2) # nothing sig
+car::Anova(Height_Jun20_urbsubs_city_m2_ME) # nothing sig
+
+
+
+# 
+# # ANy variation among families or populations?
+# m.1 <- lmer(sqrt(Total_Height_June) ~ (1|Population/Family),
+#             data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+#             REML = T)
+# ranova(m.1)
+# # YES? (marg sig) for among families
+# 
+# m.2 <- lmer(sqrt(Total_Height_June) ~ (1|Population/Family) + Transect_ID,
+#             data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+#             REML = F)
+# car::Anova(m.2)
+# # not among transects though
+# 
+# 
+# m.3 <- lmer(sqrt(Total_Height_June) ~ (1|Population/Family) + Transect_ID,
+#             data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+#             REML = T)
+# car::Anova(m.3)
+# # not sig in this or m.2
+# 
+# 
+# sum.1 <- summary(m.1)
+# 
+# variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+#   dplyr::select(., c(grp, vcov, PVE)) %>%
+#   dplyr::rename(., Group = grp,
+#                 Variance = vcov)
+# 
+# 
+# write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_JuneHeight_urban_lmer_PVE.csv"), col.names=TRUE, sep=",")
+# write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_JuneHeight_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+# write.table(car::Anova(m.2), here::here("./Figures_Tables/ranova_PVE/2020_JuneHeight_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+# 
+
+```
+
+##### Urb_score
+```{r}
+car::Anova(Height_Jun20_urbsubs_usc_m2) # not sig
+car::Anova(Height_Jun20_urbsubs_usc_m2_ME) # not sig
+
+```
+
+#### Export ANOVA
+```{r}
+# anova_table_flx(Height_Jun20_gr_city_m5)
+# anova_table_flx(Height_Jun20_gr_usc_m2)
+# anova_table_flx(Height_Jun20_urbsubs_city_m2)
+# anova_table_flx(Height_Jun20_urbsubs_city_m2_ME)
+# anova_table_flx(Height_Jun20_urbsubs_usc_m2)
+# anova_table_flx(Height_Jun20_urbsubs_usc_m2_ME)
+# 
+# AIC_compare.city_dist_transf(Height_Jun20_urbsubs_city_m2,
+#                       Height_Jun20_urbsubs_city_m2_ME)
+#     
+# AIC_compare.urb_score_transf(Height_Jun20_urbsubs_usc_m2,
+#                       Height_Jun20_urbsubs_usc_m2_ME) 
+
+```
+
+### Sept height
+#### lmer: diagnostics
+```{r}
+# GRADIENT / CITY_DIST-----
+
+# Height_Sept20_gr_city_m1 <- lmer(Total_Height_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
+#   data = heights_both_2020, REML = F,
+#       control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(Height_Sept20_gr_city_m1, type = "diag") # right-skewed
+
+Height_Sept20_gr_city_m2 <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_both_2020, REML = F)
+sjPlot::plot_model(Height_Sept20_gr_city_m2, type = "diag") # looks good
+
+
+
+
+
+# GRADIENT / URB SCORE-----
+
+# Height_Sept20_gr_usc_m1 <- lmer(Total_Height_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
+#   data = heights_both_2020, REML = F)
+# sjPlot::plot_model(Height_Sept20_gr_usc_m1, type = "diag") # right-skewed
+# 
+# 
+# Height_Sept20_gr_usc_m2 <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population/Family) + Urb_score,
+#   data = heights_both_2020, REML = F,
+#         control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(Height_Sept20_gr_usc_m2, type = "diag") # looks good though singular... take out block 
+# 
+# Height_Sept20_gr_usc_m3 <- lmer(sqrt(Total_Height_Sept) ~ (1|Population/Family) + Urb_score,
+#   data = heights_both_2020, REML = F,
+#         control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(Height_Sept20_gr_usc_m3, type = "diag") # looks ok
+# 
+# AIC(Height_Sept20_gr_usc_m2, Height_Sept20_gr_usc_m3) # model with block has significantly lower AIC... leave it in
+# 
+# Height_Sept20_gr_usc_m4 <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population) + Urb_score,
+#   data = heights_both_2020, REML = F,
+#         control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(Height_Sept20_gr_usc_m4, type = "diag") # looks ok
+# 
+# 
+# car::Anova(Height_Sept20_gr_usc_m2) # very similar results to model below
+# car::Anova(Height_Sept20_gr_usc_m4)
+# 
+# 
+# AIC(Height_Sept20_gr_usc_m2, Height_Sept20_gr_usc_m4) # nearly identical AIC... use m4
+
+# try glmmTMB
+Height_Sept20_gr_usc_m5 <- glmmTMB(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_both_2020,
+  family = gaussian) # works! use this
+
+
+
+# URB SUBTRANSECTS / CITY_DIST-----
+
+# Height_Sept20_urbsubs_city_m1 <- lmer(Total_Height_Sept ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F)
+# sjPlot::plot_model(Height_Sept20_urbsubs_city_m1, type = "diag") # right-skewed & singular
+# 
+# Height_Sept20_urbsubs_city_m2 <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F,
+#         control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(Height_Sept20_urbsubs_city_m2, type = "diag") # looks good but still singular... take out block
+# 
+# Height_Sept20_urbsubs_city_m3 <- lmer(sqrt(Total_Height_Sept) ~  (1|Population/Family) + City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F,
+#         control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(Height_Sept20_urbsubs_city_m3, type = "diag") # still singular... take out fam
+# 
+# Height_Sept20_urbsubs_city_m4 <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population) + City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F,
+#         control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(Height_Sept20_urbsubs_city_m4, type = "diag") # looks ok 
+
+# AIC(Height_Sept20_urbsubs_city_m2, Height_Sept20_urbsubs_city_m4) # nearly identical AIC
+# 
+# car::Anova(Height_Sept20_urbsubs_city_m4) # extremely similar results!
+# car::Anova(Height_Sept20_urbsubs_city_m2)
+
+# try glmmTMB
+Height_Sept20_urbsubs_city_m5 <- glmmTMB(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = gaussian) # works! use this
+
+
+# main effects
+Height_Sept20_urbsubs_city_m5_ME <- glmmTMB(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = gaussian) # works! use this
+
+
+
+
+# URB SUBTRANSECTS / URB SCORE-----
+
+# Height_Sept20_urbsubs_usc_m1 <- lmer(Total_Height_Sept ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F)
+# sjPlot::plot_model(Height_Sept20_urbsubs_usc_m1, type = "diag") # right-skewed
+
+
+Height_Sept20_urbsubs_usc_m2 <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F)
+sjPlot::plot_model(Height_Sept20_urbsubs_usc_m2, type = "diag") # looks good
+
+
+# main effects
+Height_Sept20_urbsubs_usc_m2_ME <- lmer(sqrt(Total_Height_Sept) ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  REML = F,
+    control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
+summary(Height_Sept20_urbsubs_usc_m2_ME)
+```
+#### Entire gradient: *sig for city_dist, not for urb_score
+###### City_dist
+```{r}
+car::Anova(Height_Sept20_gr_city_m2) # sig
+
+# 
+# # ANy variation within families or populations?
+# m.1 <- lmer(Total_Height_Sept ~ (1|Population/Family), data = heights_both_2020, REML = T)
+# 
+# ranova(m.1)
+# # YES for among families
+# 
+# 
+# sum.1 <- summary(m.1)
+# 
+# variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+#   dplyr::select(., c(grp, vcov, PVE)) %>%
+#   dplyr::rename(., Group = grp,
+#                 Variance = vcov)
+# 
+# 
+# write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_SeptHeight_lmer_PVE.csv"), col.names=TRUE, sep=",")
+# write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_SeptHeight_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+
+```
+
+###### Urb_score
+```{r}
+car::Anova(Height_Sept20_gr_usc_m5) # not sig
+```
+
+#### Urban subtransects: *Not sig for either
+###### City_dist
+```{r}
+car::Anova(Height_Sept20_urbsubs_city_m5) # not sig
+car::Anova(Height_Sept20_urbsubs_city_m5_ME)# not sig
+
+# 
+# # ANy variation among families or populations?
+# m.1 <- lmer(sqrt(Total_Height_Sept) ~ (1|Population/Family),
+#             data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+#             REML = T)
+# ranova(m.1)
+# # no
+# 
+# m.2 <- lmer(sqrt(Total_Height_Sept) ~ (1|Population/Family) + Transect_ID,
+#             data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+#             REML = F)
+# car::Anova(m.2)
+# # not among transects either
+# 
+# 
+# m.3 <- lmer(sqrt(Total_Height_Sept) ~ (1|Population/Family) + Transect_ID,
+#             data = heights_both_2020 %>% dplyr::filter(., Transect_ID != "Rural"),
+#             REML = T)
+# car::Anova(m.3)
+# # not sig in this or m.2
+# 
+# 
+# sum.1 <- summary(m.1)
+# 
+# variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+#   dplyr::select(., c(grp, vcov, PVE)) %>%
+#   dplyr::rename(., Group = grp,
+#                 Variance = vcov)
+# 
+# 
+# write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_SeptHeight_urban_lmer_PVE.csv"), col.names=TRUE, sep=",")
+# write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_SeptHeight_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+# write.table(car::Anova(m.2), here::here("./Figures_Tables/ranova_PVE/2020_SeptHeight_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+```
+
+
+###### Urb_score
+```{r}
+car::Anova(Height_Sept20_urbsubs_usc_m2) # not sig
+car::Anova(Height_Sept20_urbsubs_usc_m2_ME)# not sig
+```
+
+#### Export ANOVA
+```{r}
+# anova_table_flx(Height_Sept20_gr_city_m2)
+# anova_table_flx(Height_Sept20_gr_usc_m5)
+# anova_table_flx(Height_Sept20_urbsubs_city_m5)
+# anova_table_flx(Height_Sept20_urbsubs_city_m5_ME)
+# anova_table_flx(Height_Sept20_urbsubs_usc_m2)
+# anova_table_flx(Height_Sept20_urbsubs_usc_m2_ME)
+# 
+# AIC_compare.city_dist_transf(Height_Sept20_urbsubs_city_m5,
+#                       Height_Sept20_urbsubs_city_m5_ME)
+#     
+# AIC_compare.urb_score_transf(Height_Sept20_urbsubs_usc_m2,
+#                       Height_Sept20_urbsubs_usc_m2_ME) 
+
+```
+
+## Relative Growth Rate
+### lmer: diagnostics
+```{r}
+# GRADIENT / CITY_DIST-----
+
+# rgr_gr_city_m1 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + City_dist,
+#   data = heights_both_2020, REML = F)
+# sjPlot::plot_model(rgr_gr_city_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)... try taking out block
+# 
+# diagnostic(resid(rgr_gr_city_m1)) # very kurtotic
+# 
+# rgr_gr_city_m2 <- lmer(rel_growth_rate ~  (1|Population/Family) + City_dist,
+#   data = heights_both_2020, REML = F) # still singular... take out Fam
+# 
+# rgr_gr_city_m3 <- lmer(rel_growth_rate ~ (1|Block) +(1|Population) + City_dist,
+#   data = heights_both_2020, REML = F)#  singular. take out block
+# 
+# rgr_gr_city_m4 <- lmer(rel_growth_rate ~ (1|Population) + City_dist,
+#   data = heights_both_2020, REML = F)#  singular...
+# 
+# # try glmmtmb
+# test1 <- glmmTMB(rel_growth_rate ~ (1|Block) + (1|Population/Family) + City_dist,
+#   data = heights_both_2020,
+#   family = gaussian) # singular. take out block
+# 
+# test1 <- glmmTMB(rel_growth_rate ~ (1|Population/Family) + City_dist,
+#   data = heights_both_2020,
+#   family = gaussian) # singular. take out Family
+# 
+# rgr_gr_city_m5 <- glmmTMB(rel_growth_rate ~ (1|Population) + City_dist,
+#   data = heights_both_2020,
+#   family = gaussian) # singular...
+
+# try binomial, then removing zeroes and going from there
+
+
+# TAKING OUT PLANTS W/ZERO SCAR LENGTH & FITTING A BINOMIAL MODEL
+## THEN I'LL USE >0 DATA AND LOOK AT QUANTITATIVE MEASUREMENTS
+
+# recode plants as having height or not
+heights_both_2020$rel_growth_rate_binary <- heights_both_2020$rel_growth_rate
+heights_both_2020$rel_growth_rate_binary[heights_both_2020$rel_growth_rate > 0] <- 1
+heights_both_2020$rel_growth_rate_binary[heights_both_2020$rel_growth_rate <= 0] <- 0
+
+
+rgr_gr_city_m6 <- glmer((rel_growth_rate_binary) ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_both_2020,
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
+res <- simulateResiduals(rgr_gr_city_m6)
+plot(res)
+# looks great! 
+summary(rgr_gr_city_m6)
+
+car::Anova(rgr_gr_city_m6) # not sig
+
+
+# rgr_gr_city_m7 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + City_dist,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1),
+#   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(rgr_gr_city_m7, type='diag') #very right-skewed but otherwise aligns well with normal curve... try sqrt
+
+rgr_gr_city_m8 <- lmer(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(rgr_gr_city_m8, type='diag') # looks great!
+
+
+
+
+
+
+# GRADIENT / URB SCORE-----
+
+# rgr_gr_usc_m1 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + Urb_score,
+#   data = heights_both_2020, REML = F)
+# sjPlot::plot_model(rgr_gr_usc_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)... take out block
+# 
+# rgr_gr_usc_m2 <- lmer(rel_growth_rate ~  (1|Population/Family) + Urb_score,
+#   data = heights_both_2020, REML = F)
+# sjPlot::plot_model(rgr_gr_usc_m2, type = "diag") # still singular... take out Pop/Fam
+# 
+# rgr_gr_usc_m3 <- lmer(rel_growth_rate ~ (1|Block) + Urb_score,
+#   data = heights_both_2020, REML = F)
+# sjPlot::plot_model(rgr_gr_usc_m3, type = "diag") # not singular. looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)..
+# 
+# diagnostic(resid(rgr_gr_usc_m3)) # high kurtosis
+
+
+# try binomial, then removing zeroes and going from there
+
+# TAKING OUT PLANTS W/negative RGR & FITTING A BINOMIAL MODEL
+## THEN I'LL USE >0 DATA AND LOOK AT QUANTITATIVE MEASUREMENTS
+
+rgr_gr_usc_m6 <- glmer((rel_growth_rate_binary) ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_both_2020,
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
+res <- simulateResiduals(rgr_gr_usc_m6)
+plot(res)
+# looks great! 
+summary(rgr_gr_usc_m6)
+
+car::Anova(rgr_gr_usc_m6) # not sig
+
+
+# rgr_gr_usc_m7 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + Urb_score,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1),
+#   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(rgr_gr_usc_m7, type='diag') #very right-skewed but otherwise aligns well with normal curve... try sqrt
+
+rgr_gr_usc_m8 <- lmer(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1),
+  control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+sjPlot::plot_model(rgr_gr_usc_m8, type='diag') # looks great!
+
+
+
+
+# URB SUBTRANSECTS / CITY_DIST-----
+
+# rgr_urbsubs_city_m1 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F)
+# sjPlot::plot_model(rgr_urbsubs_city_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)... take out block
+# 
+# rgr_urbsubs_city_m2 <- lmer(rel_growth_rate ~  (1|Population/Family) + City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F) # is singular,  take out Pop/Fam
+# 
+# rgr_urbsubs_city_m3 <- lmer(rel_growth_rate ~ (1|Block) + City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F)  # is singular... take out block and pop/fam
+# 
+# rgr_urbsubs_city_m4 <- lm(rel_growth_rate ~  City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"))
+# sjPlot::plot_model(rgr_urbsubs_city_m4, type = "diag")
+# 
+# diagnostic(resid(rgr_urbsubs_city_m4)) # high kurtosis
+
+
+# try binomial, then removing zeroes and going from there
+
+# TAKING OUT PLANTS W/negative RGR & FITTING A BINOMIAL MODEL
+## THEN I'LL USE >0 DATA AND LOOK AT QUANTITATIVE MEASUREMENTS
+
+rgr_urbsubs_city_m5 <- glmer((rel_growth_rate_binary) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban" ),
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
+res <- simulateResiduals(rgr_urbsubs_city_m5)
+plot(res)
+# looks great! 
+summary(rgr_urbsubs_city_m5)
+
+car::Anova(rgr_urbsubs_city_m5) # city_dist marg sig
+
+# main effects:
+rgr_urbsubs_city_m5_ME <- glmer((rel_growth_rate_binary) ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban" ),
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+car::Anova(rgr_urbsubs_city_m5_ME) # city_dist marg sig
+
+# 
+# rgr_urbsubs_city_m6 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) +  City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+#   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(rgr_urbsubs_city_m6, type='diag') # singular... but first align it w/normal curve. do sqrt 
+# 
+# rgr_urbsubs_city_m7 <- lmer(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population/Family) +  City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+#   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(rgr_urbsubs_city_m7, type='diag') # meets expectations but still singular... try glmmTMB
+
+rgr_urbsubs_city_m8 <- glmmTMB(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population/Family) +  City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+  family = gaussian) # it works! use this
+
+
+# main effects
+# rgr_urbsubs_city_m8_ME <- glmmTMB(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population/Family) +  City_dist + Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+#   family = gaussian) # singular... take out block
+
+rgr_urbsubs_city_m8_ME.1 <- glmmTMB(sqrt(rel_growth_rate) ~ (1|Population/Family) +  City_dist + Transect_ID,
+  data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+  family = gaussian) # it works. put back block and take out fam and see how it compares to full model
+# 
+# rgr_urbsubs_city_m8_ME.2 <- glmmTMB(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population) +  City_dist + Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+#   family = gaussian)
+# 
+# car::Anova(rgr_urbsubs_city_m8)
+# car::Anova(rgr_urbsubs_city_m8_ME.1) # identical to model below!
+# car::Anova(rgr_urbsubs_city_m8_ME.2)
+
+
+
+# URB SUBTRANSECTS / URB SCORE-----
+
+# rgr_urbsubs_usc_m1 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F)
+# sjPlot::plot_model(rgr_urbsubs_usc_m1, type = "diag") # is singular, looks normal except for left tail (but otherwise looks fine... I think it's kurtotic)... take out block
+# 
+# rgr_urbsubs_usc_m2 <- lmer(rel_growth_rate ~  (1|Population/Family) + Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F) # is singular,  take out Pop/Fam
+# 
+# rgr_urbsubs_usc_m3 <- lmer(rel_growth_rate ~ (1|Block) + Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   REML = F)  # is singular... take out block and pop/fam
+# 
+# rgr_urbsubs_usc_m4 <- lm(rel_growth_rate ~  Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"))
+# sjPlot::plot_model(rgr_urbsubs_usc_m4, type = "diag") 
+# 
+# diagnostic(resid(rgr_urbsubs_usc_m4)) # high kurtosis
+
+
+# try binomial, then removing zeroes and going from there
+
+# TAKING OUT PLANTS W/negative RGR & FITTING A BINOMIAL MODEL
+## THEN I'LL USE >0 DATA AND LOOK AT QUANTITATIVE MEASUREMENTS
+
+rgr_urbsubs_usc_m5 <- glmer((rel_growth_rate_binary) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban" ),
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
+res <- simulateResiduals(rgr_urbsubs_usc_m5)
+plot(res)
+# looks great! 
+summary(rgr_urbsubs_usc_m5)
+
+car::Anova(rgr_urbsubs_usc_m5) # nothing sig
+
+# main effects:
+rgr_urbsubs_usc_m5_ME <- glmer((rel_growth_rate_binary) ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = "binomial"(link = "logit"),
+  nAGQ = 0,
+  control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+
+
+# rgr_urbsubs_usc_m6 <- lmer(rel_growth_rate ~ (1|Block) + (1|Population/Family) +  Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 & Urb_Rur == "Urban"),
+#   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(rgr_urbsubs_usc_m6, type='diag') #very right-skewed but otherwise aligns well with normal curve... try sqrt (also singular)
+# 
+# rgr_urbsubs_usc_m7 <- lmer(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population/Family) +  Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 & Urb_Rur == "Urban"),
+#   control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+# sjPlot::plot_model(rgr_urbsubs_usc_m7, type='diag') # looks great! now address singularity... try glmmTMB
+
+rgr_urbsubs_usc_m8 <- glmmTMB(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population/Family) +  Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 & Urb_Rur == "Urban"),
+  family = gaussian) # not singular! Use this
+
+
+# main effects
+# rgr_urbsubs_usc_m8_ME <- glmmTMB(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population/Family) +  Urb_score + Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 & Urb_Rur == "Urban"),
+#   family = gaussian) # singular... remove block
+
+rgr_urbsubs_usc_m8_ME.1 <- glmmTMB(sqrt(rel_growth_rate) ~ (1|Population/Family) +  Urb_score + Transect_ID,
+  data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+  family = gaussian) # it works. put back block and take out fam and see how it compares to full model
+
+# rgr_urbsubs_usc_m8_ME.2 <- glmmTMB(sqrt(rel_growth_rate) ~ (1|Block) + (1|Population) +  Urb_score + Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+#   family = gaussian) # it works
+# 
+# car::Anova(rgr_urbsubs_usc_m8_ME)
+# car::Anova(rgr_urbsubs_usc_m8_ME.1) # identical to model below!
+# car::Anova(rgr_urbsubs_usc_m8_ME.2)
+
+
+
+```
+
+### Entire gradient: *Not sig for either
+#### City_dist
+```{r}
+car::Anova(rgr_gr_city_m6) # not sig
+car::Anova(rgr_gr_city_m8) # not sig
+# 
+# 
+# # ANy variation within families or populations?
+# m.1 <- lmer(sqrt(rel_growth_rate) ~ (1|Population/Family),
+#             data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1),
+#             control=lmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+#             REML = T)
+# 
+# 
+# ranova(m.1)
+# # nope
+# sum.1 <- summary(m.1)
+# 
+# 
+# variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+#   dplyr::select(., c(grp, vcov, PVE)) %>%
+#   dplyr::rename(., Group = grp,
+#                 Variance = vcov)
+# 
+# 
+# write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_growthrate_lmer_PVE.csv"), col.names=TRUE, sep=",")
+# write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_growthrate_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+```
+
+#### Urb_score
+```{r}
+car::Anova(rgr_gr_usc_m6) #not sig
+car::Anova(rgr_gr_usc_m8) #not sig
+
+```
+
+
+### Urban subtransects: *Marg sig for city_dist (quant) & urb_score (quant)
+#### City_dist
+```{r}
+car::Anova(rgr_urbsubs_city_m5) # binomial: nothing sig
+car::Anova(rgr_urbsubs_city_m5_ME) # binomial: nothing sig
+car::Anova(rgr_urbsubs_city_m8) # quantitative: transect sig & city_dist marg sig
+car::Anova(rgr_urbsubs_city_m8_ME.1) # quantitative: transect marg sig & city_dist marg sig
+
+AIC(rgr_urbsubs_city_m5, rgr_urbsubs_city_m5_ME) # ME model lower AIC
+AIC(rgr_urbsubs_city_m8, rgr_urbsubs_city_m8_ME.1) # ME model lower AIC
+summary(rgr_urbsubs_city_m8_ME.1)
+
+
+
+# # ANy variation among families or populations?
+# m.1 <- lmer(sqrt(rel_growth_rate) ~  (1|Population/Family) + City_dist ,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 & Urb_Rur == "Urban"),
+#   REML = T)
+# 
+# ranova(m.1)
+# # no
+# 
+# m.2 <- lmer(sqrt(rel_growth_rate) ~ (1|Population/Family) + Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 & Urb_Rur == "Urban"),
+#             REML = F)
+# car::Anova(m.2)
+# # not among transects either
+# 
+# 
+# m.3 <- lmer(sqrt(rel_growth_rate) ~ (1|Population/Family) + Transect_ID,
+#   data = heights_both_2020 %>% filter(rel_growth_rate_binary == 1 &Urb_Rur == "Urban"),
+#   REML = T)
+# car::Anova(m.3)
+# # also not sig among transects
+# 
+# 
+# sum.1 <- summary(m.1)
+# 
+# variances1 <- print(VarCorr(m.1),comp="Variance") %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+#   dplyr::select(., c(grp, vcov, PVE)) %>%
+#   dplyr::rename(., Group = grp,
+#                 Variance = vcov)
+# 
+# 
+# write.table(ranova(m.1), here::here("./Figures_Tables/ranova_PVE/2020_growthrate_urban_lmer_PVE.csv"), col.names=TRUE, sep=",")
+# write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_growthrate_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+# write.table(car::Anova(m.2), here::here("./Figures_Tables/ranova_PVE/2020_growthrate_urban_lmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+```
+
+#### Urb_score
+```{r}
+car::Anova(rgr_urbsubs_usc_m5) # binomial: nothing sig
+car::Anova(rgr_urbsubs_usc_m5_ME) # binomial: nothing sig
+car::Anova(rgr_urbsubs_usc_m8) # quantitative: interaxn marg sig
+car::Anova(rgr_urbsubs_usc_m8_ME.1) # quantitative: nothing sig
+
+AIC(rgr_urbsubs_usc_m8, rgr_urbsubs_usc_m8_ME.1) # ME model lower AIC but not significant difference
+summary(rgr_urbsubs_usc_m8)
+```
+
+
+### Export ANOVA
+```{r}
+# anova_table_flx(rgr_gr_city_m6)
+# anova_table_flx(rgr_gr_city_m8)
+# anova_table_flx(rgr_gr_usc_m6)
+# anova_table_flx(rgr_gr_usc_m8)
+# 
+# anova_table_flx(rgr_urbsubs_city_m5)
+# anova_table_flx(rgr_urbsubs_city_m5_ME)
+# anova_table_flx(rgr_urbsubs_city_m8)
+# anova_table_flx(rgr_urbsubs_city_m8_ME.1)
+# anova_table_flx(rgr_urbsubs_usc_m5)
+# anova_table_flx(rgr_urbsubs_usc_m5_ME)
+# anova_table_flx(rgr_urbsubs_usc_m8)
+# anova_table_flx(rgr_urbsubs_usc_m8_ME.1)
+# 
+# AIC_compare.city_dist_transf_binomial(rgr_urbsubs_city_m5 ,
+#                        rgr_urbsubs_city_m5_ME)
+#     
+# AIC_compare.city_dist_transf_quantitative( rgr_urbsubs_city_m8,
+#                        rgr_urbsubs_city_m8_ME.1) 
+# 
+# AIC_compare.urb_score_transf_binomial(rgr_urbsubs_usc_m5 ,
+#                        rgr_urbsubs_usc_m5_ME)
+#     
+# AIC_compare.urb_score_transf_quantitative( rgr_urbsubs_usc_m8,
+#                        rgr_urbsubs_usc_m8_ME.1) 
+
+```
+
+
+## Number of Ramets
+### June ramets
+#### glmer: diagnostics
+```{r}
+# GRADIENT / CITY_DIST-----
+
+# rametsJ_gr_city_m1 <- glmer(Ramets_June ~ (1|Block) + (1|Population/Family) + City_dist,
+#   data = heights_both_2020,
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# res <- simulateResiduals(rametsJ_gr_city_m1)
+# plot(res)
+# # convergence warning and dispersion significant...
+# testOverdispersion(rametsJ_gr_city_m1) # add ID as random effect
+# address overdispersion through an individual-level random effect
+heights_both_2020$ID <- seq.int(nrow(heights_both_2020))
+
+rametsJ_gr_city_m2 <- glmer(Ramets_June ~ (1|Block) + (1|Population/Family) + City_dist + (1|ID),
+  data = heights_both_2020,
+  family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+res <- simulateResiduals(rametsJ_gr_city_m2)
+plot(res)
+# looks good!
+
+
+
+# GRADIENT / URB SCORE-----
+
+# rametsJ_gr_usc_m1 <- glmer(Ramets_June ~ (1|Block) + (1|Population/Family) + Urb_score,
+#   data = heights_both_2020,
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# res <- simulateResiduals(rametsJ_gr_usc_m1)
+# plot(res)
+# # dispersion significant...
+# testOverdispersion(rametsJ_gr_usc_m1) # add ID as random effect
+
+
+rametsJ_gr_usc_m2 <- glmer(Ramets_June ~ (1|Block) + (1|Population/Family) + Urb_score + (1|ID),
+  data = heights_both_2020,
+  family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+res <- simulateResiduals(rametsJ_gr_usc_m2)
+plot(res)
+# looks good! says there's an outlier but I think it's fine
+
+
+
+# URB SUBTRANSECTS / CITY_DIST-----
+
+rametsJ_urbsubs_city_m1 <- glmer(Ramets_June ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+res <- simulateResiduals(rametsJ_urbsubs_city_m1)
+plot(res)
+# says there's an outlier but I think it's fine
+
+
+# main effects
+rametsJ_urbsubs_city_m1_ME <- glmer(Ramets_June ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+
+
+# URB SUBTRANSECTS / URB SCORE-----
+
+# rametsJ_urbsubs_urbsubs_m1 <- glmer(Ramets_June ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# res <- simulateResiduals(rametsJ_urbsubs_urbsubs_m1)
+# plot(res) # looks good but is singular... take out block
+# 
+# rametsJ_urbsubs_urbsubs_m2 <- glmer(Ramets_June ~ (1|Population/Family) + Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))) # still singular... take out Fam
+# 
+# rametsJ_urbsubs_urbsubs_m3 <- glmer(Ramets_June ~  (1|Population) + (1|Block) + Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# res <- simulateResiduals(rametsJ_urbsubs_urbsubs_m3)
+# plot(res) # # dispersion significant...
+# testOverdispersion(rametsJ_urbsubs_urbsubs_m3) # add ID as random effect
+# 
+# rametsJ_urbsubs_urbsubs_m4 <- glmer(Ramets_June ~ (1|Block) +(1|Population/Family) + (1|ID) + Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# res <- simulateResiduals(rametsJ_urbsubs_urbsubs_m4)
+# plot(res)# looks good but still singular... take out block
+# 
+# rametsJ_urbsubs_urbsubs_m5 <- glmer(Ramets_June ~ (1|Population/Family) + (1|ID) + Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))) # singular... take out Family
+# 
+# rametsJ_urbsubs_urbsubs_m6 <- glmer(Ramets_June ~ (1|Population) + (1|ID) + Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))) # singular...
+
+# try glmmTMB
+rametsJ_urbsubs_urbsubs_m7 <- glmmTMB(Ramets_June ~ (1|Block) +(1|Population/Family) + (1|ID) + Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson) # it works! use this
+
+
+
+# main effects
+rametsJ_urbsubs_urbsubs_m7_ME <- glmmTMB(Ramets_June ~ (1|Block) +(1|Population/Family) + (1|ID) + Urb_score + Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson) # it works! use this
+
+
+```
+
+#### Entire gradient: *Nothing sig for either
+##### City_dist
+```{r}
+car::Anova(rametsJ_gr_city_m2) # not sig
+
+# 
+# # ANy variation within families or populations?
+# 
+# ##### TACTIC 1: try bootstrapping #####
+# # NOT PERFECT b/c can't nest family within pop but trying a few ways to get at the correct answer.
+# # https://www.ssc.wisc.edu/sscc/pubs/MM/MM_TestEffects.html#test-of-random-parameter
+# library(pbkrtest) # Parametric Bootstrap, Kenward-Roger and Satterthwaite Based
+Methods for Test in Mixed Models
+# library(pbnm)
+# 
+# 
+# # JUST POPULATION
+# gmm <-  glmer(Ramets_June ~ City_dist + (1|Population), # can't leave in Family... doesn't work
+#   family = poisson,
+#               data = heights_both_2020,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# 
+# 
+# # IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+# gmm1 <-  glmer(Ramets_June ~ City_dist + (1|Population/Family), 
+#   family = poisson,
+#               data = heights_both_2020,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# 
+# # POP:FAMILY
+# gmm2 <-  glmer(Ramets_June ~ City_dist + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+#   family = poisson,
+#               data = heights_both_2020,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# 
+# # UNIQUE FAMILIES
+# heights_both_2020$Family_unique <- paste(heights_both_2020$Population, heights_both_2020$Family)
+# gmm3 <-  glmer(Ramets_June ~ City_dist + (1|Family_unique),
+#   family = poisson,
+#               data = heights_both_2020,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP
+# gmm4 <-  glmer(Ramets_June ~ City_dist + (1|Population:Family) + (1|Population),
+#   family = poisson,
+#               data = heights_both_2020,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# 
+# 
+# # REDUCED MODEL
+# gmmDG1 <- glm(Ramets_June ~ City_dist,
+#   family = poisson,
+#               data = heights_both_2020)
+# 
+# ### RESULTS ###
+# # POPULATION (so, results are about populations)
+# pbgmmDg1 <- pbnm(gmm,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) %T>%
+#   summary() %>%
+#   print()   # p = 0.396 ... no var among pops
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+# pbgmmDg4 <- pbnm(gmm4,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# ranova_pop <- summary(pbgmmDg4) %T>%
+#   print() # p =  0.159... no var among pops accounting for fams
+# 
+# # POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+# pbgmmDg2 <- pbnm(gmm2,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# ranova_fam <- summary(pbgmmDg2) %T>%
+#   print() # p = 0.441 ... little var among families crossed w/ pops
+# 
+# # UNIQUE FAMILIES (so, results are about families)
+# pbgmmDg3 <- pbnm(gmm3,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) %T>%
+#   summary() %>%
+#   print() # p = 0.441 ... little var among families, period
+# 
+# 
+# 
+# ##### use anova to test significance of terms (this isn't what we want, though): #####
+# ## test Pop/Fam
+# anova(gmm1, gmmDG1) # p = 0.0001594 ***
+# 
+# ## test Pop/Fam but expanded
+# anova(gmm4, gmmDG1) # p = 0.0001594 ***      # SAME AS ABOVE
+# 
+# ## test Pop
+# anova(gmm, gmmDG1) # p = 0.024*
+# 
+# ## test Fam
+# anova(gmm3, gmmDG1) # p =  3.155e-05 ***
+# 
+# ## test pop:fam
+# anova(gmm2, gmmDG1) # p =  3.155e-05 ***    # SAME AS ABOVE
+# 
+# 
+# 
+# #--------- FINAL RESULTS: ----------#
+# # Bootstrapping:
+# # - Pop:    NOT SIGNIFICANT
+# # - Family: NOT SIGNIFICANT
+# # anova:
+# # - Pop:    SIGNIFICANT
+# # - Family: SIGNIFICANT
+# 
+# # --- DO THE 2 METHODS MATCH? ---#
+# #       [ ]    NO
+# #             
+# 
+# 
+# 
+# ##### old code #####
+# 
+# sum.1 <- summary(gmm4)
+# 
+# variances1 <- print(VarCorr(gmm4),comp="Variance") %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+#   dplyr::select(., c(grp, vcov, PVE)) %>%
+#   dplyr::rename(., Group = grp,
+#                 Variance = vcov)
+# 
+# # export percent variance explained
+# write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_Ramets_June_glmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+# 
+# # export ranova
+# sink(here::here("./Figures_Tables/ranova_PVE/2020_Ramets_June_glmer_ranova.csv"))
+# print("POPULATION", sep="\n\n")
+# print(ranova_pop, sep="\n\n")
+#   cat("\n")
+# print("FAMILY", sep="\n\n")
+# print(ranova_fam, sep="\n\n")
+#   cat("\n")
+# if (ranova_pop[1] <= 0.05){
+#   print ('There is variance among populations')}
+# if (ranova_pop[1] > 0.05){
+#   print ("There is not much variance among populations")}
+# if (ranova_fam[1] <= 0.05){
+#   print ("There is variance among families")}
+# if (ranova_fam[1] > 0.05){
+#   print ("There is not much variance among families")}
+# sink()
+
+
+```
+
+##### Urb_score
+```{r}
+car::Anova(rametsJ_gr_usc_m2) # not sig
+
+```
+
+
+#### Urban subtransects: *Nothing sig for city_dist; urb_score sig and transect marg sig
+##### City_dist
+```{r}
+car::Anova(rametsJ_urbsubs_city_m1) # not sig
+car::Anova(rametsJ_urbsubs_city_m1_ME) # not sig
+
+AIC(rametsJ_urbsubs_city_m1, rametsJ_urbsubs_city_m1_ME) # ME has lower aic but <2
+
+# 
+# # ANy variation within families or populations?
+# 
+# ##### TACTIC 1: try bootstrapping #####
+# # NOT PERFECT b/c can't nest family within pop but trying a few ways to get at the correct answer.
+# # https://www.ssc.wisc.edu/sscc/pubs/MM/MM_TestEffects.html#test-of-random-parameter
+# 
+# 
+# ### MODEL 1: CITY_DIST ###
+# ##########################
+# 
+# # JUST POPULATION
+# gmm <-  glmer(Ramets_June ~ City_dist + (1|Population), # can't leave in Family... doesn't work
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+# gmm1 <-  glmer(Ramets_June ~ City_dist + (1|Population/Family), 
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # POP:FAMILY
+# gmm2 <-  glmer(Ramets_June ~ City_dist + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+#   family = poisson,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # UNIQUE FAMILIES
+# heights_both_2020$Family_unique <- paste(heights_both_2020$Population, heights_both_2020$Family)
+# gmm3 <-  glmer(Ramets_June ~ City_dist + (1|Family_unique),
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP
+# gmm4 <-  glmer(Ramets_June ~ City_dist + (1|Population:Family) + (1|Population),
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# 
+# # REDUCED MODEL 1
+# gmmDG1 <- glm(Ramets_June ~ City_dist,
+#                 data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = poisson)
+# 
+# 
+# 
+# ### RESULTS ###
+# # POPULATION (so, results are about populations)
+# pbgmmDg1 <- pbnm(gmm,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# summary(pbgmmDg1) # p = 0.375...  little var among pops
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+# pbgmmDg4 <- pbnm(gmm4,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# ranova_pop <- summary(pbgmmDg4) %T>%
+#   print() # p = 0.098... (some?) var among pops accounting for fams
+# 
+# # POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+# pbgmmDg2 <- pbnm(gmm2,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# ranova_fam <- summary(pbgmmDg2) %T>%
+#   print() # p = 0.441... little var among families crossed w/ pops
+# 
+# # UNIQUE FAMILIES (so, results are about families)
+# pbgmmDg3 <- pbnm(gmm3,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# summary(pbgmmDg3) # p = 0.44... little var among families, period
+# 
+# 
+# 
+# ### MODEL 2: TRANSECT_ID ###
+# ##########################
+# 
+# # JUST POPULATION
+# gmm.2 <-  glmer(Ramets_June ~ Transect_ID + (1|Population), # can't leave in Family... doesn't work
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+# gmm1.2 <-  glmer(Ramets_June ~ Transect_ID + (1|Population/Family), 
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # POP:FAMILY
+# gmm2.2 <-  glmer(Ramets_June ~ Transect_ID + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # UNIQUE FAMILIES
+# gmm3.2 <-  glmer(Ramets_June ~ Transect_ID + (1|Family_unique),
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP
+# gmm4.2 <-  glmer(Ramets_June ~ Transect_ID + (1|Population:Family) + (1|Population),
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"))
+# 
+# # REDUCED MODEL 2
+# gmmDG1.2 <- glm(Ramets_June ~ Transect_ID,
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"))
+# 
+# 
+# 
+# ### RESULTS ###
+# # POPULATION (so, results are about populations)
+# pbgmmDg1.2 <- pbnm(gmm.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# summary(pbgmmDg1.2) # p = 0.023...  var among pops
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+# pbgmmDg4.2 <- pbnm(gmm4.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# ranova_pop.2 <- summary(pbgmmDg4.2) %T>%
+#   print() # p = 0.026... var among pops accounting for fams
+# 
+# # POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+# pbgmmDg2.2 <- pbnm(gmm2.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# ranova_fam.2 <- summary(pbgmmDg2.2) %T>%
+#   print() # p = 0.001...  var among families crossed w/ pops
+# 
+# # UNIQUE FAMILIES (so, results are about families)
+# pbgmmDg3.2 <- pbnm(gmm3.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# summary(pbgmmDg3.2) # p = 0.001.. var among families
+# 
+# 
+# 
+# 
+# sum.1 <- summary(gmm4)
+# 
+# variances1 <- print(VarCorr(gmm4),comp="Variance") %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+#   dplyr::select(., c(grp, vcov, PVE)) %>%
+#   dplyr::rename(., Group = grp,
+#                 Variance = vcov)
+# 
+# # export percent variance explained
+# write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_RametsJune_urban_glmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+# 
+# # export ranova
+# sink(here::here("./Figures_Tables/ranova_PVE/2020_RametsJune_urban_glmer_ranova.csv"))
+# print("POPULATION", sep="\n\n")
+# print(ranova_pop, sep="\n\n")
+#   cat("\n")
+# print("FAMILY", sep="\n\n")
+# print(ranova_fam, sep="\n\n")
+#   cat("\n")
+# if (ranova_pop[1] <= 0.05){
+#   print ('There is variance among populations')}
+# if (ranova_pop[1] > 0.05){
+#   print ("There is not much variance among populations")}
+# if (ranova_fam[1] <= 0.05){
+#   print ("There is variance among families")}
+# if (ranova_fam[1] > 0.05){
+#   print ("There is not much variance among families")}
+#   
+# cat("\n")
+# cat("\n")
+# 
+# print("POPULATION", sep="\n\n")
+# print(ranova_pop.2, sep="\n\n")
+#   cat("\n")
+# print("FAMILY", sep="\n\n")
+# print(ranova_fam.2, sep="\n\n")
+#   cat("\n")
+# if (ranova_pop.2[1] <= 0.05){
+#   print ('Variance among populations differs by urban subtransect')}
+# if (ranova_pop.2[1] > 0.05){
+#   print ("Variance among populations does not differ by urban subtransect")}
+# if (ranova_fam.2[1] <= 0.05){
+#   print ("Variance among families differs by urban subtransect")}
+# if (ranova_fam.2[1] > 0.05){
+#   print ("Variance among families does not differ by urban subtransect")}
+# sink()
+
+```
+
+##### Urb_score
+```{r}
+car::Anova(rametsJ_urbsubs_urbsubs_m7)    # urb_score sig and transect marg sig
+car::Anova(rametsJ_urbsubs_urbsubs_m7_ME) # urb_score sig and transect marg sig
+
+AIC(rametsJ_urbsubs_urbsubs_m7, rametsJ_urbsubs_urbsubs_m7_ME) # ME has slightly lower aic but <2
+
+```
+
+
+#### Export ANOVA
+```{r}
+# anova_table_flx(rametsJ_gr_city_m2)
+# anova_table_flx(rametsJ_gr_usc_m2)
+# anova_table_flx(rametsJ_urbsubs_city_m1)
+# anova_table_flx(rametsJ_urbsubs_city_m1_ME)
+# anova_table_flx(rametsJ_urbsubs_urbsubs_m7)
+# anova_table_flx(rametsJ_urbsubs_urbsubs_m7_ME)
+# 
+# AIC_compare.city_dist(rametsJ_urbsubs_city_m1,
+#                       rametsJ_urbsubs_city_m1_ME)
+#     
+# AIC_compare.urb_score(rametsJ_urbsubs_urbsubs_m7,
+#                       rametsJ_urbsubs_urbsubs_m7_ME) 
+
+```
+### Sept ramets
+#### glmer: diagnostics
+```{r}
+# GRADIENT / CITY_DIST-----
+
+# rametsS_gr_city_m1 <- glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
+#   data = heights_both_2020,
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# res <- simulateResiduals(rametsS_gr_city_m1)
+# plot(res) # looks good but singular... take out block
+# 
+# rametsS_gr_city_m2 <- glmer(Ramets_Sept ~  (1|Population/Family) + City_dist,
+#   data = heights_both_2020,
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))) # singular... take out fam
+# 
+# rametsS_gr_city_m3 <- glmer(Ramets_Sept ~ (1|Block) +  (1|Population) + City_dist,
+#   data = heights_both_2020,
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))) # singular... take out block
+# 
+# rametsS_gr_city_m4 <- glmer(Ramets_Sept ~ (1|Population) + City_dist,
+#   data = heights_both_2020,
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))) # singular... 
+
+# try glmmTMB
+# test1 <- glmmTMB(Ramets_Sept ~ (1|Block) + (1|Population/Family) + City_dist,
+#   data = heights_both_2020,
+#   family = poisson) # singular... take out block
+
+rametsS_gr_city_m5 <- glmmTMB(Ramets_Sept ~  (1|Population/Family) + City_dist,
+  data = heights_both_2020,
+  family = poisson) # it works! use this
+
+# test1 <- glmmTMB(Ramets_Sept ~ (1|Block) + (1|Population) + City_dist,
+#   data = heights_both_2020,
+#   family = poisson) # it works!
+# 
+# car::Anova(rametsS_gr_city_m5) # both are identical
+# car::Anova(test1)
+
+
+
+# GRADIENT / URB SCORE-----
+
+# rametsS_gr_usc_m1 <- glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
+#   data = heights_both_2020,
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# res <- simulateResiduals(rametsS_gr_usc_m1)
+# plot(res)
+# # looks good! though singular... take out block
+# 
+# rametsS_gr_usc_m2 <- glmer(Ramets_Sept ~  (1|Population/Family) + Urb_score,
+#   data = heights_both_2020,
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))) # singular... take out fam
+# 
+# rametsS_gr_usc_m3 <- glmer(Ramets_Sept ~ (1|Block) + (1|Population) +  Urb_score,
+#   data = heights_both_2020,
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))) # singular... take out block
+# 
+# rametsS_gr_usc_m4 <- glmer(Ramets_Sept ~  (1|Population) +  Urb_score,
+#   data = heights_both_2020,
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))) # singular...
+
+# try glmmTMB
+rametsS_gr_usc_m5 <- glmmTMB(Ramets_Sept ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = heights_both_2020,
+  family = poisson) # it works! use this
+
+
+
+# URB SUBTRANSECTS / CITY_DIST-----
+
+# rametsS_urbsubs_city_m1 <- glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# res <- simulateResiduals(rametsS_urbsubs_city_m1)
+# plot(res) # looks good though singular... take out block
+# 
+# rametsS_urbsubs_city_m2 <- glmer(Ramets_Sept ~  (1|Population/Family) + City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))) # singular... take out fam
+# 
+# rametsS_urbsubs_city_m3 <- glmer(Ramets_Sept ~ (1|Block) + (1|Population) + City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))) #  singular... take out block
+# 
+# rametsS_urbsubs_city_m4 <- glm(Ramets_Sept ~ (1|Population) + City_dist * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = poisson) # this works!
+
+# try glmmTMB
+rametsS_urbsubs_city_m5 <- glmmTMB(Ramets_Sept ~ (1|Block) + (1|Population/Family) +  City_dist * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson) # it works! use this
+
+
+# main effects
+rametsS_urbsubs_city_m5_ME <- glmmTMB(Ramets_Sept ~ (1|Block) + (1|Population/Family) +  City_dist + Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson) # it works! use this
+
+
+
+# URB SUBTRANSECTS / URB SCORE-----
+
+# rametsS_urbsubs_urbsubs_m1 <- glmer(Ramets_Sept ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# res <- simulateResiduals(rametsS_urbsubs_urbsubs_m1)
+# plot(res)
+# # looks good but singular... take out block
+# 
+# rametsS_urbsubs_usc_m2 <- glmer(Ramets_Sept ~  (1|Population/Family) + Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))) # singular... take out fam
+# 
+# rametsS_urbsubs_usc_m3 <- glmer(Ramets_Sept ~ (1|Block) + (1|Population) + Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))) # singular... take out block
+# 
+# rametsS_urbsubs_usc_m4 <- glmer(Ramets_Sept ~  (1|Population) + Urb_score * Transect_ID,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = poisson,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))) # singular...
+
+# try glmmTMB
+rametsS_urbsubs_usc_m5 <- glmmTMB(Ramets_Sept ~ (1|Block) + (1|Population/Family) +  Urb_score * Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson) # it works! use this
+
+
+
+
+# main effects
+rametsS_urbsubs_usc_m5_ME <- glmmTMB(Ramets_Sept ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+  data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+  family = poisson) # it works! use this
+
+```
+
+#### Entire gradient: *Sig for city_dist, not for urb_score
+##### City_dist
+```{r}
+car::Anova(rametsS_gr_city_m5) # sig
+
+
+# 
+# # ANy variation within families or populations?
+# 
+# ##### TACTIC 1: try bootstrapping #####
+# # NOT PERFECT b/c can't nest family within pop but trying a few ways to get at the correct answer.
+# # https://www.ssc.wisc.edu/sscc/pubs/MM/MM_TestEffects.html#test-of-random-parameter
+# library(pbkrtest) # Parametric Bootstrap, Kenward-Roger and Satterthwaite Based
+Methods for Test in Mixed Models
+# library(pbnm)
+# 
+# # can't handle glmmTMB so switching back to glmer
+# 
+# # JUST POPULATION
+# gmm <-  glmer(Ramets_Sept ~ City_dist + (1|Population), # can't leave in Family... doesn't work
+#   family = poisson,
+#               data = heights_both_2020)
+# 
+# 
+# 
+# # IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+# gmm1 <-  glmer(Ramets_Sept ~ City_dist + (1|Population/Family), 
+#   family = poisson,
+#               data = heights_both_2020,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# 
+# # POP:FAMILY
+# gmm2 <-  glmer(Ramets_Sept ~ City_dist + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+#   family = poisson,
+#               data = heights_both_2020,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# 
+# # UNIQUE FAMILIES
+# # heights_both_2020$Family_unique <- paste(heights_both_2020$Population, heights_both_2020$Family)
+# gmm3 <-  glmer(Ramets_Sept ~ City_dist + (1|Family_unique),
+#   family = poisson,
+#               data = heights_both_2020,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP
+# gmm4 <-  glmer(Ramets_Sept ~ City_dist + (1|Population:Family) + (1|Population),
+#   family = poisson,
+#               data = heights_both_2020)
+# 
+# 
+# 
+# # REDUCED MODEL
+# gmmDG1 <- glm(Ramets_Sept ~ City_dist,
+#   family = poisson,
+#               data = heights_both_2020)
+# 
+# ### RESULTS ###
+# # POPULATION (so, results are about populations)
+# pbgmmDg1 <- pbnm(gmm,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# pbgmmDg1  %>%
+#   summary() %>%
+#   print()   # p = 1  ... no var among pops
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+# pbgmmDg4 <- pbnm(gmm4,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# ranova_pop <- summary(pbgmmDg4) %T>%
+#   print() # p =  0.738  ... no var among pops accounting for fams
+# 
+# # POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+# pbgmmDg2 <- pbnm(gmm2,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# ranova_fam <- summary(pbgmmDg2) %T>%
+#   print() # p = 1  ... little var among families crossed w/ pops
+# 
+# # UNIQUE FAMILIES (so, results are about families)
+# pbgmmDg3 <- pbnm(gmm3,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835)
+# pbgmmDg3 %>%
+#   summary() %>%
+#   print() # p = 1  ... little var among families, period
+# 
+# 
+# 
+# ##### use anova to test significance of terms (this isn't what we want, though): #####
+# ## test Pop/Fam
+# anova(gmm1, gmmDG1) # p =  1
+# 
+# ## test Pop/Fam but expanded
+# anova(gmm4, gmmDG1) # p =   1    # SAME AS ABOVE
+# 
+# ## test Pop
+# anova(gmm, gmmDG1) # p =  1
+# 
+# ## test Fam
+# anova(gmm3, gmmDG1) # p =   1
+# 
+# ## test pop:fam
+# anova(gmm2, gmmDG1) # p =   1    # SAME AS ABOVE
+# 
+# 
+# 
+# #--------- FINAL RESULTS: ----------#
+# # Bootstrapping:
+# # - Pop:    NOT SIGNIFICANT
+# # - Family: NOT SIGNIFICANT
+# # anova:
+# # - Pop:    NOT SIGNIFICANT
+# # - Family: NOT SIGNIFICANT
+# 
+# # --- DO THE 2 METHODS MATCH? ---#
+# #       [X]    YES
+# #             
+# 
+# 
+# 
+# ##### old code #####
+# 
+# sum.1 <- summary(gmm4)
+# 
+# variances1 <- print(VarCorr(gmm4),comp="Variance") %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+#   dplyr::select(., c(grp, vcov, PVE)) %>%
+#   dplyr::rename(., Group = grp,
+#                 Variance = vcov)
+# 
+# # export percent variance explained
+# write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_Ramets_Sept_glmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+# 
+# # export ranova
+# sink(here::here("./Figures_Tables/ranova_PVE/2020_Ramets_Sept_glmer_ranova.csv"))
+# print("POPULATION", sep="\n\n")
+# print(ranova_pop, sep="\n\n")
+#   cat("\n")
+# print("FAMILY", sep="\n\n")
+# print(ranova_fam, sep="\n\n")
+#   cat("\n")
+# # if (ranova_pop[1] <= 0.05){
+# #   print ('There is variance among populations')}
+# # if (ranova_pop[1] > 0.05){
+#   print ("There is not much variance among populations") #}
+# # if (ranova_fam[1] <= 0.05){
+# #   print ("There is variance among families")}
+# # if (ranova_fam[1] > 0.05){
+#   print ("There is not much variance among families") #}
+# sink()
+
+```
+
+##### Urb_score
+```{r}
+car::Anova(rametsS_gr_usc_m5) # not sig
+
+```
+
+#### Urban subtransects: *Sig for city_dist, not for urb_score
+##### City_dist
+```{r}
+car::Anova(rametsS_urbsubs_city_m5) # city_dist sig
+car::Anova(rametsS_urbsubs_city_m5_ME) # city_dist sig
+
+AIC(rametsS_urbsubs_city_m5, rametsS_urbsubs_city_m5_ME) # <2 away from e.o. though ME is lower
+
+# 
+# # ANy variation among families or populations?
+# 
+# ##### TACTIC 1: try bootstrapping #####
+# # NOT PERFECT b/c can't nest family within pop but trying a few ways to get at the correct answer.
+# # https://www.ssc.wisc.edu/sscc/pubs/MM/MM_TestEffects.html#test-of-random-parameter
+# 
+# 
+# ### MODEL 1: CITY_DIST ###
+# ##########################
+# 
+# # JUST POPULATION
+# gmm <-  glmer(Ramets_Sept ~ City_dist + (1|Population), # can't leave in Family... doesn't work
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+# gmm1 <-  glmer(Ramets_Sept ~ City_dist + (1|Population/Family), 
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban") ,
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # POP:FAMILY
+# gmm2 <-  glmer(Ramets_Sept ~ City_dist + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+#   family = poisson,
+#   data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # UNIQUE FAMILIES
+# heights_both_2020$Family_unique <- paste(heights_both_2020$Population, heights_both_2020$Family)
+# gmm3 <-  glmer(Ramets_Sept ~ City_dist + (1|Family_unique),
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP
+# gmm4 <-  glmer(Ramets_Sept ~ City_dist + (1|Population:Family) + (1|Population),
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# 
+# # REDUCED MODEL 1
+# gmmDG1 <- glm(Ramets_Sept ~ City_dist,
+#                 data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = poisson)
+# 
+# 
+# 
+# ### RESULTS ###
+# # POPULATION (so, results are about populations)
+# pbgmmDg1 <- pbnm(gmm,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# summary(pbgmmDg1) # p = 1 ...  no var among pops
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+# pbgmmDg4 <- pbnm(gmm4,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# ranova_pop <- summary(pbgmmDg4) %T>%
+#   print() # p = 1 ... no var among pops accounting for fams
+# 
+# # POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+# pbgmmDg2 <- pbnm(gmm2,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# ranova_fam <- summary(pbgmmDg2) %T>%
+#   print() # p = 1 ... no var among families crossed w/ pops
+# 
+# # UNIQUE FAMILIES (so, results are about families)
+# pbgmmDg3 <- pbnm(gmm3,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# summary(pbgmmDg3) # p = 1 ... no var among families
+# 
+# 
+# 
+# ### MODEL 2: TRANSECT_ID ###
+# ##########################
+# 
+# # JUST POPULATION
+# gmm.2 <-  glmer(Ramets_Sept ~ Transect_ID + (1|Population), # can't leave in Family... doesn't work
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+# gmm1.2 <-  glmer(Ramets_Sept ~ Transect_ID + (1|Population/Family), 
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # POP:FAMILY
+# gmm2.2 <-  glmer(Ramets_Sept ~ Transect_ID + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # UNIQUE FAMILIES
+# gmm3.2 <-  glmer(Ramets_Sept ~ Transect_ID + (1|Family_unique),
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"),
+#   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP
+# gmm4.2 <-  glmer(Ramets_Sept ~ Transect_ID + (1|Population:Family) + (1|Population),
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"))
+# 
+# # REDUCED MODEL 2
+# gmmDG1.2 <- glm(Ramets_Sept ~ Transect_ID,
+#   family = poisson,
+#     data = heights_both_2020 %>% filter(Urb_Rur == "Urban"))
+# 
+# 
+# 
+# ### RESULTS ###
+# # POPULATION (so, results are about populations)
+# pbgmmDg1.2 <- pbnm(gmm.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# summary(pbgmmDg1.2) # p = 1 ...  no var among pops
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+# pbgmmDg4.2 <- pbnm(gmm4.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# ranova_pop.2 <- summary(pbgmmDg4.2) %T>%
+#   print() # p = 1 ... no var among pops accounting for fams
+# 
+# # POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+# pbgmmDg2.2 <- pbnm(gmm2.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# ranova_fam.2 <- summary(pbgmmDg2.2) %T>%
+#   print() # p = 0.488...  little var among families crossed w/ pops
+# 
+# # UNIQUE FAMILIES (so, results are about families)
+# pbgmmDg3.2 <- pbnm(gmm3.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# summary(pbgmmDg3.2) # p = 0.487... little var among families
+# 
+# 
+# 
+# 
+# sum.1 <- summary(gmm4)
+# 
+# variances1 <- print(VarCorr(gmm4),comp="Variance") %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+#   dplyr::select(., c(grp, vcov, PVE)) %>%
+#   dplyr::rename(., Group = grp,
+#                 Variance = vcov)
+# 
+# # export percent variance explained
+# write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_RametsSept_urban_glmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+# 
+# # export ranova
+# sink(here::here("./Figures_Tables/ranova_PVE/2020_RametsSept_urban_glmer_ranova.csv"))
+# print("POPULATION", sep="\n\n")
+# print(ranova_pop, sep="\n\n")
+#   cat("\n")
+# print("FAMILY", sep="\n\n")
+# print(ranova_fam, sep="\n\n")
+#   cat("\n")
+# # if (ranova_pop[1] <= 0.05){
+# #   print ('There is variance among populations')}
+# # if (ranova_pop[1] > 0.05){
+#   print ("There is not much variance among populations") #}
+# if (ranova_fam[1] <= 0.05){
+#   print ("There is variance among families")}
+# if (ranova_fam[1] > 0.05){
+#   print ("There is not much variance among families")}
+#   
+# cat("\n")
+# cat("\n")
+# 
+# print("POPULATION", sep="\n\n")
+# print(ranova_pop.2, sep="\n\n")
+#   cat("\n")
+# print("FAMILY", sep="\n\n")
+# print(ranova_fam.2, sep="\n\n")
+#   cat("\n")
+# # if (ranova_pop.2[1] <= 0.05){
+# #   print ('Variance among populations differs by urban subtransect')}
+# # if (ranova_pop.2[1] > 0.05){
+#   print ("Variance among populations does not differ by urban subtransect") #}
+# if (ranova_fam.2[1] <= 0.05){
+#   print ("Variance among families differs by urban subtransect")}
+# if (ranova_fam.2[1] > 0.05){
+#   print ("Variance among families does not differ by urban subtransect")}
+# sink()
+```
+
+
+##### Urb_score
+```{r}
+car::Anova(rametsS_urbsubs_usc_m5) # nothing sig
+car::Anova(rametsS_urbsubs_usc_m5_ME) # nothing sig
+
+AIC(rametsS_urbsubs_usc_m5, rametsS_urbsubs_usc_m5_ME) # <2 away from e.o. though ME is lower
+```
+
+#### Export ANOVA
+```{r}
+# anova_table_flx(rametsS_gr_city_m5)
+# anova_table_flx(rametsS_gr_usc_m5)
+# anova_table_flx(rametsS_urbsubs_city_m5)
+# anova_table_flx(rametsS_urbsubs_city_m5_ME)
+# anova_table_flx(rametsS_urbsubs_usc_m5)
+# anova_table_flx(rametsS_urbsubs_usc_m5_ME)
+# 
+# AIC_compare.city_dist(rametsS_urbsubs_city_m5,
+#                       rametsS_urbsubs_city_m5_ME)
+#     
+# AIC_compare.urb_score(rametsS_urbsubs_usc_m5,
+#                       rametsS_urbsubs_usc_m5_ME) 
+
+```
+
+## Survival
+### glmer: diagnostics
+```{r}
+# GRADIENT / CITY_DIST-----
+surv20_gr_city_m1 <- glmer(dead_2020 ~ (1|Block) + (1|Population/Family) + City_dist,
+  data = survival_2020,
+  family = binomial(link = "logit"),
+  nAGQ = 0)
+res <- simulateResiduals(surv20_gr_city_m1)
+plot(res)
+# looks good!
+
+
+# GRADIENT / URB SCORE-----
+surv20_gr_usc_m1 <- glmer(dead_2020 ~ (1|Block) + (1|Population/Family) + Urb_score,
+  data = survival_2020,
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+    control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+res <- simulateResiduals(surv20_gr_usc_m1)
+plot(res)
+# looks good!
+
+# URB SUBTRANSECTS / CITY_DIST-----
+surv20_urbsubs_city_m1 <- glmer(dead_2020 ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+  data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+    control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+res <- simulateResiduals(surv20_urbsubs_city_m1)
+plot(res)
+# looks good!
+
+# main effects
+surv20_urbsubs_city_m1_ME <- glmer(dead_2020 ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+  data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+    control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+
+# URB SUBTRANSECTS / URB SCORE-----
+surv20_urbsubs_usc_m1 <- glmer(dead_2020 ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+  data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+    control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+res <- simulateResiduals(surv20_urbsubs_usc_m1)
+plot(res)
+# looks good!
+
+# main effects
+surv20_urbsubs_usc_m1_ME <- glmer(dead_2020 ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+  data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+  family = binomial(link = "logit"),
+  nAGQ = 0,
+    control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+
+```
+
+### Entire gradient: *Nothing sig for either
+#### City_dist
+```{r}
+car::Anova(surv20_gr_city_m1) # not sig
+
+
+
+# 
+# # ANy variation within families or populations?
+# 
+# ##### TACTIC 1: try bootstrapping #####
+# # NOT PERFECT b/c can't nest family within pop but trying a few ways to get at the correct answer.
+# # https://www.ssc.wisc.edu/sscc/pubs/MM/MM_TestEffects.html#test-of-random-parameter
+# library(pbkrtest) # Parametric Bootstrap, Kenward-Roger and Satterthwaite Based
+Methods for Test in Mixed Models
+# library(pbnm)
+# 
+# # can't handle glmmTMB so switching back to glmer
+# 
+# # JUST POPULATION
+# gmm <-  glmer(dead_2020 ~ City_dist + (1|Population), # can't leave in Family... doesn't work
+#   family = binomial(link = "logit"),
+#   nAGQ = 0,
+#   data = survival_2020)
+# 
+# 
+# 
+# # IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+# gmm1 <-  glmer(dead_2020 ~ City_dist + (1|Population/Family), 
+#   family = binomial(link = "logit"),
+#   nAGQ = 0,
+#   data = survival_2020)
+# 
+# 
+# # POP:FAMILY
+# gmm2 <-  glmer(dead_2020 ~ City_dist + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+#   family = binomial(link = "logit"),
+#   nAGQ = 0,
+#   data = survival_2020)
+# 
+# 
+# # UNIQUE FAMILIES
+# survival_2020$Family_unique <- paste(survival_2020$Population, survival_2020$Family)
+# gmm3 <-  glmer(dead_2020 ~ City_dist + (1|Family_unique),
+#   family = binomial(link = "logit"),
+#   nAGQ = 0,
+#   data = survival_2020)
+# 
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP
+# gmm4 <-  glmer(dead_2020 ~ City_dist + (1|Population:Family) + (1|Population),
+#   family = binomial(link = "logit"),
+#   nAGQ = 0,
+#   data = survival_2020)
+# 
+# 
+# 
+# # REDUCED MODEL
+# gmmDG1 <- glm(dead_2020 ~ City_dist,
+#   family = binomial(link = "logit"),
+#   data = survival_2020)
+# 
+# ### RESULTS ###
+# # POPULATION (so, results are about populations)
+# pbgmmDg1 <- pbnm(gmm,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# pbgmmDg1  %>%
+#   summary() %>%
+#   print()   # p = 0.063  ... MARG SIG- questionable var among pops
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+# pbgmmDg4 <- pbnm(gmm4,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# ranova_pop <- summary(pbgmmDg4) %T>%
+#   print() # p =  0.098  ... MARG SIG- questionable var among pops accounting for fams
+# 
+# # POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+# pbgmmDg2 <- pbnm(gmm2,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# ranova_fam <- summary(pbgmmDg2) %T>%
+#   print() # p = 0.237  ... little var among families crossed w/ pops
+# 
+# # UNIQUE FAMILIES (so, results are about families)
+# pbgmmDg3 <- pbnm(gmm3,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835)
+# pbgmmDg3 %>%
+#   summary() %>%
+#   print() # p = 0.237  ... little var among families, period
+# 
+# 
+# 
+# ##### use anova to test significance of terms (this isn't what we want, though): #####
+# ## test Pop/Fam
+# anova(gmm1, gmmDG1) # p =  0.51
+# 
+# ## test Pop/Fam but expanded
+# anova(gmm4, gmmDG1) # p =   0.51    # SAME AS ABOVE
+# 
+# ## test Pop
+# anova(gmm, gmmDG1) # p =  0.2462
+# 
+# ## test Fam
+# anova(gmm3, gmmDG1) # p =   0.7278
+# 
+# ## test pop:fam
+# anova(gmm2, gmmDG1) # p =  0.7278    # SAME AS ABOVE
+# 
+# 
+# 
+# #--------- FINAL RESULTS: ----------#
+# # Bootstrapping:
+# # - Pop:    MARGINALLY SIGNIFICANT
+# # - Family: NOT SIGNIFICANT
+# # anova:
+# # - Pop:    NOT SIGNIFICANT
+# # - Family: NOT SIGNIFICANT
+# 
+# # --- DO THE 2 METHODS MATCH? ---#
+# #       [...]    Mostly
+# #             
+# 
+# 
+# 
+# ##### old code #####
+# 
+# sum.1 <- summary(gmm4)
+# 
+# variances1 <- print(VarCorr(gmm4),comp="Variance") %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+#   dplyr::select(., c(grp, vcov, PVE)) %>%
+#   dplyr::rename(., Group = grp,
+#                 Variance = vcov)
+# 
+# # export percent variance explained
+# write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_Survival_glmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+# 
+# # export ranova
+# sink(here::here("./Figures_Tables/ranova_PVE/2020_Survival_glmer_ranova.csv"))
+# print("POPULATION", sep="\n\n")
+# print(ranova_pop, sep="\n\n")
+#   cat("\n")
+# print("FAMILY", sep="\n\n")
+# print(ranova_fam, sep="\n\n")
+#   cat("\n")
+# if (ranova_pop[1] <= 0.05){
+#   print ('There is variance among populations')}
+# if (ranova_pop[1] > 0.05){
+#   print ("There is not much variance among populations") }
+# if (ranova_fam[1] <= 0.05){
+#   print ("There is variance among families")}
+# if (ranova_fam[1] > 0.05){
+#   print ("There is not much variance among families") }
+# sink()
+
+```
+
+#### Urb_score
+```{r}
+car::Anova(surv20_gr_usc_m1) # not sig
+```
+
+
+### Urban subtransects: *Nothing sig for either
+#### City_dist
+```{r}
+car::Anova(surv20_urbsubs_city_m1) # not sig
+car::Anova(surv20_urbsubs_city_m1_ME) # not sig
+AIC(surv20_urbsubs_city_m1, surv20_urbsubs_city_m1_ME)
+# AIC <2 apart; both "best models" though just main effects lower AIC
+
+# 
+# # ANy variation among families or populations?
+# 
+# ##### TACTIC 1: try bootstrapping #####
+# # NOT PERFECT b/c can't nest family within pop but trying a few ways to get at the correct answer.
+# # https://www.ssc.wisc.edu/sscc/pubs/MM/MM_TestEffects.html#test-of-random-parameter
+# 
+# 
+# ### MODEL 1: CITY_DIST ###
+# ##########################
+# 
+# # JUST POPULATION
+# gmm <-  glmer(dead_2020 ~ City_dist + (1|Population), # can't leave in Family... doesn't work
+#   data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = binomial(link = "logit"),
+#   nAGQ = 0,
+#     control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+# gmm1 <-  glmer(dead_2020 ~ City_dist + (1|Population/Family), 
+#   data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = binomial(link = "logit"),
+#   nAGQ = 0,
+#     control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # POP:FAMILY
+# gmm2 <-  glmer(dead_2020 ~ City_dist + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+#   data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = binomial(link = "logit"),
+#   nAGQ = 0,
+#     control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # UNIQUE FAMILIES
+# survival_2020$Family_unique <- paste(survival_2020$Population, survival_2020$Family)
+# gmm3 <-  glmer(dead_2020 ~ City_dist + (1|Family_unique),
+#   data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = binomial(link = "logit"),
+#   nAGQ = 0,
+#     control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP
+# gmm4 <-  glmer(dead_2020 ~ City_dist + (1|Population:Family) + (1|Population),
+#   data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = binomial(link = "logit"),
+#   nAGQ = 0,
+#     control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# 
+# # REDUCED MODEL 1
+# gmmDG1 <- glm(dead_2020 ~ City_dist,
+#   data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = binomial(link = "logit"))
+# 
+# 
+# 
+# ### RESULTS ###
+# # POPULATION (so, results are about populations)
+# pbgmmDg1 <- pbnm(gmm,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# summary(pbgmmDg1) # p = 0.383 ...  little var among pops
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+# pbgmmDg4 <- pbnm(gmm4,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# ranova_pop <- summary(pbgmmDg4) %T>%
+#   print() # p = 0.785 ... little var among pops accounting for fams
+# 
+# # POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+# pbgmmDg2 <- pbnm(gmm2,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# ranova_fam <- summary(pbgmmDg2) %T>%
+#   print() # p = 0.413 ... little var among families crossed w/ pops
+# 
+# # UNIQUE FAMILIES (so, results are about families)
+# pbgmmDg3 <- pbnm(gmm3,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# summary(pbgmmDg3) # p = 0.431 ... little var among families
+# 
+# 
+# 
+# ### MODEL 2: TRANSECT_ID ###
+# ##########################
+# 
+# # JUST POPULATION
+# gmm.2 <-  glmer(dead_2020 ~ Transect_ID + (1|Population), # can't leave in Family... doesn't work
+#   data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = binomial(link = "logit"),
+#   nAGQ = 0,
+#     control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
+# gmm1.2 <-  glmer(dead_2020 ~ Transect_ID + (1|Population/Family), 
+#   data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = binomial(link = "logit"),
+#   nAGQ = 0,
+#     control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # POP:FAMILY
+# gmm2.2 <-  glmer(dead_2020 ~ Transect_ID + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
+#   data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = binomial(link = "logit"),
+#   nAGQ = 0,
+#     control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # UNIQUE FAMILIES
+# gmm3.2 <-  glmer(dead_2020 ~ Transect_ID + (1|Family_unique),
+#   data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = binomial(link = "logit"),
+#   nAGQ = 0,
+#     control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP
+# gmm4.2 <-  glmer(dead_2020 ~ Transect_ID + (1|Population:Family) + (1|Population),
+#   data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = binomial(link = "logit"),
+#   nAGQ = 0,
+#     control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# # REDUCED MODEL 2
+# gmmDG1.2 <- glm(dead_2020 ~ Transect_ID,
+#   data = survival_2020 %>% filter(Urb_Rur == "Urban"),
+#   family = binomial(link = "logit"))
+# 
+# 
+# 
+# ### RESULTS ###
+# # POPULATION (so, results are about populations)
+# pbgmmDg1.2 <- pbnm(gmm.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# summary(pbgmmDg1.2) # p = 0.722 ...  little var among pops
+# 
+# # EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
+# pbgmmDg4.2 <- pbnm(gmm4.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# ranova_pop.2 <- summary(pbgmmDg4.2) %T>%
+#   print() # p = 0.564... little var among pops accounting for fams
+# 
+# # POP:FAMILY (so, results are about families)- accounts for fams being in same pop
+# pbgmmDg2.2 <- pbnm(gmm2.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# ranova_fam.2 <- summary(pbgmmDg2.2) %T>%
+#   print() # p = 0.47...  little var among families crossed w/ pops
+# 
+# # UNIQUE FAMILIES (so, results are about families)
+# pbgmmDg3.2 <- pbnm(gmm3.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
+# summary(pbgmmDg3.2) # p = 0.463... little var among families
+# 
+# 
+# 
+# 
+# sum.1 <- summary(gmm4)
+# 
+# variances1 <- print(VarCorr(gmm4),comp="Variance") %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
+#   dplyr::select(., c(grp, vcov, PVE)) %>%
+#   dplyr::rename(., Group = grp,
+#                 Variance = vcov)
+# 
+# # export percent variance explained
+# write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_Survival_urban_glmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
+# 
+# # export ranova
+# sink(here::here("./Figures_Tables/ranova_PVE/2020_Survival_urban_glmer_ranova.csv"))
+# print("POPULATION", sep="\n\n")
+# print(ranova_pop, sep="\n\n")
+#   cat("\n")
+# print("FAMILY", sep="\n\n")
+# print(ranova_fam, sep="\n\n")
+#   cat("\n")
+# if (ranova_pop[1] <= 0.05){
+#   print ('There is variance among populations')}
+# if (ranova_pop[1] > 0.05){
+#   print ("There is not much variance among populations") }
+# if (ranova_fam[1] <= 0.05){
+#   print ("There is variance among families")}
+# if (ranova_fam[1] > 0.05){
+#   print ("There is not much variance among families")}
+#   
+# cat("\n")
+# cat("\n")
+# 
+# print("POPULATION", sep="\n\n")
+# print(ranova_pop.2, sep="\n\n")
+#   cat("\n")
+# print("FAMILY", sep="\n\n")
+# print(ranova_fam.2, sep="\n\n")
+#   cat("\n")
+# if (ranova_pop.2[1] <= 0.05){
+#   print ('Variance among populations differs by urban subtransect')}
+# if (ranova_pop.2[1] > 0.05){
+#   print ("Variance among populations does not differ by urban subtransect") }
+# if (ranova_fam.2[1] <= 0.05){
+#   print ("Variance among families differs by urban subtransect")}
+# if (ranova_fam.2[1] > 0.05){
+#   print ("Variance among families does not differ by urban subtransect")}
+# sink()
+```
+
+#### Urb_score
+```{r}
+car::Anova(surv20_urbsubs_usc_m1) # not sig
+car::Anova(surv20_urbsubs_usc_m1_ME) # not sig
+AIC(surv20_urbsubs_usc_m1, surv20_urbsubs_usc_m1_ME)
+# AIC <2 apart; both "best models" though just main effects lower AIC
+```
+
+### Export ANOVA
+```{r}
+# anova_table_flx(surv20_gr_city_m1)
+# anova_table_flx(surv20_gr_usc_m1)
+# anova_table_flx(surv20_urbsubs_city_m1)
+# anova_table_flx(surv20_urbsubs_city_m1_ME)
+# anova_table_flx(surv20_urbsubs_usc_m1)
+# anova_table_flx(surv20_urbsubs_usc_m1_ME)
+# 
+# AIC_compare.city_dist(surv20_urbsubs_city_m1,
+#                       surv20_urbsubs_city_m1_ME)
+#     
+# AIC_compare.urb_score(surv20_urbsubs_usc_m1,
+#                       surv20_urbsubs_usc_m1_ME) 
+
+
+# test1 <- car::Anova(surv20_urbsubs_city_m1) %>%
+#   tidy() %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(.,
+#                 Response = as.character(formula(surv20_urbsubs_city_m1)[[2]]),
+#                 .before = term) %>%
+#   dplyr::mutate(Sites = case_when( str_detect(as.character(formula(surv20_urbsubs_city_m1)[3]), "Transect_ID") == TRUE ~ "Urban Only",
+#  str_detect(as.character(formula(surv20_urbsubs_city_m1)[3]), "Transect_ID") == FALSE ~ "All"),
+#                 .before = term) %>%
+#   dplyr::mutate(Significance = case_when(p.value <= 0.1 ~ "Marginal",
+#                                          p.value <= 0.05 ~ "*", 
+#                                 p.value < 0.01 ~ "**",
+#                                 p.value < 0.001 ~ "***")) %>%
+#   dplyr::mutate(., AIC = AIC(surv20_gr_city_m1)) %>%
+#   dplyr::select(., -df) %>%
+#   dplyr::rename(., Chi_sq = statistic,
+#                 Predictor = term,
+#                 p = p.value) %>%
+#   dplyr::mutate_if(.,
+#             is.character,
+#             str_replace_all,
+#             pattern = c("City_dist"),
+#             replacement = c("Distance to City Center")) %>%
+#     dplyr::mutate_if(.,
+#             is.character,
+#             str_replace_all,
+#             pattern = c("Urb_score"),
+#             replacement = c("Urbanization Score")) %>%
+#     dplyr::mutate_if(.,
+#             is.character,
+#             str_replace_all,
+#             pattern = c("Transect_ID"),
+#             replacement = c("Subtransect")) %>%
+#   mutate_if(is.numeric, round, 3)
+# 
+# 
+
+```
+

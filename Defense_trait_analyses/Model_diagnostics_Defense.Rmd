@@ -4,6 +4,199 @@ author: "Sophie Breitbart"
 date: "2/23/2022"
 output: html_document
 ---
+# LDMC
+## Gradient
+### City_dist
+```{r}
+ldmc_gr_city_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + City_dist,
+                        data = sla_ldmc,
+                        REML = F)
+
+performance::check_model(ldmc_gr_city_m1) # looks like an outlier. Remove and try again
+
+# performance::check_model(update(ldmc_gr_city_m1, . ~ . , data = sla_ldmc %>% dplyr::filter(LDMC < 1)))
+# # convergence problem. Take out block
+
+performance::check_model(update(ldmc_gr_city_m1, . ~ (1|Population/Family) + City_dist , data = sla_ldmc %>%
+                                  dplyr::filter(LDMC < 1))) # better! put back outlier to see if it changes
+
+# performance::check_model(update(ldmc_gr_city_m1, . ~ (1|Population/Family) + City_dist , data = sla_ldmc)) # still an outlier. Keep out. Still a bit right-skewed though, so try sqrt
+# 
+# performance::check_model(update(ldmc_gr_city_m1, sqrt(LDMC) ~ (1|Population/Family) + City_dist , data = sla_ldmc %>% dplyr::filter(LDMC < 1))) # convergence issue again. Stick with untransformed model
+
+
+ldmc_gr_city_m1 <- glmmTMB(LDMC ~ (1|Population/Family) + City_dist,
+                           data = sla_ldmc %>%
+                             dplyr::filter(LDMC < 1.5))
+
+car::Anova(ldmc_gr_city_m1)
+# returning NaNs. Try making family unique and then crossing?
+
+sla_ldmc %<>%
+  dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
+
+# this works: p = 0.19
+car::Anova(update(ldmc_gr_city_m1,
+                  . ~ (1|Population:Fam_uniq) + City_dist ,
+                  data = sla_ldmc %>%
+                    dplyr::filter(LDMC < 1)))
+
+# gives same result (p = 0.19)
+car::Anova(update(ldmc_gr_city_m1,
+                             . ~ (1|Population:Family) + City_dist ,
+                             data = sla_ldmc %>%
+                               dplyr::filter(LDMC < 1)))
+
+# this doesn't work though
+car::Anova(update(ldmc_gr_city_m1,
+                             . ~ (1|Population/Fam_uniq) + City_dist ,
+                             data = sla_ldmc %>%
+                               dplyr::filter(LDMC < 1)))
+
+# this DOES work and gives same result as previous models
+car::Anova(update(ldmc_gr_city_m1,
+                             . ~ (1|Fam_uniq) + City_dist ,
+                             data = sla_ldmc %>%
+                               dplyr::filter(LDMC < 1)))
+
+
+# going to use this as final model
+ldmc_gr_city_m1 <- glmmTMB(LDMC ~ (1|Population:Fam_uniq) + City_dist,
+                             data = sla_ldmc %>%
+                               dplyr::filter(LDMC < 1))
+car::Anova(ldmc_gr_city_m1)
+performance::check_model(ldmc_gr_city_m1)
+```
+
+### Urb_score
+```{r}
+ldmc_gr_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + Urb_score,
+                        data = sla_ldmc,
+                        REML = F)
+
+performance::check_model(ldmc_gr_usc_m1) # remove same outlier
+
+performance::check_model(update(ldmc_gr_usc_m1, . ~ . ,
+                                data = sla_ldmc %>%
+                                  dplyr::filter(LDMC < 1)))
+# works fine
+
+car::Anova(update(ldmc_gr_usc_m1, . ~ . ,
+                                data = sla_ldmc %>%
+                                  dplyr::filter(LDMC < 1)))
+
+# I took out block: result barely changed. Subbed in Fam_uniq, result didn't change.
+
+
+ldmc_gr_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + Urb_score,
+                        data = sla_ldmc %>%
+                                  dplyr::filter(LDMC < 1),
+                        REML = F)
+```
+
+## Urban Subtransects
+### City_dist
+```{r}
+ldmc_urbsubs_city_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + City_dist,
+                        data = sla_ldmc %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        REML = F)
+
+performance::check_model(ldmc_urbsubs_city_m1) # looks like an outlier. Remove and try again
+
+performance::check_model(update(ldmc_urbsubs_city_m1, . ~ .,
+                                data = sla_ldmc %>%
+                                  dplyr::filter(Transect_ID != "Rural") %>%
+                                  dplyr::filter(LDMC < 1.5))) # now it's not converging, based on exclusion of 1 point ? Try using Fam_uniq
+
+# this works. As does using (1|Fam_uniq)
+performance::check_model(update(ldmc_urbsubs_city_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + City_dist,
+                                data = sla_ldmc %>%
+                                  dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5)))
+
+
+# gives same result as (1|Fam_uniq)
+car::Anova(update(ldmc_urbsubs_city_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + City_dist,
+                                data = sla_ldmc %>%
+                                  dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5)))
+
+
+
+ldmc_urbsubs_city_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population:Fam_uniq) + City_dist,
+                        data = sla_ldmc %>%
+                                  dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5),
+                        REML = F)
+```
+
+### Urb_score
+```{r}
+ldmc_urbsubs_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + Urb_score,
+                        data = sla_ldmc %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        REML = F)
+
+performance::check_model(ldmc_urbsubs_usc_m1) # looks like an outlier. Remove and try again. Also not converging
+
+
+performance::check_model(update(ldmc_urbsubs_usc_m1, . ~ .,
+                                data = sla_ldmc %>%
+                                  dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5))) # now it's converging. But try using Fam_uniq
+
+# this works. As does using (1|Fam_uniq)
+performance::check_model(update(ldmc_urbsubs_usc_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score,
+                                data = sla_ldmc %>%
+                                  dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5)))
+
+# gives same result as (1|Fam_uniq)
+car::Anova(update(ldmc_urbsubs_usc_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score,
+                                data = sla_ldmc %>%
+                                  dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5)))
+
+# this one gives slightly larger p-value (0.48 compared to 0.44). So it's qualitatively not different than above models, which I'll use to be consistent with other variable's diagnostics.
+car::Anova(update(ldmc_urbsubs_usc_m1, . ~ .,
+                                data = sla_ldmc %>%
+                                  dplyr::filter(Transect_ID != "Rural") %>%
+                                  dplyr::filter(LDMC < 1.5))) 
+
+
+ldmc_urbsubs_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score,
+                                data = sla_ldmc %>%
+                                  dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5))
+
+car::Anova(ldmc_urbsubs_usc_m1)
+```
+
+# LDMC
+## Gradient
+### City_dist
+```{r}
+sla_gr_city_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + City_dist,
+                        data = sla_ldmc,
+                        REML = F)
+
+performance::check_model(sla_gr_city_m1) 
+
+# performance::check_model(update(ldmc_gr_city_m1, . ~ . , data = sla_ldmc %>% dplyr::filter(LDMC < 1)))
+# # convergence problem. Take out block
+
+```
+
+### Urb_score
+```{r}
+
+```
+
+## Urban Subtransects
+### City_dist
+```{r}
+
+```
+
+### Urb_score
+```{r}
+
+```
+
 
 # Herbivory: September (post-flowering)
 ## Gradient
@@ -160,9 +353,10 @@ herbivory_urb_usc_m2_ME <- glmmTMB(Herbivory_mean_Sept ~ (1|Block) + (1|Year) + 
 
 # Models for use in analysis
 ```{r}
-# Herbivory
-
-
-
+# LDMC
+ldmc_gr_city_m1
+ldmc_gr_usc_m1
+ldmc_urbsubs_city_m1
+ldmc_urbsubs_usc_m1
 ```
 

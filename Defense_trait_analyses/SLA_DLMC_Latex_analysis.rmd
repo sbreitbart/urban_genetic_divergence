@@ -26,31 +26,18 @@ source("functions.R")
 ## Import data
 ```{r}
 sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv")) %>%
-  dplyr::select(., -c(1:2))
+  dplyr::select(., -c(1:2)) %>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.factor)
+
+str(sla_ldmc)
 ```
 
-# Diagnostics
-## Gradient
-### City_dist
+## Import final models
 ```{r}
 
 ```
 
-### Urb_score
-```{r}
-
-```
-
-## Urban Subtransects
-### City_dist
-```{r}
-
-```
-
-### Urb_score
-```{r}
-
-```
 
 # ANOVA
 ## Gradient

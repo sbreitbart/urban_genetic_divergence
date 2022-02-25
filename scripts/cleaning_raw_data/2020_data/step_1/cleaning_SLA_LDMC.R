@@ -12,7 +12,7 @@ library(here)
 #-------------------
 # at start of season (Data Collection 1)- BINARY
 sla_ldmc <- read.csv(
-  here("./CommonGardenExperiment_2020Data/raw_data/SLA_DLMC/2020_Datacollection5_Leaves_SLA_DLMC_20210603.csv"), header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>%
+  here::here("./CommonGardenExperiment_2020Data/raw_data/SLA_DLMC/2020_Datacollection5_Leaves_SLA_DLMC_20210603.csv"), header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>%
   as.data.frame()
 
 
@@ -52,8 +52,20 @@ sla_ldmc[numeric_cols] <- lapply(sla_ldmc[numeric_cols], as.numeric)
 str(sla_ldmc)
 
 
+# Remove repeats as is done in Joining_annual_datasets script
+
+repeats <- data.frame(Population  = factor(c(19, 23, 35, 35, 41, 41, 41)),
+                      Family =      factor(c(5, 1, 4, 3, 1, 1, 1)),
+                      Replicate =   factor(c(3, 5, 2, 1, 2, 3, 4))
+)
+
+str(repeats)
+
+sla_ldmc %<>%
+  anti_join(., repeats)
+
 #-------------------
 # Export to new csv
 #-------------------
 write.csv(sla_ldmc,
-          here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_sla_ldmc_partialclean.csv"))
+          here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_sla_ldmc_partialclean.csv"))
