@@ -97,76 +97,91 @@ ldmc_gr_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + Urb_score,
 ## Urban Subtransects
 ### City_dist
 ```{r}
-ldmc_urbsubs_city_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + City_dist,
+ldmc_urbsubs_city_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
                         data = sla_ldmc %>%
                           dplyr::filter(Transect_ID != "Rural"),
                         REML = F)
+# not converging. Try changing family
 
-performance::check_model(ldmc_urbsubs_city_m1) # looks like an outlier. Remove and try again
-
-performance::check_model(update(ldmc_urbsubs_city_m1, . ~ .,
+performance::check_model(update(ldmc_urbsubs_city_m1, . ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
                                 data = sla_ldmc %>%
                                   dplyr::filter(Transect_ID != "Rural") %>%
-                                  dplyr::filter(LDMC < 1.5))) # now it's not converging, based on exclusion of 1 point ? Try using Fam_uniq
+                                  dplyr::filter(LDMC < 1.5)))
+# says CIty_dist and Transect ID are collinear. Otherwise looks fine. Same diagnostics as (1|Fam_uniq) and (1|Population:Fam_uniq)
 
-# this works. As does using (1|Fam_uniq)
-performance::check_model(update(ldmc_urbsubs_city_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + City_dist,
+car::Anova(update(ldmc_urbsubs_city_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + City_dist * Transect_ID,
                                 data = sla_ldmc %>%
-                                  dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5)))
+                                  dplyr::filter(Transect_ID != "Rural") %>%
+                                  dplyr::filter(LDMC < 1.5)),
+           type = "III") # interaxn not sig so will use type II SS
 
-
-# gives same result as (1|Fam_uniq)
-car::Anova(update(ldmc_urbsubs_city_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + City_dist,
+car::Anova(update(ldmc_urbsubs_city_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + City_dist * Transect_ID,
                                 data = sla_ldmc %>%
-                                  dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5)))
+                                  dplyr::filter(Transect_ID != "Rural") %>%
+                                  dplyr::filter(LDMC < 1.5)),
+           type = "II") # interaxn not sig
 
 
-
-ldmc_urbsubs_city_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population:Fam_uniq) + City_dist,
+# MAIN EFFECTS MODEL
+ldmc_urbsubs_city_m2 <- glmmTMB(LDMC ~ (1|Block) + (1|Population:Fam_uniq) + City_dist + Transect_ID,
                         data = sla_ldmc %>%
                                   dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5),
                         REML = F)
+
+car::Anova(ldmc_urbsubs_city_m2)
+
+# COMPARE AIC
+AIC(ldmc_urbsubs_city_m1, ldmc_urbsubs_city_m2) # m2 lower but not by more than 2 AIC
 ```
 
 ### Urb_score
 ```{r}
-ldmc_urbsubs_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + Urb_score,
+ldmc_urbsubs_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
                         data = sla_ldmc %>%
                           dplyr::filter(Transect_ID != "Rural"),
                         REML = F)
 
-performance::check_model(ldmc_urbsubs_usc_m1) # looks like an outlier. Remove and try again. Also not converging
+performance::check_model(ldmc_urbsubs_usc_m1) # not converging. Remove outlier and try again
 
 
 performance::check_model(update(ldmc_urbsubs_usc_m1, . ~ .,
                                 data = sla_ldmc %>%
-                                  dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5))) # now it's converging. But try using Fam_uniq
+                                  dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5))) # still not converging. try using Fam_uniq
 
 # this works. As does using (1|Fam_uniq)
-performance::check_model(update(ldmc_urbsubs_usc_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score,
+performance::check_model(update(ldmc_urbsubs_usc_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score * Transect_ID,
                                 data = sla_ldmc %>%
                                   dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5)))
 
 # gives same result as (1|Fam_uniq)
-car::Anova(update(ldmc_urbsubs_usc_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score,
+car::Anova(update(ldmc_urbsubs_usc_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score * Transect_ID,
                                 data = sla_ldmc %>%
-                                  dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5)))
+                                  dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5)),
+           type = "III") # interaxn not sig so try type II SS
 
-# this one gives slightly larger p-value (0.48 compared to 0.44). So it's qualitatively not different than above models, which I'll use to be consistent with other variable's diagnostics.
-car::Anova(update(ldmc_urbsubs_usc_m1, . ~ .,
+
+car::Anova(update(ldmc_urbsubs_usc_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score * Transect_ID,
                                 data = sla_ldmc %>%
-                                  dplyr::filter(Transect_ID != "Rural") %>%
-                                  dplyr::filter(LDMC < 1.5))) 
+                                  dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5)),
+           type = "II")
 
 
-ldmc_urbsubs_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score,
+ldmc_urbsubs_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score * Transect_ID,
                                 data = sla_ldmc %>%
                                   dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5))
 
-car::Anova(ldmc_urbsubs_usc_m1)
+
+# MAIN EFFECTS MODEL
+ldmc_urbsubs_usc_m2 <- glmmTMB(LDMC ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score + Transect_ID,
+                                data = sla_ldmc %>%
+                                  dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5))
+
+car::Anova(ldmc_urbsubs_usc_m2)
+
+AIC(ldmc_urbsubs_usc_m1, ldmc_urbsubs_usc_m2) # ME model best model but not <2 AIC away
 ```
 
-# LDMC
+# SLA
 ## Gradient
 ### City_dist
 ```{r}
@@ -352,11 +367,19 @@ herbivory_urb_usc_m2_ME <- glmmTMB(Herbivory_mean_Sept ~ (1|Block) + (1|Year) + 
 
 
 # Models for use in analysis
+## LDMC
 ```{r}
-# LDMC
-ldmc_gr_city_m1
-ldmc_gr_usc_m1
-ldmc_urbsubs_city_m1
-ldmc_urbsubs_usc_m1
-```
+## City_dist / gradient
+ldmc_gr_city_m1 
 
+## Urbanization score / gradient
+ldmc_gr_usc_m1 
+
+## City_dist / urban subtransects
+ldmc_urbsubs_city_m1 # Qualitatively identical model (<2 AIC away)
+ldmc_urbsubs_city_m2 # Best model
+
+## Urbanization score  / urban subtransects
+ldmc_urbsubs_usc_m1 # Qualitatively identical model (<2 AIC away)
+ldmc_urbsubs_usc_m2 # Best model
+```
