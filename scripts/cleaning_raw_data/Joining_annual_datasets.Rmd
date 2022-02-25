@@ -207,38 +207,58 @@ flowering_20_21 <- rbind.fill(flowering_2020, flowering_2021)
 
 ## Height
 ```{r}
-## first make copy of data_clean_2019 with colnames that match heights_both_2020's
-heights_2019 <- data_clean_2019 %>%
-  dplyr::select(., c(1:6, 11:13, 18:19, 25:41)) %>%
+# make copy of data_2019 with consistent colnames
+height_2019 <- data_2019 %>%
+  dplyr::select(., c(1:6, 18:19, 25:41)) %>%
   dplyr::filter(., Dead_2019 == 0) %>%
   dplyr::rename(., Dead = Dead_2019,
-                Ramets_midJune = Num_Ramets_DC2, # doing this & following rows to compare btwn years
-                Ramets_Sept = Num_Ramets_DC3,
-                Total_Height_midJune = Total_Height_DC2,
-                Total_Height_Sept = Total_height_DC3)
-heights_2019$Year = 2019
-heights_2019$rel_growth_rate <- as.character(heights_2019$rel_growth_rate)
-heights_2019$rel_growth_rate <- as.numeric(heights_2019$rel_growth_rate)
+                Ramets_veryearly = Num_Ramets_DC1,
+                Ramets_early = Num_Ramets_DC2,
+                Ramets_late = Num_Ramets_DC3,
+                Total_Height_late = Total_height_DC3) %>%
+  # make height measurements (first 2) in cm, not mm
+  dplyr::mutate(Total_Height_veryearly = Total_Height_DC1/100,
+                Total_Height_early = Total_Height_DC2/100,
+                Year = "2019") %>%
+  dplyr::mutate_at(vars(rel_growth_rate), as.character) %>%
+  dplyr::mutate_at(vars(rel_growth_rate), as.numeric) %>%
+  dplyr::mutate_at(vars(Population, Family, Replicate, Year), as.factor) %>%
+  dplyr::select(-c("Dead","Total_Height_DC1","Total_Height_DC2"))
+
+str(height_2019)
 
 
-# copy of 2020 data w/colnames that match 2019's
-heights_2020 <- heights_both_2020 %>%
-  dplyr::select(., -c(16)) %>%
-  dplyr::rename(., Ramets_midJune = Ramets_June, # doing this & following rows to compare btwn years
-                Total_Height_midJune = Total_Height_June)
-heights_2020$Year = 2020
+# copy of 2020 data w/consistent colnames
+height_2020 <- heights_2020 %>%
+  dplyr::select(., -c(7,9,11,16)) %>%
+  dplyr::rename(., Ramets_early = Ramets_June,
+                Total_Height_early = Total_Height_June,
+                Ramets_late = Ramets_Sept,
+                Total_Height_late = Total_Height_Sept) %>%
+  dplyr::mutate(Year = "2020") %>%
+  dplyr::mutate_at(vars(Population, Family, Replicate, Year), as.factor)%>%
+  dplyr::mutate_at(vars(rel_growth_rate), as.character) %>%
+  dplyr::mutate_at(vars(rel_growth_rate), as.numeric)
+
+str(height_2020)
+
+# copy of 2021 data w/consistent colnames
+height_2021 <- heights_2021 %>%
+  dplyr::select(., -c(8:11, 14:16)) %>%
+  # dplyr::rename(., Ramets_early = Ramets_June,
+  #               Total_Height_early = Total_Height_June,
+  #               Ramets_late = Ramets_Sept,
+  #               Total_Height_late = Total_Height_Sept) %>%
+  dplyr::mutate(Year = "2021") %>%
+  dplyr::mutate_at(vars(Population, Family, Replicate, Year), as.factor)%>%
+  dplyr::mutate_at(vars(rel_growth_rate), as.character) %>%
+  dplyr::mutate_at(vars(rel_growth_rate), as.numeric)
+
+str(height_2021)
+
 
 # combine yearly dfs
-heights_19_20 <- rbind.fill(heights_2019, heights_2020)
-heights_19_20$Year <- as.factor(heights_19_20$Year)
-heights_19_20$Family <- as.factor(heights_19_20$Family)
-heights_19_20$Population <- as.factor(heights_19_20$Population)
-heights_19_20$rel_growth_rate <- as.numeric(heights_19_20$rel_growth_rate)
-
-# rm(heights_2019, heights_2020)
-
-heights_19_20$Population <- as.factor(heights_19_20$Population)
-heights_19_20$Family <- as.factor(heights_19_20$Family)
+heights_19_20_21 <- rbind.fill(height_2019, height_2020, height_2021)
 ```
 
 ## Survival
@@ -282,4 +302,6 @@ write.csv(reprod_20_21,
 write.csv(flowering_20_21,
           here::here("./Joined_annual_data/flowering.csv"))
 
+write.csv(heights_19_20_21,
+          here::here("./Joined_annual_data/heights.csv"))
 ```

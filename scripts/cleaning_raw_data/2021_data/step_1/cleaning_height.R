@@ -11,17 +11,16 @@ library(magrittr)
 # Import data
 ##-------------------
 # at start of season
-heights_1 <- read.csv(here("./CommonGardenExperiment_2021Data/raw_data/2021_DC3_Height_Ramets_ScarLength.csv"),
+heights_1 <- read.csv(here::here("./CommonGardenExperiment_2021Data/raw_data/2021_DC3_Height_Ramets_ScarLength.csv"),
                       header=T, na.strings=c("NO PLANT", "none", "0", "0.00", ""),
                       blank.lines.skip=TRUE) %>%
   as.data.frame()
 
 
 # at end of season
-heights_2 <- read.csv(here("./CommonGardenExperiment_2021Data/raw_data/2021_DC6_Height_Ramets_final.csv"),
+heights_2 <- read.csv(here::here("./CommonGardenExperiment_2021Data/raw_data/2021_DC6_Height_Ramets_final.csv"),
                       header=T, na.strings=c("NO PLANT", "none", "0", "0.00", ""),
                       blank.lines.skip=TRUE) %>%
-  dplyr::select(-"X") %>%
   as.data.frame()
 
 
@@ -127,11 +126,22 @@ str(heights_2)
 
 # make into one df----
 heights_both <- left_join(heights_1, heights_2, by = c("Row", "Column", "Block", "Population", "Family", "Replicate"),
-                          suffix = c('_early', '_late'))
-heights_both <- heights_both[,-c(11:26, 32:41)]
+                          suffix = c('_early', '_late')) %>%
+  dplyr::select(-c(11:26, 32:41))
 
 
 # add col for growth rate
+# first, make second date same format as first
+# heights_both$Date_late <- as.Date(
+#   as.character(
+#     heights_both$Date_late),
+#   format="%d/%m/%Y")
+# 
+# heights_both$Date_early <- as.Date(
+#   as.character(
+#     heights_both$Date_early),
+#   format="%d/%m/%Y")
+
 heights_both$date_diff <- as.Date(
   as.character(
     heights_both$Date_late),
@@ -154,4 +164,4 @@ heights_both %<>%
 # Export to new csv
 #-------------------
 write.csv(heights_both,
-          here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_heights_partialclean.csv"))
+          here::here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_heights_partialclean.csv"))

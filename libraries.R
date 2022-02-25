@@ -18,6 +18,7 @@ librarian::shelf(broom       ,
                  MASS        ,
                  multcomp    ,
                  nlme        ,
+                 plyr        ,
                  pbkrtest    ,
                  scales      ,
                  stringi     ,
@@ -26,5 +27,4 @@ librarian::shelf(broom       ,
                  vegan
                  )
   
-library("tibble", lib.loc="~/R/win-library/3.5") 
 library("tibble", lib.loc="~/R/win-library/3.5") 
