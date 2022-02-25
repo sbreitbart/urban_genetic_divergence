@@ -4,6 +4,19 @@ author: "Sophie Breitbart"
 date: "2/23/2022"
 output: html_document
 ---
+## Import data
+```{r}
+sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv")) %>%
+  dplyr::select(., -c(1:2)) %>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.factor)
+
+str(sla_ldmc)
+
+
+latex <- 
+```
+
 # LDMC
 ## Gradient
 ### City_dist
@@ -191,8 +204,138 @@ sla_gr_city_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + City_dist,
 
 performance::check_model(sla_gr_city_m1) 
 
-# performance::check_model(update(ldmc_gr_city_m1, . ~ . , data = sla_ldmc %>% dplyr::filter(LDMC < 1)))
-# # convergence problem. Take out block
+# use fam_uniq, see if anything changes
+performance::check_model(update(sla_gr_city_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + City_dist)) 
+
+
+
+# Try IDing outlier residuals, removing from df, and rerunning model
+LargeResiduals <- resid(sla_gr_city_m1) > 50
+# 101, 170, 220, 304, 410, 444, 787
+
+lg_resids <- sla_ldmc %>%
+  dplyr::slice(101, 170, 220, 304, 410, 444, 787)
+
+sla_without_lgresids <- anti_join(sla_ldmc, lg_resids)
+
+
+sla_gr_city_m1_no_lg_resids <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + City_dist,
+                        data = sla_without_lgresids,
+                        REML = F)
+
+performance::check_model(sla_gr_city_m1_no_lg_resids) 
+
+
+car::Anova(sla_gr_city_m1) # same result as third model
+car::Anova(sla_gr_city_m1_no_lg_resids) # still qualitatively same result as other two models (p >> 0.1)
+car::Anova(update(sla_gr_city_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + City_dist)) # same result as first model
+
+
+sla_gr_city_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population:Fam_uniq) + City_dist,
+                        data = sla_ldmc,
+                        REML = F)
+
+```
+
+### Urb_score
+```{r}
+sla_gr_usc_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + Urb_score,
+                        data = sla_ldmc,
+                        REML = F)
+performance::check_model(sla_gr_usc_m1) # try sqrt transformation
+
+performance::check_model(update(sla_gr_usc_m1, sqrt(SLA) ~ .)) # looks better
+
+# try with fam_uniq- looks same as above
+performance::check_model(update(sla_gr_usc_m1, sqrt(SLA) ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score))
+
+car::Anova(sla_gr_usc_m1) # lowest p-val but still >>0.1 so qualitatively same as other models
+car::Anova(update(sla_gr_usc_m1, sqrt(SLA) ~ .)) # same as third model
+car::Anova(update(sla_gr_usc_m1, sqrt(SLA) ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score)) # same as second model
+
+sla_gr_usc_m1 <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score,
+                        data = sla_ldmc,
+                        REML = F)
+```
+
+## Urban Subtransects
+### City_dist
+```{r}
+sla_urbsubs_city_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+                        data = sla_ldmc %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        REML = F)
+
+performance::check_model(sla_urbsubs_city_m1) # seems ok but try sqrt
+
+performance::check_model(update(sla_urbsubs_city_m1, sqrt(SLA) ~ .)) # looks a bit better
+
+# No interaxns sig for either so use type II SS
+car::Anova(sla_urbsubs_city_m1, type = "III")
+car::Anova(update(sla_urbsubs_city_m1, sqrt(SLA) ~ .), type = "III")
+car::Anova(update(sla_urbsubs_city_m1, sqrt(SLA) ~ (1|Block) + (1|Population:Fam_uniq) + City_dist * Transect_ID), type = "III")
+
+# Qualitatively identical again
+car::Anova(sla_urbsubs_city_m1, type = "II")
+car::Anova(update(sla_urbsubs_city_m1, sqrt(SLA) ~ .), type = "II")
+car::Anova(update(sla_urbsubs_city_m1, sqrt(SLA) ~ (1|Block) + (1|Population:Fam_uniq) + City_dist * Transect_ID), type = "II")
+
+
+sla_urbsubs_city_m1 <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population:Fam_uniq) + City_dist * Transect_ID,
+                        data = sla_ldmc %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        REML = F)
+
+# MAIN EFFECTS
+sla_urbsubs_city_m2 <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population:Fam_uniq) + City_dist + Transect_ID,
+                        data = sla_ldmc %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        REML = F)
+
+AIC(sla_urbsubs_city_m1, sla_urbsubs_city_m2) # qualitatively identical but m2 best model
+```
+
+### Urb_score
+```{r}
+sla_urbsubs_usc_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+                        data = sla_ldmc %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        REML = F)
+
+performance::check_model(sla_urbsubs_usc_m1) # seems ok but try sqrt
+
+performance::check_model(update(sla_urbsubs_usc_m1, sqrt(SLA) ~ .)) # looks a bit better
+
+# these are identical
+car::Anova(update(sla_urbsubs_usc_m1, sqrt(SLA) ~ .), type = "III") # interaxn not sig
+car::Anova(update(sla_urbsubs_usc_m1, sqrt(SLA) ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score * Transect_ID), type = "III") # interaxn not sig
+
+
+
+# Qualitatively identical again
+car::Anova(update(sla_urbsubs_usc_m1, sqrt(SLA) ~ .), type = "II")
+car::Anova(update(sla_urbsubs_usc_m1, sqrt(SLA) ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score * Transect_ID), type = "II")
+
+
+sla_urbsubs_usc_m1 <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score * Transect_ID,
+                        data = sla_ldmc %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        REML = F)
+
+# MAIN EFFECTS
+sla_urbsubs_usc_m2 <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score + Transect_ID,
+                        data = sla_ldmc %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        REML = F)
+
+AIC(sla_urbsubs_usc_m1, sla_urbsubs_usc_m2) # qualitatively identical but m2 best model
+```
+
+# Latex
+## Gradient
+### City_dist
+```{r}
+
 
 ```
 
@@ -383,3 +526,27 @@ ldmc_urbsubs_city_m2 # Best model
 ldmc_urbsubs_usc_m1 # Qualitatively identical model (<2 AIC away)
 ldmc_urbsubs_usc_m2 # Best model
 ```
+
+## SLA
+```{r}
+## City_dist / gradient
+sla_gr_city_m1 
+
+## Urbanization score / gradient
+sla_gr_usc_m1
+
+## City_dist / urban subtransects
+sla_urbsubs_city_m1 # Qualitatively identical model (<2 AIC away)
+sla_urbsubs_city_m2 # Best model
+
+## Urbanization score  / urban subtransects
+sla_urbsubs_usc_m1 # Qualitatively identical model (<2 AIC away)
+sla_urbsubs_usc_m2 # Best model
+
+```
+
+## Latex
+```{r}
+
+```
+
