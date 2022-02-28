@@ -3,8 +3,6 @@ title: "KSR_2020_analysis"
 output: html_document
 ---
 
-1/2022: Import data, then run script.
-
 # Statistics: 2020
 ## comparing lmer w/glmmTMB
 ```{r}

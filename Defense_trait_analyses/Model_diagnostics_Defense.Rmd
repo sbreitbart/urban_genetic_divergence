@@ -14,7 +14,11 @@ sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/20
 str(sla_ldmc)
 
 
-latex <- 
+latex <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_latex_clean.csv")) %>%
+  dplyr::select(-1) %>%
+  dplyr::mutate_at(vars(c(1:7, 9:12, 15, 18, 21)), as.character) %>%
+    dplyr::mutate_at(vars(c(1:7, 9:12, 15, 18, 21)), as.factor) %T>%
+  str()
 ```
 
 # LDMC
@@ -335,7 +339,14 @@ AIC(sla_urbsubs_usc_m1, sla_urbsubs_usc_m2) # qualitatively identical but m2 bes
 ## Gradient
 ### City_dist
 ```{r}
+ltx_gr_city_m1 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + City_dist,
+                        data = latex,
+                        REML = F)
 
+performance::check_model(ltx_gr_city_m1) 
+
+# use fam_uniq, see if anything changes
+performance::check_model(update(sla_gr_city_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + City_dist)) 
 
 ```
 

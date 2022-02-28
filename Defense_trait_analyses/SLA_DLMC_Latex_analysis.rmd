@@ -31,6 +31,14 @@ sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/20
     dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.factor)
 
 str(sla_ldmc)
+
+
+
+latex <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_latex_clean.csv")) %>%
+  dplyr::select(-1) %>%
+  dplyr::mutate_at(vars(c(1:7, 9:12, 15, 18, 21)), as.character) %>%
+    dplyr::mutate_at(vars(c(1:7, 9:12, 15, 18, 21)), as.factor) %T>%
+  str()
 ```
 
 ## Import final models

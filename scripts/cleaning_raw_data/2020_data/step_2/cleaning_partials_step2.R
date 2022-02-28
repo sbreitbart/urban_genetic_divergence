@@ -35,6 +35,8 @@ sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cle
 cards <-  read.csv(here::here("./CommonGardenExperiment_2020Data/raw_data/Latex_Cardenolides/Cardenolides_forR.csv")) %>%
   dplyr::rename(., Population = 1)
 
+latex <-  read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_latex_partialclean.csv"))
+
 #-------------------
 # Clean data- step 2
 #-------------------
@@ -233,6 +235,7 @@ reproductive <- merge(reproductive, y = Distances, by = "Population", all.x = TR
 flowering_2020 <- merge(flowering_2020, y = Distances, by = "Population", all.x = TRUE)
 sla_ldmc <- merge(sla_ldmc, y = Distances, by = "Population", all.x = TRUE)
 cards <- merge(cards, y = Distances, by = "Population", all.x = TRUE)
+latex <- merge(latex, y = Distances, by = "Population", all.x = TRUE)
 
 
 # recode North & South as urban (CAN'T MAKE THIS WORK SO DOING IT MANUALLY)
@@ -251,56 +254,56 @@ cards <- merge(cards, y = Distances, by = "Population", all.x = TRUE)
 #                                       'Rural' = "Rural")))
 
 
-heights_both <- heights_both %>% 
+heights_both %<>%
   dplyr::mutate(Urb_Rur = Transect_ID) %>%
   dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
                                         'North' = "Urban",
                                         'South' = "Urban",
                                         'Rural' = "Rural"))
 
-herbivory_both <- herbivory_both %>% 
+herbivory_both %<>%
   dplyr::mutate(Urb_Rur = Transect_ID) %>%
   dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
                                         'North' = "Urban",
                                         'South' = "Urban",
                                         'Rural' = "Rural"))
 
-survival_2020 <- survival_2020 %>% 
+survival_2020 %<>%
   dplyr::mutate(Urb_Rur = Transect_ID) %>%
   dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
                                         'North' = "Urban",
                                         'South' = "Urban",
                                         'Rural' = "Rural"))
 
-weevil_both <- weevil_both %>% 
+weevil_both %<>%
   dplyr::mutate(Urb_Rur = Transect_ID) %>%
   dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
                                         'North' = "Urban",
                                         'South' = "Urban",
                                         'Rural' = "Rural"))
 
-herbivores <- herbivores %>% 
+herbivores %<>%
   dplyr::mutate(Urb_Rur = Transect_ID) %>%
   dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
                                         'North' = "Urban",
                                         'South' = "Urban",
                                         'Rural' = "Rural"))
 
-reproductive <- reproductive %>% 
+reproductive %<>%
   dplyr::mutate(Urb_Rur = Transect_ID) %>%
   dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
                                         'North' = "Urban",
                                         'South' = "Urban",
                                         'Rural' = "Rural"))
 
-flowering_2020 <- flowering_2020 %>% 
+flowering_2020 %<>%
   dplyr::mutate(Urb_Rur = Transect_ID) %>%
   dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
                                         'North' = "Urban",
                                         'South' = "Urban",
                                         'Rural' = "Rural"))
 
-sla_ldmc <- sla_ldmc %>% 
+sla_ldmc %<>%
   dplyr::mutate(Urb_Rur = Transect_ID) %>%
   dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
                                         'North' = "Urban",
@@ -308,7 +311,14 @@ sla_ldmc <- sla_ldmc %>%
                                         'Rural' = "Rural"))
 
 
-cards <- cards %>% 
+cards %<>%
+  dplyr::mutate(Urb_Rur = Transect_ID) %>%
+  dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
+                                        'North' = "Urban",
+                                        'South' = "Urban",
+                                        'Rural' = "Rural"))
+
+latex %<>%
   dplyr::mutate(Urb_Rur = Transect_ID) %>%
   dplyr::mutate(Urb_Rur = dplyr::recode(Urb_Rur,
                                         'North' = "Urban",
@@ -336,7 +346,11 @@ reproductive <- merge(reproductive, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 flowering_2020 <- merge(flowering_2020, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 sla_ldmc <- merge(sla_ldmc, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 cards <- merge(cards, y = urb_scores, by = "Pop_ID", all.x = TRUE)
+latex <- merge(latex, y = urb_scores, by = "Pop_ID", all.x = TRUE)
 
+# remove two "X" cols from latex df
+latex %<>%
+  dplyr::select(-c(3,16))
 
 # ----------------
 # Export to new csvs
@@ -360,3 +374,5 @@ write.csv(sla_ldmc,
           here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv"))
 write.csv(cards,
           here::here("./CommonGardenExperiment_2020Data/clean_data/2020_cardenolides_clean.csv"))
+write.csv(latex,
+          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_latex_clean.csv"))
