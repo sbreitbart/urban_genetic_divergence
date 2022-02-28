@@ -20,6 +20,7 @@ latex %<>%
   dplyr::filter(!is.na(Filter_paper_and_tube_weight_mg)) %>%
   dplyr::filter(is.na(Latex_not_collected)) %>%
   dplyr::filter(Latex_weight_mg != "NA") %>%
+  dplyr::filter(Latex_and_filter_paper_and_tube_weight_mg != "NA") %>%
   dplyr::mutate_at(vars(Latex_and_filter_paper_and_tube_weight_mg, Latex_weight_mg), as.numeric) %>%
   dplyr::mutate_at(vars(3:6, 8:10), as.factor)
 

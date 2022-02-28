@@ -12,6 +12,8 @@ sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/20
     dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.factor)
 
 str(sla_ldmc)
+sla_ldmc %<>%
+  dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
 
 
 latex <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_latex_clean.csv")) %>%
@@ -19,6 +21,11 @@ latex <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_
   dplyr::mutate_at(vars(c(1:7, 9:12, 15, 18, 21)), as.character) %>%
     dplyr::mutate_at(vars(c(1:7, 9:12, 15, 18, 21)), as.factor) %T>%
   str()
+
+latex %<>%
+  dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
+
+str(latex)
 ```
 
 # LDMC
@@ -346,24 +353,147 @@ ltx_gr_city_m1 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + 
 performance::check_model(ltx_gr_city_m1) 
 
 # use fam_uniq, see if anything changes
-performance::check_model(update(sla_gr_city_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + City_dist)) 
+performance::check_model(update(ltx_gr_city_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + City_dist)) 
+
+# there is a diff (qualitatively identical though). So use Pop/Fam
+car::Anova(ltx_gr_city_m1)
+car::Anova(update(ltx_gr_city_m1, . ~ (1|Block) + (1|Fam_uniq) + City_dist))
 
 ```
 
 ### Urb_score
 ```{r}
+ltx_gr_usc_m1 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + Urb_score,
+                        data = latex,
+                        REML = F)
+
+performance::check_model(ltx_gr_usc_m1) 
+
+# use fam_uniq, see if anything changes
+performance::check_model(update(ltx_gr_usc_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score)) 
+
+# there is a diff (qualitatively identical though). So use Pop/Fam. P < 0.01 in both cases
+car::Anova(ltx_gr_usc_m1)
+car::Anova(update(ltx_gr_usc_m1, . ~ (1|Block) + (1|Fam_uniq) + Urb_score))
 
 ```
 
 ## Urban Subtransects
 ### City_dist
 ```{r}
+ltx_urbsubs_city_m1 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+                        data = latex %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        REML = F)
 
+performance::check_model(ltx_urbsubs_city_m1) # try sqrt
+
+performance::check_model(update(ltx_urbsubs_city_m1, Latex_weight_mg^(1/2) ~ .)) # looks better
+
+
+# use fam_uniq, see if anything changes
+performance::check_model(update(ltx_urbsubs_city_m1, Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population:Fam_uniq) + City_dist* Transect_ID)) 
+
+# there is a diff (qualitatively identical though). So use Pop/Fam
+## interaxn not sig, so use type II SS
+car::Anova(update(ltx_urbsubs_city_m1, Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population/Family) + City_dist* Transect_ID), type = "III")
+car::Anova(update(ltx_urbsubs_city_m1, Latex_weight_mg^(1/2) ~ (1|Block) + (1|Fam_uniq) + City_dist* Transect_ID), type = "III")
+
+## interaxn not sig, so use type II SS
+car::Anova(update(ltx_urbsubs_city_m1, Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population/Family) + City_dist* Transect_ID), type = "II")
+car::Anova(update(ltx_urbsubs_city_m1, Latex_weight_mg^(1/2) ~ (1|Block) + (1|Fam_uniq) + City_dist* Transect_ID), type = "II")
+
+# final model
+ltx_urbsubs_city_m1 <- glmmTMB(Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+                        data = latex %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        REML = F)
+
+
+
+# MAIN EFFECTS MODEL
+ltx_urbsubs_city_m2 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+                        data = latex %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        REML = F)
+
+performance::check_model(ltx_urbsubs_city_m2) # try sqrt again
+
+performance::check_model(update(ltx_urbsubs_city_m2, Latex_weight_mg^(1/2) ~ .)) # looks better
+
+
+# use fam_uniq, see if anything changes
+performance::check_model(update(ltx_urbsubs_city_m2, Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population:Fam_uniq) + City_dist + Transect_ID)) 
+
+# there is a diff (qualitatively identical though). So use Pop/Fam
+car::Anova(update(ltx_urbsubs_city_m2, Latex_weight_mg^(1/2) ~ .), type = "II")
+car::Anova(update(ltx_urbsubs_city_m2, Latex_weight_mg^(1/2) ~ (1|Block) + (1|Fam_uniq) + City_dist + Transect_ID), type = "II")
+
+
+# final ME model
+ltx_urbsubs_city_m2 <- glmmTMB(Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+                        data = latex %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        REML = F)
+
+AIC(ltx_urbsubs_city_m1, ltx_urbsubs_city_m2) # m2 best but <2 AIC away
 ```
 
 ### Urb_score
 ```{r}
+ltx_urbsubs_usc_m1 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+                        data = latex %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        REML = F)
 
+performance::check_model(ltx_urbsubs_usc_m1) # try sqrt
+
+performance::check_model(update(ltx_urbsubs_usc_m1, Latex_weight_mg^(1/2) ~ .)) # looks better
+
+
+# use fam_uniq, see if anything changes
+performance::check_model(update(ltx_urbsubs_usc_m1, Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score* Transect_ID)) 
+
+# there is a diff (qualitatively identical though). So use Pop/Fam
+## interaxn sig for both
+car::Anova(update(ltx_urbsubs_usc_m1, Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population/Family) + Urb_score* Transect_ID), type = "III")
+car::Anova(update(ltx_urbsubs_usc_m1, Latex_weight_mg^(1/2) ~ (1|Block) + (1|Fam_uniq) + Urb_score* Transect_ID), type = "III")
+
+
+# final model
+ltx_urbsubs_usc_m1 <- glmmTMB(Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+                        data = latex %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        REML = F)
+
+
+
+# MAIN EFFECTS MODEL
+ltx_urbsubs_usc_m2 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+                        data = latex %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        REML = F)
+
+performance::check_model(ltx_urbsubs_usc_m2) # try sqrt again
+
+performance::check_model(update(ltx_urbsubs_usc_m2, Latex_weight_mg^(1/2) ~ .)) # looks better
+
+
+# use fam_uniq, see if anything changes
+performance::check_model(update(ltx_urbsubs_usc_m2, Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score + Transect_ID)) 
+
+# there is a diff (qualitatively identical though). So use Pop/Fam
+car::Anova(update(ltx_urbsubs_usc_m2, Latex_weight_mg^(1/2) ~ .), type = "II")
+car::Anova(update(ltx_urbsubs_usc_m2, Latex_weight_mg^(1/2) ~ (1|Block) + (1|Fam_uniq) + Urb_score + Transect_ID), type = "II")
+
+
+# final ME model
+ltx_urbsubs_usc_m2 <- glmmTMB(Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+                        data = latex %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        REML = F)
+
+AIC(ltx_urbsubs_usc_m1, ltx_urbsubs_usc_m2) # m1 best
 ```
 
 
@@ -558,6 +688,18 @@ sla_urbsubs_usc_m2 # Best model
 
 ## Latex
 ```{r}
+## City_dist / gradient
+ltx_gr_city_m1 
+
+## Urbanization score / gradient
+ltx_gr_usc_m1
+
+## City_dist / urban subtransects
+ltx_urbsubs_city_m1 # Qualitatively identical model (<2 AIC away)
+ltx_urbsubs_city_m2 # Best model
+
+## Urbanization score  / urban subtransects
+ltx_urbsubs_usc_m1 # Best model
 
 ```
 
