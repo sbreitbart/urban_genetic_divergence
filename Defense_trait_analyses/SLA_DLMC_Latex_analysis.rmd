@@ -43,9 +43,8 @@ latex <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_
 
 ## Import final models
 ```{r}
-
+source(knitr::purl("Defense_trait_analyses/Model_diagnostics_Defense.Rmd", quiet=TRUE))
 ```
-
 
 # ANOVA
 ## Gradient
