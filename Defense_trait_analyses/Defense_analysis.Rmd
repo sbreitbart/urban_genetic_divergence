@@ -32,7 +32,7 @@ NOTES:
 +-----------------------------+-----------+-----------+-----------+
 | Weevil damage: Quantitative |           | X         | X         |
 +-----------------------------+-----------+-----------+-----------+
-| Weevil damage: Binary       |           | X         |           |
+| Weevil damage: Binary       |           | X         | X         |
 +-----------------------------+-----------+-----------+-----------+
 | Specific Leaf Area          |           | X         |           |
 +-----------------------------+-----------+-----------+-----------+
@@ -55,16 +55,79 @@ source("functions.R")
 ## Import data
 
 ```{r}
-herbivory <- read.csv(here::here("./Joined_annual_data/herbivory.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
-  dplyr::select(., -1)
+# SLA & LDMC-----
+sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv")) %>%
+  dplyr::select(., -c(1:2)) %>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.factor)
 
-weevil <- read.csv(here::here("./Joined_annual_data/weevil.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
-  dplyr::select(., -1)
+str(sla_ldmc)
+sla_ldmc %<>%
+  dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
+
+
+# LATEX-----
+latex <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_latex_clean.csv")) %>%
+  dplyr::select(-1) %>%
+  dplyr::mutate_at(vars(c(1:7, 9:12, 15, 18, 21)), as.character) %>%
+    dplyr::mutate_at(vars(c(1:7, 9:12, 15, 18, 21)), as.factor) %T>%
+  str()
+
+latex %<>%
+  dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
+
+str(latex)
+
+
+# HERBIVORY-----
+herbivory <- read.csv(here::here("./Joined_annual_data/herbivory.csv")) %>%
+  dplyr::select(-1) %>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor) %T>%
+  str()
+
+herbivory %<>%
+  dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
+
+
+
+# WEEVIL DAMAGE-----
+weevil <- read.csv(here::here("./Joined_annual_data/weevil.csv")) %>%
+  dplyr::select(-1) %>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor) %T>%
+  str()
+
+weevil %<>%
+  dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
 ```
 
-## MAKE DIAGNOSTIC RMD NEXT, THEN FIGURE OUT HOW TO STRUCTURE REST OF THIS
+## Import final models
+```{r}
+source(knitr::purl("Defense_trait_analyses/Model_diagnostics_Defense.Rmd", quiet=TRUE))
+
+all_models <- list(
+ldmc_mods          , # LDMC
+sla_mods           , # SLA
+latex_mods         , # Latex
+herb_early_mods    , # Herbivory: before flowering
+herb_late_mods     , # Herbivory: after flowering
+weev_mods_binomial , # Weevil scar: binomial (part of hurdle models)
+weev_mods_quant)     # Weevil scar: quantitative (part of hurdle models)
+
+names(all_models) <- c(
+"ldmc_mods"          ,
+"sla_mods"           ,
+"latex_mods"         ,
+"herb_early_mods"    ,
+"herb_late_mods"     ,
+"weev_mods_binomial" ,
+"weev_mods_quant")
+```
+
+## FIGURE OUT HOW TO STRUCTURE REST OF THIS
 ### Herbivory
-#### Entire gradient: *NOT sig for city_dist or urb_score
+#### Gradient
 ##### City_dist
 ```{r}
 car::Anova(herbivory_gr_dist_m5)
@@ -82,7 +145,7 @@ r.squaredGLMM(ramets_gr_usc_m1)
 
 ```
 
-#### Urban subtransects: nothing sig
+#### Urban subtransects
 ##### City_dist
 ```{r}
 car::Anova(ramets_urb_dist_m1)
@@ -120,3 +183,28 @@ AIC((ramets_urb_usc_m1),
 ```
 
 
+
+
+
+# ANOVA
+## Gradient
+### City_dist
+```{r}
+
+```
+
+### Urb_score
+```{r}
+
+```
+
+## Urban Subtransects
+### City_dist
+```{r}
+
+```
+
+### Urb_score
+```{r}
+
+```

@@ -1,4 +1,10 @@
-## -----------------------------------------------------------------
+## ------------------------------------------------------------
+source("libraries.R")
+source("functions.R")
+
+
+## ------------------------------------------------------------
+# SLA & LDMC-----
 sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv")) %>%
   dplyr::select(., -c(1:2)) %>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.character) %>%
@@ -9,6 +15,7 @@ sla_ldmc %<>%
   dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
 
 
+# LATEX-----
 latex <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_latex_clean.csv")) %>%
   dplyr::select(-1) %>%
   dplyr::mutate_at(vars(c(1:7, 9:12, 15, 18, 21)), as.character) %>%
@@ -21,7 +28,30 @@ latex %<>%
 str(latex)
 
 
-## -----------------------------------------------------------------
+# HERBIVORY-----
+herbivory <- read.csv(here::here("./Joined_annual_data/herbivory.csv")) %>%
+  dplyr::select(-1) %>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor) %T>%
+  str()
+
+herbivory %<>%
+  dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
+
+
+
+# WEEVIL DAMAGE-----
+weevil <- read.csv(here::here("./Joined_annual_data/weevil.csv")) %>%
+  dplyr::select(-1) %>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor) %T>%
+  str()
+
+weevil %<>%
+  dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
+
+
+## ------------------------------------------------------------
 # ldmc_gr_city_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + City_dist,
 #                         data = sla_ldmc,
 #                         REML = F)
@@ -83,7 +113,7 @@ ldmc_gr_city_m1 <- glmmTMB(LDMC ~ (1|Population:Fam_uniq) + City_dist,
 # performance::check_model(ldmc_gr_city_m1)
 
 
-## -----------------------------------------------------------------
+## ------------------------------------------------------------
 # ldmc_gr_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + Urb_score,
 #                         data = sla_ldmc,
 #                         REML = F)
@@ -108,7 +138,7 @@ ldmc_gr_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + Urb_score,
                         REML = F)
 
 
-## -----------------------------------------------------------------
+## ------------------------------------------------------------
 ldmc_urbsubs_city_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
                         data = sla_ldmc %>%
                           dplyr::filter(Transect_ID != "Rural"),
@@ -146,7 +176,7 @@ ldmc_urbsubs_city_m2 <- glmmTMB(LDMC ~ (1|Block) + (1|Population:Fam_uniq) + Cit
 # AIC(ldmc_urbsubs_city_m1, ldmc_urbsubs_city_m2) # m2 lower but not by more than 2 AIC
 
 
-## -----------------------------------------------------------------
+## ------------------------------------------------------------
 # ldmc_urbsubs_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
 #                         data = sla_ldmc %>%
 #                           dplyr::filter(Transect_ID != "Rural"),
@@ -192,7 +222,7 @@ ldmc_urbsubs_usc_m2 <- glmmTMB(LDMC ~ (1|Block) + (1|Population:Fam_uniq) + Urb_
 # AIC(ldmc_urbsubs_usc_m1, ldmc_urbsubs_usc_m2) # ME model best model but not <2 AIC away
 
 
-## -----------------------------------------------------------------
+## ------------------------------------------------------------
 # sla_gr_city_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + City_dist,
 #                         data = sla_ldmc,
 #                         REML = F)
@@ -232,7 +262,7 @@ sla_gr_city_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population:Fam_uniq) + City_dist,
 
 
 
-## -----------------------------------------------------------------
+## ------------------------------------------------------------
 # sla_gr_usc_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + Urb_score,
 #                         data = sla_ldmc,
 #                         REML = F)
@@ -253,7 +283,7 @@ sla_gr_usc_m1 <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population:Fam_uniq) + Urb_s
                         REML = F)
 
 
-## -----------------------------------------------------------------
+## ------------------------------------------------------------
 # sla_urbsubs_city_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
 #                         data = sla_ldmc %>%
 #                           dplyr::filter(Transect_ID != "Rural"),
@@ -288,7 +318,7 @@ sla_urbsubs_city_m2 <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population:Fam_uniq) +
 # AIC(sla_urbsubs_city_m1, sla_urbsubs_city_m2) # qualitatively identical but m2 best model
 
 
-## -----------------------------------------------------------------
+## ------------------------------------------------------------
 # sla_urbsubs_usc_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
 #                         data = sla_ldmc %>%
 #                           dplyr::filter(Transect_ID != "Rural"),
@@ -323,7 +353,7 @@ sla_urbsubs_usc_m2 <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population:Fam_uniq) + 
 # AIC(sla_urbsubs_usc_m1, sla_urbsubs_usc_m2) # qualitatively identical but m2 best model
 
 
-## -----------------------------------------------------------------
+## ------------------------------------------------------------
 ltx_gr_city_m1 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + City_dist,
                         data = latex,
                         REML = F)
@@ -339,7 +369,7 @@ ltx_gr_city_m1 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + 
 
 
 
-## -----------------------------------------------------------------
+## ------------------------------------------------------------
 ltx_gr_usc_m1 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + Urb_score,
                         data = latex,
                         REML = F)
@@ -355,7 +385,7 @@ ltx_gr_usc_m1 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + U
 
 
 
-## -----------------------------------------------------------------
+## ------------------------------------------------------------
 # ltx_urbsubs_city_m1 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
 #                         data = latex %>%
 #                           dplyr::filter(Transect_ID != "Rural"),
@@ -414,7 +444,7 @@ ltx_urbsubs_city_m2 <- glmmTMB(Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population
 # AIC(ltx_urbsubs_city_m1, ltx_urbsubs_city_m2) # m2 best but <2 AIC away
 
 
-## -----------------------------------------------------------------
+## ------------------------------------------------------------
 # ltx_urbsubs_usc_m1 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
 #                         data = latex %>%
 #                           dplyr::filter(Transect_ID != "Rural"),
@@ -470,152 +500,804 @@ ltx_urbsubs_usc_m2 <- glmmTMB(Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population/
 # AIC(ltx_urbsubs_usc_m1, ltx_urbsubs_usc_m2) # m1 best
 
 
-## -----------------------------------------------------------------
-herbivory_gr_dist_m1 <- glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
-                              data = herbivory_19_20,
+## ------------------------------------------------------------
+# herbiv_e_gr_dist_m1 <- glmmTMB(Herbivory_mean_early ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+#                               data = herbivory,
+#                               REML = F) # convergence issue
+# 
+# performance::check_model(herbiv_e_gr_dist_m1) # very right-skewed. try sqrt transformation
+# 
+# performance::check_model(update(herbiv_e_gr_dist_m1, sqrt(Herbivory_mean_early) ~ .)) # better but still very right-skewed. try cube root transformation
+# 
+# performance::check_model(update(herbiv_e_gr_dist_m1, (Herbivory_mean_early)^(1/3) ~ .)) # better but still skewed. Is this good enough?
+# 
+# 
+# hist(herbivory$Herbivory_mean_early, breaks = 50) # zero-inflated?
+# 
+# 
+# performance::check_model(
+#   glmmTMB(Herbivory_mean_early^(1/3) ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+#                               data = herbivory,
+#           ziformula = ~1,
+#                               REML = F)
+# ) # still some heavy tails but looks better
+# 
+# # doesn't work
+# car::Anova(
+#   glmmTMB(Herbivory_mean_early^(1/3) ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+#                               data = herbivory,
+#           ziformula = ~1,
+#                               REML = F)
+# ) 
+# 
+# performance::check_model(
+#   glmmTMB(Herbivory_mean_early^(1/3) ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+#                               data = herbivory %>%
+#             dplyr::filter(Year != "2021"),
+#           ziformula = ~1,
+#                               REML = F)
+# ) # 2020 looks better than 2021
+# 
+# 
+# # just curious- take out 0s
+# performance::check_model(
+#   glmmTMB(Herbivory_mean_early^(1/3) ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+#                               data = herbivory %>%
+#             dplyr::filter(Year != "2021" & Herbivory_mean_early > 0),
+#           ziformula = ~1,
+#                               REML = F)
+# ) # looks better...
+# 
+# 
+# # create bins for herbivory: Low, medium, high
+# herbivory %<>%
+#   dplyr::mutate(early_quantiles = cut(Herbivory_mean_early,
+#                                breaks=c(0, 0.05, 0.2, 0.4, 1),
+#                               labels=c("very_low", "low","middle","high")))
+# 
+# performance::check_model(
+#   glmmTMB(early_levels ~ (1|Year) + (1|Block) + (1|Population/Family) + City_dist,
+#                               data = herbivory,
+#                                REML = F)) # very bimodal residuals
+# 
+# 
+# 
+# 
+# # TRY BETA FAMILY
+herbivory$Herbivory_mean_early_recode <- herbivory$Herbivory_mean_early
+herbivory$Herbivory_mean_early_recode[herbivory$Herbivory_mean_early_recode == 1] <- 0.999999
+herbivory$Herbivory_mean_early_recode[herbivory$Herbivory_mean_early_recode == 0] <- 0.000001
+
+# test1 <- glmmTMB(Herbivory_mean_early_recode  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+#                                 data = herbivory,
+#                                 family = beta_family(link="logit"),
+#                                REML = F)
+# performance::check_model(test1) # heavy right tail. Try sqrt transformation
+# 
+# performance::check_model(update(test1, sqrt(Herbivory_mean_early_recode) ~ .)) # better. Try cube root transformation
+# 
+# performance::check_model(update(test1, (Herbivory_mean_early_recode)^(1/3) ~ .)) # better. Try log transformation
+# 
+# performance::check_model(update(test1, log(Herbivory_mean_early_recode + 1) ~ .)) # worse
+# 
+# # still not converging though. Make Pop/Fam Fam_uniq
+# performance::check_model(update(test1, (Herbivory_mean_early_recode)^(1/3) ~ (1|Block) + (1|Year) + (1|Population:Fam_uniq) + City_dist)) # not converging. take out block
+
+# performance::check_model(update(test1, (Herbivory_mean_early_recode)^(1/3) ~  (1|Year) + (1|Population/Family) + City_dist)) # looks good enough
+
+herbiv_e_gr_dist_m1 <- glmmTMB(Herbivory_mean_early_recode^(1/3)  ~  (1|Year) + (1|Population/Family) + City_dist,
+                                data = herbivory,
+                                family = beta_family(link="logit"),
+                                REML = F)
+
+# car::Anova(herbiv_e_gr_dist_m1)
+
+
+## ------------------------------------------------------------
+# herbiv_e_gr_usc_m1 <- glmmTMB(Herbivory_mean_early ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+#                               data = herbivory,
+#                               REML = F) 
+# 
+# performance::check_model(herbiv_e_gr_usc_m1) # very right-skewed. try sqrt transformation
+# 
+# performance::check_model(update(herbiv_e_gr_usc_m1, sqrt(Herbivory_mean_early) ~ .)) # better but still very right-skewed. try cube root transformation
+# 
+# performance::check_model(update(herbiv_e_gr_usc_m1, (Herbivory_mean_early)^(1/3) ~ .)) # better but still skewed. Is this good enough?
+# 
+# 
+# performance::check_model(
+#   glmmTMB(Herbivory_mean_early^(1/3) ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+#                               data = herbivory,
+#           ziformula = ~1,
+#                               REML = F)
+# ) # still some heavy tails but looks better
+# 
+# 
+# 
+# # try bins
+# performance::check_model(
+#   glmmTMB(early_levels ~ (1|Year) + (1|Block) + (1|Population/Family) + Urb_score,
+#                               data = herbivory,
+#                                REML = F)) # very bimodal residuals
+# 
+# 
+# 
+# 
+# # TRY BETA FAMILY
+# test1 <- glmmTMB(Herbivory_mean_early_recode  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+#                                 data = herbivory,
+#                                 family = beta_family(link="logit"),
+#                                REML = F)
+# performance::check_model(test1) # heavy right tail. Try sqrt transformation
+# 
+# performance::check_model(update(test1, sqrt(Herbivory_mean_early_recode) ~ .)) # better. Try cube root transformation
+# 
+# performance::check_model(update(test1, (Herbivory_mean_early_recode)^(1/3) ~ .)) # better. But not converging. Try log transformation
+# 
+# performance::check_model(update(test1, log(Herbivory_mean_early_recode + 1) ~ .)) # worse
+# 
+# # still not converging though. Make Pop/Fam Fam_uniq
+# performance::check_model(update(test1, (Herbivory_mean_early_recode)^(1/3) ~ (1|Block) + (1|Year) + (1|Population:Fam_uniq) + Urb_score)) # looks good enough
+
+herbiv_l_gr_usc_m1 <- glmmTMB(Herbivory_mean_early_recode^(1/3)  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+                                data = herbivory,
+                                family = beta_family(link="logit"),
+                                REML = F)
+
+# car::Anova(herbiv_l_gr_usc_m1)
+
+
+## ------------------------------------------------------------
+# herbiv_e_urbsubs_dist_m1 <- glmmTMB(Herbivory_mean_early ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+#                               data = herbivory %>%
+#                                 dplyr::filter(Transect_ID != "Rural"),
+#                               REML = F) # convergence issue. Try taking out block
+# 
+# 
+# performance::check_model(glmmTMB(Herbivory_mean_early ~  (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+#                               data = herbivory %>%
+#                                 dplyr::filter(Transect_ID != "Rural")),
+#                               REML = F) # very right-skewed. try sqrt transformation
+# 
+# 
+# performance::check_model(glmmTMB(Herbivory_mean_early^(1/2) ~  (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+#                               data = herbivory %>%
+#                                 dplyr::filter(Transect_ID != "Rural")),
+#                               REML = F) # better but still very right-skewed. try cube root transformation
+# 
+# 
+# performance::check_model(glmmTMB(Herbivory_mean_early^(1/3) ~  (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+#                               data = herbivory %>%
+#                                 dplyr::filter(Transect_ID != "Rural")),
+#                               REML = F) # better. Put back block, see if it runs
+# 
+# performance::check_model(glmmTMB(Herbivory_mean_early^(1/3) ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+#                               data = herbivory %>%
+#                                 dplyr::filter(Transect_ID != "Rural")),
+#                               REML = F) # doesn't run
+# 
+# 
+# # Compare w/beta distribution
+# performance::check_model(glmmTMB(Herbivory_mean_early_recode^(1/3)  ~  (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+#                                 data = herbivory %>%
+#                                 dplyr::filter(Transect_ID != "Rural"),
+#                                 family = beta_family(link="logit"),
+#                                REML = F)) # looks about the same. Add back block
+# 
+# performance::check_model(glmmTMB(Herbivory_mean_early_recode^(1/3)  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+#                                 data = herbivory %>%
+#                                 dplyr::filter(Transect_ID != "Rural"),
+#                                 family = beta_family(link="logit"),
+#                                REML = F)) # looks better. Make pop/fam Pop:Fam_uniq
+# 
+# performance::check_model(glmmTMB(Herbivory_mean_early_recode^(1/3)  ~ (1|Block) + (1|Year) + (1|Population:Fam_uniq) + City_dist * Transect_ID,
+#                                 data = herbivory %>%
+#                                 dplyr::filter(Transect_ID != "Rural"),
+#                                 family = beta_family(link="logit"),
+#                                REML = F))
+# 
+# 
+# 
+# # compare both
+# car::Anova(glmmTMB(Herbivory_mean_early^(1/3) ~  (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+#                               data = herbivory %>%
+#                                 dplyr::filter(Transect_ID != "Rural"),
+#                               REML = F),
+#            type = "III")
+# 
+# # going to use this one because it includes block and beta distribution is better than gaussian I think
+# car::Anova(
+#   glmmTMB(Herbivory_mean_early_recode^(1/3)  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+#                                 data = herbivory %>%
+#                                 dplyr::filter(Transect_ID != "Rural"),
+#                                 family = beta_family(link="logit"),
+#                                REML = F),
+#            type = "III") # interaxn marg sig, so will keep type III SS
+
+# final model
+herbiv_e_urbsubs_dist_m1 <- glmmTMB(Herbivory_mean_early_recode^(1/3)  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+                                data = herbivory %>%
+                                dplyr::filter(Transect_ID != "Rural"),
+                                family = beta_family(link="logit"),
+                                REML = F)
+
+
+
+
+
+# MAIN EFFECTS MODEL
+herbiv_e_urbsubs_dist_m2 <- glmmTMB(Herbivory_mean_early_recode^(1/3)  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist + Transect_ID,
+                                data = herbivory %>%
+                                dplyr::filter(Transect_ID != "Rural"),
+                                family = beta_family(link="logit"),
+                                REML = F)
+
+# performance::check_model(herbiv_e_urbsubs_dist_m2) # looks fine
+# 
+# AIC(herbiv_e_urbsubs_dist_m1, herbiv_e_urbsubs_dist_m2) # m1 better but <2 AIC apart
+
+
+## ------------------------------------------------------------
+herbiv_e_urbsubs_usc_m1 <- glmmTMB(Herbivory_mean_early_recode^(1/3)  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
+                                data = herbivory %>%
+                                dplyr::filter(Transect_ID != "Rural"),
+                                family = beta_family(link="logit"),
+                                REML = F)
+
+# performance::check_model(herbiv_e_urbsubs_usc_m1) # looks good
+
+
+
+# MAIN EFFECTS MODEL
+herbiv_e_urbsubs_usc_m2 <- glmmTMB(Herbivory_mean_early_recode^(1/3)  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score + Transect_ID,
+                                data = herbivory %>%
+                                dplyr::filter(Transect_ID != "Rural"),
+                                family = beta_family(link="logit"),
+                                REML = F)
+
+# performance::check_model(herbiv_e_urbsubs_usc_m2) # looks good
+# 
+# 
+# AIC(herbiv_e_urbsubs_usc_m1, herbiv_e_urbsubs_usc_m2) # m2 better but <2 AIC from m1
+
+
+## ------------------------------------------------------------
+# herbiv_l_gr_dist_m1 <- glmmTMB(Herbivory_mean_late ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+#                               data = herbivory,
+#                               REML = F) # convergence issue
+# 
+# performance::check_model(herbiv_l_gr_dist_m1) # very right-skewed. try cube root transformation
+# 
+# performance::check_model(update(herbiv_l_gr_dist_m1, Herbivory_mean_late^(1/3) ~ .)) # still not converging and I think beta is better choice
+# 
+
+# BETA FAMILY
+herbivory$Herbivory_mean_late_recode <- herbivory$Herbivory_mean_late
+herbivory$Herbivory_mean_late_recode[herbivory$Herbivory_mean_late_recode == 1] <- 0.999999
+herbivory$Herbivory_mean_late_recode[herbivory$Herbivory_mean_late_recode == 0] <- 0.000001
+# 
+# test1 <- glmmTMB(Herbivory_mean_late_recode  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+#                                 data = herbivory,
+#                                 family = beta_family(link="logit"),
+#                                REML = F)
+# performance::check_model(test1) # heavy right tail. Try sqrt transformation
+# 
+# performance::check_model(update(test1, sqrt(Herbivory_mean_late_recode) ~ .)) # better. Try cube root transformation
+# 
+# performance::check_model(update(test1, (Herbivory_mean_late_recode)^(1/3) ~ .)) # better. Try log transformation
+# 
+# performance::check_model(update(test1, log(Herbivory_mean_late_recode + 1) ~ .)) # worse
+# 
+# # still not converging though. Make Pop/Fam Fam_uniq
+# performance::check_model(update(test1, (Herbivory_mean_late_recode)^(1/3) ~ (1|Block) + (1|Year) + (1|Population:Fam_uniq) + City_dist))  # works, but try taking out block
+# 
+# performance::check_model(update(test1, (Herbivory_mean_late_recode)^(1/3) ~  (1|Year) + (1|Population/Family) + City_dist)) # looks good enough
+
+herbiv_l_gr_dist_m1 <- glmmTMB(Herbivory_mean_late_recode^(1/3)  ~  (1|Year) + (1|Population/Family) + City_dist,
+                                data = herbivory,
+                                family = beta_family(link="logit"),
+                                REML = F)
+
+# car::Anova(herbiv_l_gr_dist_m1)
+
+
+
+## ------------------------------------------------------------
+# test1 <- glmmTMB(Herbivory_mean_late_recode  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+#                                 data = herbivory,
+#                                 family = beta_family(link="logit"),
+#                                 REML = F)
+# performance::check_model(test1) # heavy right tail. Try sqrt transformation
+# 
+# performance::check_model(update(test1, sqrt(Herbivory_mean_late_recode) ~ .)) # better. Try cube root transformation
+# 
+# performance::check_model(update(test1, (Herbivory_mean_late_recode)^(1/3) ~ .)) # better. Try log transformation
+# 
+# performance::check_model(update(test1, log(Herbivory_mean_late_recode + 1) ~ .)) # worse
+# 
+# # try Pop/Fam --> Fam_uniq
+# performance::check_model(update(test1, (Herbivory_mean_late_recode)^(1/3) ~ (1|Block) + (1|Year) + (1|Population:Fam_uniq) + Urb_score))  # works
+# 
+
+# this is good enough
+herbiv_l_gr_usc_m1 <- glmmTMB(Herbivory_mean_late_recode^(1/3)  ~  (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+                                data = herbivory,
+                                family = beta_family(link="logit"),
+                                REML = F)
+
+car::Anova(herbiv_l_gr_usc_m1)
+
+
+## ------------------------------------------------------------
+# BETA FAMILY
+# test1 <- glmmTMB(Herbivory_mean_late_recode  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+#                                 data = herbivory %>%
+#                    dplyr::filter(Transect_ID != "Rural"),
+#                                 family = beta_family(link="logit"),
+#                  REML = F) # not converging. Try taking out block
+# 
+# 
+# performance::check_model(update(test1, . ~ . -(1|Block))) # heavy right tail. Try sqrt transformation and put block back in
+# 
+# performance::check_model(update(test1, sqrt(Herbivory_mean_late_recode) ~ .)) # better. Try cube root transformation
+# 
+# performance::check_model(update(test1, (Herbivory_mean_late_recode)^(1/3) ~ .)) 
+# # looks good enough. Go with this one
+
+herbiv_l_urbsubs_dist_m1 <- glmmTMB(Herbivory_mean_late_recode^(1/3)  ~  (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+                                data = herbivory,
+                                family = beta_family(link="logit"),
+                                REML = F)
+
+# interaxn marg sig, so keep type III SS
+car::Anova(herbiv_l_urbsubs_dist_m1, type = "III")
+
+
+
+# MAIN EFFECTS MODEL
+herbiv_l_urbsubs_dist_m2 <- glmmTMB(Herbivory_mean_late_recode^(1/3)  ~  (1|Year) + (1|Population/Family) + City_dist + Transect_ID,
+                                data = herbivory,
+                                family = beta_family(link="logit"),
+                                REML = F)
+
+# performance::check_model(herbiv_l_urbsubs_dist_m2) # looks fine
+# 
+# car::Anova(herbiv_l_urbsubs_dist_m2)
+# 
+# AIC(herbiv_l_urbsubs_dist_m1,
+#     herbiv_l_urbsubs_dist_m2) # m1 better but <2AIC away
+
+
+## ------------------------------------------------------------
+# BETA FAMILY
+test1 <- glmmTMB(Herbivory_mean_late_recode  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
+                                data = herbivory %>%
+                   dplyr::filter(Transect_ID != "Rural"),
+                                family = beta_family(link="logit"),
+                 REML = F)
+
+performance::check_model(test1) # heavy right tail. Try sqrt transformation 
+
+performance::check_model(update(test1, sqrt(Herbivory_mean_late_recode) ~ .)) # better. Try cube root transformation
+
+performance::check_model(update(test1, (Herbivory_mean_late_recode)^(1/3) ~ .)) 
+# looks good enough. Go with this one
+
+herbiv_l_urbsubs_usc_m1 <- glmmTMB(Herbivory_mean_late_recode^(1/3)  ~  (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
+                                data = herbivory,
+                                family = beta_family(link="logit"),
+                                REML = F)
+
+# interaxn not sig, so use type II SS
+car::Anova(herbiv_l_urbsubs_usc_m1, type = "III")
+car::Anova(herbiv_l_urbsubs_usc_m1, type = "II")
+
+
+# MAIN EFFECTS MODEL
+herbiv_l_urbsubs_usc_m2 <- glmmTMB(Herbivory_mean_late_recode^(1/3)  ~  (1|Year) + (1|Population/Family) + Urb_score + Transect_ID,
+                                data = herbivory,
+                                family = beta_family(link="logit"),
+                                REML = F)
+
+performance::check_model(herbiv_l_urbsubs_usc_m2) # looks fine
+
+car::Anova(herbiv_l_urbsubs_usc_m2)
+
+AIC(herbiv_l_urbsubs_usc_m1,
+    herbiv_l_urbsubs_usc_m2) # m2 better model
+
+
+## ------------------------------------------------------------
+# weev_gr_dist_m1 <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+#                               data = weevil,
+#                               REML = F) 
+# 
+# performance::check_model(weev_gr_dist_m1) # right-skewed. try sqrt transformation
+# 
+# performance::check_model(update(weev_gr_dist_m1, (Scar_length_cm)^(1/2) ~ .)) # better. try cube root transformation
+# 
+# performance::check_model(update(weev_gr_dist_m1, (Scar_length_cm)^(1/3) ~ .)) # better
+# 
+# 
+# hist(weevil$Scar_length_cm, breaks = 100)# looks zero-inflated. Try a ZI model
+# 
+# 
+# # ZI MODEL
+# test1 <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+#                               data = weevil,
+#                  ziformula = ~1,
+#                               REML = F)
+# 
+# performance::check_model(test1) # looks promising! try transforming again
+# 
+# performance::check_model(update(test1, Scar_length_cm^(1/2) ~ .)) # I think this one is slightly better than untransformed. Let's see if there's a qualitative difference
+# 
+# 
+# # not a qualitative diff
+# car::Anova(test1)
+# car::Anova(update(test1, Scar_length_cm^(1/2) ~ .))
+# 
+# # suggests second model better too
+# AIC(test1, update(test1, Scar_length_cm^(1/2) ~ .))
+
+
+# final model
+weev_gr_dist_m1 <- glmmTMB(Scar_length_cm^(1/2) ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+                              data = weevil,
+                 ziformula = ~1,
+                              REML = F)
+
+
+## ------------------------------------------------------------
+# weev_gr_usc_m1 <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+#                               data = weevil,
+#                               REML = F) 
+# 
+# performance::check_model(weev_gr_usc_m1) # right-skewed. try sqrt transformation
+# 
+# performance::check_model(update(weev_gr_usc_m1, (Scar_length_cm)^(1/2) ~ .)) # better. try cube root transformation
+# 
+# performance::check_model(update(weev_gr_usc_m1, (Scar_length_cm)^(1/3) ~ .)) # better
+# 
+# 
+# 
+# # ZI MODEL
+# test1 <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+#                               data = weevil,
+#                  ziformula = ~1,
+#                               REML = F)
+# 
+# performance::check_model(test1) # looks promising! try transforming again
+# 
+# performance::check_model(update(test1, Scar_length_cm^(1/2) ~ .)) # I think this one is slightly better than untransformed. Let's see if there's a qualitative difference
+# 
+# 
+# # not a qualitative diff
+# car::Anova(test1)
+# car::Anova(update(test1, Scar_length_cm^(1/2) ~ .))
+# 
+# # suggests second model better too
+# AIC(test1, update(test1, Scar_length_cm^(1/2) ~ .))
+
+
+# final model
+weev_gr_usc_m1 <- glmmTMB(Scar_length_cm^(1/2) ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+                              data = weevil,
+                 ziformula = ~1,
+                              REML = F)
+
+
+## ------------------------------------------------------------
+# ZI MODEL
+# weev_urbsubs_dist_m1 <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+#                               data = weevil %>%
+#                                 dplyr::filter(Transect_ID != "Rural"),
+#                  ziformula = ~1,
+#                               REML = F)
+# 
+# performance::check_model(weev_urbsubs_dist_m1) # looks promising! try transforming again
+# 
+# performance::check_model(update(weev_urbsubs_dist_m1, Scar_length_cm^(1/2) ~ .)) # I think this one is slightly better than untransformed. Let's see if there's a qualitative difference
+# 
+# # type III SS: no interaxn sig, so use type II
+# car::Anova(weev_urbsubs_dist_m1, type = "III")
+# car::Anova(update(weev_urbsubs_dist_m1, Scar_length_cm^(1/2) ~ .), type = "III")
+# 
+# 
+# # m2 has marg sig effect of transect while m1 doesn't
+# car::Anova(weev_urbsubs_dist_m1, type = "II")
+# car::Anova(update(weev_urbsubs_dist_m1, Scar_length_cm^(1/2) ~ .), type = "II")
+# 
+# # suggests second model better too
+# AIC(weev_urbsubs_dist_m1, update(weev_urbsubs_dist_m1, Scar_length_cm^(1/2) ~ .))
+
+
+# final model
+weev_urbsubs_dist_m1 <- glmmTMB(Scar_length_cm^(1/2) ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+                              data = weevil %>%
+                                dplyr::filter(Transect_ID != "Rural"),
+                 ziformula = ~1,
+                              REML = F)
+
+
+
+# MAIN EFFECTS MODEL
+weev_urbsubs_dist_m2 <- glmmTMB(Scar_length_cm^(1/2) ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist + Transect_ID,
+                              data = weevil %>%
+                                dplyr::filter(Transect_ID != "Rural"),
+                 ziformula = ~1,
+                              REML = F)
+
+# performance::check_model(weev_urbsubs_dist_m2) # looks fine
+# 
+# AIC(weev_urbsubs_dist_m1, weev_urbsubs_dist_m2) # m2 better but <2AIC away
+
+
+## ------------------------------------------------------------
+# ZI MODEL
+# weev_urbsubs_usc_m1 <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
+#                               data = weevil %>%
+#                                 dplyr::filter(Transect_ID != "Rural"),
+#                  ziformula = ~1,
+#                               REML = F)
+# 
+# performance::check_model(weev_urbsubs_usc_m1) # looks promising! try transforming again
+# 
+# performance::check_model(update(weev_urbsubs_usc_m1, Scar_length_cm^(1/2) ~ .)) # I think this one is slightly better than untransformed. Let's see if there's a qualitative difference
+# 
+# # type III SS: no interaxn sig, so use type II
+# car::Anova(weev_urbsubs_usc_m1, type = "III")
+# car::Anova(update(weev_urbsubs_usc_m1, Scar_length_cm^(1/2) ~ .), type = "III")
+# 
+# 
+# # m2 has marg sig effect of transect while m1 doesn't
+# car::Anova(weev_urbsubs_usc_m1, type = "II")
+# car::Anova(update(weev_urbsubs_usc_m1, Scar_length_cm^(1/2) ~ .), type = "II")
+# 
+# # suggests second model better too
+# AIC(weev_urbsubs_usc_m1, update(weev_urbsubs_usc_m1, Scar_length_cm^(1/2) ~ .))
+
+
+# final model
+weev_urbsubs_usc_m1 <- glmmTMB(Scar_length_cm^(1/2) ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
+                              data = weevil %>%
+                                dplyr::filter(Transect_ID != "Rural"),
+                 ziformula = ~1,
+                              REML = F)
+
+
+
+# MAIN EFFECTS MODEL
+weev_urbsubs_usc_m2 <- glmmTMB(Scar_length_cm^(1/2) ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score + Transect_ID,
+                              data = weevil %>%
+                                dplyr::filter(Transect_ID != "Rural"),
+                 ziformula = ~1,
+                              REML = F)
+
+# performance::check_model(weev_urbsubs_usc_m2) # looks fine
+# 
+# AIC(weev_urbsubs_usc_m1, weev_urbsubs_usc_m2) # m2 better but <2AIC away
+
+
+## ------------------------------------------------------------
+# BINARY MODEL-----
+# create binary column
+weevil$Scar_binary <- weevil$Scar_length_cm
+weevil$Scar_binary[weevil$Scar_binary > 0] <- 1
+
+
+weev_gr_dist_m1_bin <- glmmTMB(Scar_binary ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+                              data = weevil,
                               family = "binomial"(link = "logit"),
-                              control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+                              REML = F)
 
-res <- simulateResiduals(herbivory_gr_dist_m1)
-plot(res)
-testDispersion(herbivory_gr_dist_m1)
-# qqplot looks very off... try  ????
-hist(herbivory_19_20$Herbivory_mean_Sept, breaks = 30)
-summary(herbivory_gr_dist_m1)
+performance::check_model(weev_gr_dist_m1_bin)
+plot(DHARMa::simulateResiduals(weev_gr_dist_m1_bin)) # looks good
 
 
-herbivory_gr_dist_m2 <- glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Year) + (1|Family) + City_dist,
-                              data = herbivory_19_20,
+
+# QUANTITATIVE MODEL-----
+# weev_gr_dist_m1_quant <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+#                               data = weevil %>%
+#                                 dplyr::filter(Scar_length_cm > 0),
+#                               REML = F)
+# 
+# performance::check_model(weev_gr_dist_m1_quant)
+# plot(DHARMa::simulateResiduals(weev_gr_dist_m1_quant)) # right-skew. try sqrt
+# 
+# performance::check_model(update(weev_gr_dist_m1_quant, sqrt(Scar_length_cm) ~ .))
+# plot(DHARMa::simulateResiduals(update(weev_gr_dist_m1_quant, sqrt(Scar_length_cm) ~ .))) # better. Try cube root
+# 
+# 
+# performance::check_model(update(weev_gr_dist_m1_quant, (Scar_length_cm)^(1/3) ~ .))
+# plot(DHARMa::simulateResiduals(update(weev_gr_dist_m1_quant, (Scar_length_cm)^(1/3) ~ .))) # looks great
+
+
+# final model
+weev_gr_dist_m1_quant <- glmmTMB(Scar_length_cm^(1/3) ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+                              data = weevil %>%
+                                dplyr::filter(Scar_length_cm > 0),
+                              REML = F)
+
+weev_gr_dist_m1_quant %>% car::Anova()
+
+
+## ------------------------------------------------------------
+# BINARY MODEL-----
+weev_gr_usc_m1_bin <- glmmTMB(Scar_binary ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+                              data = weevil,
                               family = "binomial"(link = "logit"),
-                              control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
-res <- simulateResiduals(herbivory_gr_dist_m2)
-plot(res)
+                              REML = F)
 
-# try removing pop and making families unique
-herbivory_19_20[,"FamPop"] <- paste0(herbivory_19_20$Family, "-", herbivory_19_20$Population)
+performance::check_model(weev_gr_usc_m1_bin)
+plot(DHARMa::simulateResiduals(weev_gr_usc_m1_bin)) # looks good
 
-herbivory_gr_dist_m3 <- glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Year) + City_dist,
-                              data = herbivory_19_20,
+
+
+# QUANTITATIVE MODEL-----
+# weev_gr_usc_m1_quant <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+#                               data = weevil %>%
+#                                 dplyr::filter(Scar_length_cm > 0),
+#                               REML = F)
+# 
+# performance::check_model(weev_gr_usc_m1_quant)
+# plot(DHARMa::simulateResiduals(weev_gr_usc_m1_quant)) # right-skew. try sqrt
+# 
+# performance::check_model(update(weev_gr_usc_m1_quant, sqrt(Scar_length_cm) ~ .))
+# plot(DHARMa::simulateResiduals(update(weev_gr_usc_m1_quant, sqrt(Scar_length_cm) ~ .))) # better. Try cube root
+# 
+# 
+# performance::check_model(update(weev_gr_usc_m1_quant, (Scar_length_cm)^(1/3) ~ .))
+# plot(DHARMa::simulateResiduals(update(weev_gr_usc_m1_quant, (Scar_length_cm)^(1/3) ~ .))) # looks great
+
+
+# final model
+weev_gr_usc_m1_quant <- glmmTMB(Scar_length_cm^(1/3) ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+                              data = weevil %>%
+                                dplyr::filter(Scar_length_cm > 0),
+                              REML = F)
+
+weev_gr_usc_m1_quant %>% car::Anova()
+
+
+## ------------------------------------------------------------
+# BINARY MODEL-----
+weev_urbsubs_dist_m1_bin <- glmmTMB(Scar_binary ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+                              data = weevil %>%
+                                dplyr::filter(Transect_ID != "Rural"),
                               family = "binomial"(link = "logit"),
-                              control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
+                              REML = F)
 
-summary(herbivory_gr_dist_m3)
-# trying to find where all the variance is being eaten up/accounted for and still not finding it... try beta distribution
+# performance::check_model(weev_urbsubs_dist_m1_bin)
+# plot(DHARMa::simulateResiduals(weev_urbsubs_dist_m1_bin)) # looks good
 
+# MAIN EFFECTS
+weev_urbsubs_dist_m2_bin <- glmmTMB(Scar_binary ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist + Transect_ID,
+                              data = weevil %>%
+                                dplyr::filter(Transect_ID != "Rural"),
+                              family = "binomial"(link = "logit"),
+                              REML = F)
 
-herbivory_gr_dist_m4 <- glmmTMB(Herbivory_mean_Sept  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
-                                data = herbivory_19_20,
-                                family = beta_family(link="logit"))
-# Error in eval(family$initialize) : y values must be 0 < y < 1
-# recode: 0s as 0.00001 & 1 as 0.999999
-
-herbivory_19_20_recode <- herbivory_19_20
-herbivory_19_20_recode$Herbivory_mean_Sept[herbivory_19_20_recode$Herbivory_mean_Sept == 1] <- 0.999999
-herbivory_19_20_recode$Herbivory_mean_Sept[herbivory_19_20_recode$Herbivory_mean_Sept == 0] <- 0.000001
-
-
-
-herbivory_gr_dist_m5 <- glmmTMB(Herbivory_mean_Sept  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
-                                data = herbivory_19_20_recode,
-                                family = beta_family(link="logit"))
-res <- simulateResiduals(herbivory_gr_dist_m5)
-plot(res)
-# IT WORKS
-
-hist(herbivory_19_20$Herbivory_mean_Sept, breaks = 30)
-summary(herbivory_gr_dist_m5)
-
-
-herbivory_gr_dist_m6 <- glmmTMB(Herbivory_mean_Sept  ~ (1|Block) + Year + (1|Population/Family) + City_dist,
-                                data = herbivory_19_20_recode,
-                                family = beta_family(link="logit"))
-res <- simulateResiduals(herbivory_gr_dist_m6)
-plot(res)
-
-herbivory_gr_dist_m7 <- glmmTMB(Herbivory_mean_Sept  ~ (1|Block) + Year + (1|FamPop) + City_dist,
-                                data = herbivory_19_20_recode,
-                                family = beta_family(link="logit"))
-res <- simulateResiduals(herbivory_gr_dist_m7)
-plot(res)
-
-herbivory_gr_dist_m8 <- glmmTMB(Herbivory_mean_Sept  ~  Year + (1|FamPop) + City_dist,
-                                data = herbivory_19_20_recode,
-                                family = beta_family(link="logit"))
-res <- simulateResiduals(herbivory_gr_dist_m8)
-plot(res)
-
-car::Anova(herbivory_gr_dist_m7) # doesn't run
-car::Anova(herbivory_gr_dist_m8)
-
-
-## -----------------------------------------------------------------
-herbivory_gr_usc_m1 <- glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
-                             data = herbivory_19_20,
-                             family = binomial,
-                             control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
-
-res <- simulateResiduals(herbivory_gr_usc_m1)
-plot(res)
-# try beta
-
-herbivory_gr_usc_m2 <- glmmTMB(Herbivory_mean_Sept ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
-                               data = herbivory_19_20_recode,
-                               family = beta_family(link="logit"))
-
-res <- simulateResiduals(herbivory_gr_usc_m2)
-plot(res)
-
-
-## -----------------------------------------------------------------
-herbivory_urb_dist_m1 <- glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
-                               data = herbivory_19_20 %>% dplyr::filter(., Transect_ID != "Rural"),
-                               family = binomial,
-                               control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
-
-res <- simulateResiduals(herbivory_urb_dist_m1)
-plot(res)
-# try beta
-
-herbivory_urb_dist_m2 <- glmmTMB(Herbivory_mean_Sept ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
-                                 data = herbivory_19_20_recode %>% dplyr::filter(., Transect_ID != "Rural"),
-                                 family = beta_family(link="logit"))
-
-res <- simulateResiduals(herbivory_urb_dist_m2)
-plot(res)
-
-
-# main effects:
-herbivory_urb_dist_m2_ME <- herbivory_urb_dist_m2 <- glmmTMB(Herbivory_mean_Sept ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist + Transect_ID,
-                                                             data = herbivory_19_20_recode %>% dplyr::filter(., Transect_ID != "Rural"),
-                                                             family = beta_family(link="logit"))
-
-
-## -----------------------------------------------------------------
-herbivory_urb_usc_m1 <- glmer(Herbivory_mean_Sept ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
-                              data = herbivory_19_20 %>% dplyr::filter(., Transect_ID != "Rural"),
-                              family = binomial,
-                              control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)))
-
-res <- simulateResiduals(herbivory_urb_usc_m1)
-plot(res)
-# try beta
-
-herbivory_urb_usc_m2 <- glmmTMB(Herbivory_mean_Sept ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
-                                data = herbivory_19_20_recode %>% dplyr::filter(., Transect_ID != "Rural"),
-                                family = beta_family(link="logit"))
-
-res <- simulateResiduals(herbivory_urb_usc_m2)
-plot(res)
-
-
-# # main effects:
-herbivory_urb_usc_m2_ME <- glmmTMB(Herbivory_mean_Sept ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score + Transect_ID,
-                                   data = herbivory_19_20_recode %>% dplyr::filter(., Transect_ID != "Rural"),
-                                   family = beta_family(link="logit"))
+# performance::check_model(weev_urbsubs_dist_m2_bin)
+# plot(DHARMa::simulateResiduals(weev_urbsubs_dist_m2_bin)) # looks good
+# 
+# AIC(weev_urbsubs_dist_m1_bin, weev_urbsubs_dist_m2_bin) # m2 better but <2AIC away
 
 
 
-## -----------------------------------------------------------------
+
+# QUANTITATIVE MODEL-----
+# weev_urbsubs_dist_m1_quant <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+#                               data = weevil %>%
+#                                 dplyr::filter(Scar_length_cm > 0 & Transect_ID != "Rural"),
+#                               REML = F)
+# 
+# performance::check_model(weev_urbsubs_dist_m1_quant)
+# plot(DHARMa::simulateResiduals(weev_urbsubs_dist_m1_quant)) # right-skew. try sqrt
+# 
+# performance::check_model(update(weev_urbsubs_dist_m1_quant, sqrt(Scar_length_cm) ~ .))
+# plot(DHARMa::simulateResiduals(update(weev_urbsubs_dist_m1_quant, sqrt(Scar_length_cm) ~ .))) # better. Try cube root
+# 
+# 
+# performance::check_model(update(weev_urbsubs_dist_m1_quant, (Scar_length_cm)^(1/3) ~ .))
+# plot(DHARMa::simulateResiduals(update(weev_urbsubs_dist_m1_quant, (Scar_length_cm)^(1/3) ~ .))) # looks great
+
+
+# final model
+weev_urbsubs_dist_m1_quant <- glmmTMB(Scar_length_cm^(1/3) ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
+                              data = weevil %>%
+                                dplyr::filter(Scar_length_cm > 0 & Transect_ID != "Rural"),
+                              REML = F)
+
+# No interaxns sig, so use type II SS
+car::Anova(weev_urbsubs_dist_m1_quant, type = "III")
+car::Anova(weev_urbsubs_dist_m1_quant, type = "II")
+
+
+
+# MAIN EFFECTS MODEL
+weev_urbsubs_dist_m2_quant <- glmmTMB(Scar_length_cm^(1/3) ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist + Transect_ID,
+                              data = weevil %>%
+                                dplyr::filter(Scar_length_cm > 0 & Transect_ID != "Rural"),
+                              REML = F)
+# 
+# performance::check_model(weev_urbsubs_dist_m2_quant)
+# plot(DHARMa::simulateResiduals(weev_urbsubs_dist_m2_quant)) # looks great
+# 
+# 
+# AIC(weev_urbsubs_dist_m1_quant, weev_urbsubs_dist_m2_quant) # m2 best but <2 AIC away
+
+
+## ------------------------------------------------------------
+# BINARY MODEL-----
+weev_urbsubs_usc_m1_bin <- glmmTMB(Scar_binary ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
+                              data = weevil %>%
+                                dplyr::filter(Transect_ID != "Rural"),
+                              family = "binomial"(link = "logit"),
+                              REML = F)
+# 
+# performance::check_model(weev_urbsubs_usc_m1_bin)
+# plot(DHARMa::simulateResiduals(weev_urbsubs_usc_m1_bin)) # looks good
+
+# MAIN EFFECTS
+weev_urbsubs_usc_m2_bin <- glmmTMB(Scar_binary ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score + Transect_ID,
+                              data = weevil %>%
+                                dplyr::filter(Transect_ID != "Rural"),
+                              family = "binomial"(link = "logit"),
+                              REML = F)
+# 
+# performance::check_model(weev_urbsubs_usc_m2_bin)
+# plot(DHARMa::simulateResiduals(weev_urbsubs_usc_m2_bin)) # looks good
+# 
+# AIC(weev_urbsubs_usc_m1_bin, weev_urbsubs_usc_m2_bin) # m2 better but <2AIC away
+
+
+
+
+# QUANTITATIVE MODEL-----
+# weev_urbsubs_usc_m1_quant <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
+#                               data = weevil %>%
+#                                 dplyr::filter(Scar_length_cm > 0 & Transect_ID != "Rural"),
+#                               REML = F)
+# 
+# performance::check_model(weev_urbsubs_usc_m1_quant)
+# plot(DHARMa::simulateResiduals(weev_urbsubs_usc_m1_quant)) # right-skew. try sqrt
+# 
+# performance::check_model(update(weev_urbsubs_usc_m1_quant, sqrt(Scar_length_cm) ~ .))
+# plot(DHARMa::simulateResiduals(update(weev_urbsubs_usc_m1_quant, sqrt(Scar_length_cm) ~ .))) # better. Try cube root
+# 
+# 
+# performance::check_model(update(weev_urbsubs_usc_m1_quant, (Scar_length_cm)^(1/3) ~ .))
+# plot(DHARMa::simulateResiduals(update(weev_urbsubs_usc_m1_quant, (Scar_length_cm)^(1/3) ~ .))) # looks great
+
+
+# final model
+weev_urbsubs_usc_m1_quant <- glmmTMB(Scar_length_cm^(1/3) ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
+                              data = weevil %>%
+                                dplyr::filter(Scar_length_cm > 0 & Transect_ID != "Rural"),
+                              REML = F)
+
+# No interaxns sig, so use type II SS
+# car::Anova(weev_urbsubs_usc_m1_quant, type = "III")
+# car::Anova(weev_urbsubs_usc_m1_quant, type = "II")
+
+
+
+# MAIN EFFECTS MODEL
+weev_urbsubs_usc_m2_quant <- glmmTMB(Scar_length_cm^(1/3) ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score + Transect_ID,
+                              data = weevil %>%
+                                dplyr::filter(Scar_length_cm > 0 & Transect_ID != "Rural"),
+                              REML = F)
+
+# performance::check_model(weev_urbsubs_usc_m2_quant)
+# plot(DHARMa::simulateResiduals(weev_urbsubs_usc_m2_quant)) # looks great
+# 
+# 
+# AIC(weev_urbsubs_usc_m1_quant, weev_urbsubs_usc_m2_quant) # m2 best but <2 AIC away
+
+
+
+## ------------------------------------------------------------
 ldmc_mods <- list(
 
 ## City_dist / gradient
@@ -643,7 +1325,7 @@ names(ldmc_mods) <- c("City_gr",
                      "Usc_urbsubs_best")
 
 
-## -----------------------------------------------------------------
+## ------------------------------------------------------------
 sla_mods <- list(
 
 ## City_dist / gradient
@@ -671,7 +1353,7 @@ names(sla_mods) <- c("City_gr",
                      "Usc_urbsubs_best")
 
 
-## -----------------------------------------------------------------
+## ------------------------------------------------------------
 latex_mods <- list(
 
 ## City_dist / gradient
@@ -689,4 +1371,133 @@ ltx_urbsubs_usc_m1 # Best model
 )
 
 names(latex_mods) <- c("City_gr", "Usc_gr", "City_urbsubs_alt", "City_urbsubs_best", "Usc_urbsubs")
+
+
+## ------------------------------------------------------------
+herb_early_mods <- list(
+
+## City_dist / gradient
+herbiv_e_gr_dist_m1 ,
+
+## Urbanization score / gradient
+herbiv_e_gr_usc_m1,
+
+## City_dist / urban subtransects
+herbiv_e_urbsubs_dist_m1, # Best model
+herbiv_e_urbsubs_dist_m2, # Qualitatively identical model (<2 AIC away)
+
+## Urbanization score  / urban subtransects
+herbiv_e_urbsubs_usc_m1, # Qualitatively identical model (<2 AIC away)
+herbiv_e_urbsubs_usc_m2 # Best model
+)
+
+names(herb_early_mods) <- c("City_gr",
+                            "Usc_gr",
+                            "City_urbsubs_best",
+                            "City_urbsubs_alt",
+                            "Usc_urbsubs_alt",
+                            "Usc_urbsubs_best")
+
+
+## ------------------------------------------------------------
+herb_late_mods <- list(
+
+## City_dist / gradient
+herbiv_l_gr_dist_m1 ,
+
+## Urbanization score / gradient
+herbiv_l_gr_usc_m1,
+
+## City_dist / urban subtransects
+herbiv_l_urbsubs_dist_m1, # Best model
+herbiv_l_urbsubs_dist_m2, # Qualitatively identical model (<2 AIC away)
+
+## Urbanization score  / urban subtransects
+herbiv_l_urbsubs_usc_m2 # Best model
+)
+
+names(herb_late_mods) <- c("City_gr",
+                            "Usc_gr",
+                            "City_urbsubs_best",
+                            "City_urbsubs_alt",
+                            "Usc_urbsubs")
+
+
+## ------------------------------------------------------------
+weev_mods_ZI <- list(
+
+## City_dist / gradient
+weev_gr_dist_m1 ,
+
+## Urbanization score / gradient
+weev_gr_usc_m1,
+
+## City_dist / urban subtransects
+weev_urbsubs_dist_m1, # Qualitatively identical model (<2 AIC away)
+weev_urbsubs_dist_m2, # Best model
+
+## Urbanization score  / urban subtransects
+weev_urbsubs_usc_m1 , # Qualitatively identical model (<2 AIC away)
+weev_urbsubs_usc_m2 # Best model
+)
+
+names(weev_mods_ZI) <- c("City_gr",
+                      "Usc_gr",
+                      "City_urbsubs_alt",
+                      "City_urbsubs_best",
+                      "Usc_urbsubs_alt",
+                      "Usc_urbsubs_best")
+
+
+## ------------------------------------------------------------
+weev_mods_binomial <- list(
+
+## City_dist / gradient
+weev_gr_dist_m1_bin ,
+
+## Urbanization score / gradient
+weev_gr_usc_m1_bin,
+
+## City_dist / urban subtransects
+weev_urbsubs_dist_m1_bin, # Qualitatively identical model (<2 AIC away)
+weev_urbsubs_dist_m2_bin, # Best model
+
+## Urbanization score  / urban subtransects
+weev_urbsubs_usc_m1_bin , # Qualitatively identical model (<2 AIC away)
+weev_urbsubs_usc_m2_bin # Best model
+)
+
+names(weev_mods_binomial) <- c("City_gr",
+                      "Usc_gr",
+                      "City_urbsubs_alt",
+                      "City_urbsubs_best",
+                      "Usc_urbsubs_alt",
+                      "Usc_urbsubs_best")
+
+
+
+
+weev_mods_quant <- list(
+
+## City_dist / gradient
+weev_gr_dist_m1_quant ,
+
+## Urbanization score / gradient
+weev_gr_usc_m1_quant,
+
+## City_dist / urban subtransects
+weev_urbsubs_dist_m1_quant, # Qualitatively identical model (<2 AIC away)
+weev_urbsubs_dist_m2_quant, # Best model
+
+## Urbanization score  / urban subtransects
+weev_urbsubs_usc_m1_quant , # Qualitatively identical model (<2 AIC away)
+weev_urbsubs_usc_m2_quant # Best model
+)
+
+names(weev_mods_quant) <- c("City_gr",
+                      "Usc_gr",
+                      "City_urbsubs_alt",
+                      "City_urbsubs_best",
+                      "Usc_urbsubs_alt",
+                      "Usc_urbsubs_best")
 
