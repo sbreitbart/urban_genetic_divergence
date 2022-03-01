@@ -948,9 +948,10 @@ AIC(herbiv_l_urbsubs_usc_m1,
     herbiv_l_urbsubs_usc_m2) # m2 better model
 ```
 
-## Herbivory: Before flowering- 2020 and 2021 ONLY
-### Gradient
-#### City_dist
+## Weevil scar length- 2020 and 2021 ONLY
+### Zero-inflated models
+#### Gradient
+##### City_dist
 ```{r}
 # weev_gr_dist_m1 <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
 #                               data = weevil,
@@ -992,7 +993,7 @@ weev_gr_dist_m1 <- glmmTMB(Scar_length_cm^(1/2) ~ (1|Block) + (1|Year) + (1|Popu
                               REML = F)
 ```
 
-#### Urb_score
+##### Urb_score
 ```{r}
 # weev_gr_usc_m1 <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
 #                               data = weevil,
@@ -1032,8 +1033,8 @@ weev_gr_usc_m1 <- glmmTMB(Scar_length_cm^(1/2) ~ (1|Block) + (1|Year) + (1|Popul
                               REML = F)
 ```
 
-### Urban Subtransects
-#### City_dist
+#### Urban Subtransects
+##### City_dist
 ```{r}
 # ZI MODEL
 # weev_urbsubs_dist_m1 <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
@@ -1080,7 +1081,7 @@ weev_urbsubs_dist_m2 <- glmmTMB(Scar_length_cm^(1/2) ~ (1|Block) + (1|Year) + (1
 # AIC(weev_urbsubs_dist_m1, weev_urbsubs_dist_m2) # m2 better but <2AIC away
 ```
 
-#### Urb_score
+##### Urb_score
 ```{r}
 # ZI MODEL
 # weev_urbsubs_usc_m1 <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
@@ -1125,6 +1126,91 @@ weev_urbsubs_usc_m2 <- glmmTMB(Scar_length_cm^(1/2) ~ (1|Block) + (1|Year) + (1|
 # performance::check_model(weev_urbsubs_usc_m2) # looks fine
 # 
 # AIC(weev_urbsubs_usc_m1, weev_urbsubs_usc_m2) # m2 better but <2AIC away
+```
+
+### Hurdle models (Binary, then quantitative)
+1. Use a binomial model to predict whether the values are 0 or >0, then
+2. Use a linear model to model the observed non-zero values 
+#### Gradient
+##### City_dist
+```{r}
+# BINARY MODEL-----
+# create binary column
+weevil$Scar_binary <- weevil$Scar_length_cm
+weevil$Scar_binary[weevil$Scar_binary > 0] <- 1
+
+
+weev_gr_dist_m1_bin <- glmmTMB(Scar_binary ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+                              data = weevil,
+                              family = "binomial"(link = "logit"),
+                              REML = F)
+
+performance::check_model(weev_gr_dist_m1_bin)
+plot(DHARMa::simulateResiduals(weev_gr_dist_m1_bin)) # looks good
+
+
+
+# QUANTITATIVE MODEL-----
+weev_gr_dist_m1_quant <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+                              data = weevil %>%
+                                dplyr::filter(Scar_length_cm > 0),
+                              REML = F)
+
+performance::check_model(weev_gr_dist_m1_quant)
+plot(DHARMa::simulateResiduals(weev_gr_dist_m1_quant)) # right-skew. try sqrt
+
+performance::check_model(update(weev_gr_dist_m1_quant, sqrt(Scar_length_cm) ~ .))
+plot(DHARMa::simulateResiduals(update(weev_gr_dist_m1_quant, sqrt(Scar_length_cm) ~ .))) # better. Try cube root
+
+
+performance::check_model(update(weev_gr_dist_m1_quant, (Scar_length_cm)^(1/3) ~ .))
+plot(DHARMa::simulateResiduals(update(weev_gr_dist_m1_quant, (Scar_length_cm)^(1/3) ~ .))) # looks great
+
+
+# final model
+weev_gr_dist_m1_quant <- glmmTMB(Scar_length_cm^(1/3) ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+                              data = weevil %>%
+                                dplyr::filter(Scar_length_cm > 0),
+                              REML = F)
+
+weev_gr_dist_m1_quant %>% car::Anova()
+```
+
+##### Urb_score
+```{r}
+# BINARY MODEL-----
+
+
+
+# QUANTITATIVE MODEL-----
+
+
+
+```
+
+#### Urban Subtransects
+##### City_dist
+```{r}
+# BINARY MODEL-----
+
+
+
+# QUANTITATIVE MODEL-----
+
+
+
+```
+
+##### Urb_score
+```{r}
+# BINARY MODEL-----
+
+
+
+# QUANTITATIVE MODEL-----
+
+
+
 ```
 
 # Models for use in analysis
@@ -1261,9 +1347,9 @@ names(herb_late_mods) <- c("City_gr",
 ```
 
 
-## Weevil Scar
+## Weevil Scar- Zero-inflated (prioritize hurdle models instead)
 ```{r}
-weev_mods <- list(
+weev_mods_ZI <- list(
 
 ## City_dist / gradient
 weev_gr_dist_m1 ,
@@ -1280,7 +1366,61 @@ weev_urbsubs_usc_m1 , # Qualitatively identical model (<2 AIC away)
 weev_urbsubs_usc_m2 # Best model
 )
 
-names(weev_mods) <- c("City_gr",
+names(weev_mods_ZI) <- c("City_gr",
+                      "Usc_gr",
+                      "City_urbsubs_alt",
+                      "City_urbsubs_best",
+                      "Usc_urbsubs_alt",
+                      "Usc_urbsubs_best")
+```
+
+## Weevil Scar- Hurdle models (Binomial and gaussian families)
+```{r}
+weev_mods_binomial <- list(
+
+## City_dist / gradient
+ ,
+
+## Urbanization score / gradient
+,
+
+## City_dist / urban subtransects
+, # Qualitatively identical model (<2 AIC away)
+, # Best model
+
+## Urbanization score  / urban subtransects
+ , # Qualitatively identical model (<2 AIC away)
+ # Best model
+)
+
+names(weev_mods_binomial) <- c("City_gr",
+                      "Usc_gr",
+                      "City_urbsubs_alt",
+                      "City_urbsubs_best",
+                      "Usc_urbsubs_alt",
+                      "Usc_urbsubs_best")
+
+
+
+
+weev_mods_quant <- list(
+
+## City_dist / gradient
+ ,
+
+## Urbanization score / gradient
+,
+
+## City_dist / urban subtransects
+, # Qualitatively identical model (<2 AIC away)
+, # Best model
+
+## Urbanization score  / urban subtransects
+ , # Qualitatively identical model (<2 AIC away)
+ # Best model
+)
+
+names(weev_mods_quant) <- c("City_gr",
                       "Usc_gr",
                       "City_urbsubs_alt",
                       "City_urbsubs_best",
