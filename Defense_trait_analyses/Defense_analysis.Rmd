@@ -125,8 +125,145 @@ names(all_models) <- c(
 "weev_mods_quant")
 ```
 
-## FIGURE OUT HOW TO STRUCTURE REST OF THIS
-### Herbivory
+# Anova
+## Create functions
+```{r}
+# GOALS:
+# 1. Perform car::Anova() on each model in list
+#   -if it's got an interaction, do type III first
+#     -if interaxn p-val < 0.1, retain that result
+#     -else, move on to type II
+# 2. Save anova table w/appropriate SS type as new item in trait's sublist
+
+
+# function that IDs if there is >= 1 sig interaction in the type III anova
+ID_intxn <- function(model){
+  model.df <- broom.mixed::tidy(car::Anova(model, type = "III"))
+  intxn.df <- model.df[grep(":", model.df$term), "p.value"]
+  sig.intxns <- sum(intxn.df <= 0.1)
+  return(sig.intxns)
+}
+
+# loop over list of lists to perform ID-intxn on all models
+all_type3 <- lapply(all_models, lapply, ID_intxn)
+
+
+# tidy anovas
+tidy_sb <- function(model){
+      type.choice <- ifelse(ID_intxn(model) > 0,
+                          3,
+                          2)
+  return(
+    car::Anova(model, type = type.choice) %>%
+      broom.mixed::tidy() %>%
+      # as.data.frame() %>%
+      dplyr::mutate(Response = as.character(formula(model)[2]),
+                    .before = term) %>%
+      # dplyr::mutate(Model = paste(n(model)),
+      #               .before = term) %>%
+      dplyr::mutate(Sites = case_when(
+        str_detect(as.character(formula(model)[3]), "Transect_ID") == TRUE ~ "Urban Only",
+        str_detect(as.character(formula(model)[3]), "Transect_ID") == FALSE ~ "All"),
+                    .before = term) %>%
+      dplyr::mutate(Significance = case_when(p.value < 0.001 ~ "***",
+                                             p.value < 0.01 ~ "**",
+                                             p.value <= 0.05 ~ "*")) %>%
+      dplyr::mutate(., AIC = as.numeric(AIC(model))) %>%
+      mutate_if(is.numeric, round, 3)      %>%
+      dplyr::mutate(p.value = replace(p.value, Significance == "***", "<0.001"))  %>%
+      dplyr::select(., -df) %>%
+      dplyr::rename(., Chi_sq = statistic,
+                    Predictor = term,
+                    p = p.value) %>%
+      unite("p", p:Significance, sep = "", na.rm = TRUE) %>%
+      dplyr::mutate_if(.,
+                is.character,
+                str_replace_all,
+                pattern = c("City_dist"),
+                replacement = c("Distance to City Center")) %>%
+        dplyr::mutate_if(.,
+                is.character,
+                str_replace_all,
+                pattern = c("Urb_score"),
+                replacement = c("Urbanization Score")) %>%
+        dplyr::mutate_if(.,
+                is.character,
+                str_replace_all,
+                pattern = c("Transect_ID"),
+                replacement = c("Subtransect")) %>%
+        dplyr::mutate_if(.,
+                is.character,
+                str_replace_all,
+                pattern = c(":"),
+                replacement = c(" x ")) %>%
+    dplyr::mutate_if(.,
+          is.character,
+          str_replace_all,
+          pattern = c("Year x Urbanization Score"),
+          replacement = c("Urbanization Score x Year"))
+  )}
+
+lapply(all_models, lapply, tidy_sb)
+
+
+# Next, adapt this for this project. Take out ch1 vars, decide how I want output to look...
+make_Q1Q2_Anova <- function(anova_list){
+  return(
+    lapply(anova_list, tidy_sb) %>%
+    lapply(., as.data.frame) %>%
+    purrr::reduce(full_join, by = "Predictor") %>%
+    arrange(factor(Predictor, levels = c("Distance to City Center",
+                                         "Urbanization Score",
+                                         "Year",
+                                         "Subtransect",
+                                         "Distance to City Center x Subtransect",
+                                         "Urbanization Score x Subtransect",
+                                         "Distance to City Center x Year",
+                                         "Urbanization Score x Year",
+                                         "Year x Subtransect",
+                                         "Urbanization Score x Year x Subtransect",
+                                         "Distance to City Center x Year x Subtransect"
+                                         ))) %>%
+    dplyr::select(-starts_with(c("Sites", "Significance", "AIC", "Response"))) %>%
+    replace(., is.na(.), "-") %>%
+    dplyr::filter(Predictor != "(Intercept)") %>%
+    dplyr::rename('X2' = 2,
+                  'p' = 3,
+                  'X2 ' = 4,
+                  'p ' = 5,
+                  'X2  ' = 6,
+                  'p  ' = 7,
+                  'X2   ' = 8,
+                  'p   ' = 9) %>%
+      flextable::flextable() %>%
+      add_header_row(
+        values = c(" ",
+                   "Pollinaria Removed",
+                   "Follicles",
+                   "Follicles per Inflorescence",
+                    "Inflorescences"),
+        colwidths = c(1, 2, 2, 2, 2)) %>%
+      align(j = 1, align = "left", part = "all") %>%
+      align(j = 2:9, align = "center", part = "body") %>%
+      align(j = 2:9, align = "center", part = "header") %>%
+      flextable::compose(i = 2, j = 2, part = "header",
+              value = as_paragraph("χ", as_sup("2"))) %>%
+      flextable::compose(i = 2, j = 4, part = "header",
+              value = as_paragraph("χ", as_sup("2"))) %>%
+      flextable::compose(i = 2, j = 6, part = "header",
+              value = as_paragraph("χ", as_sup("2"))) %>%
+      flextable::compose(i = 2, j = 8, part = "header",
+              value = as_paragraph("χ", as_sup("2"))) %>%
+      flextable::compose(i = 2, j = c(3,5,7,9), part = "header",
+              value = as_paragraph(as_i("p"))) %>%
+      fontsize(size = 12, part = "header") %>%
+      fontsize(size = 12, part = "body")
+    )
+  }
+
+```
+
+### Herbivory- Early
 #### Gradient
 ##### City_dist
 ```{r}
@@ -139,7 +276,6 @@ r.squaredGLMM(herbivory_gr_dist_m5)
 ##### Urb_score
 ```{r}
 car::Anova(ramets_gr_usc_m1)
-# dist not significant
 
 r.squaredGLMM(ramets_gr_usc_m1)
 
