@@ -170,9 +170,14 @@ herbivory_19_20_21 <- rbind.fill(herb_2019, herb_2020, herb_2021) %>%
 
 weev_2020 <- weevil_2020 %>%
     dplyr::rename(., Total_Height_early = Total_Height_June) %>%
-    dplyr::rename(., scar_div_earlyheight = scar_div_Juneheight)
+    dplyr::rename(., scar_div_earlyheight = scar_div_Juneheight) %>%
+  dplyr::mutate(Year = "2020")
 
-weevil_20_21 <- rbind.fill(weev_2020, weevil_2021[,-c(8:13)])
+weev_2021 <- weevil_2021 %>%
+  dplyr::mutate(Year = "2021") %>%
+  dplyr::select(-c(8:13))
+
+weevil_20_21 <- rbind.fill(weev_2020, weev_2021)
 ```
 
 ## Reproductive traits
