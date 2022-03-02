@@ -139,10 +139,10 @@ ldmc_gr_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + Urb_score,
 
 
 ## ------------------------------------------------------------
-ldmc_urbsubs_city_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-                        data = sla_ldmc %>%
-                          dplyr::filter(Transect_ID != "Rural"),
-                        REML = F)
+# ldmc_urbsubs_city_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+#                         data = sla_ldmc %>%
+#                           dplyr::filter(Transect_ID != "Rural"),
+#                         REML = F)
 # not converging. Try changing family
 
 # performance::check_model(update(ldmc_urbsubs_city_m1, . ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
@@ -162,7 +162,13 @@ ldmc_urbsubs_city_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + City_
 #                                   dplyr::filter(Transect_ID != "Rural") %>%
 #                                   dplyr::filter(LDMC < 1.5)),
 #            type = "II") # interaxn not sig
-# 
+# Final model
+ldmc_urbsubs_city_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population:Fam_uniq) + City_dist * Transect_ID,
+                        data = sla_ldmc %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        REML = F)
+
+
 
 # MAIN EFFECTS MODEL
 ldmc_urbsubs_city_m2 <- glmmTMB(LDMC ~ (1|Block) + (1|Population:Fam_uniq) + City_dist + Transect_ID,
@@ -639,12 +645,12 @@ herbiv_e_gr_dist_m1 <- glmmTMB(Herbivory_mean_early_recode^(1/3)  ~  (1|Year) + 
 # # still not converging though. Make Pop/Fam Fam_uniq
 # performance::check_model(update(test1, (Herbivory_mean_early_recode)^(1/3) ~ (1|Block) + (1|Year) + (1|Population:Fam_uniq) + Urb_score)) # looks good enough
 
-herbiv_l_gr_usc_m1 <- glmmTMB(Herbivory_mean_early_recode^(1/3)  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+herbiv_e_gr_usc_m1 <- glmmTMB(Herbivory_mean_early_recode^(1/3)  ~ (1|Block) + (1|Year) + (1|Population:Fam_uniq) + Urb_score,
                                 data = herbivory,
                                 family = beta_family(link="logit"),
                                 REML = F)
 
-# car::Anova(herbiv_l_gr_usc_m1)
+# car::Anova(herbiv_e_gr_usc_m1)
 
 
 ## ------------------------------------------------------------
@@ -876,21 +882,21 @@ test1 <- glmmTMB(Herbivory_mean_late_recode  ~ (1|Block) + (1|Year) + (1|Populat
                                 family = beta_family(link="logit"),
                  REML = F)
 
-performance::check_model(test1) # heavy right tail. Try sqrt transformation 
-
-performance::check_model(update(test1, sqrt(Herbivory_mean_late_recode) ~ .)) # better. Try cube root transformation
-
-performance::check_model(update(test1, (Herbivory_mean_late_recode)^(1/3) ~ .)) 
-# looks good enough. Go with this one
+# performance::check_model(test1) # heavy right tail. Try sqrt transformation 
+# 
+# performance::check_model(update(test1, sqrt(Herbivory_mean_late_recode) ~ .)) # better. Try cube root transformation
+# 
+# performance::check_model(update(test1, (Herbivory_mean_late_recode)^(1/3) ~ .)) 
+# # looks good enough. Go with this one
 
 herbiv_l_urbsubs_usc_m1 <- glmmTMB(Herbivory_mean_late_recode^(1/3)  ~  (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
                                 data = herbivory,
                                 family = beta_family(link="logit"),
                                 REML = F)
 
-# interaxn not sig, so use type II SS
-car::Anova(herbiv_l_urbsubs_usc_m1, type = "III")
-car::Anova(herbiv_l_urbsubs_usc_m1, type = "II")
+# # interaxn not sig, so use type II SS
+# car::Anova(herbiv_l_urbsubs_usc_m1, type = "III")
+# car::Anova(herbiv_l_urbsubs_usc_m1, type = "II")
 
 
 # MAIN EFFECTS MODEL
@@ -899,184 +905,12 @@ herbiv_l_urbsubs_usc_m2 <- glmmTMB(Herbivory_mean_late_recode^(1/3)  ~  (1|Year)
                                 family = beta_family(link="logit"),
                                 REML = F)
 
-performance::check_model(herbiv_l_urbsubs_usc_m2) # looks fine
-
-car::Anova(herbiv_l_urbsubs_usc_m2)
-
-AIC(herbiv_l_urbsubs_usc_m1,
-    herbiv_l_urbsubs_usc_m2) # m2 better model
-
-
-## ------------------------------------------------------------
-# weev_gr_dist_m1 <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
-#                               data = weevil,
-#                               REML = F) 
+# performance::check_model(herbiv_l_urbsubs_usc_m2) # looks fine
 # 
-# performance::check_model(weev_gr_dist_m1) # right-skewed. try sqrt transformation
+# car::Anova(herbiv_l_urbsubs_usc_m2)
 # 
-# performance::check_model(update(weev_gr_dist_m1, (Scar_length_cm)^(1/2) ~ .)) # better. try cube root transformation
-# 
-# performance::check_model(update(weev_gr_dist_m1, (Scar_length_cm)^(1/3) ~ .)) # better
-# 
-# 
-# hist(weevil$Scar_length_cm, breaks = 100)# looks zero-inflated. Try a ZI model
-# 
-# 
-# # ZI MODEL
-# test1 <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
-#                               data = weevil,
-#                  ziformula = ~1,
-#                               REML = F)
-# 
-# performance::check_model(test1) # looks promising! try transforming again
-# 
-# performance::check_model(update(test1, Scar_length_cm^(1/2) ~ .)) # I think this one is slightly better than untransformed. Let's see if there's a qualitative difference
-# 
-# 
-# # not a qualitative diff
-# car::Anova(test1)
-# car::Anova(update(test1, Scar_length_cm^(1/2) ~ .))
-# 
-# # suggests second model better too
-# AIC(test1, update(test1, Scar_length_cm^(1/2) ~ .))
-
-
-# final model
-weev_gr_dist_m1 <- glmmTMB(Scar_length_cm^(1/2) ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
-                              data = weevil,
-                 ziformula = ~1,
-                              REML = F)
-
-
-## ------------------------------------------------------------
-# weev_gr_usc_m1 <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
-#                               data = weevil,
-#                               REML = F) 
-# 
-# performance::check_model(weev_gr_usc_m1) # right-skewed. try sqrt transformation
-# 
-# performance::check_model(update(weev_gr_usc_m1, (Scar_length_cm)^(1/2) ~ .)) # better. try cube root transformation
-# 
-# performance::check_model(update(weev_gr_usc_m1, (Scar_length_cm)^(1/3) ~ .)) # better
-# 
-# 
-# 
-# # ZI MODEL
-# test1 <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
-#                               data = weevil,
-#                  ziformula = ~1,
-#                               REML = F)
-# 
-# performance::check_model(test1) # looks promising! try transforming again
-# 
-# performance::check_model(update(test1, Scar_length_cm^(1/2) ~ .)) # I think this one is slightly better than untransformed. Let's see if there's a qualitative difference
-# 
-# 
-# # not a qualitative diff
-# car::Anova(test1)
-# car::Anova(update(test1, Scar_length_cm^(1/2) ~ .))
-# 
-# # suggests second model better too
-# AIC(test1, update(test1, Scar_length_cm^(1/2) ~ .))
-
-
-# final model
-weev_gr_usc_m1 <- glmmTMB(Scar_length_cm^(1/2) ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
-                              data = weevil,
-                 ziformula = ~1,
-                              REML = F)
-
-
-## ------------------------------------------------------------
-# ZI MODEL
-# weev_urbsubs_dist_m1 <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
-#                               data = weevil %>%
-#                                 dplyr::filter(Transect_ID != "Rural"),
-#                  ziformula = ~1,
-#                               REML = F)
-# 
-# performance::check_model(weev_urbsubs_dist_m1) # looks promising! try transforming again
-# 
-# performance::check_model(update(weev_urbsubs_dist_m1, Scar_length_cm^(1/2) ~ .)) # I think this one is slightly better than untransformed. Let's see if there's a qualitative difference
-# 
-# # type III SS: no interaxn sig, so use type II
-# car::Anova(weev_urbsubs_dist_m1, type = "III")
-# car::Anova(update(weev_urbsubs_dist_m1, Scar_length_cm^(1/2) ~ .), type = "III")
-# 
-# 
-# # m2 has marg sig effect of transect while m1 doesn't
-# car::Anova(weev_urbsubs_dist_m1, type = "II")
-# car::Anova(update(weev_urbsubs_dist_m1, Scar_length_cm^(1/2) ~ .), type = "II")
-# 
-# # suggests second model better too
-# AIC(weev_urbsubs_dist_m1, update(weev_urbsubs_dist_m1, Scar_length_cm^(1/2) ~ .))
-
-
-# final model
-weev_urbsubs_dist_m1 <- glmmTMB(Scar_length_cm^(1/2) ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
-                              data = weevil %>%
-                                dplyr::filter(Transect_ID != "Rural"),
-                 ziformula = ~1,
-                              REML = F)
-
-
-
-# MAIN EFFECTS MODEL
-weev_urbsubs_dist_m2 <- glmmTMB(Scar_length_cm^(1/2) ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist + Transect_ID,
-                              data = weevil %>%
-                                dplyr::filter(Transect_ID != "Rural"),
-                 ziformula = ~1,
-                              REML = F)
-
-# performance::check_model(weev_urbsubs_dist_m2) # looks fine
-# 
-# AIC(weev_urbsubs_dist_m1, weev_urbsubs_dist_m2) # m2 better but <2AIC away
-
-
-## ------------------------------------------------------------
-# ZI MODEL
-# weev_urbsubs_usc_m1 <- glmmTMB(Scar_length_cm ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
-#                               data = weevil %>%
-#                                 dplyr::filter(Transect_ID != "Rural"),
-#                  ziformula = ~1,
-#                               REML = F)
-# 
-# performance::check_model(weev_urbsubs_usc_m1) # looks promising! try transforming again
-# 
-# performance::check_model(update(weev_urbsubs_usc_m1, Scar_length_cm^(1/2) ~ .)) # I think this one is slightly better than untransformed. Let's see if there's a qualitative difference
-# 
-# # type III SS: no interaxn sig, so use type II
-# car::Anova(weev_urbsubs_usc_m1, type = "III")
-# car::Anova(update(weev_urbsubs_usc_m1, Scar_length_cm^(1/2) ~ .), type = "III")
-# 
-# 
-# # m2 has marg sig effect of transect while m1 doesn't
-# car::Anova(weev_urbsubs_usc_m1, type = "II")
-# car::Anova(update(weev_urbsubs_usc_m1, Scar_length_cm^(1/2) ~ .), type = "II")
-# 
-# # suggests second model better too
-# AIC(weev_urbsubs_usc_m1, update(weev_urbsubs_usc_m1, Scar_length_cm^(1/2) ~ .))
-
-
-# final model
-weev_urbsubs_usc_m1 <- glmmTMB(Scar_length_cm^(1/2) ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
-                              data = weevil %>%
-                                dplyr::filter(Transect_ID != "Rural"),
-                 ziformula = ~1,
-                              REML = F)
-
-
-
-# MAIN EFFECTS MODEL
-weev_urbsubs_usc_m2 <- glmmTMB(Scar_length_cm^(1/2) ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score + Transect_ID,
-                              data = weevil %>%
-                                dplyr::filter(Transect_ID != "Rural"),
-                 ziformula = ~1,
-                              REML = F)
-
-# performance::check_model(weev_urbsubs_usc_m2) # looks fine
-# 
-# AIC(weev_urbsubs_usc_m1, weev_urbsubs_usc_m2) # m2 better but <2AIC away
+# AIC(herbiv_l_urbsubs_usc_m1,
+#     herbiv_l_urbsubs_usc_m2) # m2 better model
 
 
 ## ------------------------------------------------------------
@@ -1421,32 +1255,6 @@ names(herb_late_mods) <- c("City_gr",
                             "City_urbsubs_best",
                             "City_urbsubs_alt",
                             "Usc_urbsubs")
-
-
-## ------------------------------------------------------------
-weev_mods_ZI <- list(
-
-## City_dist / gradient
-weev_gr_dist_m1 ,
-
-## Urbanization score / gradient
-weev_gr_usc_m1,
-
-## City_dist / urban subtransects
-weev_urbsubs_dist_m1, # Qualitatively identical model (<2 AIC away)
-weev_urbsubs_dist_m2, # Best model
-
-## Urbanization score  / urban subtransects
-weev_urbsubs_usc_m1 , # Qualitatively identical model (<2 AIC away)
-weev_urbsubs_usc_m2 # Best model
-)
-
-names(weev_mods_ZI) <- c("City_gr",
-                      "Usc_gr",
-                      "City_urbsubs_alt",
-                      "City_urbsubs_best",
-                      "Usc_urbsubs_alt",
-                      "Usc_urbsubs_best")
 
 
 ## ------------------------------------------------------------

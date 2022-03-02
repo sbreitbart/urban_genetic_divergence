@@ -148,15 +148,15 @@ ID_intxn <- function(model){
 all_type3 <- lapply(all_models, lapply, ID_intxn)
 
 
-# tidy anovas
-tidy_sb <- function(model){
+# tidy anovas function
+tidy_anova <- function(model){
       type.choice <- ifelse(ID_intxn(model) > 0,
                           3,
                           2)
   return(
     car::Anova(model, type = type.choice) %>%
       broom.mixed::tidy() %>%
-      # as.data.frame() %>%
+      as.data.frame() %>%
       dplyr::mutate(Response = as.character(formula(model)[2]),
                     .before = term) %>%
       # dplyr::mutate(Model = paste(n(model)),
@@ -168,7 +168,7 @@ tidy_sb <- function(model){
       dplyr::mutate(Significance = case_when(p.value < 0.001 ~ "***",
                                              p.value < 0.01 ~ "**",
                                              p.value <= 0.05 ~ "*")) %>%
-      dplyr::mutate(., AIC = as.numeric(AIC(model))) %>%
+      # dplyr::mutate(., AIC = as.numeric(AIC(model))) %>%
       mutate_if(is.numeric, round, 3)      %>%
       dplyr::mutate(p.value = replace(p.value, Significance == "***", "<0.001"))  %>%
       dplyr::select(., -df) %>%
@@ -203,63 +203,41 @@ tidy_sb <- function(model){
           replacement = c("Urbanization Score x Year"))
   )}
 
-lapply(all_models, lapply, tidy_sb)
+# creates list of list of anova objects
+all_anovas <- lapply(all_models, lapply, tidy_anova) %>%
+  unlist(recursive = FALSE)
+
+# creates list of list of BEST anova models
+best_anovas <- all_anovas[-c(3,5,9, 11, 15, 21, 22, 27, 31, 33, 37, 39)]
+
+# creates list of list of ALTERNATIVE anova models
+alt_anovas <- all_anovas[c(3,5,9, 11, 15, 21, 22, 27, 31, 33, 37, 39)]
+
 
 
 # Next, adapt this for this project. Take out ch1 vars, decide how I want output to look...
-make_Q1Q2_Anova <- function(anova_list){
+make_all_anovas_tidy <- function(anova_list){
   return(
-    lapply(anova_list, tidy_sb) %>%
+    lapply(anova_list, tidy_anova) %>%
     lapply(., as.data.frame) %>%
-    purrr::reduce(full_join, by = "Predictor") %>%
-    arrange(factor(Predictor, levels = c("Distance to City Center",
-                                         "Urbanization Score",
-                                         "Year",
-                                         "Subtransect",
-                                         "Distance to City Center x Subtransect",
-                                         "Urbanization Score x Subtransect",
-                                         "Distance to City Center x Year",
-                                         "Urbanization Score x Year",
-                                         "Year x Subtransect",
-                                         "Urbanization Score x Year x Subtransect",
-                                         "Distance to City Center x Year x Subtransect"
-                                         ))) %>%
-    dplyr::select(-starts_with(c("Sites", "Significance", "AIC", "Response"))) %>%
+    purrr::reduce(full_join) %>%
     replace(., is.na(.), "-") %>%
-    dplyr::filter(Predictor != "(Intercept)") %>%
-    dplyr::rename('X2' = 2,
-                  'p' = 3,
-                  'X2 ' = 4,
-                  'p ' = 5,
-                  'X2  ' = 6,
-                  'p  ' = 7,
-                  'X2   ' = 8,
-                  'p   ' = 9) %>%
       flextable::flextable() %>%
-      add_header_row(
-        values = c(" ",
-                   "Pollinaria Removed",
-                   "Follicles",
-                   "Follicles per Inflorescence",
-                    "Inflorescences"),
-        colwidths = c(1, 2, 2, 2, 2)) %>%
-      align(j = 1, align = "left", part = "all") %>%
-      align(j = 2:9, align = "center", part = "body") %>%
-      align(j = 2:9, align = "center", part = "header") %>%
-      flextable::compose(i = 2, j = 2, part = "header",
+      flextable::autofit() %>%
+      align(j = c(1, 3), align = "left", part = "all") %>%
+      align(j = c(2,4,5), align = "center", part = "body") %>%
+      align(j = c(2,4,5), align = "center", part = "header") %>%
+      flextable::compose(i = 1, j = 4, part = "header",
               value = as_paragraph("χ", as_sup("2"))) %>%
-      flextable::compose(i = 2, j = 4, part = "header",
-              value = as_paragraph("χ", as_sup("2"))) %>%
-      flextable::compose(i = 2, j = 6, part = "header",
-              value = as_paragraph("χ", as_sup("2"))) %>%
-      flextable::compose(i = 2, j = 8, part = "header",
-              value = as_paragraph("χ", as_sup("2"))) %>%
-      flextable::compose(i = 2, j = c(3,5,7,9), part = "header",
-              value = as_paragraph(as_i("p"))) %>%
+     flextable::compose(i = 1, j = 5, part = "header",
+             value = as_paragraph(as_i("p"))) %>%
       fontsize(size = 12, part = "header") %>%
       fontsize(size = 12, part = "body")
     )
   }
+
+# filter best models, then do this for each trait?
+make_all_anovas_tidy(ldmc_mods) 
 
 ```
 
