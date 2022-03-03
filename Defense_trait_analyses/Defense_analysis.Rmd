@@ -28,7 +28,9 @@ NOTES:
 +-----------------------------+-----------+-----------+-----------+
 | Trait                       | 2019 Data | 2020 Data | 2021 Data |
 +=============================+:=========:+:=========:+:=========:+
-| Herbivory                   | X         | X         | X         |
+| Herbivory: Before flowering |           | X         | X         |
++-----------------------------+-----------+-----------+-----------+
+| Herbivory: After flowering  | X         | X         | X         |
 +-----------------------------+-----------+-----------+-----------+
 | Weevil damage: Quantitative |           | X         | X         |
 +-----------------------------+-----------+-----------+-----------+
@@ -44,7 +46,6 @@ NOTES:
 +-----------------------------+-----------+-----------+-----------+
 
 # Set up notebook
-
 ## Load libraries and add functions
 
 ```{r}
@@ -198,8 +199,6 @@ herb_e_mods_alt_u <- herb_early_mods[5]
 
 ```
 
-
-
 #### Herbivory- Late
 ```{r}
 ## Best
@@ -233,8 +232,6 @@ weev_bin_mods_alt_c <- weev_mods_binomial[3]
 ### Urb_score
 weev_bin_mods_alt_u <- weev_mods_binomial[5]
 ```
-
-
 
 #### Weevil- Quantitative
 ```{r}
@@ -274,7 +271,7 @@ ID_intxn <- function(model){
 }
 
 # loop over list of lists to perform ID-intxn on all models
-all_type3 <- lapply(all_models, lapply, ID_intxn)
+# all_type3 <- lapply(all_models, lapply, ID_intxn)
 
 
 # tidy anovas function
@@ -351,6 +348,7 @@ make_all_anovas_tidy <- function(anova_list){
     lapply(., as.data.frame) %>%
     purrr::reduce(full_join) %>%
     replace(., is.na(.), "-") %>%
+    dplyr::filter(Predictor != "(Intercept)") %>%
       flextable::flextable() %>% 
       merge_v(j = "Response") %>% 
       merge_v(j = "Sites") %>% 
@@ -380,11 +378,13 @@ make_all_anovas_tidy(ldmc_mods_best_c)
 ```
 
 ## LDMC
-### Gradient
+### Best Models
 #### City_dist
 ```{r}
 make_all_anovas_tidy(ldmc_mods_best_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/LDMC_citydist.png"))
+
+lapply(ldmc_mods_best_c, MuMIn::r.squaredGLMM)
 
 ```
 
@@ -394,36 +394,191 @@ make_all_anovas_tidy(ldmc_mods_best_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/LDMC_urbscore.png"))
 ```
 
-### Urban Subtransects
+### Alternative Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(ldmc_mods_best_c) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/LDMC_citydist.png"))
+make_all_anovas_tidy(ldmc_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/LDMC_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
-
+make_all_anovas_tidy(ldmc_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/LDMC_urbscore_alt.png"))
 ```
 ## SLA
-### Gradient
+### Best Models
 #### City_dist
 ```{r}
-
+make_all_anovas_tidy(sla_mods_best_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/sla_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
-
+make_all_anovas_tidy(sla_mods_best_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/sla_urbscore.png"))
 ```
 
-### Urban Subtransects
+### Alt Models
 #### City_dist
 ```{r}
-
+make_all_anovas_tidy(sla_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/sla_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
+make_all_anovas_tidy(sla_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/sla_urbscore_alt.png"))
+```
+## Latex
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy(latex_mods_best_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/latex_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy(latex_mods_best_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/latex_urbscore.png"))
+```
+
+### Alt Models
+#### City_dist
+```{r}
+make_all_anovas_tidy(latex_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/latex_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+# NONE
+```
+## Herbivory- Early
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy(herb_e_mods_best_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_e_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy(herb_e_mods_best_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_e_urbscore.png"))
+```
+
+### Alt Models
+#### City_dist
+```{r}
+make_all_anovas_tidy(herb_e_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_e_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy(herb_e_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_e_urbscore_alt.png"))
+```
+
+## Herbivory- Late
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy(herb_l_mods_best_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_l_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy(herb_l_mods_best_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_l_urbscore.png"))
+```
+
+### Alt Models
+#### City_dist
+```{r}
+make_all_anovas_tidy(herb_l_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_l_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+# NONE
+```
+
+
+## Weevil Scar- Binomial
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy(weev_bin_mods_best_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/weev_bin_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy(weev_bin_mods_best_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/weev_bin_urbscore.png"))
+```
+
+### Alt Models
+#### City_dist
+```{r}
+make_all_anovas_tidy(weev_bin_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/weev_bin_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy(weev_bin_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/weev_bin_urbscore_alt.png"))
+```
+
+
+## Weevil Scar- Quantitative
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy(weev_quant_mods_best_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/weev_quant_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy(weev_quant_mods_best_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/weev_quant_urbscore.png"))
+```
+
+### Alt Models
+#### City_dist
+```{r}
+make_all_anovas_tidy(weev_quant_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/weev_quant_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy(weev_quant_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/weev_quant_urbscore_alt.png"))
+```
+
+
+# R-squared values
+```{r}
+# took out lists 4 and 5 from all_models- the herbivory ones- because R.squaredGLMM can't intake models with beta family
+all_rsq <- lapply(all_models[-c(4:5)], lapply, r.squaredGLMM) %>%
+  unlist(recursive = FALSE)
+
+# super low marginal R2 values. Some conditional R2 are higher (some ~0.15) but most low
+```
+
+
+# Ranova
+```{r}
 
 ```
+
