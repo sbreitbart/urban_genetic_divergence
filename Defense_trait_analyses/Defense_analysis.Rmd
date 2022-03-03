@@ -103,6 +103,7 @@ weevil %<>%
 ```
 
 ## Import final models
+### Create full list
 ```{r}
 source(knitr::purl("Defense_trait_analyses/Model_diagnostics_Defense.Rmd", quiet=TRUE))
 
@@ -124,6 +125,134 @@ names(all_models) <- c(
 "weev_mods_binomial" ,
 "weev_mods_quant")
 ```
+
+### Create separate lists of best vs. alt models for city_dist vs urb_score
+#### LDMC
+```{r}
+## Best
+### City_dist
+ldmc_mods_best_c <- ldmc_mods[c(1,4)]
+
+### Urb_score
+ldmc_mods_best_u <- ldmc_mods[c(2,6)]
+
+## Alt
+### City_dist
+ldmc_mods_alt_c <- ldmc_mods[3]
+
+### Urb_score
+ldmc_mods_alt_u <- ldmc_mods[5]
+```
+
+#### SLA
+```{r}
+## Best
+### City_dist
+sla_mods_best_c <- sla_mods[c(1,4)]
+
+### Urb_score
+sla_mods_best_u <- sla_mods[c(2,6)]
+
+## Alt
+### City_dist
+sla_mods_alt_c <- sla_mods[3]
+
+### Urb_score
+sla_mods_alt_u <- sla_mods[5]
+```
+
+
+#### Latex
+```{r}
+## Best
+### City_dist
+latex_mods_best_c <- latex_mods[c(1,4)]
+
+### Urb_score
+latex_mods_best_u <- latex_mods[c(2,5)]
+
+## Alt
+### City_dist
+latex_mods_alt_c <- latex_mods[3]
+
+### Urb_score- NONE
+
+```
+
+
+#### Herbivory- Early
+```{r}
+## Best
+### City_dist
+herb_e_mods_best_c <- herb_early_mods[c(1,3)]
+
+### Urb_score
+herb_e_mods_best_u <- herb_early_mods[c(2,6)]
+
+## Alt
+### City_dist
+herb_e_mods_alt_c <- herb_early_mods[4]
+
+### Urb_score
+herb_e_mods_alt_u <- herb_early_mods[5]
+
+```
+
+
+
+#### Herbivory- Late
+```{r}
+## Best
+### City_dist
+herb_l_mods_best_c <- herb_late_mods[c(1,3)]
+
+### Urb_score
+herb_l_mods_best_u <- herb_late_mods[c(2,5)]
+
+## Alt
+### City_dist
+herb_l_mods_alt_c <- herb_late_mods[4]
+
+### Urb_score- NONE
+```
+
+
+#### Weevil- Binomial
+```{r}
+## Best
+### City_dist
+weev_bin_mods_best_c <- weev_mods_binomial[c(1,4)]
+
+### Urb_score
+weev_bin_mods_best_u <- weev_mods_binomial[c(2,6)]
+
+## Alt
+### City_dist
+weev_bin_mods_alt_c <- weev_mods_binomial[3]
+
+### Urb_score
+weev_bin_mods_alt_u <- weev_mods_binomial[5]
+```
+
+
+
+#### Weevil- Quantitative
+```{r}
+## Best
+### City_dist
+weev_quant_mods_best_c <- weev_mods_quant[c(1,4)]
+
+### Urb_score
+weev_quant_mods_best_u <- weev_mods_quant[c(2,6)]
+
+## Alt
+### City_dist
+weev_quant_mods_alt_c <- weev_mods_quant[3]
+
+### Urb_score
+weev_quant_mods_alt_u <- weev_mods_quant[5]
+```
+
 
 # Anova
 ## Create functions
@@ -203,122 +332,98 @@ tidy_anova <- function(model){
           replacement = c("Urbanization Score x Year"))
   )}
 
-# creates list of list of anova objects
-all_anovas <- lapply(all_models, lapply, tidy_anova) %>%
-  unlist(recursive = FALSE)
+# # creates list of list of anova objects
+# all_anovas <- lapply(all_models, lapply, tidy_anova) %>%
+#   unlist(recursive = FALSE)
+# 
+# # creates list of list of BEST anova models
+# best_anovas <- all_anovas[-c(3,5,9, 11, 15, 21, 22, 27, 31, 33, 37, 39)]
+# 
+# # creates list of list of ALTERNATIVE anova models
+# alt_anovas <- all_anovas[c(3,5,9, 11, 15, 21, 22, 27, 31, 33, 37, 39)]
 
-# creates list of list of BEST anova models
-best_anovas <- all_anovas[-c(3,5,9, 11, 15, 21, 22, 27, 31, 33, 37, 39)]
-
-# creates list of list of ALTERNATIVE anova models
-alt_anovas <- all_anovas[c(3,5,9, 11, 15, 21, 22, 27, 31, 33, 37, 39)]
 
 
-
-# Next, adapt this for this project. Take out ch1 vars, decide how I want output to look...
+# Next, create best and alt models for individual lists of traits, then do this for the city_dist models, then urb_score models... put underlines in to separate Qs... export!
 make_all_anovas_tidy <- function(anova_list){
   return(
     lapply(anova_list, tidy_anova) %>%
     lapply(., as.data.frame) %>%
     purrr::reduce(full_join) %>%
     replace(., is.na(.), "-") %>%
-      flextable::flextable() %>%
+      flextable::flextable() %>% 
+      merge_v(j = "Response") %>% 
+      merge_v(j = "Sites") %>% 
+      valign(valign = "top")%>%
       flextable::autofit() %>%
       align(j = c(1, 3), align = "left", part = "all") %>%
-      align(j = c(2,4,5), align = "center", part = "body") %>%
+      align(j = c(2,4,5), align = "center", part = "all") %>%
       align(j = c(2,4,5), align = "center", part = "header") %>%
       flextable::compose(i = 1, j = 4, part = "header",
               value = as_paragraph("χ", as_sup("2"))) %>%
      flextable::compose(i = 1, j = 5, part = "header",
              value = as_paragraph(as_i("p"))) %>%
       fontsize(size = 12, part = "header") %>%
-      fontsize(size = 12, part = "body")
+      fontsize(size = 12, part = "body") %>%
+      #theme_booktabs()%>%
+      flextable::hline(i = 1, part = "body",
+        border = officer::fp_border(color = "#666666",
+                                    width = 1.5) )
+    %>% fix_border_issues()
+    
     )
   }
 
 # filter best models, then do this for each trait?
-make_all_anovas_tidy(ldmc_mods) 
+make_all_anovas_tidy(ldmc_mods_best_c) 
 
 ```
 
-### Herbivory- Early
-#### Gradient
-##### City_dist
+## LDMC
+### Gradient
+#### City_dist
 ```{r}
-car::Anova(herbivory_gr_dist_m5)
-# doesn't converge with all terms... 
+make_all_anovas_tidy(ldmc_mods_best_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/LDMC_citydist.png"))
 
-r.squaredGLMM(herbivory_gr_dist_m5)
 ```
 
-##### Urb_score
+#### Urb_score
 ```{r}
-car::Anova(ramets_gr_usc_m1)
-
-r.squaredGLMM(ramets_gr_usc_m1)
-
+make_all_anovas_tidy(ldmc_mods_best_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/LDMC_urbscore.png"))
 ```
 
-#### Urban subtransects
-##### City_dist
+### Urban Subtransects
+#### City_dist
 ```{r}
-car::Anova(ramets_urb_dist_m1)
-# nothing sig
-
-r.squaredGLMM(ramets_urb_dist_m1)
-
-
-# just main effects
-car::Anova(ramets_urb_dist_m2_ME)
-# nothing sig
-
-r.squaredGLMM(ramets_urb_dist_m2_ME)
-
-AIC((ramets_urb_dist_m1),
-    (ramets_urb_dist_m2_ME)) # better but <2 AIC from full model
+make_all_anovas_tidy(ldmc_mods_best_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/LDMC_citydist.png"))
 ```
 
-##### Urb_score
+#### Urb_score
 ```{r}
-car::Anova(ramets_urb_usc_m1)
-# nothing sig
 
-r.squaredGLMM(ramets_urb_usc_m1)
-
-
-# just main effects
-car::Anova(ramets_urb_usc_m2_ME)
-# nothing sig
-
-r.squaredGLMM(ramets_urb_usc_m2_ME)
-
-AIC((ramets_urb_usc_m1),
-    (ramets_urb_usc_m2_ME)) # better but <2 AIC from full model
 ```
-
-
-
-
-
-# ANOVA
-## Gradient
-### City_dist
+## SLA
+### Gradient
+#### City_dist
 ```{r}
 
 ```
 
-### Urb_score
+#### Urb_score
 ```{r}
 
 ```
 
-## Urban Subtransects
-### City_dist
+### Urban Subtransects
+#### City_dist
 ```{r}
 
 ```
 
-### Urb_score
+#### Urb_score
 ```{r}
 
 ```
