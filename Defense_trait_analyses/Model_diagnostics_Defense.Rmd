@@ -113,7 +113,8 @@ weevil %<>%
 # going to use this as final model
 ldmc_gr_city_m1 <- glmmTMB(LDMC ~ (1|Population:Fam_uniq) + City_dist,
                              data = sla_ldmc %>%
-                               dplyr::filter(LDMC < 1))
+                               dplyr::filter(LDMC < 1),
+                           REML = F)
 
 # car::Anova(ldmc_gr_city_m1)
 # performance::check_model(ldmc_gr_city_m1)
