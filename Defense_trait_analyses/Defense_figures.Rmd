@@ -70,6 +70,13 @@ herbivory <- read.csv(here::here("./Joined_annual_data/herbivory.csv")) %>%
 herbivory %<>%
   dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
 
+herbivory$Herbivory_mean_early_recode <- herbivory$Herbivory_mean_early
+herbivory$Herbivory_mean_early_recode[herbivory$Herbivory_mean_early_recode == 1] <- 0.999999
+herbivory$Herbivory_mean_early_recode[herbivory$Herbivory_mean_early_recode == 0] <- 0.000001
+
+herbivory$Herbivory_mean_late_recode <- herbivory$Herbivory_mean_late
+herbivory$Herbivory_mean_late_recode[herbivory$Herbivory_mean_late_recode == 1] <- 0.999999
+herbivory$Herbivory_mean_late_recode[herbivory$Herbivory_mean_late_recode == 0] <- 0.000001
 
 
 # WEEVIL DAMAGE-----
@@ -306,10 +313,6 @@ sla_urbsubs_02_pred <- ggeffects::ggpredict(sla_mods_best_u[[2]],
 ```
 
 ## Latex
-```{r}
-
-```
-
 ### Gradient
 ```{r}
 # city_dist
@@ -334,25 +337,103 @@ latex_gradient_02_pred <- ggeffects::ggpredict(latex_mods_best_u[[1]],
 ```
 
 ## Herbivory- Early
+### Gradient
 ```{r}
+# city_dist
+herb_e_mods_best_c[1] # CUBE ROOT-TRANSFORMED
+herb_e_gradient_01_pred <- ggeffects::ggpredict(herb_e_mods_best_c[[1]],
+                                   terms = c("City_dist"),
+                                   type = "fe") %>%
+  as.data.frame() 
 
+# urb_score
+herb_e_mods_best_u[1]# CUBE ROOT-TRANSFORMED
+herb_e_gradient_02_pred <- ggeffects::ggpredict(herb_e_mods_best_u[[1]],
+                                   terms = c("Urb_score"),
+                                   type = "fe") %>%
+  as.data.frame()
+
+```
+
+### Urban Subtransects
+```{r}
+# CUBE ROOT-TRANSFORMED
+# # CUBE ROOT-TRANSFORMED
 ```
 
 ## Herbivory- Late
+### Gradient
 ```{r}
+# city_dist
+herb_l_mods_best_c[1] # CUBE ROOT-TRANSFORMED
+herb_l_gradient_01_pred <- ggeffects::ggpredict(herb_l_mods_best_c[[1]],
+                                   terms = c("City_dist"),
+                                   type = "fe") %>%
+  as.data.frame() 
+
+# urb_score
+herb_l_mods_best_u[1] # CUBE ROOT-TRANSFORMED
+herb_l_gradient_02_pred <- ggeffects::ggpredict(herb_l_mods_best_u[[1]],
+                                   terms = c("Urb_score"),
+                                   type = "fe") %>%
+  as.data.frame()
 
 ```
 
+### Urban Subtransects
+```{r}
+# CUBE ROOT-TRANSFORMED
+# # CUBE ROOT-TRANSFORMED
+```
+
 ## Weevil damage- binary
+### Gradient
+```{r}
+# city_dist
+weev_bin_mods_best_c[1]
+weev_b_gradient_01_pred <- ggeffects::ggpredict(weev_bin_mods_best_c[[1]],
+                                   terms = c("City_dist"),
+                                   type = "fe") %>%
+  as.data.frame() 
+
+# urb_score
+weev_bin_mods_best_u[1]
+weev_b_gradient_02_pred <- ggeffects::ggpredict(weev_bin_mods_best_u[[1]],
+                                   terms = c("Urb_score"),
+                                   type = "fe") %>%
+  as.data.frame()
+
+```
+
+### Urban Subtransects
 ```{r}
 
 ```
 
 ## Weevil damage- quantitative
+### Gradient
 ```{r}
+# city_dist
+weev_quant_mods_best_c[1] # CUBE ROOT-TRANSFORMED
+weev_q_gradient_01_pred <- ggeffects::ggpredict(weev_quant_mods_best_c[[1]],
+                                   terms = c("City_dist"),
+                                   type = "fe") %>%
+  as.data.frame() 
+
+# urb_score
+weev_quant_mods_best_u[1] # CUBE ROOT-TRANSFORMED
+weev_q_gradient_02_pred <- ggeffects::ggpredict(weev_quant_mods_best_u[[1]],
+                                   terms = c("Urb_score"),
+                                   type = "fe") %>%
+  as.data.frame()
 
 ```
 
+### Urban Subtransects
+```{r}
+ # CUBE ROOT-TRANSFORMED
+ #  # CUBE ROOT-TRANSFORMED
+```
 
 # Create plots
 ## Create themes
@@ -462,7 +543,143 @@ ggpred_Q1.citydist_latex <- ggplot(latex_gradient_01_pred) +
                 size = 4.5)
 
 ggpred_Q1.citydist_latex
+
+# herbivory- early-----
+ggpred_Q1.citydist_herb_e <- ggplot(herb_e_gradient_01_pred) +
+    geom_smooth(aes(x = x,
+                    y = predicted),
+                color = "#66a182",
+                size = 1,
+                se = F) +
+    geom_ribbon(aes(x = x,
+                    ymin = predicted - std.error,
+                    ymax = predicted + std.error),
+                fill = "#66a182",
+                alpha = 0.3) +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Herbivory (Before Flowering) " ^{1/3})) +
+  # labs( color="Year", shape="Year", fill = "Year") +
+  scale_y_continuous(labels = scales::percent_format(
+    scale = 100,
+    accuracy = 1),
+    limits = c(NA, 1))+
+    scale_colour_brewer(palette = "Set2") +
+  theme_1() +
+#   # adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+                    label = paste0(" Distance: p = ", tidy_anova(herb_e_mods_best_c[[1]])$p)),
+                size = 4.5)
+
+ggpred_Q1.citydist_herb_e
+
+
+# herbivory- late-----
+ggpred_Q1.citydist_herb_l <- ggplot(herb_l_gradient_01_pred) +
+    geom_smooth(aes(x = x,
+                    y = predicted),
+                color = "#66a182",
+                size = 1,
+                se = F) +
+    geom_ribbon(aes(x = x,
+                    ymin = predicted - std.error,
+                    ymax = predicted + std.error),
+                fill = "#66a182",
+                alpha = 0.3) +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Herbivory (After Flowering) " ^{1/3})) +
+  scale_y_continuous(labels = scales::percent_format(
+    scale = 100,
+    accuracy = 1),
+    limits = c(NA, 1))+
+    scale_colour_brewer(palette = "Set2") +
+  theme_1() +
+#   # adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+                    label = paste0(" Distance: p = ", tidy_anova(herb_l_mods_best_c[[1]])$p)),
+                size = 4.5)
+
+ggpred_Q1.citydist_herb_l
+
+
+# weevil damage- binary-----
+ggpred_Q1.citydist_weev_bin <- ggplot(weev_b_gradient_01_pred) +
+    geom_smooth(aes(x = x,
+                    y = predicted),
+                color = "#66a182",
+                size = 1,
+                se = F) +
+    geom_ribbon(aes(x = x,
+                    ymin = predicted - std.error,
+                    ymax = predicted + std.error),
+                fill = "#66a182",
+                alpha = 0.3) +
+  labs(x = "Distance to Urban Center (km)",
+       y = "Weevil Damage Outcome") +
+    scale_y_continuous(labels = scales::percent_format(
+    scale = 100,
+    accuracy = 1),
+    limits = c(0, 1.2)) +
+    scale_colour_brewer(palette = "Set2") +
+  theme_1() +
+#   # adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+                    label = paste0(" Distance: p = ", tidy_anova(weev_bin_mods_best_c[[1]])$p)),
+                size = 4.5)
+
+ggpred_Q1.citydist_weev_bin
+
+
+
+# weevil damage- quantitative-----
+ggpred_Q1.citydist_weev_quant <- ggplot(weev_q_gradient_01_pred) +
+    geom_smooth(aes(x = x,
+                    y = predicted),
+                color = "#66a182",
+                size = 1,
+                se = F) +
+    geom_ribbon(aes(x = x,
+                    ymin = predicted - std.error,
+                    ymax = predicted + std.error),
+                fill = "#66a182",
+                alpha = 0.3) +
+  ylim(1.5, NA) +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Weevil Scar Length (cm) " ^{1/3})) +
+    scale_colour_brewer(palette = "Set2") +
+  theme_1() +
+#   # adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+                    label = paste0(" Distance: p = ", tidy_anova(weev_quant_mods_best_c[[1]])$p)),
+                size = 4.5)
+
+ggpred_Q1.citydist_weev_quant
 ```
+
+## Combine plots into one figure
+### Gradient / City_dist
+```{r}
+gradient_citydist_plots <- ggarrange(
+  ggpred_Q1.citydist_ldmc,
+  ggpred_Q1.citydist_sla,
+  ggpred_Q1.citydist_latex,
+  ggpred_Q1.citydist_herb_e,
+  ggpred_Q1.citydist_herb_l,
+  ggpred_Q1.citydist_weev_bin,
+  ggpred_Q1.citydist_weev_quant +
+            font("x.text"),
+          ncol = 4,
+          nrow = 2,
+          align = "hv",
+          labels = list("A", "B", "C", "D", "E", "F", "G"),
+          font.label = (size =16),
+          common.legend = T,
+          legend = "top") %T>%
+  plot
+
+dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q1_grad_citydist_Defense.pdf"),
+             width = 14, height = 7.5)
+```
+
 
 ### Urbanization Score
 ```{r}

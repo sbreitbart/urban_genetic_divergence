@@ -918,11 +918,11 @@ herbiv_l_urbsubs_dist_m2 <- glmmTMB(Herbivory_mean_late_recode^(1/3)  ~  (1|Year
 #### Urbanization Score
 ```{r}
 # BETA FAMILY
-test1 <- glmmTMB(Herbivory_mean_late_recode  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
-                                data = herbivory %>%
-                   dplyr::filter(Transect_ID != "Rural"),
-                                family = beta_family(link="logit"),
-                 REML = F)
+# test1 <- glmmTMB(Herbivory_mean_late_recode  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
+#                                 data = herbivory %>%
+#                    dplyr::filter(Transect_ID != "Rural"),
+#                                 family = beta_family(link="logit"),
+#                  REML = F)
 
 # performance::check_model(test1) # heavy right tail. Try sqrt transformation 
 # 
