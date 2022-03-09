@@ -253,6 +253,7 @@ weev_quant_mods_alt_u <- weev_mods_quant[5]
 
 # Ranova
 The point: to determine if there is much genetic diversity present within populations for natural selection to act on.
+## Create function
 ```{r}
 # ranova can't handle GLMMTMB functions so I'll use lmer instead
 # Also using Pop/Fam instead of Pop:Fam or Pop/Fam_uniq like I did when making models earlier
@@ -295,15 +296,63 @@ tab1 <- full_join(m1.ranova, variances1) %>%
   dplyr::select(c(5, 1:4)) %>%
   flextable() %>%
   merge_at(j = 1) %>% 
-  fix_border_issues()
+  fix_border_issues() %>%
+  bold(i = ~ p <= 0.05, j = 5) 
 
   return(tab1)
 }
 
-testing <- CreateRanovaOutput(m1)
-
-save_as_html(testing, path = here::here("./Defense_trait_analyses/Tables/Ranova/tesdfdstingtoday.html"))
 ```
+
+## Export: Gradient / City_dist
+```{r}
+# LDMC-------
+ldmc_ranova_mod1 <- lmer(LDMC ~ (1|Population/Family) + City_dist,
+                             data = sla_ldmc %>%
+                               dplyr::filter(LDMC < 1),
+                           REML = T)
+
+ldmc_ranova1 <- CreateRanovaOutput(ldmc_ranova_mod1) %T>%
+  flextable::save_as_html(.,
+                        path = here::here("./Defense_trait_analyses/Tables/Ranova/ldmc.html"))
+
+
+# SLA-----
+sla_ranova_mod1 <- lmer(SLA ~ (1|Population/Family) + City_dist,
+                        data = sla_ldmc,
+                        REML = T)
+
+
+sla_ranova1 <- CreateRanovaOutput(sla_ranova_mod1) %T>%
+  flextable::save_as_html(.,
+                        path = here::here("./Defense_trait_analyses/Tables/Ranova/sla.html"))
+
+
+# Latex-----
+latex_ranova_mod1 <- lmer(Latex_weight_mg ~ (1|Population/Family) + City_dist,
+                        data = latex,
+                        REML = T)
+
+latex_ranova1 <- CreateRanovaOutput(latex_ranova_mod1) %T>%
+  flextable::save_as_html(.,
+                        path = here::here("./Defense_trait_analyses/Tables/Ranova/latex.html"))
+
+
+
+
+
+
+# Export all-----
+flextable::save_as_html(ldmc_ranova1,
+                        sla_ranova1,
+                        latex_ranova1,
+                        path = here::here("./Defense_trait_analyses/Tables/Ranova/all.html"))
+```
+
+## Export: Gradient / Urb_score
+## Export: Urban Subtransects / City_dist
+## Export: Urban Subtransects / Urb_score
+
 
 # Anova
 ## Create functions
