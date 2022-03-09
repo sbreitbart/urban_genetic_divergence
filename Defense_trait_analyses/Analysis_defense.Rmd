@@ -274,10 +274,16 @@ CreateRanovaOutput <- function(lmer_model){
                                 "Family:Population")) %>%
     dplyr::mutate(Group = replace(Group,
                                 Group == "(1 | Population)",
-                                "Population"))
+                                "Population")) %>%
+    dplyr::mutate(Group = replace(Group,
+                                Group == "(1 | Block)",
+                                "Block")) %>%
+    dplyr::mutate(Group = replace(Group,
+                                Group == "(1 | Year)",
+                                "Year"))
 
 
-variances1 <- print(lme4::VarCorr(lmer_model),
+  variances1 <- print(lme4::VarCorr(lmer_model),
                     comp="Variance") %>%
   as.data.frame() %>%
   dplyr::mutate(., PVE = round((vcov*100 / sum(vcov)),3)) %>%
@@ -286,18 +292,23 @@ variances1 <- print(lme4::VarCorr(lmer_model),
                 Variance = vcov) %>%
   as.data.frame()
 
-tab1 <- full_join(m1.ranova, variances1) %>%
+  tab1 <- full_join(m1.ranova, variances1) %>%
   as.data.frame() %>%
   dplyr::arrange(Group) %>%
   dplyr::select(c(1,8,9,7)) %>%
   dplyr::mutate_at(vars(c(2,4)), round, 3) %>%
   dplyr::rename(., p = 4) %>%
+  dplyr::mutate(p = replace(p,
+                                p < 0.001,
+                                "<0.001")) %>%
   dplyr::mutate(Variable = deparse(lmer_model@call[["formula"]][[2]])) %>%
   dplyr::select(c(5, 1:4)) %>%
+  dplyr::filter(Group != "Block") %>%
+  dplyr::filter(Group != "Year") %>%
   flextable() %>%
-  merge_at(j = 1) %>% 
+  merge_at(j = 1) %>%
   fix_border_issues() %>%
-  bold(i = ~ p <= 0.05, j = 5) 
+  bold(i = ~ p <= 0.05, j = 5)
 
   return(tab1)
 }
@@ -306,8 +317,10 @@ tab1 <- full_join(m1.ranova, variances1) %>%
 
 ## Export: Gradient / City_dist
 ```{r}
+############ MEASURED ONLY IN 2020 #############
+################################################
 # LDMC-------
-ldmc_ranova_mod1 <- lmer(LDMC ~ (1|Population/Family) + City_dist,
+ldmc_ranova_mod1 <- lmer(LDMC ~ (1|Population/Family) + (1|Block) + City_dist,
                              data = sla_ldmc %>%
                                dplyr::filter(LDMC < 1),
                            REML = T)
@@ -318,7 +331,7 @@ ldmc_ranova1 <- CreateRanovaOutput(ldmc_ranova_mod1) %T>%
 
 
 # SLA-----
-sla_ranova_mod1 <- lmer(SLA ~ (1|Population/Family) + City_dist,
+sla_ranova_mod1 <- lmer(SLA ~ (1|Population/Family) + (1|Block) + City_dist,
                         data = sla_ldmc,
                         REML = T)
 
@@ -329,7 +342,7 @@ sla_ranova1 <- CreateRanovaOutput(sla_ranova_mod1) %T>%
 
 
 # Latex-----
-latex_ranova_mod1 <- lmer(Latex_weight_mg ~ (1|Population/Family) + City_dist,
+latex_ranova_mod1 <- lmer(Latex_weight_mg ~ (1|Population/Family) + (1|Block) + City_dist,
                         data = latex,
                         REML = T)
 
@@ -337,22 +350,54 @@ latex_ranova1 <- CreateRanovaOutput(latex_ranova_mod1) %T>%
   flextable::save_as_html(.,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/latex.html"))
 
+############ MEASURED IN MULTIPLE YEARS ########
+################################################
+# **Herbivory (before flowering)-------
+
+## Can't use glmmTMB model: Get this error message:
+### Error in ranova(lmer_model) : 'model' should be an lmer-fit: "inherits(model, 'lmerMod')" is not TRUE 
+
+## glmer can't handle beta family. So can't use that model structure either.
+
+
+# **Herbivory (after flowering)-------
+
+## Can't use glmmTMB model: Get this error message:
+### Error in ranova(lmer_model) : 'model' should be an lmer-fit: "inherits(model, 'lmerMod')" is not TRUE 
+
+## glmer can't handle beta family. So can't use that model structure either.
+
+
+# **Weevil scar length (binary)-----
 
 
 
+
+
+# Weevil scar length (quantitative)-----
+
+weev_quant_ranova_mod1 <- lmer(Scar_length_cm^(1/3) ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+                              data = weevil %>%
+                                dplyr::filter(Scar_length_cm > 0),
+                              REML = T)
+
+
+weev_q_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod1) %T>%
+  flextable::save_as_html(.,
+                        path = here::here("./Defense_trait_analyses/Tables/Ranova/weevil_quant.html"))
 
 
 # Export all-----
 flextable::save_as_html(ldmc_ranova1,
                         sla_ranova1,
                         latex_ranova1,
+                        weev_q_ranova1,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/all.html"))
 ```
 
 ## Export: Gradient / Urb_score
 ## Export: Urban Subtransects / City_dist
 ## Export: Urban Subtransects / Urb_score
-
 
 # Anova
 ## Create functions
