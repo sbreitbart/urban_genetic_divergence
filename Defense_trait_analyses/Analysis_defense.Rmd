@@ -256,13 +256,12 @@ The point: to determine if there is much genetic diversity present within popula
 ```{r}
 # ranova can't handle GLMMTMB functions so I'll use lmer instead
 # Also using Pop/Fam instead of Pop:Fam or Pop/Fam_uniq like I did when making models earlier
-m1 <- lmer(LDMC ~ (1|Population/Family) + City_dist,
-                             data = sla_ldmc %>%
-                               dplyr::filter(LDMC < 1),
-            REML = T) %T>%
-  ranova()
 
-m1.ranova <- as.data.frame(ranova(m1)) %>%
+CreateRanovaOutput <- function(lmer_model){
+  
+  m1 <- ranova(lmer_model)
+  
+  m1.ranova <- as.data.frame(m1) %>%
   dplyr::mutate(Group = row.names(.)) %>%
   remove_rownames %>%
   dplyr::select(c(Group, 1:6)) %>%
@@ -277,7 +276,7 @@ m1.ranova <- as.data.frame(ranova(m1)) %>%
                                 "Population"))
 
 
-variances1 <- print(lme4::VarCorr(m1),
+variances1 <- print(lme4::VarCorr(lmer_model),
                     comp="Variance") %>%
   as.data.frame() %>%
   dplyr::mutate(., PVE = round((vcov*100 / sum(vcov)),3)) %>%
@@ -286,18 +285,24 @@ variances1 <- print(lme4::VarCorr(m1),
                 Variance = vcov) %>%
   as.data.frame()
 
-full_join(m1.ranova, variances1) %>%
+tab1 <- full_join(m1.ranova, variances1) %>%
   as.data.frame() %>%
   dplyr::arrange(Group) %>%
   dplyr::select(c(1,8,9,7)) %>%
   dplyr::mutate_at(vars(c(2,4)), round, 3) %>%
   dplyr::rename(., p = 4) %>%
-  dplyr::mutate(Variable = deparse(m1@call[["formula"]][[2]])) %>%
+  dplyr::mutate(Variable = deparse(lmer_model@call[["formula"]][[2]])) %>%
   dplyr::select(c(5, 1:4)) %>%
   flextable() %>%
   merge_at(j = 1) %>% 
-  fix_border_issues() %>%
-  save_as_html(path = here::here("./Defense_trait_analyses/Tables/Ranova/testingtoday.html"))
+  fix_border_issues()
+
+  return(tab1)
+}
+
+testing <- CreateRanovaOutput(m1)
+
+save_as_html(testing, path = here::here("./Defense_trait_analyses/Tables/Ranova/tesdfdstingtoday.html"))
 ```
 
 # Anova
