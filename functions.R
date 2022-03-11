@@ -1,5 +1,24 @@
 # Functions for project
 
+##### theme for figures #####
+theme_1 <- function(){ 
+  
+  theme(
+    legend.position = c(.99, .99),
+    legend.justification = c("right", "top"),
+    legend.box = 'horizontal',
+    legend.box.just = "right",
+    legend.margin = margin(5,5,5,5),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "black"),
+    legend.key = element_rect(fill = NA),
+    axis.text = element_text(size = 12),
+    text = element_text(size = 14)
+  )
+}
+
+
+
 ##### Export ANOVAs ##### 
 anova_table_flx <- function(mod1) {
   

@@ -1,39 +1,15 @@
----
-title: "Cardenolide Analysis (KSR 2020)"
-author: "Sophie Breitbart"
-output:
-  html_document:
-    number_sections: false
-    df_print: paged
-    toc: yes
-    toc_depth: 3
-    toc_float:
-      collapsed: yes
-  pdf_document:
-    toc: yes
-    toc_depth: '2'
-editor_options: 
-  chunk_output_type: console
----
-
-# Set up notebook
-## Load libraries and add functions
-
-```{r}
+## -----------------------------------------------------------------
 source("libraries.R")
 source("functions.R")
-```
 
-## Import data
-```{r}
+
+## -----------------------------------------------------------------
 # cardenolides per population (pooled)
 cards <-  read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_cardenolides_clean.csv")) %>%
   dplyr::select(., -1) 
-```
 
-# Diagnostics + anova
-## Create function
-```{r}
+
+## -----------------------------------------------------------------
 DoLinearReg <- function(response_var, predictor_var, input_data){
 
   # first, make the formula as a string
@@ -59,10 +35,9 @@ cards_vars <- cards %>%
   dplyr::select(3,5,7,10) %>%
   names() %>%
   as.list()
-```
 
-## Predictor: City_dist
-```{r}
+
+## -----------------------------------------------------------------
 city_dist_list <- lapply(cards_vars,
        DoLinearReg,
        predictor_var = "City_dist",
@@ -70,28 +45,25 @@ city_dist_list <- lapply(cards_vars,
 names(city_dist_list) <- cards_vars
 # Num 3 doesn't look normal... try transformation. Residuals look bimodal
 
-```
 
-## Investigate non-normal-looking models
-```{r}
+
+## -----------------------------------------------------------------
 DoLinearReg("X17.6_main", "City_dist", cards)
 DoLinearReg("log(X17.6_main)", "City_dist", cards)
 car::Anova(lm(log(X17.6_main) ~ City_dist, cards)) # still isn't near p = 0.05 so maybe not worth worrying about
-```
 
-## Predictor: Urb_score
-```{r}
+
+## -----------------------------------------------------------------
 urb_score_list <- lapply(cards_vars,
        DoLinearReg,
        predictor_var = "Urb_score",
        input_data = cards)
 names(urb_score_list) <- cards_vars
 # Num 3 doesn't look normal... try transformation. Looks bimodal
-```
 
-## Investigate non-normal-looking models
-```{r}
+
+## -----------------------------------------------------------------
 DoLinearReg("X17.6_main", "Urb_score", cards)
 DoLinearReg("log(X17.6_main)", "Urb_score", cards)
 car::Anova(lm(log(X17.6_main) ~ Urb_score, cards)) # now it's near p = 0.05 (it's 0.068)... so investigate further
-```
+

@@ -1,0 +1,250 @@
+---
+title: "Defense Trait Analysis"
+author: "Sophie Breitbart"
+output:
+  html_document:
+    number_sections: true
+    df_print: paged
+    toc: yes
+    toc_depth: 6
+    toc_float:
+      collapsed: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
+editor_options: 
+  chunk_output_type: console
+
+---
+
+# Set up notebook
+## Load libraries and add functions
+
+```{r}
+source("libraries.R")
+source("functions.R")
+```
+
+## Import data
+```{r}
+# cardenolides per population (pooled)
+cards <-  read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_cardenolides_clean.csv")) %>%
+  dplyr::select(., -1) 
+```
+
+## Import final models
+```{r}
+source(knitr::purl("Defense_trait_analyses/Analysis_Cardenolides.Rmd", quiet=TRUE))
+```
+
+# Figures
+## Distance from city center
+```{r warning=FALSE, message=FALSE}
+# Total cards
+cd_total <- ggplot(cards, aes(x = City_dist, y = total)) +
+  # geom_point(size = 2,
+  #            shape = 1) +
+  geom_smooth(method = "lm",
+                color = "#66a182",
+                fill = "#66a182",
+                size = 1,
+                alpha = 0.3) +
+  labs(x = "Distance to Urban Center (km)",
+    y = "Total Cardenolides") +
+  xlim(0, 71) +
+  ylim(0,0.8) +
+  theme_1() +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+                    label = paste0("p = ", round(city_dist_list[["total"]][[2]][["Pr(>F)"]][1], 3))),
+                size = 4.5)
+cd_total
+
+
+
+# 6.6
+cd_66 <- ggplot(cards, aes(x = City_dist, y = X6.6_main)) +
+  # geom_point(size = 2,
+  #            shape = 1) +
+  geom_smooth(method = "lm",
+                color = "#66a182",
+                fill = "#66a182",
+                size = 1,
+                alpha = 0.3) +
+  labs(x = "Distance to Urban Center (km)",
+    y = "Digitoxin peak 6.6") +
+  xlim(0, 71) +
+  ylim(0,0.6) +
+  theme_1() +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+                    label = paste0("p = ", round(city_dist_list[["X6.6_main"]][[2]][["Pr(>F)"]][1], 3))),
+                size = 4.5)
+
+
+# 15
+cd_15 <-ggplot(cards, aes(x = City_dist, y = X15_main)) +
+  # geom_point(size = 2,
+  #            shape = 1) +
+  geom_smooth(method = "lm",
+                color = "#66a182",
+                fill = "#66a182",
+                size = 1,
+                alpha = 0.3) +
+  labs(x = "Distance to Urban Center (km)",
+    y = "Digitoxin peak 15") +
+  xlim(0, 71) +
+  ylim(0,0.2) +
+  theme_1() +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+                    label = paste0("p = ", round(city_dist_list[["X15_main"]][[2]][["Pr(>F)"]][1], 3))),
+                size = 4.5)
+
+
+# 17.6
+cd_176 <- ggplot(cards, aes(x = City_dist, y = log(X17.6_main))) +
+  # geom_point(size = 2,
+  #            shape = 1) +
+  geom_smooth(method = "lm",
+                color = "#66a182",
+                fill = "#66a182",
+                size = 1,
+                alpha = 0.3) +
+  labs(x = "Distance to Urban Center (km)",
+    y = "log(Digitoxin peak 17.6)") +
+  xlim(0, 71) +
+  theme_1() +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
+                    label = paste0("p = ", round(city_dist_list[["X17.6_main"]][[2]][["Pr(>F)"]][1], 3))),
+                size = 4.5)
+
+
+# arrange plots in grid
+cards_citydist_plots <- ggarrange(cd_total,
+                                  cd_66,
+                                  cd_15,
+                                  cd_176 +
+                                    font("x.text"), 
+          labels = c("A", "B", "C", "D"),
+          ncol = 2, nrow = 2,
+          align = "hv",
+          font.label = (size =16),
+          common.legend = T,
+          legend = "top") %T>%
+  plot
+
+dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q1_citydist_Cardenolides.pdf"),
+             width = 8, height = 6)
+
+```
+
+
+## Urbanization score
+```{r warning=FALSE, message=FALSE}
+# Total cards
+us_total <- ggplot(cards, aes(x = Urb_score, y = total)) +
+  # geom_point(size = 2,
+  #            shape = 1) +
+  geom_smooth(method = "lm",
+                color = "#66a182",
+                fill = "#66a182",
+                size = 1,
+                alpha = 0.3) +
+  theme_1() +
+  labs(x = "Urbanization Score", 
+    y = "Total Cardenolides") +
+  xlim(4, -4) +
+  ylim(0,0.4) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+                    label = paste0("p = ", round(urb_score_list[["total"]][[2]][["Pr(>F)"]][1], 3))),
+                size = 4.5)
+
+
+
+# 6.6
+us_66 <- ggplot(cards, aes(x = Urb_score, y = X6.6_main)) +
+  # geom_point(size = 2,
+  #            shape = 1) +
+  geom_smooth(method = "lm",
+                color = "#66a182",
+                fill = "#66a182",
+                size = 1,
+                alpha = 0.3) +
+  theme_1() +
+  labs(x = "Urbanization Score", 
+    y = "Digitoxin peak 6.6") +
+  xlim(4, -4) +
+  ylim(0,0.3)+
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+                    label = paste0("p = ", round(urb_score_list[["X6.6_main"]][[2]][["Pr(>F)"]][1], 3))),
+                size = 4.5)
+
+
+# 15
+us_15 <- ggplot(cards, aes(x = Urb_score, y = X15_main)) +
+  # geom_point(size = 2,
+  #            shape = 1) +
+  geom_smooth(method = "lm",
+                color = "#66a182",
+                fill = "#66a182",
+                size = 1,
+                alpha = 0.3) +
+  theme_1() +
+  labs(x = "Urbanization Score", 
+    y = "Digitoxin peak 15") +
+  xlim(4, -4) +
+  ylim(0,0.1)+
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+                    label = paste0("p = ", round(urb_score_list[["X15_main"]][[2]][["Pr(>F)"]][1], 3))),
+                size = 4.5)
+
+
+# 17.6
+us_176 <- ggplot(cards, aes(x = Urb_score, y = log(X17.6_main))) +
+  # geom_point(size = 2,
+  #            shape = 1) +
+  geom_smooth(method = "lm",
+                color = "#66a182",
+                fill = "#66a182",
+                size = 1,
+                alpha = 0.3) +
+  theme_1() +
+  labs(x = "Urbanization Score", 
+    y = "log(Digitoxin peak 17.6)") +
+  xlim(4, -4) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
+                    label = paste0("p = ", round(urb_score_list[["X17.6_main"]][[2]][["Pr(>F)"]][1], 3))),
+                size = 4.5)
+
+
+# arrange plots in grid
+cards_urbscore_plots <- ggarrange(us_total, us_66, us_15, us_176 +
+                                    font("x.text"), 
+          labels = c("A", "B", "C", "D"),
+          ncol = 2, nrow = 2,
+          align = "hv",
+          font.label = (size =16),
+          common.legend = T,
+          legend = "top") %T>%
+  plot
+
+dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q1_urbscore_Cardenolides.pdf"),
+             width = 8, height = 6)
+```
+
+# RDA
+```{r warning=FALSE, message=FALSE}
+pairs(cards[,c(3,5,7,10, 17)],
+      lower.panel = NULL)
+
+my.rda <- rda(cards[,c(3,5,7,10)])
+biplot(my.rda)
+
+ordihull(my.rda,
+         group = cards$Urb_Rur,
+         col = c("Orange", "Green"))
+
+legend("topright",
+       col = c("Orange", "Green"),
+       lty = 1,
+       legend = unique(cards$Urb_Rur))
+```
+
