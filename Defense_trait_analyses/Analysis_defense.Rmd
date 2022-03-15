@@ -253,69 +253,11 @@ weev_quant_mods_alt_u <- weev_mods_quant[5]
 
 # Ranova
 The point: to determine if there is much genetic diversity present within populations for natural selection to act on.
-## Create function
-```{r}
-# ranova can't handle GLMMTMB functions so I'll use lmer instead
-# Also using Pop/Fam instead of Pop:Fam or Pop/Fam_uniq like I did when making models earlier
+- ranova can't handle GLMMTMB functions so I'll use lmer instead
+- Also using Pop/Fam instead of Pop:Fam or Pop/Fam_uniq like I did when making models earlier
 
-CreateRanovaOutput <- function(lmer_model){
-  
-  m1 <- ranova(lmer_model)
-  
-  m1.ranova <- as.data.frame(m1) %>%
-  dplyr::mutate(Group = row.names(.)) %>%
-  remove_rownames %>%
-  dplyr::select(c(Group, 1:6)) %>%
-  dplyr::mutate(Group = replace(Group,
-                                Group == "<none>",
-                                "Residual")) %>%
-    dplyr::mutate(Group = replace(Group,
-                                Group == "(1 | Family:Population)",
-                                "Family:Population")) %>%
-    dplyr::mutate(Group = replace(Group,
-                                Group == "(1 | Population)",
-                                "Population")) %>%
-    dplyr::mutate(Group = replace(Group,
-                                Group == "(1 | Block)",
-                                "Block")) %>%
-    dplyr::mutate(Group = replace(Group,
-                                Group == "(1 | Year)",
-                                "Year"))
-
-
-  variances1 <- print(lme4::VarCorr(lmer_model),
-                    comp="Variance") %>%
-  as.data.frame() %>%
-  dplyr::mutate(., PVE = round((vcov*100 / sum(vcov)),3)) %>%
-  dplyr::select(., c(grp, vcov, PVE)) %>%
-  dplyr::rename(., Group = grp,
-                Variance = vcov) %>%
-  as.data.frame()
-
-  tab1 <- full_join(m1.ranova, variances1) %>%
-  as.data.frame() %>%
-  dplyr::arrange(Group) %>%
-  dplyr::select(c(1,8,9,7)) %>%
-  dplyr::mutate_at(vars(c(2,4)), round, 3) %>%
-  dplyr::rename(., p = 4) %>%
-  dplyr::mutate(p = replace(p,
-                                p < 0.001,
-                                "<0.001")) %>%
-  dplyr::mutate(Variable = deparse(lmer_model@call[["formula"]][[2]])) %>%
-  dplyr::select(c(5, 1:4)) %>%
-  dplyr::filter(Group != "Block") %>%
-  dplyr::filter(Group != "Year") %>%
-  flextable() %>%
-  merge_at(j = 1) %>%
-  fix_border_issues() %>%
-  bold(i = ~ p <= 0.05, j = 5)
-
-  return(tab1)
-}
-
-```
-
-## Export: Gradient / City_dist
+## Gradient / City_dist
+### Gaussian models use ranova()
 ```{r}
 ############ MEASURED ONLY IN 2020 #############
 ################################################
@@ -325,7 +267,7 @@ ldmc_ranova_mod1 <- lmer(LDMC ~ (1|Population/Family) + (1|Block) + City_dist,
                                dplyr::filter(LDMC < 1),
                            REML = T)
 
-ldmc_ranova1 <- CreateRanovaOutput(ldmc_ranova_mod1) %T>%
+ldmc_ranova1 <- CreateRanovaOutput(ldmc_ranova_mod1, "LDMC") %T>%
   flextable::save_as_html(.,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/ldmc.html"))
 
@@ -336,7 +278,7 @@ sla_ranova_mod1 <- lmer(SLA ~ (1|Population/Family) + (1|Block) + City_dist,
                         REML = T)
 
 
-sla_ranova1 <- CreateRanovaOutput(sla_ranova_mod1) %T>%
+sla_ranova1 <- CreateRanovaOutput(sla_ranova_mod1, "SLA") %T>%
   flextable::save_as_html(.,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/sla.html"))
 
@@ -346,7 +288,7 @@ latex_ranova_mod1 <- lmer(Latex_weight_mg ~ (1|Population/Family) + (1|Block) + 
                         data = latex,
                         REML = T)
 
-latex_ranova1 <- CreateRanovaOutput(latex_ranova_mod1) %T>%
+latex_ranova1 <- CreateRanovaOutput(latex_ranova_mod1, "Latex Exudation") %T>%
   flextable::save_as_html(.,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/latex.html"))
 
@@ -370,7 +312,7 @@ latex_ranova1 <- CreateRanovaOutput(latex_ranova_mod1) %T>%
 
 # **Weevil scar length (binary)-----
 
-
+## Using boostrapping for this one too.
 
 
 
@@ -382,22 +324,129 @@ weev_quant_ranova_mod1 <- lmer(Scar_length_cm^(1/3) ~ (1|Block) + (1|Year) + (1|
                               REML = T)
 
 
-weev_q_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod1) %T>%
+weev_q_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod1, "Weevil Damage: Quantitative") %T>%
   flextable::save_as_html(.,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/weevil_quant.html"))
+```
+
+### Generalized LMM use bootstrapping with pbnm()
+```{r}
+# NOT PERFECT b/c can't nest family within pop
+# Ben Bolker says it should work too: https://stackoverflow.com/questions/69842066/testing-for-the-significance-of-a-random-effect-in-a-mixed-model
+# https://github.com/glmmTMB/glmmTMB/issues/456
 
 
-# Export all-----
+# Herbivory (before flowering)-------
+## glmer can't handle beta distribution, and 
+## PBmodcomp can't handle GLMMTMB, so will skip this one
+ 
+
+# Herbivory (after flowering)-------
+## glmer can't handle beta distribution, and 
+## PBmodcomp can't handle GLMMTMB, so will skip this one
+
+
+# Weevil scar length (binary)-----
+full <- glmer(Scar_binary ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
+                              data = weevil,
+                              family = "binomial"(link = "logit"),
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  # ,control=glmerControl(optimizer="bobyqa",
+  #                           optCtrl=list(maxfun=2e5))
+  )
+
+reduced <- update(full, .~. - City_dist)
+
+weev_ranova <- PBmodcomp(full, reduced,
+          nsim = 10)
+tidy(weev_ranova) # not converging
+
+
+# take out block and year
+full <- glmer(Scar_binary ~
+                # (1|Block) + (1|Year) + 
+                (1|Population/Family) + City_dist,
+                              data = weevil,
+                              family = "binomial"(link = "logit"),
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+  )
+
+reduced <- update(full, .~. - City_dist)
+
+weev_ranova <- PBmodcomp(full, reduced,
+          nsim = 10)
+
+tidy(weev_ranova) # p ~ 0.5
+
+
+
+
+
+# take out fam
+full <- glmer(Scar_binary ~
+                # (1|Block) + (1|Year) + 
+                (1|Population) + City_dist,
+                              data = weevil,
+                              family = "binomial"(link = "logit"),
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+  )
+
+reduced <- update(full, .~. - City_dist)
+
+weev_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 100)
+
+tidy(weev_ranova.pop) # Pop: p ~ 0.5
+
+
+
+
+
+# take out pop
+full <- glmer(Scar_binary ~
+                # (1|Block) + (1|Year) + 
+                (1|Fam_uniq) + City_dist,
+                              data = weevil,
+                              family = "binomial"(link = "logit"),
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+  )
+
+reduced <- update(full, .~. - City_dist)
+
+weev_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 100)
+
+tidy(weev_ranova.fam) # Family: p ~ 0.5
+
+
+
+
+
+
+# merge Pop and Fam ranovas
+weev_bin_ranova1 <- CreateRanovaOutput_bootstrap(weev_ranova.fam, weev_ranova.pop, "Weevil Damage: Binary") %T>%
+  flextable::save_as_html(path = here::here("./Defense_trait_analyses/Tables/Ranova/weevil_binary.html"))
+```
+
+### Export all
+```{r}
 flextable::save_as_html(ldmc_ranova1,
                         sla_ranova1,
                         latex_ranova1,
                         weev_q_ranova1,
+                        weev_bin_ranova1,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/all.html"))
 ```
 
-## Export: Gradient / Urb_score
-## Export: Urban Subtransects / City_dist
-## Export: Urban Subtransects / Urb_score
+## Gradient / Urb_score
+## Urban Subtransects / City_dist
+## Urban Subtransects / Urb_score
 
 # Anova
 ## Create functions

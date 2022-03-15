@@ -1,5 +1,102 @@
 # Functions for project
 
+##### function to create tidy ranova table #####
+# for regular g/lmer models
+CreateRanovaOutput <- function(lmer_model, var_name){
+  
+  m1 <- ranova(lmer_model)
+  
+  m1.ranova <- as.data.frame(m1) %>%
+    dplyr::mutate(Group = row.names(.)) %>%
+    remove_rownames %>%
+    dplyr::select(c(Group, 1:6)) %>%
+    dplyr::mutate(Group = replace(Group,
+                                  Group == "<none>",
+                                  "Residual")) %>%
+    dplyr::mutate(Group = replace(Group,
+                                  Group == "(1 | Family:Population)",
+                                  "Family:Population")) %>%
+    dplyr::mutate(Group = replace(Group,
+                                  Group == "(1 | Population)",
+                                  "Population")) %>%
+    dplyr::mutate(Group = replace(Group,
+                                  Group == "(1 | Block)",
+                                  "Block")) %>%
+    dplyr::mutate(Group = replace(Group,
+                                  Group == "(1 | Year)",
+                                  "Year"))
+  
+  
+  variances1 <- print(lme4::VarCorr(lmer_model),
+                      comp="Variance") %>%
+    as.data.frame() %>%
+    dplyr::mutate(., PVE = round((vcov*100 / sum(vcov)),3)) %>%
+    dplyr::select(., c(grp, vcov, PVE)) %>%
+    dplyr::rename(., Group = grp,
+                  Variance = vcov) %>%
+    as.data.frame()
+  
+  tab1 <- full_join(m1.ranova, variances1) %>%
+    as.data.frame() %>%
+    dplyr::arrange(Group) %>%
+    dplyr::select(c(1,8,9,7)) %>%
+    dplyr::mutate_at(vars(c(2,4)), round, 3) %>%
+    dplyr::rename(., p = 4) %>%
+    dplyr::mutate(p = replace(p,
+                              p < 0.001,
+                              "<0.001")) %>%
+    dplyr::mutate(Variable = noquote(var_name)) %>%
+    dplyr::select(c(5, 1:4)) %>%
+    dplyr::filter(Group != "Block") %>%
+    dplyr::filter(Group != "Year") %>%
+    flextable() %>%
+    merge_at(j = 1) %>%
+    fix_border_issues() %>%
+    bold(i = ~ p <= 0.05, j = 5)
+  
+  return(tab1)
+}
+
+# for boostrapping models
+CreateRanovaOutput_bootstrap <- function(ranova_fam,
+                                         ranova_pop,
+                                         var_name){
+  
+  ranova.fam <- tidy(ranova_fam) %>%
+    dplyr::filter(type == "PBtest") %>%
+    dplyr::rename(Group = type) %>%
+    dplyr::mutate(Group = replace(Group,
+                                  Group == "PBtest",
+                                  "Family")) %>%
+    dplyr::select(-c(2:3))
+  
+  ranova.pop <- tidy(ranova_pop) %>%
+    dplyr::filter(type == "PBtest") %>%
+    dplyr::rename(Group = type) %>%
+    dplyr::mutate(Group = replace(Group,
+                                  Group == "PBtest",
+                                  "Population")) %>%
+    dplyr::select(-c(2:3))
+  
+  tab1 <- full_join(ranova.fam, ranova.pop) %>%
+    as.data.frame() %>%
+    dplyr::mutate_at(vars(c(p.value)), round, 3) %>%
+    dplyr::rename(., p = 2) %>%
+    dplyr::mutate(p = replace(p,
+                              p < 0.001,
+                              "<0.001")) %>%
+    dplyr::mutate(Variable = noquote(var_name)) %>%
+    dplyr::select(c(3,1,2)) %>%
+    flextable() %>%
+    merge_at(j = 1) %>%
+    fix_border_issues() %>%
+    bold(i = ~ p <= 0.05, j = 3) %>%
+    autofit()
+  
+  return(tab1)
+}
+
+
 ##### theme for figures #####
 theme_1 <- function(){ 
   
