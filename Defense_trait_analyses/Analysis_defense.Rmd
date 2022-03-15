@@ -445,6 +445,194 @@ flextable::save_as_html(ldmc_ranova1,
 ```
 
 ## Gradient / Urb_score
+### Gaussian models use ranova()
+```{r}
+############ MEASURED ONLY IN 2020 #############
+################################################
+# LDMC-------
+ldmc_ranova_mod1 <- lmer(LDMC ~ (1|Population/Family) + (1|Block) + Urb_score,
+                             data = sla_ldmc %>%
+                               dplyr::filter(LDMC < 1),
+                           REML = T)
+
+ldmc_ranova1 <- CreateRanovaOutput(ldmc_ranova_mod1, "LDMC") %T>%
+  flextable::save_as_html(.,
+                        path = here::here("./Defense_trait_analyses/Tables/Ranova/Urb_score/ldmc.html"))
+
+
+# SLA-----
+# same output as Pop:Fam_uniq
+sla_ranova_mod1 <- lmer(sqrt(SLA) ~ (1|Population/Family) + (1|Block) + Urb_score,
+                        data = sla_ldmc,
+                        REML = T)
+
+
+sla_ranova1 <- CreateRanovaOutput(sla_ranova_mod1, "SLA") %T>%
+  flextable::save_as_html(.,
+                        path = here::here("./Defense_trait_analyses/Tables/Ranova/Urb_score/sla.html"))
+
+
+# Latex-----
+latex_ranova_mod1 <- lmer(Latex_weight_mg ~ (1|Population/Family) + (1|Block) + Urb_score,
+                        data = latex,
+                        REML = T)
+
+latex_ranova1 <- CreateRanovaOutput(latex_ranova_mod1, "Latex Exudation") %T>%
+  flextable::save_as_html(.,
+                        path = here::here("./Defense_trait_analyses/Tables/Ranova/Urb_score/latex.html"))
+
+############ MEASURED IN MULTIPLE YEARS ########
+################################################
+# **Herbivory (before flowering)-------
+
+## Can't use glmmTMB model: Get this error message:
+### Error in ranova(lmer_model) : 'model' should be an lmer-fit: "inherits(model, 'lmerMod')" is not TRUE 
+
+## glmer can't handle beta family. So can't use that model structure either.
+
+
+# **Herbivory (after flowering)-------
+
+## Can't use glmmTMB model: Get this error message:
+### Error in ranova(lmer_model) : 'model' should be an lmer-fit: "inherits(model, 'lmerMod')" is not TRUE 
+
+## glmer can't handle beta family. So can't use that model structure either.
+
+
+# **Weevil scar length (binary)-----
+
+## Using bootstrapping for this one too.
+
+
+
+# Weevil scar length (quantitative)-----
+
+weev_quant_ranova_mod1 <- lmer(Scar_length_cm^(1/3) ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+                              data = weevil %>%
+                                dplyr::filter(Scar_length_cm > 0),
+                              REML = T)
+
+
+weev_q_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod1, "Weevil Damage: Quantitative") %T>%
+  flextable::save_as_html(.,
+                        path = here::here("./Defense_trait_analyses/Tables/Ranova/Urb_score/weevil_quant.html"))
+```
+
+### Generalized LMM use bootstrapping with pbnm()
+```{r}
+# NOT PERFECT b/c can't nest family within pop
+# Ben Bolker says it should work too: https://stackoverflow.com/questions/69842066/testing-for-the-significance-of-a-random-effect-in-a-mixed-model
+# https://github.com/glmmTMB/glmmTMB/issues/456
+
+
+# Herbivory (before flowering)-------
+## glmer can't handle beta distribution, and 
+## PBmodcomp can't handle GLMMTMB, so will skip this one
+ 
+
+# Herbivory (after flowering)-------
+## glmer can't handle beta distribution, and 
+## PBmodcomp can't handle GLMMTMB, so will skip this one
+
+
+# Weevil scar length (binary)-----
+full <- glmer(Scar_binary ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
+                              data = weevil,
+                              family = "binomial"(link = "logit"),
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  # ,control=glmerControl(optimizer="bobyqa",
+  #                           optCtrl=list(maxfun=2e5))
+  )
+
+reduced <- update(full, .~. - Urb_score)
+
+weev_ranova <- PBmodcomp(full, reduced,
+          nsim = 10)
+tidy(weev_ranova) # not converging
+
+
+# take out block and year
+full <- glmer(Scar_binary ~
+                # (1|Block) + (1|Year) + 
+                (1|Population/Family) + Urb_score,
+                              data = weevil,
+                              family = "binomial"(link = "logit"),
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+  )
+
+reduced <- update(full, .~. - Urb_score)
+
+weev_ranova <- PBmodcomp(full, reduced,
+          nsim = 10)
+
+tidy(weev_ranova) # p ~ 0.5
+
+
+
+
+
+# take out fam
+full <- glmer(Scar_binary ~
+                # (1|Block) + (1|Year) + 
+                (1|Population) + Urb_score,
+                              data = weevil,
+                              family = "binomial"(link = "logit"),
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+  )
+
+reduced <- update(full, .~. - Urb_score)
+
+weev_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 100)
+
+tidy(weev_ranova.pop) # Pop: p ~ 0.7
+
+
+
+
+
+# take out pop
+full <- glmer(Scar_binary ~
+                # (1|Block) + (1|Year) + 
+                (1|Fam_uniq) + Urb_score,
+                              data = weevil,
+                              family = "binomial"(link = "logit"),
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+  )
+
+reduced <- update(full, .~. - Urb_score)
+
+weev_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 100)
+
+tidy(weev_ranova.fam) # Family: p ~ 0.7
+
+
+
+
+
+
+# merge Pop and Fam ranovas
+weev_bin_ranova1 <- CreateRanovaOutput_bootstrap(weev_ranova.fam, weev_ranova.pop, "Weevil Damage: Binary") %T>%
+  flextable::save_as_html(path = here::here("./Defense_trait_analyses/Tables/Ranova/Urb_score/weevil_binary.html"))
+```
+
+### Export all
+```{r}
+flextable::save_as_html(ldmc_ranova1,
+                        sla_ranova1,
+                        latex_ranova1,
+                        weev_q_ranova1,
+                        weev_bin_ranova1,
+                        path = here::here("./Defense_trait_analyses/Tables/Ranova/Urb_score/all_urbscore.html"))
+```
+
 ## Urban Subtransects / City_dist
 ## Urban Subtransects / Urb_score
 

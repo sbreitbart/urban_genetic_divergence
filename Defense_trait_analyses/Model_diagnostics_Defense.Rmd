@@ -111,7 +111,7 @@ weevil %<>%
 
 
 # going to use this as final model
-ldmc_gr_city_m1 <- glmmTMB(LDMC ~ (1|Population:Fam_uniq) + City_dist,
+ldmc_gr_city_m1 <- glmmTMB(LDMC ~ (1|Population:Fam_uniq) + (1|Block) + City_dist,
                              data = sla_ldmc %>%
                                dplyr::filter(LDMC < 1),
                            REML = F)
