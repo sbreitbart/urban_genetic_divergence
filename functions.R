@@ -1,5 +1,29 @@
 # Functions for project
 
+
+##### function for doing linear regression on multiple models
+##### (used this for cardenolide functions)
+DoLinearReg <- function(response_var, predictor_var, input_data){
+  
+  # first, make the formula as a string
+  formula_str <- paste(
+    response_var, "~",
+    paste(predictor_var,
+          collapse = " + ")   )
+  print(paste0("Model formula: ", formula_str))
+  
+  # input string into lm
+  my_model <- lm(formula_str, data = input_data) 
+  performance::check_model(my_model) %T>%
+    print()
+  performance::model_performance(my_model) %T>%
+    print()
+  my_anova <- car::Anova(my_model)
+  my_list <<- list(my_model, my_anova)
+}
+
+
+
 ##### function to create tidy ranova table #####
 # for regular g/lmer models
 CreateRanovaOutput <- function(lmer_model, var_name){
@@ -52,7 +76,8 @@ CreateRanovaOutput <- function(lmer_model, var_name){
     flextable() %>%
     merge_at(j = 1) %>%
     fix_border_issues() %>%
-    bold(i = ~ p <= 0.05, j = 5)
+    bold(i = ~ p <= 0.05, j = 5) %>%
+    autofit()
   
   return(tab1)
 }
