@@ -894,7 +894,79 @@ dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q1_grad_urbscor
 ## Urban Subtransects
 ### City_dist
 ```{r}
+# LDMC-----
+ggpred_Q2.citydist_ldmc <- 
+ggplot(ldmc_urbsubs_01_pred) +
+    geom_smooth(aes(x = x,
+                    y = predicted,
+                    color = group),
+                size = 1,
+                se = F) +
+    geom_ribbon(aes(x = x,
+                    ymin = predicted - std.error,
+                    ymax = predicted + std.error,
+                    fill = group),
+                alpha = 0.3) +
+  labs(x = "Distance to Urban Center (km)",
+       y = "Leaf Dry Matter Content") +
+  labs( color="Transect", fill = "Transect") +
+  ylim(NA, 0.19) +
+  xlim(0, NA) +
+    # min(ldmc_gradient_01_pred$predicted) * 0.95,
+    # max(ldmc_gradient_01_pred$predicted) * 1.05) +
+    scale_colour_brewer(palette = "Set2") +
+    scale_fill_brewer(palette = "Set2") +
+  theme_1() +
+  scale_fill_discrete(labels = c("Corridor", "Non-Corridor")) +
+  scale_color_discrete(labels = c("Corridor", "Non-Corridor")) +
 
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.17,
+                    label = paste0(" Distance: p = ", tidy_anova(ldmc_mods_best_c[[2]])$p[1])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+                    label = paste0(" Transect: p = ", tidy_anova(ldmc_mods_best_c[[2]])$p[2])),
+                size = 4.5)
+
+ggpred_Q2.citydist_ldmc
+
+# SLA-----
+ggpred_Q2.citydist_SLA <- 
+ggplot(sla_urbsubs_01_pred) +
+    geom_smooth(aes(x = x,
+                    y = predicted,
+                    color = group),
+                size = 1,
+                se = F) +
+    geom_ribbon(aes(x = x,
+                    ymin = predicted - std.error,
+                    ymax = predicted + std.error,
+                    fill = group),
+                alpha = 0.3) +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Specific Leaf Area "(cm^2/g))) +
+  labs( color="Transect", fill = "Transect") +
+  ylim(NA, 22) +
+    xlim(0, NA) +
+    # min(SLA_gradient_01_pred$predicted) * 0.95,
+    # max(SLA_gradient_01_pred$predicted) * 1.05) +
+    scale_colour_brewer(palette = "Set2") +
+    scale_fill_brewer(palette = "Set2") +
+  theme_1() +
+  scale_fill_discrete(labels = c("Corridor", "Non-Corridor")) +
+  scale_color_discrete(labels = c("Corridor", "Non-Corridor")) +
+
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.17,
+                    label = paste0(" Distance: p = ", tidy_anova(sla_mods_best_c[[2]])$p[1])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+                    label = paste0(" Transect: p = ", tidy_anova(sla_mods_best_c[[2]])$p[2])),
+                size = 4.5)
+
+ggpred_Q2.citydist_SLA
 ```
 
 ### Urbanization Score
