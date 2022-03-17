@@ -1,6 +1,55 @@
 # Functions for project
 
 
+##### functions to create tidy anova tables #####
+# GOALS:
+# 1. Perform car::Anova() on each model in list
+#   -if it's got an interaction, do type III first
+#     -if interaxn p-val < 0.1, retain that result
+#     -else, move on to type II
+# 2. Save anova table w/appropriate SS type as new item in trait's sublist
+
+# function that IDs if there is >= 1 sig interaction in the type III anova
+ID_intxn <- function(model){
+  model.df <- broom.mixed::tidy(car::Anova(model, type = "III"))
+  intxn.df <- model.df[grep(":", model.df$term), "p.value"]
+  sig.intxns <- sum(intxn.df <= 0.1)
+  return(sig.intxns)
+}
+
+# Next, create best and alt models for individual lists of traits, then do this for the city_dist models, then urb_score models... put underlines in to separate Qs... export!
+make_all_anovas_tidy <- function(anova_list){
+  return(
+    lapply(anova_list, tidy_anova) %>%
+      lapply(., as.data.frame) %>%
+      purrr::reduce(full_join) %>%
+      replace(., is.na(.), "-") %>%
+      dplyr::filter(Predictor != "(Intercept)") %>%
+      flextable::flextable() %>% 
+      merge_v(j = "Response") %>% 
+      merge_v(j = "Sites") %>% 
+      valign(valign = "top")%>%
+      flextable::autofit() %>%
+      align(j = c(1, 3), align = "left", part = "all") %>%
+      align(j = c(2,4,5), align = "center", part = "all") %>%
+      align(j = c(2,4,5), align = "center", part = "header") %>%
+      flextable::compose(i = 1, j = 4, part = "header",
+                         value = as_paragraph("χ", as_sup("2"))) %>%
+      flextable::compose(i = 1, j = 5, part = "header",
+                         value = as_paragraph(as_i("p"))) %>%
+      fontsize(size = 12, part = "header") %>%
+      fontsize(size = 12, part = "body") %>%
+      #theme_booktabs()%>%
+      flextable::hline(i = 1, part = "body",
+                       border = officer::fp_border(color = "#666666",
+                                                   width = 1.5) )
+    %>% fix_border_issues()
+    
+  )
+}
+
+
+
 ##### function for doing linear regression on multiple models
 ##### (used this for cardenolide functions)
 DoLinearReg <- function(response_var, predictor_var, input_data){
