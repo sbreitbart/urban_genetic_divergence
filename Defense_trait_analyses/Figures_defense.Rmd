@@ -1349,3 +1349,41 @@ dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q2_urbsubs_urbs
              width = 14.5, height = 8)
 ```
 
+
+# Find estimated marginal means at terminii
+## Gradient
+### City_dist
+#### Herbivory: Before flowering
+```{r}
+# PERCENT CHANGE, rural to urban terminus:
+Calc_percent_change(herb_e_gradient_01_pred) # 19.7%
+```
+
+### Urbanization Score
+## Urban Subtransects
+### City_dist
+#### LDMC
+```{r}
+# PERCENT CHANGE, suburban to urban terminus:
+Calc_percent_change_urbsubs(ldmc_urbsubs_01_pred) # 10.9%
+```
+
+#### Herbivory: Before flowering
+```{r}
+# PERCENT CHANGE, suburban to urban terminus:
+Calc_percent_change_urbsubs(herb_e_urbsubs_01_pred) # 26.9%
+```
+
+#### Herbivory: After flowering
+```{r}
+Calc_percent_change_urbsubs_intxn(herb_l_urbsubs_01_pred)
+# "Percent change from suburban to urban terminus along         corridor subtransect: 20.7%"
+# "Percent change from suburban to urban terminus along         non-corridor subtransect: 34.2%"
+```
+
+#### Weevil damage: Quantitative
+```{r}
+Calc_percent_change_transects(weev_quant_urbsubs_01_pred) # 6.2%
+```
+
+### Urbanization Score- not done

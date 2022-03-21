@@ -201,3 +201,89 @@ Calc_percent_change <- function(ggpredict_object){
   print(baseline_numbers)
   return(paste0("Percent change, from rural to urban terminus: ", round(percent_change, 1), "%"))
 }
+### Urban subtransects/city_dist models
+Calc_percent_change_urbsubs <- function(ggpredict_object){
+  baseline_numbers <- ggpredict_object %>%
+    dplyr::group_by(x) %>%
+    dplyr::summarise(mean = mean(predicted)) %>%
+    dplyr::filter(., x == max(x) | x == min(x)) 
+  
+  urb_mean <- baseline_numbers[baseline_numbers$x == min(baseline_numbers$x),]$mean
+  
+  rur_mean <- baseline_numbers[baseline_numbers$x == max(baseline_numbers$x),]$mean
+  
+  percent_change <- ((urb_mean - rur_mean) / rur_mean) * 100
+  print(baseline_numbers)
+  return(paste0("Percent change, from suburban to urban terminus: ",
+                round(percent_change, 1), "%"))
+  
+}
+Calc_percent_change_urbsubs_intxn <- function(ggpredict_object){
+  baseline <- ggpredict_object %>%
+    dplyr::filter(., x == max(x) | x == min(x)) %>%
+    dplyr::select(c(1,2,6))
+  
+  # percent change from suburban to urban terminus
+  ## Corridor subtransect
+  suburban_corridor_mean <- baseline %>%
+    dplyr::filter(x == max(x) & group == "South") %>%
+    dplyr::select("predicted") %>%
+    as.numeric()
+  
+  urban_corridor_mean <- baseline %>%
+    dplyr::filter(x == min(x) & group == "South") %>%
+    dplyr::select("predicted") %>%
+    as.numeric()
+  
+  PC_corr_suburbanTOurban <- round(
+    (((urban_corridor_mean - suburban_corridor_mean) /
+        suburban_corridor_mean) * 100),
+    1)
+  
+  
+  ## Non-corridor subtransect
+  suburban_noncorridor_mean <- baseline %>%
+    dplyr::filter(x == max(x) & group == "North") %>%
+    dplyr::select("predicted") %>%
+    as.numeric()
+  
+  urban_noncorridor_mean <- baseline %>%
+    dplyr::filter(x == min(x) & group == "North") %>%
+    dplyr::select("predicted") %>%
+    as.numeric()
+  
+  PC_noncorr_suburbanTOurban <- round(
+    (((urban_noncorridor_mean - suburban_noncorridor_mean) /
+        suburban_noncorridor_mean) * 100),
+    1)
+  
+  print(baseline)
+  print(paste0("Percent change from suburban to urban terminus along corridor subtransect: ", PC_corr_suburbanTOurban, "%"))
+  print(paste0("Percent change from suburban to urban terminus along non-corridor subtransect: ", PC_noncorr_suburbanTOurban, "%"))
+}
+Calc_percent_change_transects <- function(ggpredict_object){
+  baseline <- weev_quant_urbsubs_01_pred %>%
+    dplyr::group_by(group) %>%
+    dplyr::summarise(mean = mean(predicted))
+  
+  corridor_mean <- baseline %>%
+    dplyr::filter(group == "South") %>%
+    dplyr::select("mean") %>%
+    as.numeric()
+  
+  noncorridor_mean <- baseline %>%
+    dplyr::filter(group == "North") %>%
+    dplyr::select("mean") %>%
+    as.numeric()
+  
+  PC_noncorrTOcorridor <- round(
+    (((corridor_mean - noncorridor_mean) /
+        noncorridor_mean) * 100),
+    1)
+  
+  print(baseline)
+  print(paste0("Percent change from non-corridor to corridor subtransect: ",
+               PC_noncorrTOcorridor, "%"))
+  
+}
+
