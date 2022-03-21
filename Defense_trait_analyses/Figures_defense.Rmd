@@ -840,6 +840,416 @@ ggpred_Q1.urbscore_weev_quant <- ggplot(weev_q_gradient_02_pred) +
 ggpred_Q1.urbscore_weev_quant
 ```
 
+## Urban Subtransects
+### City_dist
+```{r}
+# LDMC-----
+ggpred_Q2.citydist_ldmc <-
+ggplot(ldmc_urbsubs_01_pred) +
+  labs(x = "Distance to Urban Center (km)",
+       y = "Leaf Dry Matter Content",
+       color = "Transect",
+       fill = "Transect") +
+  ylim(NA, 0.19) +
+  xlim(0, NA) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.97,
+                    label = paste0(" Distance: p = ", tidy_anova(ldmc_mods_best_c[[2]])$p[1])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(ldmc_mods_best_c[[2]])$p[2])),
+                size = 4.5)
+
+ggpred_Q2.citydist_ldmc
+
+# SLA-----
+ggpred_Q2.citydist_sla <- 
+ggplot(sla_urbsubs_01_pred) +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Specific Leaf Area "(cm^2/g)),
+       color = "Transect",
+       fill = "Transect") +
+  ylim(NA, 22) +
+  xlim(0, NA) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.97,
+                    label = paste0(" Distance: p = ", tidy_anova(sla_mods_best_c[[2]])$p[1])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(sla_mods_best_c[[2]])$p[2])),
+                size = 4.5)
+
+ggpred_Q2.citydist_sla
+
+
+# latex-----
+ggpred_Q2.citydist_latex <- 
+ggplot(latex_urbsubs_01_pred) +
+  rep_geoms2 +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Latex Exudation (g) "^{1/2}),
+       color = "Transect",
+       fill = "Transect") +
+  ylim(6.25, 8.5) +
+    xlim(0, NA) +
+  theme_1() +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
+                    label = paste0(" Distance: p = ", tidy_anova(latex_mods_best_c[[2]])$p[1])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(latex_mods_best_c[[2]])$p[2])),
+                size = 4.5)
+
+ggpred_Q2.citydist_latex
+
+# herbivory: Before flowering-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+herb_e_urbsubs_01_pred$group <- factor(herb_e_urbsubs_01_pred$group,
+                                   levels(herb_e_urbsubs_01_pred$group)[c(2,1)])
+levels(herb_e_urbsubs_01_pred$group)
+
+ggpred_Q2.citydist_herb_e <- 
+ggplot(herb_e_urbsubs_01_pred) +
+  rep_geoms2 +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Herbivory (Before Flowering) "^{1/3}),
+       color = "Transect",
+       fill = "Transect") +
+  scale_y_continuous(labels = scales::percent_format(
+    scale = 100,
+    accuracy = 1),
+    limits = c(NA, 1))+
+  xlim(0, NA) +
+  theme_1() +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
+                    label = paste0(" Distance: p = ", tidy_anova(herb_e_mods_best_c[[2]])$p[2])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(herb_e_mods_best_c[[2]])$p[3])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.79,
+                    label = paste0(" D x T: p = ", tidy_anova(herb_e_mods_best_c[[2]])$p[4])),
+                size = 4.5)
+
+ggpred_Q2.citydist_herb_e
+
+# herbivory: After flowering-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+herb_l_urbsubs_01_pred$group <- factor(herb_l_urbsubs_01_pred$group,
+                                   levels(herb_l_urbsubs_01_pred$group)[c(2,1)])
+levels(herb_l_urbsubs_01_pred$group)
+
+
+ggpred_Q2.citydist_herb_l <- 
+ggplot(herb_l_urbsubs_01_pred) +
+  rep_geoms2 +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Herbivory (After Flowering) "^{1/3}),
+       color = "Transect",
+       fill = "Transect") +
+  scale_y_continuous(labels = scales::percent_format(
+    scale = 100,
+    accuracy = 1),
+    limits = c(NA, 1))+
+  xlim(0, NA) +
+  theme_1() +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 1,
+                    label = paste0(" Distance: p = ", tidy_anova(herb_l_mods_best_c[[2]])$p[2])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.93,
+                    label = paste0(" Transect: p = ", tidy_anova(herb_l_mods_best_c[[2]])$p[3])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.86,
+                    label = paste0(" D x T: p = ", tidy_anova(herb_l_mods_best_c[[2]])$p[4])),
+                size = 4.5)
+
+ggpred_Q2.citydist_herb_l
+
+
+# Weevil damage: Binary-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+weev_bin_urbsubs_01_pred$group <- factor(weev_bin_urbsubs_01_pred$group,
+                                   levels(weev_bin_urbsubs_01_pred$group)[c(2,1)])
+levels(weev_bin_urbsubs_01_pred$group)
+
+
+ggpred_Q2.citydist_weev_bin <- 
+ggplot(weev_bin_urbsubs_01_pred) +
+  rep_geoms2 +
+  labs(x = "Distance to Urban Center (km)",
+       y = "Weevil Damage Outcome",
+       color = "Transect",
+       fill = "Transect") +
+  scale_y_continuous(labels = scales::percent_format(
+    scale = 100,
+    accuracy = 1),
+    limits = c(0, 1.2),
+    breaks = c(0, .25, .5, .75, 1)
+    ) +
+  xlim(0, NA) +
+  theme_1() +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.1,
+                    label = paste0(" Distance: p = ", tidy_anova(weev_bin_mods_best_c[[2]])$p[1])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.04,
+                    label = paste0(" Transect: p = ", tidy_anova(weev_bin_mods_best_c[[2]])$p[2])),
+                size = 4.5)
+
+ggpred_Q2.citydist_weev_bin
+
+
+# Weevil damage: Quantitative-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+weev_quant_urbsubs_01_pred$group <- factor(weev_quant_urbsubs_01_pred$group,
+                                   levels(weev_quant_urbsubs_01_pred$group)[c(2,1)])
+levels(weev_quant_urbsubs_01_pred$group)
+
+
+ggpred_Q2.citydist_weev_quant <- 
+ggplot(weev_quant_urbsubs_01_pred) +
+  rep_geoms2 +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Weevil Scar Length (cm)" ^{1/3}),
+       color = "Transect",
+       fill = "Transect") +
+  ylim(1.4, 2) +
+  xlim(0, NA) +
+  theme_1() +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.17,
+                    label = paste0(" Distance: p = ", tidy_anova(weev_quant_mods_best_c[[2]])$p[1])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+                    label = paste0(" Transect: p = ", tidy_anova(weev_quant_mods_best_c[[2]])$p[2])),
+                size = 4.5)
+
+ggpred_Q2.citydist_weev_quant
+
+```
+
+### Urbanization Score
+```{r}
+# LDMC-----
+ggpred_Q2.urbsubs_ldmc <-
+ggplot(ldmc_urbsubs_02_pred) +
+  labs(x = "Urbanization Score",
+       y = "Leaf Dry Matter Content",
+       color = "Transect",
+       fill = "Transect") +
+  ylim(NA, 0.19) +
+  xlim(4, -2) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(ldmc_mods_best_u[[2]])$p[1])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(ldmc_mods_best_u[[2]])$p[2])),
+                size = 4.5)
+
+ggpred_Q2.urbsubs_ldmc
+
+
+# SLA-----
+ggpred_Q2.urbsubs_sla <- 
+ggplot(sla_urbsubs_02_pred) +
+  labs(x = "Urbanization Score",
+       y = expression("Specific Leaf Area "(cm^2/g)),
+       color = "Transect",
+       fill = "Transect") +
+  ylim(18, 22.5) +
+  xlim(4, -2) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(sla_mods_best_u[[2]])$p[1])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(sla_mods_best_u[[2]])$p[2])),
+                size = 4.5)
+
+ggpred_Q2.urbsubs_sla
+
+
+# latex-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+latex_urbsubs_02_pred$group <- factor(latex_urbsubs_02_pred$group,
+                                   levels(latex_urbsubs_02_pred$group)[c(2,1)])
+levels(latex_urbsubs_02_pred$group)
+
+ggpred_Q2.urbsubs_latex <- 
+ggplot(latex_urbsubs_02_pred) +
+  rep_geoms2 +
+  labs(x = "Urbanization Score",
+       y = expression("Latex Exudation (g) "^{1/2}),
+       color = "Transect",
+       fill = "Transect") +
+  # ylim(6.25, 8.5) +
+  xlim(4, -2) +
+  theme_1() +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 1,
+                                   npcy = 0.96,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(latex_mods_best_u[[2]])$p[2])),
+                size = 4.5,
+                hjust = "right") +
+  ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.87,
+                    label = paste0(" Transect: p = ", tidy_anova(latex_mods_best_u[[2]])$p[3])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.78,
+                    label = paste0(" U x T: p = ", tidy_anova(latex_mods_best_u[[2]])$p[4])),
+                size = 4.5)
+
+ggpred_Q2.urbsubs_latex
+
+
+
+# herbivory: Before flowering-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+herb_e_urbsubs_02_pred$group <- factor(herb_e_urbsubs_02_pred$group,
+                                   levels(herb_e_urbsubs_02_pred$group)[c(2,1)])
+levels(herb_e_urbsubs_02_pred$group)
+
+
+ggpred_Q2.urbsubs_herb_e <- 
+ggplot(herb_e_urbsubs_02_pred) +
+  rep_geoms2 +
+  labs(x = "Urbanization Score",
+       y = expression("Herbivory (Before Flowering) "^{1/3}),
+       color = "Transect",
+       fill = "Transect") +
+  scale_y_continuous(labels = scales::percent_format(
+    scale = 100,
+    accuracy = 1),
+    limits = c(NA, 1))+
+  xlim(4, -2) +
+  theme_1() +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(herb_e_mods_best_u[[2]])$p[1])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(herb_e_mods_best_u[[2]])$p[2])),
+                size = 4.5)
+
+ggpred_Q2.urbsubs_herb_e
+
+# herbivory: After flowering-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+herb_l_urbsubs_02_pred$group <- factor(herb_l_urbsubs_02_pred$group,
+                                   levels(herb_l_urbsubs_02_pred$group)[c(2,1)])
+levels(herb_l_urbsubs_02_pred$group)
+
+ggpred_Q2.urbsubs_herb_l <- 
+ggplot(herb_l_urbsubs_02_pred) +
+  rep_geoms2 +
+  labs(x = "Urbanization Score",
+       y = expression("Herbivory (After Flowering) "^{1/3}),
+       color = "Transect",
+       fill = "Transect") +
+  scale_y_continuous(labels = scales::percent_format(
+    scale = 100,
+    accuracy = 1),
+    limits = c(NA, 1))+
+  xlim(4, -2) +
+  theme_1() +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(herb_l_mods_best_u[[2]])$p[1])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(herb_l_mods_best_u[[2]])$p[2])),
+                size = 4.5) 
+
+ggpred_Q2.urbsubs_herb_l
+
+
+# Weevil damage: Binary-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+weev_bin_urbsubs_02_pred$group <- factor(weev_bin_urbsubs_02_pred$group,
+                                   levels(weev_bin_urbsubs_02_pred$group)[c(2,1)])
+levels(weev_bin_urbsubs_02_pred$group)
+
+
+ggpred_Q2.urbsubs_weev_bin <- 
+ggplot(weev_bin_urbsubs_02_pred) +
+  rep_geoms2 +
+  labs(x = "Urbanization Score",
+       y = "Weevil Damage Outcome",
+       color = "Transect",
+       fill = "Transect") +
+  scale_y_continuous(labels = scales::percent_format(
+    scale = 100,
+    accuracy = 1),
+    limits = c(0, 1.2),
+    breaks = c(0, .25, .5, .75, 1)
+    ) +
+  xlim(4, -2) +
+  theme_1() +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.12,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(weev_bin_mods_best_u[[2]])$p[1])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.05,
+                    label = paste0(" Transect: p = ", tidy_anova(weev_bin_mods_best_u[[2]])$p[2])),
+                size = 4.5)
+
+ggpred_Q2.urbsubs_weev_bin
+
+
+# Weevil damage: Quantitative-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+weev_quant_urbsubs_02_pred$group <- factor(weev_quant_urbsubs_02_pred$group,
+                                   levels(weev_quant_urbsubs_02_pred$group)[c(2,1)])
+levels(weev_quant_urbsubs_02_pred$group)
+
+
+ggpred_Q2.urbsubs_weev_quant <- 
+ggplot(weev_quant_urbsubs_02_pred) +
+  rep_geoms2 +
+  labs(x = "Urbanization Score",
+       y = expression("Weevil Scar Length (cm)" ^{1/3}),
+       color = "Transect",
+       fill = "Transect") +
+  ylim(1.4, 2) +
+  xlim(4, -2) +
+  theme_1() +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.17,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(weev_quant_mods_best_u[[2]])$p[1])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+                    label = paste0(" Transect: p = ", tidy_anova(weev_quant_mods_best_u[[2]])$p[2])),
+                size = 4.5)
+
+ggpred_Q2.urbsubs_weev_quant
+
+```
+
 ## Combine plots into one figure
 ### Gradient / City_dist
 ```{r}
@@ -890,364 +1300,6 @@ dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q1_grad_urbscor
              width = 14, height = 7.5)
 ```
 
-## Urban Subtransects
-### City_dist
-```{r}
-# LDMC-----
-ggpred_Q2.citydist_ldmc <-
-ggplot(ldmc_urbsubs_01_pred) +
-  labs(x = "Distance to Urban Center (km)",
-       y = "Leaf Dry Matter Content",
-       color = "Transect",
-       fill = "Transect") +
-  ylim(NA, 0.19) +
-  xlim(0, NA) +
-  theme_1() +
-  rep_geoms2 +
-
-# adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.17,
-                    label = paste0(" Distance: p = ", tidy_anova(ldmc_mods_best_c[[2]])$p[1])),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
-                    label = paste0(" Transect: p = ", tidy_anova(ldmc_mods_best_c[[2]])$p[2])),
-                size = 4.5)
-
-ggpred_Q2.citydist_ldmc
-
-# SLA-----
-ggpred_Q2.citydist_sla <- 
-ggplot(sla_urbsubs_01_pred) +
-  labs(x = "Distance to Urban Center (km)",
-       y = expression("Specific Leaf Area "(cm^2/g)),
-       color = "Transect",
-       fill = "Transect") +
-  ylim(NA, 22) +
-  xlim(0, NA) +
-  theme_1() +
-  rep_geoms2 +
-
-# adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.17,
-                    label = paste0(" Distance: p = ", tidy_anova(sla_mods_best_c[[2]])$p[1])),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
-                    label = paste0(" Transect: p = ", tidy_anova(sla_mods_best_c[[2]])$p[2])),
-                size = 4.5)
-
-ggpred_Q2.citydist_sla
-
-
-# latex-----
-ggpred_Q2.citydist_latex <- 
-ggplot(latex_urbsubs_01_pred) +
-  rep_geoms2 +
-  labs(x = "Distance to Urban Center (km)",
-       y = expression("Latex Exudation (g) "^{1/2}),
-       color = "Transect",
-       fill = "Transect") +
-  ylim(6.25, 8.5) +
-    xlim(0, NA) +
-  theme_1() +
-
-# adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.17,
-                    label = paste0(" Distance: p = ", tidy_anova(latex_mods_best_c[[2]])$p[1])),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
-                    label = paste0(" Transect: p = ", tidy_anova(latex_mods_best_c[[2]])$p[2])),
-                size = 4.5)
-
-ggpred_Q2.citydist_latex
-
-# herbivory: Before flowering-----
-ggpred_Q2.citydist_herb_e <- 
-ggplot(herb_e_urbsubs_01_pred) +
-  rep_geoms2 +
-  labs(x = "Distance to Urban Center (km)",
-       y = expression("Herbivory (Before Flowering) "^{1/3}),
-       color = "Transect",
-       fill = "Transect") +
-  scale_y_continuous(labels = scales::percent_format(
-    scale = 100,
-    accuracy = 1),
-    limits = c(NA, 1))+
-  xlim(0, NA) +
-  theme_1() +
-
-# adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
-                    label = paste0(" Distance: p = ", tidy_anova(herb_e_mods_best_c[[2]])$p[2])),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
-                    label = paste0(" Transect: p = ", tidy_anova(herb_e_mods_best_c[[2]])$p[3])),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.79,
-                    label = paste0(" D x T: p = ", tidy_anova(herb_e_mods_best_c[[2]])$p[4])),
-                size = 4.5)
-
-ggpred_Q2.citydist_herb_e
-
-# herbivory: After flowering-----
-ggpred_Q2.citydist_herb_l <- 
-ggplot(herb_l_urbsubs_01_pred) +
-  rep_geoms2 +
-  labs(x = "Distance to Urban Center (km)",
-       y = expression("Herbivory (After Flowering) "^{1/3}),
-       color = "Transect",
-       fill = "Transect") +
-  scale_y_continuous(labels = scales::percent_format(
-    scale = 100,
-    accuracy = 1),
-    limits = c(NA, 1))+
-  xlim(0, NA) +
-  theme_1() +
-
-# adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
-                    label = paste0(" Distance: p = ", tidy_anova(herb_l_mods_best_c[[2]])$p[2])),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
-                    label = paste0(" Transect: p = ", tidy_anova(herb_l_mods_best_c[[2]])$p[3])),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.79,
-                    label = paste0(" D x T: p = ", tidy_anova(herb_l_mods_best_c[[2]])$p[4])),
-                size = 4.5)
-
-ggpred_Q2.citydist_herb_l
-
-
-# Weevil damage: Binary-----
-ggpred_Q2.citydist_weev_bin <- 
-ggplot(weev_bin_urbsubs_01_pred) +
-  rep_geoms2 +
-  labs(x = "Distance to Urban Center (km)",
-       y = "Weevil Damage Outcome",
-       color = "Transect",
-       fill = "Transect") +
-  scale_y_continuous(labels = scales::percent_format(
-    scale = 100,
-    accuracy = 1),
-    limits = c(0, 1.2),
-    breaks = c(0, .25, .5, .75, 1)
-    ) +
-  xlim(0, NA) +
-  theme_1() +
-
-# adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.17,
-                    label = paste0(" Distance: p = ", tidy_anova(weev_bin_mods_best_c[[2]])$p[1])),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
-                    label = paste0(" Transect: p = ", tidy_anova(weev_bin_mods_best_c[[2]])$p[2])),
-                size = 4.5)
-
-ggpred_Q2.citydist_weev_bin
-
-
-# Weevil damage: Quantitative-----
-ggpred_Q2.citydist_weev_quant <- 
-ggplot(weev_quant_urbsubs_01_pred) +
-  rep_geoms2 +
-  labs(x = "Distance to Urban Center (km)",
-       y = expression("Weevil Scar Length (cm)" ^{1/3}),
-       color = "Transect",
-       fill = "Transect") +
-  ylim(1.4, 2) +
-  xlim(0, NA) +
-  theme_1() +
-
-# adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.17,
-                    label = paste0(" Distance: p = ", tidy_anova(weev_quant_mods_best_c[[2]])$p[1])),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
-                    label = paste0(" Transect: p = ", tidy_anova(weev_quant_mods_best_c[[2]])$p[2])),
-                size = 4.5)
-
-ggpred_Q2.citydist_weev_quant
-
-```
-
-### Urbanization Score
-```{r}
-# LDMC-----
-ggpred_Q2.urbsubs_ldmc <-
-ggplot(ldmc_urbsubs_02_pred) +
-  labs(x = "Urbanization Score",
-       y = "Leaf Dry Matter Content",
-       color = "Transect",
-       fill = "Transect") +
-  ylim(NA, 0.19) +
-  xlim(4, -2) +
-  theme_1() +
-  rep_geoms2 +
-
-# adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.17,
-                    label = paste0(" Urb. Score: p = ", tidy_anova(ldmc_mods_best_u[[2]])$p[1])),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
-                    label = paste0(" Transect: p = ", tidy_anova(ldmc_mods_best_u[[2]])$p[2])),
-                size = 4.5)
-
-ggpred_Q2.urbsubs_ldmc
-
-
-# SLA-----
-ggpred_Q2.urbsubs_sla <- 
-ggplot(sla_urbsubs_02_pred) +
-  labs(x = "Urbanization Score",
-       y = expression("Specific Leaf Area "(cm^2/g)),
-       color = "Transect",
-       fill = "Transect") +
-  ylim(18, 22.5) +
-  xlim(4, -2) +
-  theme_1() +
-  rep_geoms2 +
-
-# adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
-                    label = paste0(" Urb. Score: p = ", tidy_anova(sla_mods_best_u[[2]])$p[1])),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
-                    label = paste0(" Transect: p = ", tidy_anova(sla_mods_best_u[[2]])$p[2])),
-                size = 4.5)
-
-ggpred_Q2.urbsubs_sla
-
-
-# latex-----
-ggpred_Q2.urbsubs_latex <- 
-ggplot(latex_urbsubs_02_pred) +
-  rep_geoms2 +
-  labs(x = "Urbanization Score",
-       y = expression("Latex Exudation (g) "^{1/2}),
-       color = "Transect",
-       fill = "Transect") +
-  # ylim(6.25, 8.5) +
-  xlim(4, -2) +
-  theme_1() +
-
-# adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.26,
-                    label = paste0(" Urb. Score: p = ", tidy_anova(latex_mods_best_u[[2]])$p[2])),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.17,
-                    label = paste0(" Transect: p = ", tidy_anova(latex_mods_best_u[[2]])$p[3])),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
-                    label = paste0(" U x T: p = ", tidy_anova(latex_mods_best_u[[2]])$p[4])),
-                size = 4.5)
-
-ggpred_Q2.urbsubs_latex
-
-
-
-# herbivory: Before flowering-----
-ggpred_Q2.urbsubs_herb_e <- 
-ggplot(herb_e_urbsubs_02_pred) +
-  rep_geoms2 +
-  labs(x = "Urbanization Score",
-       y = expression("Herbivory (Before Flowering) "^{1/3}),
-       color = "Transect",
-       fill = "Transect") +
-  scale_y_continuous(labels = scales::percent_format(
-    scale = 100,
-    accuracy = 1),
-    limits = c(NA, 1))+
-  xlim(4, -2) +
-  theme_1() +
-
-# adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
-                    label = paste0(" Urb. Score:p = ", tidy_anova(herb_e_mods_best_u[[2]])$p[1])),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
-                    label = paste0(" Transect: p = ", tidy_anova(herb_e_mods_best_u[[2]])$p[2])),
-                size = 4.5)
-
-ggpred_Q2.urbsubs_herb_e
-
-# herbivory: After flowering-----
-ggpred_Q2.urbsubs_herb_l <- 
-ggplot(herb_l_urbsubs_02_pred) +
-  rep_geoms2 +
-  labs(x = "Urbanization Score",
-       y = expression("Herbivory (After Flowering) "^{1/3}),
-       color = "Transect",
-       fill = "Transect") +
-  scale_y_continuous(labels = scales::percent_format(
-    scale = 100,
-    accuracy = 1),
-    limits = c(NA, 1))+
-  xlim(4, -2) +
-  theme_1() +
-
-# adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
-                    label = paste0(" Urb. Score:p = ", tidy_anova(herb_l_mods_best_u[[2]])$p[1])),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
-                    label = paste0(" Transect: p = ", tidy_anova(herb_l_mods_best_u[[2]])$p[2])),
-                size = 4.5) 
-
-ggpred_Q2.urbsubs_herb_l
-
-
-# Weevil damage: Binary-----
-ggpred_Q2.urbsubs_weev_bin <- 
-ggplot(weev_bin_urbsubs_02_pred) +
-  rep_geoms2 +
-  labs(x = "Urbanization Score",
-       y = "Weevil Damage Outcome",
-       color = "Transect",
-       fill = "Transect") +
-  scale_y_continuous(labels = scales::percent_format(
-    scale = 100,
-    accuracy = 1),
-    limits = c(0, 1.2),
-    breaks = c(0, .25, .5, .75, 1)
-    ) +
-  xlim(4, -2) +
-  theme_1() +
-
-# adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.17,
-                    label = paste0(" Urb. Score:p = ", tidy_anova(weev_bin_mods_best_u[[2]])$p[1])),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
-                    label = paste0(" Transect: p = ", tidy_anova(weev_bin_mods_best_u[[2]])$p[2])),
-                size = 4.5)
-
-ggpred_Q2.urbsubs_weev_bin
-
-
-# Weevil damage: Quantitative-----
-ggpred_Q2.urbsubs_weev_quant <- 
-ggplot(weev_quant_urbsubs_02_pred) +
-  rep_geoms2 +
-  labs(x = "Urbanization Score",
-       y = expression("Weevil Scar Length (cm)" ^{1/3}),
-       color = "Transect",
-       fill = "Transect") +
-  ylim(1.4, 2) +
-  xlim(4, -2) +
-  theme_1() +
-
-# adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.17,
-                    label = paste0(" Urb. Score:p = ", tidy_anova(weev_quant_mods_best_u[[2]])$p[1])),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
-                    label = paste0(" Transect: p = ", tidy_anova(weev_quant_mods_best_u[[2]])$p[2])),
-                size = 4.5)
-
-ggpred_Q2.urbsubs_weev_quant
-
-```
-
-## Combine plots into one figure
 ### Urb Subtransects / City_dist
 ```{r}
 urbsubs_citydist_plots <- ggarrange(
@@ -1269,7 +1321,7 @@ urbsubs_citydist_plots <- ggarrange(
   plot
 
 dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q2_urbsubs_citydist_Defense.pdf"),
-             width = 14, height = 7.5)
+             width = 14.5, height = 8)
 ```
 
 
@@ -1294,6 +1346,6 @@ urbsubs_urbscore_plots <- ggarrange(
   plot
 
 dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q2_urbsubs_urbscore_Defense.pdf"),
-             width = 14, height = 7.5)
+             width = 14.5, height = 8)
 ```
 
