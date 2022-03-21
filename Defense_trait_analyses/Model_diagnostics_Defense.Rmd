@@ -439,7 +439,7 @@ ltx_gr_usc_m1 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + U
 # car::Anova(update(ltx_urbsubs_city_m1, Latex_weight_mg^(1/2) ~ (1|Block) + (1|Fam_uniq) + City_dist* Transect_ID), type = "II")
 
 # final model
-ltx_urbsubs_city_m1 <- glmmTMB(Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
+ltx_urbsubs_city_m1 <- glmmTMB(sqrt(Latex_weight_mg) ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
                         data = latex %>%
                           dplyr::filter(Transect_ID != "Rural"),
                         REML = F)
@@ -466,7 +466,7 @@ ltx_urbsubs_city_m1 <- glmmTMB(Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population
 
 
 # final ME model
-ltx_urbsubs_city_m2 <- glmmTMB(Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
+ltx_urbsubs_city_m2 <- glmmTMB(sqrt(Latex_weight_mg) ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID,
                         data = latex %>%
                           dplyr::filter(Transect_ID != "Rural"),
                         REML = F)
@@ -496,7 +496,7 @@ ltx_urbsubs_city_m2 <- glmmTMB(Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population
 
 
 # final model
-ltx_urbsubs_usc_m1 <- glmmTMB(Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
+ltx_urbsubs_usc_m1 <- glmmTMB(sqrt(Latex_weight_mg) ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
                         data = latex %>%
                           dplyr::filter(Transect_ID != "Rural"),
                         REML = F)
@@ -523,7 +523,7 @@ ltx_urbsubs_usc_m1 <- glmmTMB(Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population/
 
 
 # final ME model
-ltx_urbsubs_usc_m2 <- glmmTMB(Latex_weight_mg^(1/2) ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
+ltx_urbsubs_usc_m2 <- glmmTMB(sqrt(Latex_weight_mg) ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID,
                         data = latex %>%
                           dplyr::filter(Transect_ID != "Rural"),
                         REML = F)
