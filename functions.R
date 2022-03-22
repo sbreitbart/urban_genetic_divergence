@@ -73,7 +73,9 @@ DoLinearReg <- function(response_var, predictor_var, input_data){
 
 
 ## Create tidy ranova table-----
-### for regular g/lmer models
+### assessing if variation among pops/fams varies with
+### distance from city center
+#### for regular g/lmer models:
 CreateRanovaOutput <- function(lmer_model, var_name){
   
   m1 <- ranova(lmer_model)
@@ -130,7 +132,7 @@ CreateRanovaOutput <- function(lmer_model, var_name){
   return(tab1)
 }
 
-### for boostrapping models
+#### for boostrapping models:
 CreateRanovaOutput_bootstrap <- function(ranova_fam,
                                          ranova_pop,
                                          var_name){
@@ -164,6 +166,37 @@ CreateRanovaOutput_bootstrap <- function(ranova_fam,
     merge_at(j = 1) %>%
     fix_border_issues() %>%
     bold(i = ~ p <= 0.05, j = 3) %>%
+    autofit()
+  
+  return(tab1)
+}
+
+### assessing if variation among pops/fams varies by transect
+CreateRanovaOutput_Q2 <- function(lmer_model, var_name){
+
+  tab1 <- car::Anova(lmer_model) %>%
+    tidy() %>%
+    as.data.frame() %>%
+    dplyr::select(-df) %>%
+    dplyr::mutate_at(vars(c(2,3)), round, 3) %>%
+    dplyr::rename(.,
+                  p = 3,
+                  Variable = 1) %>%
+    dplyr::mutate(p = replace(p,
+                              p < 0.001,
+                              "<0.001")) %>%
+    dplyr::mutate(Variable = noquote(var_name)) %>%
+    flextable() %>%
+    flextable::compose(i = 1, j = 2,
+                       part = "header",
+                       value = as_paragraph("χ", as_sup("2"))) %>%
+    bold(i = ~ p <= 0.05, j = 3) %>%
+    align(j = c(2,3),
+          align = "center",
+          part = "header") %>%
+    align(j = c(2,3),
+          align = "center",
+          part = "body") %>%
     autofit()
   
   return(tab1)

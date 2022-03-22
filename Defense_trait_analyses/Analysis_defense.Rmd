@@ -639,21 +639,21 @@ flextable::save_as_html(ldmc_ranova1,
 ############ MEASURED ONLY IN 2020 #############
 ################################################
 # LDMC-------
-## Include City_dist
-ldmc_ranova_mod1 <- lmer(LDMC ~ (1|Population/Family) + (1|Block) + City_dist + Transect_ID,
+## test City_dist
+ldmc_ranova_mod1 <- lmer(LDMC ~ (1|Population/Family) + (1|Block) + City_dist,
                              data = sla_ldmc %>%
                           dplyr::filter(Transect_ID != "Rural"),
                            REML = T)
 
-## Exclude city_dist
+## test Transect
 ldmc_ranova_mod2 <- lmer(LDMC ~ (1|Population/Family) + (1|Block) + Transect_ID,
                              data = sla_ldmc %>%
                           dplyr::filter(Transect_ID != "Rural"),
-                           REML = T)
+                           REML = F)
 
 
-ldmc_ranova1 <- CreateRanovaOutput(ldmc_ranova_mod1, "LDMC (Distance + Transect)")
-ldmc_ranova2 <- CreateRanovaOutput(ldmc_ranova_mod2, "LDMC (Transect)")
+ldmc_ranova1 <- CreateRanovaOutput(ldmc_ranova_mod1, "LDMC (Distance)")
+ldmc_ranova2 <- CreateRanovaOutput_Q2(ldmc_ranova_mod2, "LDMC (Transect)")
 
 flextable::save_as_html(ldmc_ranova1,
                         ldmc_ranova2,
@@ -661,21 +661,21 @@ flextable::save_as_html(ldmc_ranova1,
 
 
 # SLA-----
-## Include City_dist
-sla_ranova_mod1 <- lmer(sqrt(SLA) ~ (1|Population/Family) + (1|Block) + City_dist + Transect_ID,
+## test City_dist
+sla_ranova_mod1 <- lmer(sqrt(SLA) ~ (1|Population/Family) + (1|Block) + City_dist,
                              data = sla_ldmc %>%
                           dplyr::filter(Transect_ID != "Rural"),
                            REML = T)
 
-## Exclude city_dist
+## test transect
 sla_ranova_mod2 <- lmer(sqrt(SLA) ~ (1|Population/Family) + (1|Block) + Transect_ID,
                              data = sla_ldmc %>%
                           dplyr::filter(Transect_ID != "Rural"),
-                           REML = T)
+                           REML = F)
 
 
-sla_ranova1 <- CreateRanovaOutput(sla_ranova_mod1, "SLA (Distance + Transect)")
-sla_ranova2 <- CreateRanovaOutput(sla_ranova_mod2, "SLA (Transect)")
+sla_ranova1 <- CreateRanovaOutput(sla_ranova_mod1, "SLA (Distance)")
+sla_ranova2 <- CreateRanovaOutput_Q2(sla_ranova_mod2, "SLA (Transect)")
 
 flextable::save_as_html(sla_ranova1,
                         sla_ranova2,
@@ -683,21 +683,21 @@ flextable::save_as_html(sla_ranova1,
 
 
 # Latex-----
-## Include City_dist
-latex_ranova_mod1 <- lmer(Latex_weight_mg^(1/2) ~ (1|Population/Family) + (1|Block) + City_dist + Transect_ID,
+## test City_dist
+latex_ranova_mod1 <- lmer(Latex_weight_mg^(1/2) ~ (1|Population/Family) + (1|Block) + City_dist,
                              data = latex %>%
                           dplyr::filter(Transect_ID != "Rural"),
                            REML = T)
 
-## Exclude city_dist
+## test transect
 latex_ranova_mod2 <- lmer(Latex_weight_mg^(1/2) ~ (1|Population/Family) + (1|Block) + Transect_ID,
                              data = latex %>%
                           dplyr::filter(Transect_ID != "Rural"),
-                           REML = T)
+                           REML = F)
 
 
-latex_ranova1 <- CreateRanovaOutput(latex_ranova_mod1, "Latex (Distance + Transect)")
-latex_ranova2 <- CreateRanovaOutput(latex_ranova_mod2, "Latex (Transect)")
+latex_ranova1 <- CreateRanovaOutput(latex_ranova_mod1, "Latex (Distance)")
+latex_ranova2 <- CreateRanovaOutput_Q2(latex_ranova_mod2, "Latex (Transect)")
 
 flextable::save_as_html(latex_ranova1,
                         latex_ranova2,
@@ -731,21 +731,21 @@ flextable::save_as_html(latex_ranova1,
 
 # Weevil scar length (quantitative)-----
 
-## Include City_dist
-weev_quant_ranova_mod1 <- lmer(Scar_length_cm^(1/3) ~ (1|Population/Family) + (1|Block) + City_dist + Transect_ID,
+## test City_dist
+weev_quant_ranova_mod1 <- lmer(Scar_length_cm^(1/3) ~ (1|Population/Family) + (1|Block) + City_dist,
                              data = weevil %>%
                           dplyr::filter(Scar_length_cm > 0 & Transect_ID != "Rural"),
                            REML = T)
 
-## Exclude city_dist
+## test transect
 weev_quant_ranova_mod2 <- lmer(Scar_length_cm^(1/3) ~ (1|Population/Family) + (1|Block) + Transect_ID,
                              data = weevil %>%
                           dplyr::filter(Scar_length_cm > 0 & Transect_ID != "Rural"),
-                           REML = T)
+                           REML = F)
 
 
-weev_quant_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod1, "Weevil Damage: Quantitative (Distance + Transect)")
-weev_quant_ranova2 <- CreateRanovaOutput(weev_quant_ranova_mod2, "Weevil Damage: Quantitative (Transect)")
+weev_quant_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod1, "Weevil Damage: Quantitative (Distance)")
+weev_quant_ranova2 <- CreateRanovaOutput_Q2(weev_quant_ranova_mod2, "Weevil Damage: Quantitative (Transect)")
 
 flextable::save_as_html(weev_quant_ranova1,
                         weev_quant_ranova2,
@@ -898,21 +898,21 @@ flextable::save_as_html(weev_bin_ranova1,
 ############ MEASURED ONLY IN 2020 #############
 ################################################
 # LDMC-------
-## Include Urb_score
-ldmc_ranova_mod1 <- lmer(LDMC ~ (1|Population/Family) + (1|Block) + Urb_score + Transect_ID,
+## test Urb_score
+ldmc_ranova_mod1 <- lmer(LDMC ~ (1|Population/Family) + (1|Block) + Urb_score,
                              data = sla_ldmc %>%
                           dplyr::filter(Transect_ID != "Rural"),
                            REML = T)
 
-## Exclude Urb_score
+## test transect
 ldmc_ranova_mod2 <- lmer(LDMC ~ (1|Population/Family) + (1|Block) + Transect_ID,
                              data = sla_ldmc %>%
                           dplyr::filter(Transect_ID != "Rural"),
-                           REML = T)
+                           REML = F)
 
 
-ldmc_ranova1 <- CreateRanovaOutput(ldmc_ranova_mod1, "LDMC (Distance + Transect)")
-ldmc_ranova2 <- CreateRanovaOutput(ldmc_ranova_mod2, "LDMC (Transect)")
+ldmc_ranova1 <- CreateRanovaOutput(ldmc_ranova_mod1, "LDMC (Urbanization Score)")
+ldmc_ranova2 <- CreateRanovaOutput_Q2(ldmc_ranova_mod2, "LDMC (Transect)")
 
 flextable::save_as_html(ldmc_ranova1,
                         ldmc_ranova2,
@@ -920,21 +920,21 @@ flextable::save_as_html(ldmc_ranova1,
 
 
 # SLA-----
-## Include Urb_score
-sla_ranova_mod1 <- lmer(sqrt(SLA) ~ (1|Population/Family) + (1|Block) + Urb_score + Transect_ID,
+## test Urb_score
+sla_ranova_mod1 <- lmer(sqrt(SLA) ~ (1|Population/Family) + (1|Block) + Urb_score,
                              data = sla_ldmc %>%
                           dplyr::filter(Transect_ID != "Rural"),
                            REML = T)
 
-## Exclude Urb_score
+## test transect
 sla_ranova_mod2 <- lmer(sqrt(SLA) ~ (1|Population/Family) + (1|Block) + Transect_ID,
                              data = sla_ldmc %>%
                           dplyr::filter(Transect_ID != "Rural"),
-                           REML = T)
+                           REML = F)
 
 
-sla_ranova1 <- CreateRanovaOutput(sla_ranova_mod1, "SLA (Distance + Transect)")
-sla_ranova2 <- CreateRanovaOutput(sla_ranova_mod2, "SLA (Transect)")
+sla_ranova1 <- CreateRanovaOutput(sla_ranova_mod1, "SLA (Urbanization Score)")
+sla_ranova2 <- CreateRanovaOutput_Q2(sla_ranova_mod2, "SLA (Transect)")
 
 flextable::save_as_html(sla_ranova1,
                         sla_ranova2,
@@ -942,21 +942,21 @@ flextable::save_as_html(sla_ranova1,
 
 
 # Latex-----
-## Include Urb_score
-latex_ranova_mod1 <- lmer(Latex_weight_mg^(1/2) ~ (1|Population/Family) + (1|Block) + Urb_score * Transect_ID,
+## test Urb_score
+latex_ranova_mod1 <- lmer(Latex_weight_mg^(1/2) ~ (1|Population/Family) + (1|Block) + Urb_score,
                              data = latex %>%
                           dplyr::filter(Transect_ID != "Rural"),
                            REML = T)
 
-## Exclude Urb_score
+## test transect
 latex_ranova_mod2 <- lmer(Latex_weight_mg^(1/2) ~ (1|Population/Family) + (1|Block) + Transect_ID,
                              data = latex %>%
                           dplyr::filter(Transect_ID != "Rural"),
-                           REML = T)
+                           REML = F)
 
 
-latex_ranova1 <- CreateRanovaOutput(latex_ranova_mod1, "Latex (Distance + Transect)")
-latex_ranova2 <- CreateRanovaOutput(latex_ranova_mod2, "Latex (Transect)")
+latex_ranova1 <- CreateRanovaOutput(latex_ranova_mod1, "Latex (Urbanization Score)")
+latex_ranova2 <- CreateRanovaOutput_Q2(latex_ranova_mod2, "Latex (Transect)")
 
 flextable::save_as_html(latex_ranova1,
                         latex_ranova2,
@@ -990,21 +990,21 @@ flextable::save_as_html(latex_ranova1,
 
 # Weevil scar length (quantitative)-----
 
-## Include Urb_score
-weev_quant_ranova_mod1 <- lmer(Scar_length_cm^(1/3) ~ (1|Population/Family) + (1|Block) + Urb_score + Transect_ID,
+## test Urb_score
+weev_quant_ranova_mod1 <- lmer(Scar_length_cm^(1/3) ~ (1|Population/Family) + (1|Block) + Urb_score,
                              data = weevil %>%
                           dplyr::filter(Scar_length_cm > 0 & Transect_ID != "Rural"),
                            REML = T)
 
-## Exclude Urb_score
+## test transect
 weev_quant_ranova_mod2 <- lmer(Scar_length_cm^(1/3) ~ (1|Population/Family) + (1|Block) + Transect_ID,
                              data = weevil %>%
                           dplyr::filter(Scar_length_cm > 0 & Transect_ID != "Rural"),
-                           REML = T)
+                           REML = F)
 
 
-weev_quant_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod1, "Weevil Damage: Quantitative (Distance + Transect)")
-weev_quant_ranova2 <- CreateRanovaOutput(weev_quant_ranova_mod2, "Weevil Damage: Quantitative (Transect)")
+weev_quant_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod1, "Weevil Damage: Quantitative (Urbanization Score)")
+weev_quant_ranova2 <- CreateRanovaOutput_Q2(weev_quant_ranova_mod2, "Weevil Damage: Quantitative (Transect)")
 
 flextable::save_as_html(weev_quant_ranova1,
                         weev_quant_ranova2,
