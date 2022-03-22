@@ -765,11 +765,11 @@ flextable::save_as_html(weev_quant_ranova1,
 
 
 # Weevil scar length (binary)-----
-## include city_dist-----
+## test city_dist-----
 ### take out fam
 full <- glmer(Scar_binary ~
                 # (1|Block) + (1|Year) + 
-                (1|Population) + City_dist + Transect_ID,
+                (1|Population) + City_dist,
                               data = weevil %>%
                 dplyr::filter(Transect_ID != "Rural"),
                               family = "binomial"(link = "logit"),
@@ -790,9 +790,10 @@ reduced <- glmer(Scar_binary ~
   )
 
 weev_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 100)
+          nsim = 1000,
+          cl = makeCluster(rep("localhost", 6)))
 
-tidy(weev_ranova.pop) # Pop: p ~ 0.5
+tidy(weev_ranova.pop) # Pop: p ~ 0.29
 
 
 ### take out pop
@@ -817,16 +818,17 @@ reduced <- glmer(Scar_binary ~
   )
 
 weev_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 100)
+          nsim = 1000,
+          cl = makeCluster(rep("localhost", 6)))
 
-tidy(weev_ranova.fam) # Family: p ~ 0.56
+tidy(weev_ranova.fam) # Family: p ~ 0.51
 
 
-## exclude city_dist-----
-### take out fam
-full <- glmer(Scar_binary ~
+
+## test transect-----
+test_tr <- glmer(Scar_binary ~
                 # (1|Block) + (1|Year) + 
-                (1|Population) + Transect_ID,
+                (1|Population/Family) + Transect_ID,
                               data = weevil %>%
                 dplyr::filter(Transect_ID != "Rural"),
                               family = "binomial"(link = "logit"),
@@ -834,58 +836,14 @@ full <- glmer(Scar_binary ~
   ,control=glmerControl(optimizer="bobyqa",
                             optCtrl=list(maxfun=2e5))
   )
-
-reduced <- glmer(Scar_binary ~
-                # (1|Block) + (1|Year) + 
-                (1|Population),
-                              data = weevil %>%
-                dplyr::filter(Transect_ID != "Rural"),
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
-
-weev_ranova.pop2 <- PBmodcomp(full, reduced,
-          nsim = 100)
-
-tidy(weev_ranova.pop2) # Pop: p ~ 0.95
-
-
-### take out pop
-full <- glmer(Scar_binary ~
-                # (1|Block) + (1|Year) + 
-                (1|Fam_uniq) + Transect_ID,
-                              data = weevil %>%
-                dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
-
-reduced <- glmer(Scar_binary ~
-                # (1|Block) + (1|Year) + 
-                (1|Fam_uniq),
-                              data = weevil %>%
-                dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
-
-weev_ranova.fam2 <- PBmodcomp(full, reduced,
-          nsim = 100)
-
-tidy(weev_ranova.fam2) # Family: p ~ 0.98
-
 
 
 # merge Pop and Fam ranovas
-## include city_dist
-weev_bin_ranova1 <- CreateRanovaOutput_bootstrap(weev_ranova.fam, weev_ranova.pop, "Weevil Damage: Binary (Distance + Transect)")
+## test city_dist
+weev_bin_ranova1 <- CreateRanovaOutput_bootstrap(weev_ranova.fam, weev_ranova.pop, "Weevil Damage: Binary (Distance)")
 
-## exclude city_dist
-weev_bin_ranova2 <- CreateRanovaOutput_bootstrap(weev_ranova.fam2, weev_ranova.pop2, "Weevil Damage: Binary (Transect)")
+## test transect
+weev_bin_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Weevil Damage: Binary (Transect)")
 
 flextable::save_as_html(weev_bin_ranova1,
                         weev_bin_ranova2,
@@ -1024,11 +982,11 @@ flextable::save_as_html(weev_quant_ranova1,
 
 
 # Weevil scar length (binary)-----
-## include Urb_score-----
+## test Urb_score-----
 ### take out fam
 full <- glmer(Scar_binary ~
                 # (1|Block) + (1|Year) + 
-                (1|Population) + Urb_score + Transect_ID,
+                (1|Population) + Urb_score,
                               data = weevil %>%
                 dplyr::filter(Transect_ID != "Rural"),
                               family = "binomial"(link = "logit"),
@@ -1049,15 +1007,16 @@ reduced <- glmer(Scar_binary ~
   )
 
 weev_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 100)
+          nsim = 1000,
+          cl = makeCluster(rep("localhost", 6)))
 
-tidy(weev_ranova.pop) # Pop: p ~ 0.95
+tidy(weev_ranova.pop) # Pop: p ~ 0.73
 
 
 ### take out pop
 full <- glmer(Scar_binary ~
                 # (1|Block) + (1|Year) + 
-                (1|Fam_uniq) + Urb_score + Transect_ID,
+                (1|Fam_uniq) + Urb_score,
                               data = weevil %>%
                 dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
              na.action = na.exclude # THIS LINE IS IMPORTANT
@@ -1076,75 +1035,22 @@ reduced <- glmer(Scar_binary ~
   )
 
 weev_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 100)
+          nsim = 1000,
+          cl = makeCluster(rep("localhost", 6)))
 
-tidy(weev_ranova.fam) # Family: p ~ 0.93
-
-
-## exclude Urb_score-----
-### take out fam
-full <- glmer(Scar_binary ~
-                # (1|Block) + (1|Year) + 
-                (1|Population) + Transect_ID,
-                              data = weevil %>%
-                dplyr::filter(Transect_ID != "Rural"),
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
-
-reduced <- glmer(Scar_binary ~
-                # (1|Block) + (1|Year) + 
-                (1|Population),
-                              data = weevil %>%
-                dplyr::filter(Transect_ID != "Rural"),
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
-
-weev_ranova.pop2 <- PBmodcomp(full, reduced,
-          nsim = 100)
-
-tidy(weev_ranova.pop2) # Pop: p ~ 0.99
+tidy(weev_ranova.fam) # Family: p ~ 0.7
 
 
-### take out pop
-full <- glmer(Scar_binary ~
-                # (1|Block) + (1|Year) + 
-                (1|Fam_uniq) + Transect_ID,
-                              data = weevil %>%
-                dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
-
-reduced <- glmer(Scar_binary ~
-                # (1|Block) + (1|Year) + 
-                (1|Fam_uniq),
-                              data = weevil %>%
-                dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
-
-weev_ranova.fam2 <- PBmodcomp(full, reduced,
-          nsim = 100)
-
-tidy(weev_ranova.fam2) # Family: p ~ 0.96
-
+## test transect-----
+# already done for city_dist above: use this object: test_tr
 
 
 # merge Pop and Fam ranovas
-## include Urb_score
-weev_bin_ranova1 <- CreateRanovaOutput_bootstrap(weev_ranova.fam, weev_ranova.pop, "Weevil Damage: Binary (Distance + Transect)")
+## test Urb_score
+weev_bin_ranova1 <- CreateRanovaOutput_bootstrap(weev_ranova.fam, weev_ranova.pop, "Weevil Damage: Binary (Distance)")
 
-## exclude Urb_score
-weev_bin_ranova2 <- CreateRanovaOutput_bootstrap(weev_ranova.fam2, weev_ranova.pop2, "Weevil Damage: Binary (Transect)")
+## test transect
+weev_bin_ranova2 # created in city_dist chunk above
 
 flextable::save_as_html(weev_bin_ranova1,
                         weev_bin_ranova2,
@@ -1352,4 +1258,19 @@ all_rsq <- lapply(all_models[-c(4:5)], lapply, r.squaredGLMM) %>%
 ```
 
 
+
+# Calculate heritability
+## Just looking at gradient models- all pops included
+h2 represents the average heritability across populations after removing the genetic effects due to population differences.
+```{r}
+# LDMC
+ldmc_ranova_mod1
+h2_ldmc <- Calc_narrow_sense_h(0.008893,
+                    0,
+                    0.084891) %T>%
+  print()
+
+
+# SLA
+```
 

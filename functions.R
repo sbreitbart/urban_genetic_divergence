@@ -202,6 +202,16 @@ CreateRanovaOutput_Q2 <- function(lmer_model, var_name){
   return(tab1)
 }
 
+## Calculate heritability
+Calc_narrow_sense_h <- function(fam_var, pop_var, resid_var){
+  add_var <- 2*(fam_var^2)
+  total_wp_var <- (fam_var^2) + # family
+    (pop_var^2) + # population
+    (resid_var^2) # residual
+  h2 <- add_var/total_wp_var
+  return(h2)
+}
+
 ## Create theme for figures-----
 theme_1 <- function(){ 
   
