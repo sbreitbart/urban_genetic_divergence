@@ -39,331 +39,65 @@ renv::activate()
 renv::snapshot()
 
 # Set up notebook
-## Load packages
-```{r, warning=FALSE, message=FALSE}
-library(dplyr)
-library(reshape)
-library(reshape2)
-library(tidyr)
-library(tidyverse)
-library(readxl)
-library(broom)
-library(knitr)
-library(ggplot2)
-library(ggExtra)
-library("ggpubr")
-library(devtools)
-library(glmmTMB)
-library(rpart)
-library("tibble", lib.loc="~/R/win-library/3.5")
-library(ISLR)
-library(DHARMa)
-library(MASS)
-library(car)
-library(data.table)
-library(plyr)
-library(dplyr)
-library(MuMIn)
-library(ggplot2)
-library(gridExtra)
-library(Hmisc)
-library(lme4)
-library(nlme)
-library(reshape)
-library(lmerTest)
-library(vegan)
-library(lindia)
-library(e1071)
-library(ggpubr)
-library(forcats)
-library(car)
-library(multcomp)
-library(lsmeans)
-library(ggbiplot)
-library(ggplot2)
-require(MASS)
-require(scales)
-require(car)
-require(ggplot2)
-require(ggiraph)
-require(ggiraphExtra)
-library(geosphere)
-library(vctrs)
-library(here)
-library(stringi)
-```
-
-## Make functions
+## Load libraries & functions
 ```{r}
-
-  # make filename a string (from symbol)
-  filename1 <- toString(formula(full_model_dist.gradient)[[2]])
-
-  # can't figure out how to remove space from filename so it's staying for now...
-  path_out = here::here("./Figures_Tables/ANOVA/1")
-  
- # export list to csv named for herbivore
-  lapply(A_citydist, function(x) write.table(data.frame(x),
-                                             gsub(" ", "", paste(path_out,
-                                                    filename1,
-                                                    "_ANOVA_dist.csv")),
-                                             append= T,
-                                             sep=',' ))
-  
-  
-  ######################################################
-  ####### Urbanization Score as a predictor: list/export
-
-  A_urbscore <- list(
-      print(paste('Gradient: Full model ANOVA: ', formula(full_model_urbscore.gradient)), quote = FALSE),
-      print(car::Anova(full_model_urbscore.gradient)),
-    
-      print('Gradient: Full model R-squared: ', quote = FALSE),
-      print(r.squaredGLMM(full_model_urbscore.gradient)),
-      
-  # Urban subtransects/City distance x subtransect (urban sites ONLY) : FULL MODEL    
-      print(paste('Urban Subtransects: Full model ANOVA: ', formula(full_model_urbscore.urbsubs)), quote = FALSE),
-      print(car::Anova(full_model_urbscore.urbsubs)),
-    
-      print('Urban Subtransects: Full model R-squared: ', quote = FALSE),
-      print(r.squaredGLMM(full_model_urbscore.urbsubs)),
-      
-    # Urban subtransects/City distance x subtransect (urban sites ONLY) : MAIN EFFECTS ONLY   
-      print(paste('Urban Subtransects: Main effects model ANOVA: ', formula(main_effects_urbscore.urbsubs)), quote = FALSE),
-      print(car::Anova(main_effects_urbscore.urbsubs)),
-        
-      print('Urban Subtransects: Main effects model R-squared: ', quote = FALSE),
-      print(r.squaredGLMM(main_effects_urbscore.urbsubs)),
-    
-      cat(sep="\n\n"),
-    
-      print(paste("Gradient AIC (full model) =", AIC(full_model_urbscore.gradient)), quote = FALSE),
-      print(paste("Urban subtransects AIC (full model) =", AIC(full_model_urbscore.urbsubs)), quote = FALSE),
-      print(paste("Urban subtransects AIC (main effects model) =", AIC(main_effects_urbscore.urbsubs)), quote = FALSE)
-      
-  )
-  
-   # export list to csv named for herbivore
-  lapply(A_urbscore, function(x) write.table(data.frame(x),
-                                             gsub(" ", "", paste(path_out,
-                                                    filename1,
-                                                    "_ANOVA_urbscore.csv")),
-                                             append= T,
-                                             sep=',' ))
-
-    # return( A_urbscore )
-
-}
-
-# modify the ANova_etc function to accomodate Monarch models, one of which has a zero-inflated model that r.squaredglmm can't handle (urbanization score/gradient)
-Anova_etc_monarch <- function(full_model_dist.gradient,
-                      full_model_dist.urbsubs,
-                      main_effects_dist.urbsubs,
-                      full_model_urbscore.gradient,
-                      full_model_urbscore.urbsubs,
-                      main_effects_urbscore.urbsubs) {
-  
-  ######################################################   
-  ## Distance to city center as a predictor: list/export
-  
-  # Gradient/City distance
-  A_citydist <- list(
-      print(paste('Gradient: Full model ANOVA: ', formula(full_model_dist.gradient)), quote = FALSE),
-      print(car::Anova(full_model_dist.gradient)),
-    
-      print('Gradient: Full model R-squared: ', quote = FALSE),
-      print(r.squaredGLMM(full_model_dist.gradient)),
-      
-  # Urban subtransects/City distance x subtransect (urban sites ONLY) : FULL MODEL    
-      print(paste('Urban Subtransects: Full model ANOVA: ', formula(full_model_dist.urbsubs)), quote = FALSE),
-      print(car::Anova(full_model_dist.urbsubs)),
-    
-      # print('Urban Subtransects: Full model R-squared: ', quote = FALSE),
-      # print(r.squaredGLMM(full_model_dist.urbsubs)),
-      
-    # Urban subtransects/City distance x subtransect (urban sites ONLY) : MAIN EFFECTS ONLY   
-      print(paste('Urban Subtransects: Main effects model ANOVA: ', formula(main_effects_dist.urbsubs)), quote = FALSE),
-      print(car::Anova(main_effects_dist.urbsubs)),
-        
-      # print('Urban Subtransects: Main effects model R-squared: ', quote = FALSE),
-      # print(r.squaredGLMM(main_effects_dist.urbsubs)),
-    
-      cat(sep="\n\n"),
-    
-      print(paste("Gradient AIC (full model) =", AIC(full_model_dist.gradient)), quote = FALSE),
-      print(paste("Urban subtransects AIC (full model) =", AIC(full_model_dist.urbsubs)), quote = FALSE),
-      print(paste("Urban subtransects AIC (main effects model) =", AIC(main_effects_dist.urbsubs)), quote = FALSE)
-      
-  )
-  
-  # make filename a string (from symbol)
-  filename1 <- toString(formula(full_model_dist.gradient)[[2]])
-
-  # can't figure out how to remove space from filename so it's staying for now...
-  path_out = here::here("./Figures_Tables/ANOVA/1")
-  
- # export list to csv named for herbivore
-  lapply(A_citydist, function(x) write.table(data.frame(x),
-                                             gsub(" ", "", paste(path_out,
-                                                    filename1,
-                                                    "_ANOVA_dist.csv")),
-                                             append= T,
-                                             sep=',' ))
-  
-  
-  ######################################################
-  ####### Urbanization Score as a predictor: list/export
-
-  A_urbscore <- list(
-      print(paste('Gradient: Full model ANOVA: ', formula(full_model_urbscore.gradient)), quote = FALSE),
-      print(car::Anova(full_model_urbscore.gradient)),
-    
-      print('Gradient: Full model R-squared: ', quote = FALSE),
-      print(r.squaredGLMM(full_model_urbscore.gradient)),
-      
-  # Urban subtransects/City distance x subtransect (urban sites ONLY) : FULL MODEL    
-      print(paste('Urban Subtransects: Full model ANOVA: ', formula(full_model_urbscore.urbsubs)), quote = FALSE),
-      print(car::Anova(full_model_urbscore.urbsubs)),
-    
-      print('Urban Subtransects: Full model R-squared: ', quote = FALSE),
-      print(r.squaredGLMM(full_model_urbscore.urbsubs)),
-      
-    # Urban subtransects/City distance x subtransect (urban sites ONLY) : MAIN EFFECTS ONLY   
-      print(paste('Urban Subtransects: Main effects model ANOVA: ', formula(main_effects_urbscore.urbsubs)), quote = FALSE),
-      print(car::Anova(main_effects_urbscore.urbsubs)),
-        
-      print('Urban Subtransects: Main effects model R-squared: ', quote = FALSE),
-      print(r.squaredGLMM(main_effects_urbscore.urbsubs)),
-
-      cat(sep="\n\n"),
-    
-      print(paste("Gradient AIC (full model) =", AIC(full_model_urbscore.gradient)), quote = FALSE),
-      print(paste("Urban subtransects AIC (full model) =", AIC(full_model_urbscore.urbsubs)), quote = FALSE),
-      print(paste("Urban subtransects AIC (main effects model) =", AIC(main_effects_urbscore.urbsubs)), quote = FALSE)
-      
-  )
-  
-   # export list to csv named for herbivore
-  lapply(A_urbscore, function(x) write.table(data.frame(x),
-                                             gsub(" ", "", paste(path_out,
-                                                    filename1,
-                                                    "_ANOVA_urbscore.csv")),
-                                             append= T,
-                                             sep=',' ))
-
-    # return( A_urbscore )
-
-}
-
-# modify the ANova_etc function to accomodate Rhyssomatus models, three of which have zero-inflated models that r.squaredglmm can't handle (all models w/all sites (gradient))
-Anova_etc_rhysso <- function(full_model_dist.gradient,
-                      full_model_dist.urbsubs,
-                      main_effects_dist.urbsubs,
-                      full_model_urbscore.gradient,
-                      full_model_urbscore.urbsubs,
-                      main_effects_urbscore.urbsubs) {
-  
-  ######################################################   
-  ## Distance to city center as a predictor: list/export
-  
-  # Gradient/City distance
-  A_citydist <- list(
-      print(paste('Gradient: Full model ANOVA: ', formula(full_model_dist.gradient)), quote = FALSE),
-      print(car::Anova(full_model_dist.gradient)),
-    
-      # print('Gradient: Full model R-squared: ', quote = FALSE),
-      # print(r.squaredGLMM(full_model_dist.gradient)),
-      
-  # Urban subtransects/City distance x subtransect (urban sites ONLY) : FULL MODEL    
-      print(paste('Urban Subtransects: Full model ANOVA: ', formula(full_model_dist.urbsubs)), quote = FALSE),
-      print(car::Anova(full_model_dist.urbsubs)),
-    
-      print('Urban Subtransects: Full model R-squared: ', quote = FALSE),
-      print(r.squaredGLMM(full_model_dist.urbsubs)),
-      
-    # Urban subtransects/City distance x subtransect (urban sites ONLY) : MAIN EFFECTS ONLY   
-      print(paste('Urban Subtransects: Main effects model ANOVA: ', formula(main_effects_dist.urbsubs)), quote = FALSE),
-      print(car::Anova(main_effects_dist.urbsubs)),
-        
-      print('Urban Subtransects: Main effects model R-squared: ', quote = FALSE),
-      print(r.squaredGLMM(main_effects_dist.urbsubs)),
-    
-      cat(sep="\n\n"),
-    
-      print(paste("Gradient AIC (full model) =", AIC(full_model_dist.gradient)), quote = FALSE),
-      print(paste("Urban subtransects AIC (full model) =", AIC(full_model_dist.urbsubs)), quote = FALSE),
-      print(paste("Urban subtransects AIC (main effects model) =", AIC(main_effects_dist.urbsubs)), quote = FALSE)
-      
-  )
-  
-  # make filename a string (from symbol)
-  filename1 <- toString(formula(full_model_dist.gradient)[[2]])
-
-  # can't figure out how to remove space from filename so it's staying for now...
-  path_out = here::here("./Figures_Tables/ANOVA/1")
-  
- # export list to csv named for herbivore
-  lapply(A_citydist, function(x) write.table(data.frame(x),
-                                             gsub(" ", "", paste(path_out,
-                                                    filename1,
-                                                    "_ANOVA_dist.csv")),
-                                             append= T,
-                                             sep=',' ))
-  
-  
-  ######################################################
-  ####### Urbanization Score as a predictor: list/export
-
-  A_urbscore <- list(
-      print(paste('Gradient: Full model ANOVA: ', formula(full_model_urbscore.gradient)), quote = FALSE),
-      print(car::Anova(full_model_urbscore.gradient)),
-    
-      # print('Gradient: Full model R-squared: ', quote = FALSE),
-      # print(r.squaredGLMM(full_model_urbscore.gradient)),
-      
-  # Urban subtransects/City distance x subtransect (urban sites ONLY) : FULL MODEL    
-      print(paste('Urban Subtransects: Full model ANOVA: ', formula(full_model_urbscore.urbsubs)), quote = FALSE),
-      print(car::Anova(full_model_urbscore.urbsubs)),
-    
-      print('Urban Subtransects: Full model R-squared: ', quote = FALSE),
-      print(r.squaredGLMM(full_model_urbscore.urbsubs)),
-      
-    # Urban subtransects/City distance x subtransect (urban sites ONLY) : MAIN EFFECTS ONLY   
-      print(paste('Urban Subtransects: Main effects model ANOVA: ', formula(main_effects_urbscore.urbsubs)), quote = FALSE),
-      print(car::Anova(main_effects_urbscore.urbsubs)),
-        
-      print('Urban Subtransects: Main effects model R-squared: ', quote = FALSE),
-      print(r.squaredGLMM(main_effects_urbscore.urbsubs)),
-    
-      cat(sep="\n\n"),
-    
-      print(paste("Gradient AIC (full model) =", AIC(full_model_urbscore.gradient)), quote = FALSE),
-      print(paste("Urban subtransects AIC (full model) =", AIC(full_model_urbscore.urbsubs)), quote = FALSE),
-      print(paste("Urban subtransects AIC (main effects model) =", AIC(main_effects_urbscore.urbsubs)), quote = FALSE)
-      
-  )
-  
-   # export list to csv named for herbivore
-  lapply(A_urbscore, function(x) write.table(data.frame(x),
-                                             gsub(" ", "", paste(path_out,
-                                                    filename1,
-                                                    "_ANOVA_urbscore.csv")),
-                                             append= T,
-                                             sep=',' ))
-
-    # return( A_urbscore )
-
-}
+source("libraries.R")
+source("functions.R")
 ```
 
 ## Import data
 ```{r}
-herbivores <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_herbivores_clean.csv")) %>%
-  dplyr::select(., -c(1:2)) %>%
-  mutate(Population = factor(Population),
-         Family = factor(Family),
-         Block = factor(Block))
-         
+herbivores <- read.csv(here::here("./Joined_annual_data/herbivores.csv")) %>%
+  dplyr::select(., -1) %>%
+  dplyr::mutate_at(vars(c("Population",
+                          "Family",
+                          "Replicate",
+                          "Block",
+                          "Transect_ID",
+                          "Sample",
+                          "Patch_ID",
+                          "Urb_Rur",
+                          "Year",
+                          "Surveyor",
+                          "Date")),
+                   as.character) %>%
+    dplyr::mutate_at(vars(c("Population",
+                            "Family",
+                            "Replicate",
+                            "Block",
+                            "Transect_ID",
+                            "Sample",
+                            "Patch_ID",
+                            "Urb_Rur",
+                            "Year",
+                            "Surveyor",
+                          "Date")),
+                     as.factor)
+
+str(herbivores)  
+```
+
+## Import final models
+```{r}
+source(knitr::purl("Defense_trait_analyses/Model_diagnostics_herbivores.Rmd", quiet=TRUE))
+
+# all_models <- list(
+# ldmc_mods          , # LDMC
+# sla_mods           , # SLA
+# latex_mods         , # Latex
+# herb_early_mods    , # Herbivory: before flowering
+# herb_late_mods     , # Herbivory: after flowering
+# weev_mods_binomial , # Weevil scar: binomial (part of hurdle models)
+# weev_mods_quant)     # Weevil scar: quantitative (part of hurdle models)
+# 
+# names(all_models) <- c(
+# "ldmc_mods"          ,
+# "sla_mods"           ,
+# "latex_mods"         ,
+# "herb_early_mods"    ,
+# "herb_late_mods"     ,
+# "weev_mods_binomial" ,
+# "weev_mods_quant")
 ```
 
 # Ordination
