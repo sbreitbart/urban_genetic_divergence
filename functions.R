@@ -212,6 +212,14 @@ Calc_narrow_sense_h <- function(fam_var, pop_var, resid_var){
   return(h2)
 }
 
+## Calculate Qst
+Calc_qst <- function(fam_var, pop_var){
+  num_qst <- pop_var^2
+  dem_qst <- pop_var^2 + (2*(fam_var^2))
+  qst <- num_qst/dem_qst
+  return(qst)
+}
+
 ## Create theme for figures-----
 theme_1 <- function(){ 
   
