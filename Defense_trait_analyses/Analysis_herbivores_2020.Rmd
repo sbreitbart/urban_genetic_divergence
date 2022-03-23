@@ -47,53 +47,11 @@ source("functions.R")
 
 ## Import data
 ```{r}
-herbivores <- read.csv(here::here("./Joined_annual_data/herbivores.csv")) %>%
-  dplyr::select(., -1) %>%
-  dplyr::mutate_at(vars(c("Population",
-                          "Family",
-                          "Replicate",
-                          "Block",
-                          "Transect_ID",
-                          "Sample",
-                          "Patch_ID",
-                          "Urb_Rur",
-                          "Year",
-                          "Surveyor",
-                          "Date")),
-                   as.character) %>%
-    dplyr::mutate_at(vars(c("Population",
-                            "Family",
-                            "Replicate",
-                            "Block",
-                            "Transect_ID",
-                            "Sample",
-                            "Patch_ID",
-                            "Urb_Rur",
-                            "Year",
-                            "Surveyor",
-                          "Date")),
-                     as.factor)
-
-str(herbivores)  
-
-
-herbivores %<>%
-  dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
-```
-
-## Import final models
-```{r}
-source(knitr::purl("Defense_trait_analyses/Model_diagnostics_herbivores.Rmd", quiet=TRUE))
-
-all_models <- list(
-monarch_mods          , 
-asclepiadis_mods           , 
-clivicollis_mods)
-
-names(all_models) <- c(
-"monarch_mods"          ,
-"asclepiadis_mods"           ,
-"clivicollis_mods"         )
+herbivores <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_herbivores_clean.csv")) %>%
+  dplyr::select(., -c(1:2)) %>%
+  mutate(Population = factor(Population),
+         Family = factor(Family),
+         Block = factor(Block))
 ```
 
 # Ordination

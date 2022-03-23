@@ -17,6 +17,61 @@ ID_intxn <- function(model){
   return(sig.intxns)
 }
 
+### Tidy up anova into table
+tidy_anova <- function(model){
+  type.choice <- ifelse(ID_intxn(model) > 0,
+                        3,
+                        2)
+  return(
+    car::Anova(model, type = type.choice) %>%
+      broom.mixed::tidy() %>%
+      as.data.frame() %>%
+      dplyr::mutate(Response = as.character(formula(model)[2]),
+                    .before = term) %>%
+      # dplyr::mutate(Model = paste(n(model)),
+      #               .before = term) %>%
+      dplyr::mutate(Sites = case_when(
+        str_detect(as.character(formula(model)[3]), "Transect_ID") == TRUE ~ "Urban Only",
+        str_detect(as.character(formula(model)[3]), "Transect_ID") == FALSE ~ "All"),
+        .before = term) %>%
+      dplyr::mutate(Significance = case_when(p.value < 0.001 ~ "***",
+                                             p.value < 0.01 ~ "**",
+                                             p.value <= 0.05 ~ "*")) %>%
+      # dplyr::mutate(., AIC = as.numeric(AIC(model))) %>%
+      mutate_if(is.numeric, round, 3)      %>%
+      dplyr::mutate(p.value = replace(p.value, Significance == "***", "<0.001"))  %>%
+      dplyr::select(., -df) %>%
+      dplyr::rename(., Chi_sq = statistic,
+                    Predictor = term,
+                    p = p.value) %>%
+      unite("p", p:Significance, sep = "", na.rm = TRUE) %>%
+      dplyr::mutate_if(.,
+                       is.character,
+                       str_replace_all,
+                       pattern = c("City_dist"),
+                       replacement = c("Distance to City Center")) %>%
+      dplyr::mutate_if(.,
+                       is.character,
+                       str_replace_all,
+                       pattern = c("Urb_score"),
+                       replacement = c("Urbanization Score")) %>%
+      dplyr::mutate_if(.,
+                       is.character,
+                       str_replace_all,
+                       pattern = c("Transect_ID"),
+                       replacement = c("Subtransect")) %>%
+      dplyr::mutate_if(.,
+                       is.character,
+                       str_replace_all,
+                       pattern = c(":"),
+                       replacement = c(" x ")) %>%
+      dplyr::mutate_if(.,
+                       is.character,
+                       str_replace_all,
+                       pattern = c("Year x Urbanization Score"),
+                       replacement = c("Urbanization Score x Year"))
+  )}
+
 ### Next, create best and alt models for individual lists
 ### of traits
 make_all_anovas_tidy <- function(anova_list){
@@ -48,6 +103,36 @@ make_all_anovas_tidy <- function(anova_list){
     
   )
 }
+
+### For only one model (e.g., alt models), use this slightly
+### altered function that doesn't include horizontal bar
+make_all_anovas_tidy_altmods <- function(anova_list){
+  return(
+    lapply(anova_list, tidy_anova) %>%
+      lapply(., as.data.frame) %>%
+      purrr::reduce(full_join) %>%
+      replace(., is.na(.), "-") %>%
+      dplyr::filter(Predictor != "(Intercept)") %>%
+      flextable::flextable() %>% 
+      merge_v(j = "Response") %>% 
+      merge_v(j = "Sites") %>% 
+      valign(valign = "top")%>%
+      flextable::autofit() %>%
+      align(j = c(1, 3), align = "left", part = "all") %>%
+      align(j = c(2,4,5), align = "center", part = "all") %>%
+      align(j = c(2,4,5), align = "center", part = "header") %>%
+      flextable::compose(i = 1, j = 4, part = "header",
+                         value = as_paragraph("χ", as_sup("2"))) %>%
+      flextable::compose(i = 1, j = 5, part = "header",
+                         value = as_paragraph(as_i("p"))) %>%
+      fontsize(size = 12, part = "header") %>%
+      fontsize(size = 12, part = "body") %>%
+      #theme_booktabs()%>%
+      fix_border_issues()
+    
+  )
+}
+
 
 ## Do linear regression on multiple models-----
 # (for cardenolide analysis)

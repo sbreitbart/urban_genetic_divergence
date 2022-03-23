@@ -604,7 +604,7 @@ clivicollis_urbsubs_usc_m1 <- glmmTMB(LC_binary ~
 
 
 clivicollis_urbsubs_usc_m2 <- glmmTMB(LC_binary ~
-                                (1|Block) +
+                                # (1|Block) +
                                 (1|Population/Family) +
                                 (1|Year) +
                                 (1|Sample) +
@@ -612,7 +612,7 @@ clivicollis_urbsubs_usc_m2 <- glmmTMB(LC_binary ~
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
               family = binomial(),
-              REML = F) 
+              REML = F) # won't run unless I take out block
 
 performance::check_model(clivicollis_urbsubs_usc_m2) # looks fine
 plot(simulateResiduals(clivicollis_urbsubs_usc_m2)) # looks fine
