@@ -220,6 +220,23 @@ Calc_qst <- function(fam_var, pop_var){
   return(qst)
 }
 
+## Calculate h2 and Qst in same function
+Calc_h2_qst <- Calc_narrow_sense_h <- function(fam_var, pop_var, resid_var){
+  add_var <- 2*(fam_var^2)
+  total_wp_var <- (fam_var^2) + # family
+    (pop_var^2) + # population
+    (resid_var^2) # residual
+  h2 <- add_var/total_wp_var
+  
+  num_qst <- pop_var^2
+  dem_qst <- pop_var^2 + (2*(fam_var^2))
+  qst <- num_qst/dem_qst
+  
+  print(paste0("Narrow-sense heritability: ", h2))
+  print(paste0("Qst: ", qst))
+}
+
+
 ## Create theme for figures-----
 theme_1 <- function(){ 
   

@@ -57,6 +57,10 @@ weevil_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data
   dplyr::select(., -c(1:2, 13)) %>%
   anti_join(., repeats)
 
+herbivores_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_herbivores_clean.csv")) %>%
+  dplyr::select(., -c(1:2, 25)) %>%
+  anti_join(., repeats)
+
 
 
 # REPRODUCTIVE
@@ -91,6 +95,11 @@ herbivory_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_d
 weevil_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_weevil_damage_clean.csv")) %>%
   dplyr::select(., -c(1, 18)) %>%
   anti_join(., repeats)
+
+herbivores_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_herbivores_clean.csv")) %>%
+  dplyr::select(., -c(1, 16)) %>%
+  anti_join(., repeats)
+
 
 
 
@@ -178,6 +187,23 @@ weev_2021 <- weevil_2021 %>%
   dplyr::select(-c(8:13))
 
 weevil_20_21 <- rbind.fill(weev_2020, weev_2021)
+```
+
+## Herbivores
+```{r}
+herbivore_2020 <- herbivores_2020 %>%
+  dplyr::mutate(Year = "2020",
+                Surveyor = "Kavya") %>%
+  dplyr::mutate(Sample = recode(
+    Sample,
+    July = "Early",
+    August = "Late"))
+
+herbivore_2021 <- herbivores_2021 %>%
+  dplyr::mutate(Year = "2021") %>%
+  dplyr::select(-Pop_ID)
+
+herbivores_20_21 <- rbind.fill(herbivore_2020, herbivore_2021)
 ```
 
 ## Reproductive traits
@@ -303,6 +329,9 @@ write.csv(herbivory_19_20_21,
 
 write.csv(weevil_20_21,
           here::here("./Joined_annual_data/weevil.csv"))
+
+write.csv(herbivores_20_21,
+          here::here("./Joined_annual_data/herbivores.csv"))
 
 write.csv(reprod_20_21,
           here::here("./Joined_annual_data/reproductive.csv"))

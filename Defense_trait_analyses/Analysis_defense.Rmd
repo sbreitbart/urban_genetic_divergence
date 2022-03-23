@@ -1255,73 +1255,84 @@ all_rsq <- lapply(all_models[-c(4:5)], lapply, r.squaredGLMM) %>%
 # super low marginal R2 values. Some conditional R2 are higher (some ~0.15) but most low
 ```
 
-
-
-# Calculate heritability
-## Just looking at gradient models- all pops included
+# Calculate heritability & Qst
+Just looking at gradient models- all pops included. 
 h2 represents the average heritability across populations after removing the genetic effects due to population differences.
 ```{r}
-# LDMC
-ldmc_ranova_mod1
-h2_ldmc <- Calc_narrow_sense_h(0,
-                    0.00216 ,
-                    0.05424 ) %T>%
-  print()
+# LDMC-----
+## my final model, used in ANOVA, uses a crossed pop x fam random effect because the nested pop/fam returns NAn in the ANOVA. Here, I'll use the nested version of the final model and use REML = T.
+nested_ldmc <- glmmTMB(LDMC ~ (1|Population/Family) + City_dist,
+                            data = sla_ldmc %>%
+                              dplyr::filter(LDMC < 1.5),
+                       REML = T)
+
+VarCorr(nested_ldmc)
+
+Calc_h2_qst(4.3863e-07,
+                    3.1813e-03 ,
+                    5.5204e-02 )
+
+# SLA-----
+## my final model, used in ANOVA, uses a crossed pop x fam random effect because the nested pop/fam returns NAn in the ANOVA. Here, I'll use the nested version of the final model and use REML = T.
+nested_sla <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + City_dist,
+                        data = sla_ldmc,
+                        REML = T)
+  
+VarCorr(nested_sla)
+
+Calc_h2_qst(1.2678e-03  ,
+                    9.5834e-05  ,
+                    1.1524e+01  )
 
 
-# SLA
-sla_ranova_mod1
-h2_sla <- Calc_narrow_sense_h(0.000  ,
-                    0.000  ,
-                    11.524  ) %T>%
-  print()
+# Latex-----
+VarCorr(
+  update(
+    latex_mods_best_c[[1]], REML = T))
 
-# Latex
-latex_ranova_mod1
-h2_latex <- Calc_narrow_sense_h(1.549,
-                    1.193,
-                    5.243) %T>%
-  print()
+Calc_h2_qst(1.5491    ,
+                    1.1931    ,
+                    5.2429    )
 
-# Weevil damage: quantitative
-weev_quant_ranova_mod1
-h2_weev_quant <- Calc_narrow_sense_h(0.13744 ,
+
+# Herbivory: Early-----
+VarCorr(
+  update(
+    herb_e_mods_best_c[[1]], REML = T))
+
+## NO RESIDUAL VARIANCE GIVEN SO I'LL JUST CALCULATE h2 FOR NOW
+Calc_qst(5.5107e-05,
+         9.2087e-06)
+
+
+# Herbivory: Late-----
+VarCorr(
+  update(
+    herb_l_mods_best_c[[1]], REML = T))
+
+## NO RESIDUAL VARIANCE GIVEN SO I'LL JUST CALCULATE h2 FOR NOW
+Calc_qst(2.4607e-01,
+         2.4987e-05)
+
+
+# Weevil: Binomial-----
+VarCorr(
+  update(
+    weev_bin_mods_best_c[[1]], REML = T))
+
+## NO RESIDUAL VARIANCE GIVEN SO I'LL JUST CALCULATE h2 FOR NOW
+Calc_qst(0.54796923,
+         0.00017582)
+
+
+
+# Weevil damage: quantitative-----
+VarCorr(
+  update(
+    weev_quant_mods_best_c[[1]], REML = T))
+
+Calc_h2_qst(0.13743  ,
                     0.07537 ,
-                    0.60462 ) %T>%
-  print()
+                    0.60462  )
 
-
-# not sure how to find heritability for bootstrapped models
 ```
-
-# Calculate Qst
-```{r}
-# LDMC
-ldmc_ranova_mod1
-qst_ldmc <- Calc_qst(0,
-                    0.00216) %T>%
-  print()
-
-
-# SLA
-sla_ranova_mod1
-qst_sla <- Calc_qst(0.000  ,
-                    0.000 ) %T>%
-  print()
-
-# Latex
-latex_ranova_mod1
-qst_latex <- Calc_qst(1.549,
-                    1.193) %T>%
-  print()
-
-# Weevil damage: quantitative
-weev_quant_ranova_mod1
-qst_weev_quant <- Calc_qst(0.13744 ,
-                    0.07537) %T>%
-  print()
-
-
-# not sure how to find qst for bootstrapped models
-```
-
