@@ -181,7 +181,6 @@ asclepiadis_gr_city_m1 <- glmmTMB(sqrt(Liriomyza_asclepiadis) ~
               data = herbivores,
               family = poisson,
               REML = F) 
-
 ```
 
 #### Urb_score

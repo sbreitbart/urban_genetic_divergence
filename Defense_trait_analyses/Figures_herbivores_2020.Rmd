@@ -1,0 +1,233 @@
+# Plots
+## Euchaetes egle (urb score)
+```{r}
+# ggplot: limit y axis
+ggplot(herbivores2020_popmeans %>% filter(Transect_ID != "Rural"),
+       aes(x = Urb_score, y = mean_Euchaetes_egle)) + 
+  labs(x = "Urbanization Score", 
+    y = "Mean Euchaetes egle count") +
+  # ylim(0,0.5) +
+  geom_point(aes(color = Transect_ID, shape = Transect_ID), size=2) +
+                scale_shape(solid = F) +
+                geom_smooth(aes(linetype = Sample,
+                                color = Transect_ID,
+                                fill = Transect_ID) ,
+                            size=0.75, method = lm, alpha=.15, se = T) +
+    xlim(-2, 4) # +
+                # scale_shape_manual(values = c(1, 2),
+                #                    breaks = c("North", "South"),
+                #                    labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                #                    name = "Sample Site Subtransect") +
+                # scale_color_manual(values = c("red", "blue"),
+                #                    breaks = c("North", "South"),
+                #                    labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                #                    name = "Sample Site Subtransect") +
+                # scale_linetype_manual(values = c("solid", "dashed"),
+                #                    breaks = c("North", "South"),
+                #                    labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                #                    name = "Sample Site Subtransect") +
+                # scale_fill_manual(values = c("red", "blue"),
+                #                    breaks = c("North", "South"),
+                #                    labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                #                    name = "Sample Site Subtransect") +
+```
+
+## Rhyssomatus lineaticollis
+```{r}
+herbivores2020_popmeans$Sample <- factor(herbivores2020_popmeans$Sample, levels = c("July", "August"))
+
+ggplot(herbivores2020_popmeans %>% filter(Transect_ID != "Rural"),
+                            aes(x = City_dist, y = mean_Rhyssomatus_lineaticollis,
+                                group = interaction(Sample,Transect_ID),
+                                color=interaction(Sample,Transect_ID),
+                                linetype=interaction(Sample,Transect_ID),
+                                shape=interaction(Sample,Transect_ID))) + 
+  geom_point(size=2)  +
+  geom_smooth( method = lm, alpha=0.15, se = F) +
+  labs(x = "Distance to City Center (km)",
+       y = expression(italic("Rhyssomatus lineaticollis")),
+       color = "Sample, Subtransect",
+       shape = "Sample, Subtransect",
+       # fill = "Sample, Subtransect",
+       linetype = "Sample, Subtransect") +
+  scale_shape_manual(values = c(1,2,16,17),
+                     labels = c("July- Urban: Non-Corridor",
+                                "August- Urban: Non-Corridor",
+                                "July- Urban: Corridor",
+                                "August- Urban: Corridor")) +
+  scale_color_manual(values = c("red", "red", "blue", "blue"),
+                     labels = c("July- Urban: Non-Corridor",
+                                "August- Urban: Non-Corridor",
+                                "July- Urban: Corridor",
+                                "August- Urban: Corridor")) +
+  # scale_fill_manual(values = c("red", "red", "blue", "blue"),
+  #                    labels = c("July- Urban: Non-Corridor",
+                                # "August- Urban: Non-Corridor",
+                                # "July- Urban: Corridor",
+                                # "August- Urban: Corridor")) +
+  scale_linetype_manual(values = c('solid', 'dashed', 'solid', 'dashed'),
+                        labels = c("July- Urban: Non-Corridor",
+                                "August- Urban: Non-Corridor",
+                                "July- Urban: Corridor",
+                                "August- Urban: Corridor")) +
+  theme_bw()+
+  theme(text = element_text(size=12))
+ggsave(here::here("./Figures_Tables/Figures/2020/2020_RL_urbansites_distance.png"),
+         width = 18, height = 8, units = "cm")
+```
+
+
+## Labidomera clivicollis
+### Regression
+```{r}
+herbivores2020_popmeans$Sample <- factor(herbivores2020_popmeans$Sample, levels = c("July", "August"))
+
+ggplot(herbivores2020_popmeans %>% filter(Transect_ID != "Rural"),
+                            aes(x = City_dist, y = mean_Labidomera_clivicollis,
+                                group = interaction(Sample,Transect_ID),
+                                color=interaction(Sample,Transect_ID),
+                                linetype=interaction(Sample,Transect_ID),
+                                shape=interaction(Sample,Transect_ID))) + 
+  geom_point(size=2)  +
+  geom_smooth( method = lm, alpha=0.15, se = F) +
+  labs(x = "Distance to City Center (km)",
+       y = expression(italic("Labidomera clivicollis")),
+       color = "Sample, Subtransect",
+       shape = "Sample, Subtransect",
+       # fill = "Sample, Subtransect",
+       linetype = "Sample, Subtransect") +
+  scale_shape_manual(values = c(1,2,16,17),
+                     labels = c("July- Urban: Non-Corridor",
+                                "August- Urban: Non-Corridor",
+                                "July- Urban: Corridor",
+                                "August- Urban: Corridor")) +
+  scale_color_manual(values = c("red", "red", "blue", "blue"),
+                     labels = c("July- Urban: Non-Corridor",
+                                "August- Urban: Non-Corridor",
+                                "July- Urban: Corridor",
+                                "August- Urban: Corridor")) +
+  # scale_fill_manual(values = c("red", "red", "blue", "blue"),
+  #                    labels = c("July- Urban: Non-Corridor",
+                                # "August- Urban: Non-Corridor",
+                                # "July- Urban: Corridor",
+                                # "August- Urban: Corridor")) +
+  scale_linetype_manual(values = c('solid', 'dashed', 'solid', 'dashed'),
+                        labels = c("July- Urban: Non-Corridor",
+                                "August- Urban: Non-Corridor",
+                                "July- Urban: Corridor",
+                                "August- Urban: Corridor")) +
+  theme_bw()+
+  theme(text = element_text(size=12))
+ggsave(here::here("./Figures_Tables/Figures/2020/2020_LC_urbansites_distance.png"),
+         width = 18, height = 8, units = "cm")
+```
+
+
+## Liriomyza asclepiadis
+### Boxplot
+#### Urban subtransects
+```{r}
+herbivores2020_popmeans %>% 
+  filter(Transect_ID != "Rural") %>%
+  ggplot(aes(x=Transect_ID,
+             y=mean_Liriomyza_asclepiadis,
+             fill=Transect_ID,
+         alpha=0.999)) +
+    geom_boxplot(outlier.shape = NA) +
+    geom_jitter(aes(color = Transect_ID),
+                size=1.5,
+                width = 0.25) +
+  ylim(0, 15) +
+  labs(x = "", 
+    y = "Liriomyza asclepiadis Count") +
+  theme_classic() +
+  theme(text = element_text(size=12)) +
+  scale_color_manual(values = c("maroon4", "blue"),
+                     labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                     name = "Sample Site Subtransect") +
+  scale_fill_manual(values = c("firebrick1", "dodgerblue"),
+                    breaks = c("North", "South"),
+                    labels = c("Urban: Non-Corridor", "Urban: Corridor"),
+                     name = "Sample Site Subtransect") 
+  
+ggsave(here::here("./Figures_Tables/Figures/2020/2020_LAboxplot_urbansites_distance.png"),
+         width = 14, height = 8, units = "cm")
+```
+### Regression
+```{r}
+herbivores2020_popmeans$Sample <- factor(herbivores2020_popmeans$Sample, levels = c("July", "August"))
+
+ggplot(herbivores2020_popmeans %>% filter(Transect_ID != "Rural"),
+                            aes(x = City_dist, y = mean_Liriomyza_asclepiadis,
+                                group = interaction(Sample,Transect_ID),
+                                color=interaction(Sample,Transect_ID),
+                                linetype=interaction(Sample,Transect_ID),
+                                shape=interaction(Sample,Transect_ID))) + 
+  geom_point(size=2)  +
+  geom_smooth( method = lm, alpha=0.15, se = F) +
+  labs(x = "Distance to City Center (km)",
+       y = expression(italic("Liriomyza asclepiadis")),
+       color = "Sample, Subtransect",
+       shape = "Sample, Subtransect",
+       # fill = "Sample, Subtransect",
+       linetype = "Sample, Subtransect") +
+  scale_shape_manual(values = c(1,2,16,17),
+                     labels = c("July- Urban: Non-Corridor",
+                                "August- Urban: Non-Corridor",
+                                "July- Urban: Corridor",
+                                "August- Urban: Corridor")) +
+  scale_color_manual(values = c("red", "red", "blue", "blue"),
+                     labels = c("July- Urban: Non-Corridor",
+                                "August- Urban: Non-Corridor",
+                                "July- Urban: Corridor",
+                                "August- Urban: Corridor")) +
+  # scale_fill_manual(values = c("red", "red", "blue", "blue"),
+  #                    labels = c("July- Urban: Non-Corridor",
+                                # "August- Urban: Non-Corridor",
+                                # "July- Urban: Corridor",
+                                # "August- Urban: Corridor")) +
+  scale_linetype_manual(values = c('solid', 'dashed', 'solid', 'dashed'),
+                        labels = c("July- Urban: Non-Corridor",
+                                "August- Urban: Non-Corridor",
+                                "July- Urban: Corridor",
+                                "August- Urban: Corridor")) +
+  theme_bw()+
+  theme(text = element_text(size=12))
+ggsave(here::here("./Figures_Tables/Figures/2020/2020_LA_urbansites_distance.png"),
+         width = 18, height = 8, units = "cm")
+
+
+# Both months combined
+ggplot(herbivores2020_popmeans %>% filter(Transect_ID != "Rural"),
+                            aes(x = City_dist, y = mean_Liriomyza_asclepiadis,
+                                color=Transect_ID,
+                                linetype=Transect_ID,
+                                fill = Transect_ID,
+                                shape=Transect_ID) ) + 
+  geom_point(aes(fill = Transect_ID), size=2)  +
+  geom_smooth( method = lm, alpha=0.15, se = T) +
+  labs(x = "Distance to City Center (km)",
+       y = expression(italic("Liriomyza asclepiadis")),
+       color = "Subtransect",
+       fill = "Subtransect",
+       shape = "Subtransect",
+       linetype = "Subtransect") +
+  scale_shape_manual(values = c(1,2),
+                     labels = c("Urban: Non-Corridor",
+                                "Urban: Corridor")) +
+  scale_color_manual(values = c("red", "blue"),
+                     labels = c("Urban: Non-Corridor",
+                                "Urban: Corridor")) +
+  scale_fill_manual(values = c("red", "blue"),
+                     labels = c("Urban: Non-Corridor",
+                                "Urban: Corridor")) +
+  scale_linetype_manual(values = c('solid', 'dashed'),
+                     labels = c("Urban: Non-Corridor",
+                                "Urban: Corridor")) +
+  theme_bw()+
+  theme(text = element_text(size=12))
+  
+ggsave(here::here("./Figures_Tables/Figures/2020/2020_LA_urbansites_distance_2.png"),
+         width = 18, height = 8, units = "cm")
+```
+
