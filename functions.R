@@ -223,18 +223,18 @@ CreateRanovaOutput_bootstrap <- function(ranova_fam,
                                          var_name){
   
   ranova.fam <- tidy(ranova_fam) %>%
-    dplyr::filter(type == "PBtest") %>%
+    dplyr::filter(type == "LRT") %>%
     dplyr::rename(Group = type) %>%
     dplyr::mutate(Group = replace(Group,
-                                  Group == "PBtest",
+                                  Group == "LRT",
                                   "Family")) %>%
     dplyr::select(-c(2:3))
   
   ranova.pop <- tidy(ranova_pop) %>%
-    dplyr::filter(type == "PBtest") %>%
+    dplyr::filter(type == "LRT") %>%
     dplyr::rename(Group = type) %>%
     dplyr::mutate(Group = replace(Group,
-                                  Group == "PBtest",
+                                  Group == "LRT",
                                   "Population")) %>%
     dplyr::select(-c(2:3))
   

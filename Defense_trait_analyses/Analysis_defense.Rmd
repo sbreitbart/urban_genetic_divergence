@@ -255,6 +255,10 @@ weev_quant_mods_alt_u <- weev_mods_quant[5]
 The point: to determine if there is much genetic diversity present within populations for natural selection to act on.
 - ranova can't handle GLMMTMB functions so I'll use lmer instead
 - Also using Pop/Fam instead of Pop:Fam or Pop/Fam_uniq like I did when making models earlier
+## Set seed for random processes (bootstrapping)
+```{r}
+set.seed(45)
+```
 
 ## Gradient / City_dist
 ### Gaussian models use ranova()
@@ -338,7 +342,7 @@ weev_q_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod1, "Weevil Damage: Qua
 # Herbivory (before flowering)-------
 ## glmer can't handle beta distribution, and 
 ## PBmodcomp can't handle GLMMTMB, so will skip this one
- 
+
 
 # Herbivory (after flowering)-------
 ## glmer can't handle beta distribution, and 
@@ -346,22 +350,8 @@ weev_q_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod1, "Weevil Damage: Qua
 
 
 # Weevil scar length (binary)-----
-full <- glmer(Scar_binary ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
-                              data = weevil,
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  # ,control=glmerControl(optimizer="bobyqa",
-  #                           optCtrl=list(maxfun=2e5))
-  )
 
-reduced <- update(full, .~. - City_dist)
-
-weev_ranova <- PBmodcomp(full, reduced,
-          nsim = 10)
-tidy(weev_ranova) # not converging
-
-
-# take out block and year
+# not converging with block and year
 full <- glmer(Scar_binary ~
                 # (1|Block) + (1|Year) + 
                 (1|Population/Family) + City_dist,
@@ -375,9 +365,11 @@ full <- glmer(Scar_binary ~
 reduced <- update(full, .~. - City_dist)
 
 weev_ranova <- PBmodcomp(full, reduced,
-          nsim = 10)
+          nsim = 1000,
+          cl = makeCluster(7))
 
-tidy(weev_ranova) # p ~ 0.5
+
+tidy(weev_ranova) # p ~ 0.495
 
 
 
@@ -397,9 +389,10 @@ full <- glmer(Scar_binary ~
 reduced <- update(full, .~. - City_dist)
 
 weev_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 100)
+          nsim = 1000,          
+          cl = makeCluster(7))
 
-tidy(weev_ranova.pop) # Pop: p ~ 0.5
+tidy(weev_ranova.pop) # Pop: p ~ 0.512
 
 
 
@@ -419,9 +412,10 @@ full <- glmer(Scar_binary ~
 reduced <- update(full, .~. - City_dist)
 
 weev_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 100)
+          nsim = 1000,
+                    cl = makeCluster(7))
 
-tidy(weev_ranova.fam) # Family: p ~ 0.5
+tidy(weev_ranova.fam) # Family: p ~ 0.495
 
 
 
@@ -534,22 +528,7 @@ weev_q_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod2, "Weevil Damage: Qua
 
 
 # Weevil scar length (binary)-----
-full <- glmer(Scar_binary ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
-                              data = weevil,
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  # ,control=glmerControl(optimizer="bobyqa",
-  #                           optCtrl=list(maxfun=2e5))
-  )
-
-reduced <- update(full, .~. - Urb_score)
-
-weev_ranova <- PBmodcomp(full, reduced,
-          nsim = 10)
-tidy(weev_ranova) # not converging
-
-
-# take out block and year
+# take out block and year- doesn't converge with both included
 full <- glmer(Scar_binary ~
                 # (1|Block) + (1|Year) + 
                 (1|Population/Family) + Urb_score,
@@ -563,9 +542,10 @@ full <- glmer(Scar_binary ~
 reduced <- update(full, .~. - Urb_score)
 
 weev_ranova <- PBmodcomp(full, reduced,
-          nsim = 10)
+          nsim = 1000,
+          cl = makeCluster(7))
 
-tidy(weev_ranova) # p ~ 0.5
+tidy(weev_ranova) # p ~ 0.661
 
 
 
@@ -585,9 +565,9 @@ full <- glmer(Scar_binary ~
 reduced <- update(full, .~. - Urb_score)
 
 weev_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 100)
+          nsim = 1000)
 
-tidy(weev_ranova.pop) # Pop: p ~ 0.7
+tidy(weev_ranova.pop) # Pop: p ~ 0.679
 
 
 
@@ -607,11 +587,9 @@ full <- glmer(Scar_binary ~
 reduced <- update(full, .~. - Urb_score)
 
 weev_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 100)
+          nsim = 1000)
 
-tidy(weev_ranova.fam) # Family: p ~ 0.7
-
-
+tidy(weev_ranova.fam) # Family: p ~ 0.661
 
 
 
@@ -789,9 +767,9 @@ reduced <- glmer(Scar_binary ~
 
 weev_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,
-          cl = makeCluster(rep("localhost", 6)))
+          cl = makeCluster(7))
 
-tidy(weev_ranova.pop) # Pop: p ~ 0.29
+tidy(weev_ranova.pop) # Pop: p ~ 0.242
 
 
 ### take out pop
@@ -817,9 +795,9 @@ reduced <- glmer(Scar_binary ~
 
 weev_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
-          cl = makeCluster(rep("localhost", 6)))
+          cl = makeCluster(7))
 
-tidy(weev_ranova.fam) # Family: p ~ 0.51
+tidy(weev_ranova.fam) # Family: p ~ 0.523
 
 
 
@@ -1006,9 +984,9 @@ reduced <- glmer(Scar_binary ~
 
 weev_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,
-          cl = makeCluster(rep("localhost", 6)))
+          cl = makeCluster(7))
 
-tidy(weev_ranova.pop) # Pop: p ~ 0.73
+tidy(weev_ranova.pop) # Pop: p ~ 0.709
 
 
 ### take out pop
@@ -1034,9 +1012,9 @@ reduced <- glmer(Scar_binary ~
 
 weev_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
-          cl = makeCluster(rep("localhost", 6)))
+          cl = makeCluster(7))
 
-tidy(weev_ranova.fam) # Family: p ~ 0.7
+tidy(weev_ranova.fam) # Family: p ~ 0.707
 
 
 ## test transect-----
@@ -1076,13 +1054,13 @@ make_all_anovas_tidy(ldmc_mods_best_u) %>%
 ### Alternative Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(ldmc_mods_alt_c) %>%
+make_all_anovas_tidy_altmods(ldmc_mods_alt_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/LDMC_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(ldmc_mods_alt_u) %>%
+make_all_anovas_tidy_altmods(ldmc_mods_alt_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/LDMC_urbscore_alt.png"))
 ```
 ## SLA
@@ -1102,13 +1080,13 @@ make_all_anovas_tidy(sla_mods_best_u) %>%
 ### Alt Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(sla_mods_alt_c) %>%
+make_all_anovas_tidy_altmods(sla_mods_alt_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/sla_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(sla_mods_alt_u) %>%
+make_all_anovas_tidy_altmods(sla_mods_alt_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/sla_urbscore_alt.png"))
 ```
 ## Latex
@@ -1128,7 +1106,7 @@ make_all_anovas_tidy(latex_mods_best_u) %>%
 ### Alt Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(latex_mods_alt_c) %>%
+make_all_anovas_tidy_altmods(latex_mods_alt_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/latex_citydist_alt.png"))
 ```
 
@@ -1153,13 +1131,13 @@ make_all_anovas_tidy(herb_e_mods_best_u) %>%
 ### Alt Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(herb_e_mods_alt_c) %>%
+make_all_anovas_tidy_altmods(herb_e_mods_alt_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_e_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(herb_e_mods_alt_u) %>%
+make_all_anovas_tidy_altmods(herb_e_mods_alt_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_e_urbscore_alt.png"))
 ```
 
@@ -1180,7 +1158,7 @@ make_all_anovas_tidy(herb_l_mods_best_u) %>%
 ### Alt Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(herb_l_mods_alt_c) %>%
+make_all_anovas_tidy_altmods(herb_l_mods_alt_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_l_citydist_alt.png"))
 ```
 
@@ -1207,13 +1185,13 @@ make_all_anovas_tidy(weev_bin_mods_best_u) %>%
 ### Alt Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(weev_bin_mods_alt_c) %>%
+make_all_anovas_tidy_altmods(weev_bin_mods_alt_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/weev_bin_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(weev_bin_mods_alt_u) %>%
+make_all_anovas_tidy_altmods(weev_bin_mods_alt_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/weev_bin_urbscore_alt.png"))
 ```
 
@@ -1235,13 +1213,13 @@ make_all_anovas_tidy(weev_quant_mods_best_u) %>%
 ### Alt Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(weev_quant_mods_alt_c) %>%
+make_all_anovas_tidy_altmods(weev_quant_mods_alt_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/weev_quant_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(weev_quant_mods_alt_u) %>%
+make_all_anovas_tidy_altmods(weev_quant_mods_alt_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/weev_quant_urbscore_alt.png"))
 ```
 
@@ -1304,6 +1282,8 @@ VarCorr(
 Calc_qst(5.5107e-05,
          9.2087e-06)
 
+summary(  update(
+    herb_e_mods_best_c[[1]], REML = T))$sigma^2 
 
 # Herbivory: Late-----
 VarCorr(

@@ -1,0 +1,168 @@
+---
+title: "Comparing models for herbivory"
+author: "Sophie Breitbart"
+date: "3/28/2022"
+output:
+  html_document:
+    number_sections: true
+    df_print: paged
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapsed: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
+editor_options: 
+  chunk_output_type: console
+---
+
+# Set up notebook
+## Load libraries
+
+```{r message=FALSE}
+library(glmmTMB)
+library(magrittr)
+library(tidyverse)
+```
+
+## Import data
+
+```{r}
+herbivory <- read.csv(here::here("./Joined_annual_data/herbivory.csv")) %>%
+  dplyr::select(-1) %>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor)
+
+```
+
+# Fit Models
+## Basic Model
+Model diagnostic plots for this and next chunk are shown individually, instead of in a grid like the others, so that they can be viewed properly.
+```{r}
+basic_mod <- glmmTMB(Herbivory_mean_early ~
+                               (1|Block) +
+                               (1|Year) + 
+                               (1|Population/Family) +
+                                City_dist,
+                              data = herbivory,
+                              REML = F) # Doesn't converge. Remove block
+
+basic_mod2 <- glmmTMB(Herbivory_mean_early ~
+                             #  (1|Block) +
+                               (1|Year) + 
+                               (1|Population/Family) +
+                                City_dist,
+                              data = herbivory,
+                              REML = F) 
+
+performance::check_model(basic_mod2,
+                         panel = FALSE) # Right-skewed
+```
+
+## Arcsin(sqrt()) transformation with Gaussian model
+
+```{r}
+# First, recode values to within 0:1
+herbivory$Herbivory_mean_early_recode <- herbivory$Herbivory_mean_early
+herbivory$Herbivory_mean_early_recode[herbivory$Herbivory_mean_early_recode == 1] <- 0.999999
+herbivory$Herbivory_mean_early_recode[herbivory$Herbivory_mean_early_recode == 0] <- 0.000001
+
+asin_sqrt_mod <- glmmTMB(asin(sqrt(Herbivory_mean_early_recode)) ~
+                               (1|Block) +
+                               (1|Year) + 
+                                 (1|Population/Family) +
+                                 City_dist,
+                              data = herbivory,
+                              REML = F)
+
+performance::check_model(asin_sqrt_mod,
+                         panel = FALSE) # Still right-skewed
+```
+
+## Binomial Model
+
+```{r}
+bin_mod <- glmmTMB(Herbivory_mean_early ~
+                                 (1|Block) +
+                                 (1|Year) + 
+                                 (1|Population/Family) +
+                                 City_dist,
+                              data = herbivory,
+                              family = binomial(),
+                              REML = F) # convergence issue. Try removing block
+
+bin_mod2 <- glmmTMB(Herbivory_mean_early ~
+                               #  (1|Block) +
+                                 (1|Year) + 
+                                 (1|Population/Family) +
+                                 City_dist,
+                              data = herbivory,
+                              family = binomial(),
+                              REML = F) # convergence issue. Try removing block AND year
+
+bin_mod3 <- glmmTMB(Herbivory_mean_early ~
+                               #  (1|Block) +
+                               #  (1|Year) + 
+                                 (1|Population/Family) +
+                                 City_dist,
+                              data = herbivory,
+                              family = binomial(),
+                              REML = F) # Now it converges.
+
+# Check model assumptions
+performance::check_model(bin_mod3) # very right-skewed. try sqrt transformation
+
+performance::check_model(
+  update(
+    bin_mod3,
+    sqrt(Herbivory_mean_early) ~ .)) # less right-skewed, but now it's more left-skewed too. Try cube-root transformation
+
+performance::check_model(
+  update(
+    bin_mod3,
+    (Herbivory_mean_early)^(1/3) ~ .)) # now it's not right-skewed, but now it's even more left-skewed.
+
+bin_mod4 <- update(
+    bin_mod3,
+    (Herbivory_mean_early)^(1/3) ~ .)
+
+```
+
+## Beta Model
+
+```{r}
+beta_mod <- glmmTMB(Herbivory_mean_early_recode  ~
+                      (1|Block) +
+                      (1|Year) +
+                      (1|Population/Family) +
+                      City_dist,
+                    data = herbivory,
+                    family = beta_family(link="logit"),
+                    REML = F)
+
+performance::check_model(beta_mod) # heavy right tail. Try sqrt transformation
+
+performance::check_model(
+  update(
+    beta_mod,
+    sqrt(Herbivory_mean_early_recode) ~ .)) # better. Convergence issue though. Try cube root transformation and remove block
+
+performance::check_model(
+  update(beta_mod,
+         (Herbivory_mean_early_recode)^(1/3) ~ . - (1|Block))) # better
+
+
+beta_mod2 <- update(beta_mod,
+         (Herbivory_mean_early_recode)^(1/3) ~ . - (1|Block))
+
+```
+
+# Compare models
+
+```{r}
+AIC(basic_mod2,
+    asin_sqrt_mod,
+    bin_mod4,
+    beta_mod2)
+```
