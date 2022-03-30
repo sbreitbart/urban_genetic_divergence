@@ -1278,21 +1278,28 @@ VarCorr(
   update(
     herb_e_mods_best_c[[1]], REML = T))
 
-## NO RESIDUAL VARIANCE GIVEN SO I'LL JUST CALCULATE h2 FOR NOW
-Calc_qst(5.5107e-05,
-         9.2087e-06)
+# residual variance:
+resid_var <- update(
+    herb_e_mods_best_c[[1]], REML = T) %>%
+    sigma()
 
-summary(  update(
-    herb_e_mods_best_c[[1]], REML = T))$sigma^2 
+Calc_h2_qst(5.5107e-05,
+         9.2087e-06,
+         resid_var)
 
 # Herbivory: Late-----
 VarCorr(
   update(
     herb_l_mods_best_c[[1]], REML = T))
 
-## NO RESIDUAL VARIANCE GIVEN SO I'LL JUST CALCULATE h2 FOR NOW
-Calc_qst(2.4607e-01,
-         2.4987e-05)
+# residual variance:
+resid_var <- update(
+    herb_l_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+Calc_h2_qst(2.4607e-01,
+         2.4987e-05,
+         resid_var)
 
 
 # Weevil: Binomial-----
@@ -1300,9 +1307,14 @@ VarCorr(
   update(
     weev_bin_mods_best_c[[1]], REML = T))
 
-## NO RESIDUAL VARIANCE GIVEN SO I'LL JUST CALCULATE h2 FOR NOW
-Calc_qst(0.54796923,
-         0.00017582)
+# residual variance:
+resid_var <- update(
+    weev_bin_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+Calc_h2_qst(0.54796923,
+         0.00017582,
+         resid_var)
 
 
 

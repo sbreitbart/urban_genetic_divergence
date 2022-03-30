@@ -693,9 +693,14 @@ VarCorr(
   update(
     monarch_mods_best_c[[1]], REML = T))
 
-# no total variance so I'll just calculate qst for now
-Calc_qst(0.327706,
-            0.098136)
+# residual variance:
+resid_var <- update(
+    monarch_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+Calc_h2_qst(0.327706,
+            0.098136,
+            resid_var)
 
 
 # L. asclepiadis-----
@@ -703,17 +708,27 @@ VarCorr(
   update(
     asclepiadis_mods_best_c[[1]], REML = T))
 
-# no total variance so I'll just calculate qst for now
-Calc_qst(0.212214,
-            0.088031)
+# residual variance:
+resid_var <- update(
+    asclepiadis_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+Calc_h2_qst(0.212214,
+            0.088031,
+            resid_var)
 
 # L. clivicollis-----
 VarCorr(
   update(
     clivicollis_mods_best_c[[1]], REML = T))
 
-# no total variance so I'll just calculate qst for now
-Calc_qst(0.569848,
-            0.446121)
+# residual variance:
+resid_var <- update(
+    clivicollis_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+Calc_h2_qst(0.569848,
+            0.446121,
+            resid_var)
 
 ```
