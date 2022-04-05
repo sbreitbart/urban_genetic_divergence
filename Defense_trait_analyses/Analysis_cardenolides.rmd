@@ -130,3 +130,25 @@ urb_score_list[[4]][[1]] %>%
   dplyr::select(c(3:4))
 ```
 
+
+# Estimated marginal means
+```{r}
+# total cards
+m1 <- lm(total ~ City_dist, cards)
+summary(m1)
+## estimate at x = 0 (urban terminus): mx + b = 0 + b = 0.358397
+## estimate at x = 67 (rural terminus): (67)*(-0.001820) + 0.358397 = 0.236457
+## percent change, rur to urb: 
+#### percent_change <- ((urb_mean - rur_mean) / rur_mean) * 100
+percent_change <- ((0.358397 - 0.236457) / 0.236457) * 100
+
+
+# peak 6.6
+m2 <- lm(X6.6_main ~ City_dist, cards)
+summary(m2)
+## estimate at x = 0 (urban terminus): mx + b = 0 + b = 0.2619764  
+## estimate at x = 67 (rural terminus): (67)*(-0.0015764) + 0.2619764 = 0.1563576
+## percent change, rur to urb: 
+#### percent_change <- ((urb_mean - rur_mean) / rur_mean) * 100
+percent_change <- ((0.2619764 - 0.1563576) / 0.1563576) * 100
+```

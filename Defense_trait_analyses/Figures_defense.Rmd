@@ -78,6 +78,8 @@ herbivory$Herbivory_mean_late_recode <- herbivory$Herbivory_mean_late
 herbivory$Herbivory_mean_late_recode[herbivory$Herbivory_mean_late_recode == 1] <- 0.999999
 herbivory$Herbivory_mean_late_recode[herbivory$Herbivory_mean_late_recode == 0] <- 0.000001
 
+herbivory$Herbivory_mean_early_recode_cuberoot
+
 
 # WEEVIL DAMAGE-----
 weevil <- read.csv(here::here("./Joined_annual_data/weevil.csv")) %>%
@@ -360,6 +362,7 @@ herb_e_gradient_01_pred <- ggeffects::ggpredict(herb_e_mods_best_c[[1]],
                                    type = "fe") %>%
   as.data.frame() 
 
+
 # urb_score
 herb_e_mods_best_u[1]# CUBE ROOT-TRANSFORMED
 herb_e_gradient_02_pred <- ggeffects::ggpredict(herb_e_mods_best_u[[1]],
@@ -553,7 +556,7 @@ weev_quant_urbsubs_02_pred <- ggeffects::ggpredict(weev_quant_ggpred_mod2,
                                    type = "fe")
 ```
 
-# Create plots
+# Create regression plots
 ## first, create variable associated with replicated aesthetics of figs
 ```{r}
 # Gradient figs
@@ -652,7 +655,7 @@ ggpred_Q1.citydist_herb_e <- ggplot(herb_e_gradient_01_pred) +
     limits = c(NA, 1))+
   theme_1() +
 #   # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Distance: p = ", tidy_anova(herb_e_mods_best_c[[1]])$p)),
                 size = 4.5)
 
@@ -1349,6 +1352,18 @@ dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q2_urbsubs_urbs
              width = 14.5, height = 8)
 ```
 
+
+# Create boxplots
+## Latex
+```{r}
+ggplot(latex,
+       aes(x = Pop_ID,
+           y = Latex_weight_mg)) + 
+  geom_boxplot(
+       size = 0.5) + 
+  geom_point(position = "jitter") + 
+  theme_pubclean()
+```
 
 # Find estimated marginal means at terminii
 ## Gradient

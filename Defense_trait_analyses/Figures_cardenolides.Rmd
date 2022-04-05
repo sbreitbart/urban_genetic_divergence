@@ -230,6 +230,7 @@ dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q1_urbscore_Car
              width = 8, height = 6)
 ```
 
+
 # RDA
 ```{r warning=FALSE, message=FALSE}
 pairs(cards[,c(3,5,7,10, 17)],
