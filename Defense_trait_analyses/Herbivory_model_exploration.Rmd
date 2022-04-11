@@ -58,6 +58,8 @@ basic_mod2 <- glmmTMB(Herbivory_mean_early ~
 
 performance::check_model(basic_mod2,
                          panel = FALSE) # Right-skewed
+
+plot(DHARMa::simulateResiduals(basic_mod2)) # fails KS and outlier tests
 ```
 
 ## Arcsin(sqrt()) transformation with Gaussian model
@@ -78,6 +80,8 @@ asin_sqrt_mod <- glmmTMB(asin(sqrt(Herbivory_mean_early_recode)) ~
 
 performance::check_model(asin_sqrt_mod,
                          panel = FALSE) # Still right-skewed
+
+plot(DHARMa::simulateResiduals(asin_sqrt_mod)) # fails KS and outlier tests
 ```
 
 ## Binomial Model
@@ -111,22 +115,28 @@ bin_mod3 <- glmmTMB(Herbivory_mean_early ~
                               REML = F) # Now it converges.
 
 # Check model assumptions
-performance::check_model(bin_mod3) # very right-skewed. try sqrt transformation
+performance::check_model(bin_mod3) # very right-skewed 
 
-performance::check_model(
-  update(
-    bin_mod3,
-    sqrt(Herbivory_mean_early) ~ .)) # less right-skewed, but now it's more left-skewed too. Try cube-root transformation
 
-performance::check_model(
-  update(
-    bin_mod3,
-    (Herbivory_mean_early)^(1/3) ~ .)) # now it's not right-skewed, but now it's even more left-skewed.
+plot(DHARMa::simulateResiduals(bin_mod3)) # fails KS, dispersion, and outlier tests
 
-bin_mod4 <- update(
-    bin_mod3,
-    (Herbivory_mean_early)^(1/3) ~ .)
 
+# zero-inflated binomial
+bin_mod4 <- glmmTMB(Herbivory_mean_early ~
+                               #  (1|Block) +
+                               #  (1|Year) + 
+                                 (1|Population/Family) +
+                                 City_dist,
+                              data = herbivory,
+                              family = binomial(),
+                    ziformula = 1,
+                              REML = F) 
+
+# Check model assumptions
+performance::check_model(bin_mod4) # very right-skewed 
+
+
+plot(DHARMa::simulateResiduals(bin_mod4)) # fails KS, dispersion, and outlier tests
 ```
 
 ## Beta Model
@@ -155,6 +165,12 @@ performance::check_model(
 
 beta_mod2 <- update(beta_mod,
          (Herbivory_mean_early_recode)^(1/3) ~ . - (1|Block))
+
+
+plot(DHARMa::simulateResiduals(beta_mod)) # fails KS test only
+
+
+plot(DHARMa::simulateResiduals(beta_mod2)) # fails KS test only
 
 ```
 

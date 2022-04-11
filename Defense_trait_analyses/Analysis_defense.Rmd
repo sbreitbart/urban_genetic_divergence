@@ -1328,3 +1328,42 @@ Calc_h2_qst(0.13743  ,
                     0.60462  )
 
 ```
+
+# Calculate additive genetic coefficient of variation
+```{r}
+CVA <- function(fam_var, pop_var, resid_var, trait_mean){
+  add_var <- 2*(fam_var^2)
+  total_wp_var <- (fam_var^2) + # family
+    (pop_var^2) + # population
+    (resid_var^2) # residual
+  
+    cva <- sqrt(add_var) / trait_mean
+    
+    return(cva)
+}
+  
+
+# practice example: latex
+latex_mean <- latex %>%
+  dplyr::summarize(Mean = mean(Latex_weight_mg,
+                               na.rm = T))
+
+CVA(1.5491,
+    1.1931,
+    5.2429,
+    latex_mean[[1]])
+
+
+# practice example: weevil damage (quant)
+weev_mean <- weevil %>%
+  dplyr::filter(Scar_length_cm > 0) %>%
+  dplyr::summarize(Mean = mean(Scar_length_cm,
+                               na.rm = T))
+
+CVA(0.13743,
+    0.07537,
+    0.60462,
+    weev_mean[[1]])
+
+```
+

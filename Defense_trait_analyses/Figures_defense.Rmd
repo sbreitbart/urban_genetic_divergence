@@ -1365,6 +1365,20 @@ ggplot(latex,
   theme_pubclean()
 ```
 
+## Weevil damage
+```{r}
+ggplot(weevil %>%
+         dplyr::filter(Transect_ID != "Rural" &
+                         Scar_length_cm_cuberoot != 0),
+       aes(x = Transect_ID,
+           y = Scar_length_cm_cuberoot)) + 
+  geom_boxplot(
+       size = 0.5) + 
+  geom_point(position = "jitter") + 
+  theme_pubclean()
+```
+
+
 # Find estimated marginal means at terminii
 ## Gradient
 ### City_dist
