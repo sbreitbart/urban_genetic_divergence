@@ -1,7 +1,852 @@
----
-title: "Diagnostics"
-author: "Sophie Breitbart"
-date: "2/23/2022"
-output: html_document
----
+# Load libraries & functions
+```{r}
+source("libraries.R")
+source("functions.R")
+```
 
+# Import data
+```{r}
+reproduc <- read.csv(here::here("./Joined_annual_data/reproductive.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::select(., -1)
+
+flowering <- read.csv(here::here("./Joined_annual_data/flowering.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::select(., -1)
+
+reproduc %<>%
+  dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
+
+flowering %<>%
+  dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
+
+```
+
+# Model diagnostics
+## Flowering success
+### Gradient
+#### City_dist
+```{r}
+flsucc_gr_city1 <- glmmTMB(Flowered ~
+                             (1|Block) +
+                             (1|Year) +
+                             (1|Population/Family) +
+                             City_dist,
+  data = reproduc,
+  family = binomial(link = "logit"))
+
+
+plot(DHARMa::simulateResiduals(flsucc_gr_city1)) # looks great!
+```
+
+#### Urb_score
+```{r}
+flsucc_gr_usc1 <- glmmTMB(Flowered ~
+                             (1|Block) +
+                             (1|Year) +
+                             (1|Population/Family) +
+                             Urb_score,
+  data = reproduc,
+  family = binomial(link = "logit"))
+
+
+plot(DHARMa::simulateResiduals(flsucc_gr_usc1)) # looks great!
+```
+
+### Urban subtransects
+#### City_dist
+```{r}
+flsucc_urbsubs_city1 <- glmmTMB(Flowered ~
+                             (1|Block) +
+                             (1|Year) +
+                             (1|Population/Family) +
+                             City_dist * Transect_ID,
+  data = reproduc %>%
+    dplyr::filter(Transect_ID != "Rural"),
+  family = binomial(link = "logit"))
+
+
+plot(DHARMa::simulateResiduals(flsucc_urbsubs_city1)) # looks great!
+
+
+## MAIN EFFECTS
+flsucc_urbsubs_city1_ME <- glmmTMB(Flowered ~
+                             (1|Block) +
+                             (1|Year) +
+                             (1|Population/Family) +
+                             City_dist + Transect_ID,
+  data = reproduc %>%
+    dplyr::filter(Transect_ID != "Rural"),
+  family = binomial(link = "logit"))
+
+
+plot(DHARMa::simulateResiduals(flsucc_urbsubs_city1_ME)) # looks great!
+
+AIC(flsucc_urbsubs_city1, flsucc_urbsubs_city1_ME) # ME model best but <2 AIC away from full
+```
+
+#### Urb_score
+```{r}
+flsucc_urbsubs_usc1 <- glmmTMB(Flowered ~
+                             (1|Block) +
+                             (1|Year) +
+                             (1|Population/Family) +
+                             Urb_score * Transect_ID,
+  data = reproduc %>%
+    dplyr::filter(Transect_ID != "Rural"),
+  family = binomial(link = "logit"))
+
+
+plot(DHARMa::simulateResiduals(flsucc_urbsubs_usc1)) # looks great!
+
+
+## MAIN EFFECTS
+flsucc_urbsubs_usc1_ME <- glmmTMB(Flowered ~
+                             (1|Block) +
+                             (1|Year) +
+                             (1|Population/Family) +
+                             Urb_score + Transect_ID,
+  data = reproduc %>%
+    dplyr::filter(Transect_ID != "Rural"),
+  family = binomial(link = "logit"))
+
+
+plot(DHARMa::simulateResiduals(flsucc_urbsubs_usc1_ME)) # looks great!
+
+AIC(flsucc_urbsubs_usc1, flsucc_urbsubs_usc1_ME) # ME model best but <2 AIC away from full
+
+```
+
+
+## Flower count
+### Mean flowers/inflorescence
+#### Gradient
+##### City_dist
+```{r}
+fl_per_infl_gr_city1 <- glmmTMB(mean_flower_count ~
+                                          (1|Block) +
+                                          (1|Year) +
+                                          (1|Population/Family) +
+                                          City_dist, 
+                                        data = flowering)
+
+plot(DHARMa::simulateResiduals(fl_per_infl_gr_city1)) # looks great
+
+```
+
+##### Urb_score
+```{r}
+fl_per_infl_gr_usc1 <- glmmTMB(mean_flower_count ~
+                                          (1|Block) +
+                                          (1|Year) +
+                                          (1|Population/Family) +
+                                          Urb_score, 
+                                        data = flowering)
+
+plot(DHARMa::simulateResiduals(fl_per_infl_gr_usc1)) # looks great
+
+```
+
+
+#### Urban Subtransects
+##### City_dist
+```{r}
+fl_per_infl_urbsubs_city1 <- glmmTMB(mean_flower_count ~
+                                          # (1|Block) +
+                                          (1|Year) +
+                                          (1|Population/Family) +
+                                          City_dist * Transect_ID, 
+                                        data = flowering %>%
+                                       dplyr::filter(Transect_ID != "Rural")) # doesn't converge unless I remove block
+
+plot(DHARMa::simulateResiduals(fl_per_infl_urbsubs_city1)) # looks great
+
+## MAIN EFFECTS
+fl_per_infl_urbsubs_city1_ME <- glmmTMB(mean_flower_count ~
+                                          # (1|Block) +
+                                          (1|Year) +
+                                          (1|Population/Family) +
+                                          City_dist + Transect_ID, 
+                                        data = flowering %>%
+                                       dplyr::filter(Transect_ID != "Rural")) # doesn't converge unless I remove block
+
+plot(DHARMa::simulateResiduals(fl_per_infl_urbsubs_city1_ME)) # looks great
+
+AIC(fl_per_infl_urbsubs_city1, fl_per_infl_urbsubs_city1_ME) # ME model better but <2 AIC away
+
+```
+
+##### Urb_score
+```{r}
+fl_per_infl_urbsubs_usc1 <- glmmTMB(mean_flower_count ~
+                                          # (1|Block) +
+                                          (1|Year) +
+                                          (1|Population/Family) +
+                                          Urb_score * Transect_ID, 
+                                        data = flowering %>%
+                                       dplyr::filter(Transect_ID != "Rural")) # doesn't converge unless I remove block
+
+plot(DHARMa::simulateResiduals(fl_per_infl_urbsubs_usc1)) # looks great
+
+
+
+## MAIN EFFECTS
+fl_per_infl_urbsubs_usc1_ME <- glmmTMB(mean_flower_count ~
+                                          # (1|Block) +
+                                          (1|Year) +
+                                          (1|Population/Family) +
+                                          Urb_score + Transect_ID, 
+                                        data = flowering %>%
+                                       dplyr::filter(Transect_ID != "Rural")) # doesn't converge unless I remove block
+
+plot(DHARMa::simulateResiduals(fl_per_infl_urbsubs_usc1_ME)) # looks great
+
+AIC(fl_per_infl_urbsubs_usc1, fl_per_infl_urbsubs_usc1_ME) # ME model better but <2 AIC away
+
+```
+### Total flowers/plant
+#### Gradient
+##### City_dist
+```{r}
+flowers_gr_city1 <- glmmTMB(total_flower_count ~
+                                          (1|Block) +
+                                          (1|Year) +
+                                          (1|Population/Family) +
+                                          City_dist, 
+                                        data = flowering,
+                            family = poisson())
+
+plot(DHARMa::simulateResiduals(flowers_gr_city1)) # looks great
+
+```
+
+##### Urb_score
+```{r}
+flowers_gr_usc1 <- glmmTMB(total_flower_count ~
+                                          (1|Block) +
+                                          (1|Year) +
+                                          (1|Population/Family) +
+                                          Urb_score, 
+                                        data = flowering,
+                            family = poisson())
+
+plot(DHARMa::simulateResiduals(flowers_gr_usc1)) # looks great
+
+```
+
+
+#### Urban Subtransects
+##### City_dist
+```{r}
+flowers_urbsubs_city1 <- glmmTMB(total_flower_count ~
+                                          # (1|Block) +
+                                          (1|Year) +
+                                          (1|Population/Family) +
+                                          City_dist * Transect_ID, 
+                                        data = flowering %>%
+                                   dplyr::filter(Transect_ID != "Rural"),
+                            family = poisson()) # doesn't converge unless I remove block
+
+plot(DHARMa::simulateResiduals(flowers_urbsubs_city1)) # looks great
+
+
+## MAIN EFFECTS
+flowers_urbsubs_city1_ME <- glmmTMB(total_flower_count ~
+                                          # (1|Block) +
+                                          (1|Year) +
+                                          (1|Population/Family) +
+                                          City_dist + Transect_ID, 
+                                        data = flowering %>%
+                                   dplyr::filter(Transect_ID != "Rural"),
+                            family = poisson()) # doesn't converge unless I remove block
+
+plot(DHARMa::simulateResiduals(flowers_urbsubs_city1_ME)) # looks great
+
+
+AIC(flowers_urbsubs_city1, flowers_urbsubs_city1_ME) # ME model better but <2 AIC from full
+```
+
+##### Urb_score
+```{r}
+flowers_urbsubs_usc1 <- glmmTMB(total_flower_count ~
+                                          (1|Block) +
+                                          (1|Year) +
+                                          (1|Population/Family) +
+                                          Urb_score * Transect_ID, 
+                                        data = flowering %>%
+                                   dplyr::filter(Transect_ID != "Rural"),
+                            family = poisson()) 
+
+plot(DHARMa::simulateResiduals(flowers_urbsubs_usc1)) # looks great
+
+
+## MAIN EFFECTS
+flowers_urbsubs_usc1_ME <- glmmTMB(total_flower_count ~
+                                          (1|Block) +
+                                          (1|Year) +
+                                          (1|Population/Family) +
+                                          Urb_score + Transect_ID, 
+                                        data = flowering %>%
+                                   dplyr::filter(Transect_ID != "Rural"),
+                            family = poisson()) 
+
+plot(DHARMa::simulateResiduals(flowers_urbsubs_usc1_ME)) # looks great
+
+
+AIC(flowers_urbsubs_usc1, flowers_urbsubs_usc1_ME) # ME model better but <2 AIC from full
+```
+## Flower size
+##### Mean flower size/inflorescence
+###### lmer
+####### gradient: *NOt sig for either city_dist or urb_score
+######## City_dist
+```{r}
+### NESTED RANDOM EFFECTS-----
+lmer(Overall_mean ~ (1|Block) + (1|Population/Family) + City_dist, data = flowering_2020, REML = F)
+# is singular
+
+# ANOVA
+car::Anova(lmer(Overall_mean ~ (1|Block) + (1|Population/Family) + City_dist, data = flowering_2020, REML = F)
+)
+# distance not sig
+
+library(MuMIn) # Multi-Model Inference # Multi-Model Inference # Multi-Model Inference
+r.squaredGLMM(lmer(Overall_mean ~ (1|Block) + (1|Population/Family) + City_dist, data = flowering_2020, REML = F)
+)
+
+
+### CROSSED RANDOM EFFECTS-----
+lmer(Overall_mean ~ (1|Block) + (1|Population:Family) + City_dist, data = flowering_2020, REML = F)
+# singular
+
+car::Anova(lmer(Overall_mean ~ (1|Block) + (1|Population:Family) + City_dist, data = flowering_2020, REML = F))
+# distance not sig
+
+
+# ANy variation among families or populations?
+ranova(lmer(Overall_mean ~ (1|Population/Family), data = flowering_2020, REML = T))
+# no
+```
+
+
+######## Urb_score
+```{r}
+### NESTED RANDOM EFFECTS-----
+lmer(Overall_mean ~ (1|Block) + (1|Population/Family) + Urb_score, data = flowering_2020,
+     REML = F, lmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000)))
+# singular
+
+# ANOVA
+car::Anova(lmer(Overall_mean ~ (1|Block) + (1|Population/Family) + Urb_score, data = flowering_2020, REML = F)
+)
+# not sig
+
+library(MuMIn) # Multi-Model Inference # Multi-Model Inference # Multi-Model Inference
+r.squaredGLMM(lmer(Overall_mean ~ (1|Block) + (1|Population/Family) + Urb_score, data = flowering_2020, REML = F)
+)
+
+
+### CROSSED RANDOM EFFECTS-----
+lmer(Overall_mean ~ (1|Block) + (1|Population:Family) + Urb_score, data = flowering_2020, REML = F)
+# singular
+
+car::Anova(lmer(Overall_mean ~ (1|Block) + (1|Population:Family) + Urb_score, data = flowering_2020, REML = F))
+# urb_score not sig
+
+```
+
+####### urban subtransects: *Main effects sig for both; interaxn sig for city_dist (marg sig for urb_score)
+######## City_dist
+```{r}
+### NESTED RANDOM EFFECTS-----
+lmer(Overall_mean ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+# is singular
+
+# remove block?
+lmer(Overall_mean ~ (1|Population/Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+# is singular
+
+# ANOVA
+car::Anova(lmer(Overall_mean ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# main effects and interaxn sig
+
+car::Anova(lmer(Overall_mean ~  (1|Population/Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# still singular,  everything  sig
+
+AIC(lmer(Overall_mean ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+
+car::Anova(lmer(Overall_mean ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# both main effects sig
+
+r.squaredGLMM(lmer(Overall_mean ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+# very high r-sq...is this worth doing, since I have two regression lines?
+
+AIC(lmer(Overall_mean ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+
+
+### CROSSED RANDOM EFFECTS-----
+lmer(Overall_mean ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+# NOT singular
+
+# ANOVA
+car::Anova(lmer(Overall_mean ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+# everything sig
+
+
+car::Anova(lmer(Overall_mean ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+# main effects sig
+
+
+
+# ANy variation among families or populations?
+ranova(lmer(Overall_mean ~ (1|Population/Family), data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = T))
+# no
+car::Anova(lmer(Overall_mean ~ (1|Population/Family) + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# YES... variance DOES differ by subtransect... is singular
+
+```
+######## Urb_score
+```{r}
+### NESTED RANDOM EFFECTS-----
+lmer(Overall_mean ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+# is singular
+
+# remove block?
+lmer(Overall_mean ~ (1|Population/Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+# is singular
+
+# ANOVA
+car::Anova(lmer(Overall_mean ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# main effects sig
+
+car::Anova(lmer(Overall_mean ~  (1|Population/Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# still singular, main effects sig
+
+AIC(lmer(Overall_mean ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+
+car::Anova(lmer(Overall_mean ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# both main effects sig
+
+r.squaredGLMM(lmer(Overall_mean ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+# very high r-sq...is this worth doing, since I have two regression lines?
+
+AIC(lmer(Overall_mean ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+
+
+### CROSSED RANDOM EFFECTS-----
+lmer(Overall_mean ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+# is singular
+
+# ANOVA
+car::Anova(lmer(Overall_mean ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+# main effects sig
+
+
+car::Anova(lmer(Overall_mean ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+# main effects sig
+
+```
+
+## Pods
+##### lmer
+###### gradient: *NOt sig for either city_dist or urb_score
+####### City_dist
+```{r}
+### NESTED RANDOM EFFECTS-----
+lmer(Pods ~ (1|Block) + (1|Population/Family) + City_dist, data = flowering_2020, REML = F)
+# is singular
+
+# ANOVA
+car::Anova(lmer(Pods ~ (1|Block) + (1|Population/Family) + City_dist, data = flowering_2020, REML = F)
+)
+# distance not sig
+
+r.squaredGLMM(lmer(Pods ~ (1|Block) + (1|Population/Family) + City_dist, data = flowering_2020, REML = F)
+)
+
+
+### CROSSED RANDOM EFFECTS-----
+lmer(Pods ~ (1|Block) + (1|Population:Family) + City_dist, data = flowering_2020, REML = F)
+# singular
+
+car::Anova(lmer(Pods ~ (1|Block) + (1|Population:Family) + City_dist, data = flowering_2020, REML = F))
+# distance not sig
+
+
+# ANy variation among families or populations?
+ranova(lmer(Pods ~ (1|Population/Family), data = flowering_2020, REML = T))
+# no
+```
+
+
+####### Urb_score
+```{r}
+### NESTED RANDOM EFFECTS-----
+lmer(Pods ~ (1|Block) + (1|Population/Family) + Urb_score, data = flowering_2020,
+     REML = F, lmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000)))
+# singular
+
+# ANOVA
+car::Anova(lmer(Pods ~ (1|Block) + (1|Population/Family) + Urb_score, data = flowering_2020, REML = F)
+)
+# not sig
+
+r.squaredGLMM(lmer(Pods ~ (1|Block) + (1|Population/Family) + Urb_score, data = flowering_2020, REML = F)
+)
+
+
+### CROSSED RANDOM EFFECTS-----
+lmer(Pods ~ (1|Block) + (1|Population:Family) + Urb_score, data = flowering_2020, REML = F)
+# singular
+
+car::Anova(lmer(Pods ~ (1|Block) + (1|Population:Family) + Urb_score, data = flowering_2020, REML = F))
+# urb_score not sig
+
+```
+
+###### urban subtransects: *Main effects marg sig for city_dist; nothing sig for urb_score)
+####### City_dist
+```{r}
+### NESTED RANDOM EFFECTS-----
+lmer(Pods ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+# is singular
+
+# remove block?
+lmer(Pods ~ (1|Population/Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+# is singular
+
+# ANOVA
+car::Anova(lmer(Pods ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# main effects marg sig
+
+car::Anova(lmer(Pods ~  (1|Population/Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# still singular, main effects marg  sig
+
+AIC(lmer(Pods ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+
+car::Anova(lmer(Pods ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# both main effects marg sig
+
+r.squaredGLMM(lmer(Pods ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+# very high r-sq...is this worth doing, since I have two regression lines?
+
+AIC(lmer(Pods ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+
+
+### CROSSED RANDOM EFFECTS-----
+lmer(Pods ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+#  singular
+
+# ANOVA
+car::Anova(lmer(Pods ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+# main effects marg sig
+
+
+car::Anova(lmer(Pods ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+# main effects marg sig
+
+
+
+# ANy variation among families or populations?
+ranova(lmer(Pods ~ (1|Population/Family), data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = T))
+# no
+car::Anova(lmer(Pods ~ (1|Population/Family) + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# no ...variance doesn't differ by subtransect
+
+```
+####### Urb_score
+```{r}
+### NESTED RANDOM EFFECTS-----
+lmer(Pods ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+# is singular
+
+# remove block?
+lmer(Pods ~ (1|Population/Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+# is singular
+
+# ANOVA
+car::Anova(lmer(Pods ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# nothing sig
+
+car::Anova(lmer(Pods ~  (1|Population/Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# still singular,nothing sig
+
+AIC(lmer(Pods ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+
+car::Anova(lmer(Pods ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# both main effects NOT sig
+
+r.squaredGLMM(lmer(Pods ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+
+AIC(lmer(Pods ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+
+
+### CROSSED RANDOM EFFECTS-----
+lmer(Pods ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+# is singular
+
+# ANOVA
+car::Anova(lmer(Pods ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+# nothing sig
+
+car::Anova(lmer(Pods ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+# nothing sig
+
+```
+
+## Peduncles (Inflorescences)
+##### lmer
+###### gradient: *NOt sig for either city_dist or urb_score
+####### City_dist
+```{r}
+### NESTED RANDOM EFFECTS-----
+lmer(Peduncles ~ (1|Block) + (1|Population/Family) + City_dist, data = flowering_2020, REML = F)
+# is singular
+
+# ANOVA
+car::Anova(lmer(Peduncles ~ (1|Block) + (1|Population/Family) + City_dist, data = flowering_2020, REML = F)
+)
+# distance not sig
+
+r.squaredGLMM(lmer(Peduncles ~ (1|Block) + (1|Population/Family) + City_dist, data = flowering_2020, REML = F)
+)
+
+
+### CROSSED RANDOM EFFECTS-----
+lmer(Peduncles ~ (1|Block) + (1|Population:Family) + City_dist, data = flowering_2020, REML = F)
+# singular
+
+car::Anova(lmer(Peduncles ~ (1|Block) + (1|Population:Family) + City_dist, data = flowering_2020, REML = F))
+# distance not sig
+
+
+# ANy variation among families or populations?
+ranova(lmer(Peduncles ~ (1|Population/Family), data = flowering_2020, REML = T))
+# no
+```
+
+
+####### Urb_score
+```{r}
+### NESTED RANDOM EFFECTS-----
+lmer(Peduncles ~ (1|Block) + (1|Population/Family) + Urb_score, data = flowering_2020,
+     REML = F, lmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000)))
+# singular
+
+# ANOVA
+car::Anova(lmer(Peduncles ~ (1|Block) + (1|Population/Family) + Urb_score, data = flowering_2020, REML = F)
+)
+# not sig
+
+r.squaredGLMM(lmer(Peduncles ~ (1|Block) + (1|Population/Family) + Urb_score, data = flowering_2020, REML = F)
+)
+
+
+### CROSSED RANDOM EFFECTS-----
+lmer(Peduncles ~ (1|Block) + (1|Population:Family) + Urb_score, data = flowering_2020, REML = F)
+# singular
+
+car::Anova(lmer(Peduncles ~ (1|Block) + (1|Population:Family) + Urb_score, data = flowering_2020, REML = F))
+# urb_score not sig
+
+```
+
+###### urban subtransects: *nothing sig for city_dist (transect marg sig when interaction included but becomes non-sig when only main effects present); transect marg sig for urb_score)
+####### City_dist
+```{r}
+### NESTED RANDOM EFFECTS-----
+lmer(Peduncles ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+# is singular
+
+# remove block?
+lmer(Peduncles ~ (1|Population/Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+# is singular
+
+# ANOVA
+car::Anova(lmer(Peduncles ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# transect marg sig
+
+car::Anova(lmer(Peduncles ~  (1|Population/Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# still singular, transect marg  sig
+
+AIC(lmer(Peduncles ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+
+car::Anova(lmer(Peduncles ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# nothing sig
+
+r.squaredGLMM(lmer(Peduncles ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+
+AIC(lmer(Peduncles ~ (1|Block) + (1|Population/Family) + City_dist + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+
+
+### CROSSED RANDOM EFFECTS-----
+lmer(Peduncles ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+#  singular
+
+# ANOVA
+car::Anova(lmer(Peduncles ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+# transect marg sig
+
+
+car::Anova(lmer(Peduncles ~ (1|Block) + (1|Population:Family) + City_dist + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+# nothing sig
+
+
+
+# ANy variation among families or populations?
+ranova(lmer(Peduncles ~ (1|Population/Family), data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = T))
+# no
+car::Anova(lmer(Peduncles ~ (1|Population/Family) + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# no ...variance doesn't differ by subtransect
+
+```
+####### Urb_score
+```{r}
+### NESTED RANDOM EFFECTS-----
+lmer(Peduncles ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+# is singular
+
+# remove block?
+lmer(Peduncles ~ (1|Population/Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+# is singular
+
+# ANOVA
+car::Anova(lmer(Peduncles ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# transect is marg sig
+
+car::Anova(lmer(Peduncles ~  (1|Population/Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# still singular, transect marg sig
+
+AIC(lmer(Peduncles ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+
+car::Anova(lmer(Peduncles ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+# transect marg sig
+
+r.squaredGLMM(lmer(Peduncles ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+
+AIC(lmer(Peduncles ~ (1|Block) + (1|Population/Family) + Urb_score + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F))
+
+
+### CROSSED RANDOM EFFECTS-----
+lmer(Peduncles ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+# is singular
+
+# ANOVA
+car::Anova(lmer(Peduncles ~ (1|Block) + (1|Population:Family) + Urb_score * Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+# transect marg sig
+
+car::Anova(lmer(Peduncles ~ (1|Block) + (1|Population:Family) + Urb_score + Transect_ID, data = flowering_2020 %>% filter(Transect_ID != "Rural"), REML = F)
+)
+# transect marg sig
+
+```
+
+
+# Models for use in analysis
+## Flowering success
+```{r}
+flsucc_mods <- list(
+
+## City_dist / gradient
+flsucc_gr_city1 ,
+
+## Urbanization score / gradient
+flsucc_gr_usc1 ,
+
+## City_dist / urban subtransects
+flsucc_urbsubs_city1, # Qualitatively identical model (<2 AIC away)
+flsucc_urbsubs_city1_ME, # Best model
+
+## Urbanization score  / urban subtransects
+flsucc_urbsubs_usc1, # Qualitatively identical model (<2 AIC away)
+flsucc_urbsubs_usc1_ME # Best model
+
+)
+
+
+names(flsucc_mods) <- c("City_gr",
+                     "Usc_gr",
+                     "City_urbsubs_alt",
+                     "City_urbsubs_best",
+                     "Usc_urbsubs_alt",
+                     "Usc_urbsubs_best")
+```
+
+## Flowers per inflorescence
+```{r}
+fl_per_infl_mods <- list(
+
+## City_dist / gradient
+fl_per_infl_gr_city1 ,
+
+## Urbanization score / gradient
+fl_per_infl_gr_usc1 ,
+
+## City_dist / urban subtransects
+fl_per_infl_urbsubs_city1, # Qualitatively identical model (<2 AIC away)
+fl_per_infl_urbsubs_city1_ME, # Best model
+
+## Urbanization score  / urban subtransects
+fl_per_infl_urbsubs_usc1, # Qualitatively identical model (<2 AIC away)
+fl_per_infl_urbsubs_usc1_ME # Best model
+
+)
+
+
+names(fl_per_infl_mods) <- c("City_gr",
+                     "Usc_gr",
+                     "City_urbsubs_alt",
+                     "City_urbsubs_best",
+                     "Usc_urbsubs_alt",
+                     "Usc_urbsubs_best")
+```
+
+## Flowers total
+```{r}
+flowers_mods <- list(
+
+## City_dist / gradient
+flowers_gr_city1 ,
+
+## Urbanization score / gradient
+flowers_gr_usc1 ,
+
+## City_dist / urban subtransects
+flowers_urbsubs_city1, # Qualitatively identical model (<2 AIC away)
+flowers_urbsubs_city1_ME, # Best model
+
+## Urbanization score  / urban subtransects
+flowers_urbsubs_usc1, # Qualitatively identical model (<2 AIC away)
+flowers_urbsubs_usc1_ME # Best model
+
+)
+
+
+names(flowers_mods) <- c("City_gr",
+                     "Usc_gr",
+                     "City_urbsubs_alt",
+                     "City_urbsubs_best",
+                     "Usc_urbsubs_alt",
+                     "Usc_urbsubs_best")
+```

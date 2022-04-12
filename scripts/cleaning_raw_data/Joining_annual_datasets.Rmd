@@ -211,11 +211,13 @@ herbivores_20_21 <- rbind.fill(herbivore_2020, herbivore_2021)
 # not measured in 2019
 reproductive_2020 %<>%
   dplyr::rename(., Flowered = Flowered2020) %>%
-  dplyr::select(-7)
+  dplyr::select(-7) %>%
+  dplyr::mutate(Year = "2020")
 
 reproductive_2021 %<>%
   dplyr::rename(., Flowered = Flowered2021) %>%
-  dplyr::select(-c(9:13))
+  dplyr::select(-c(9:13)) %>%
+  dplyr::mutate(Year = "2021")
 
 reprod_20_21 <- rbind.fill(reproductive_2020, reproductive_2021)
 
@@ -227,11 +229,13 @@ reprod_20_21 <- rbind.fill(reproductive_2020, reproductive_2021)
 flowering_2020 %<>%
   dplyr::rename(., Flowered = Flowered2020) %>%
   dplyr::select(-"X") %>%
-  dplyr::select(-c(7, 12, 13))
+  dplyr::select(-c(7, 12, 13))%>%
+  dplyr::mutate(Year = "2020")
 
 flowering_2021 %<>%
   dplyr::rename(., Flowered = Flowered2021) %>%
-  dplyr::select(-"X")
+  dplyr::select(-"X")%>%
+  dplyr::mutate(Year = "2021")
 
 flowering_20_21 <- rbind.fill(flowering_2020, flowering_2021)
 ```
