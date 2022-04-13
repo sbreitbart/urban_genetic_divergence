@@ -15,12 +15,12 @@ flowering <- read.csv(here::here("./Joined_annual_data/flowering.csv"), na.strin
   dplyr::select(., -1)%>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.character) %>%
     dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.factor) 
-
-reproduc %<>%
-  dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
-
-flowering %<>%
-  dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
+# 
+# reproduc %<>%
+#   dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
+# 
+# flowering %<>%
+#   dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
 
 ```
 

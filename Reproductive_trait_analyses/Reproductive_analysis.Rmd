@@ -14,11 +14,7 @@ output:
     toc_depth: '2'
 editor_options: 
   chunk_output_type: console
-NOTES:
-  -Still to do--
-    -try to do an RDA (or PCA?) with all the traits
-    -make a ReadMe file for each level
-    -calculate heritability coefficients
+
 # WHEN TOTALLY DONE, type this:
 # renv::activate()
 # renv::snapshot()
@@ -41,520 +37,418 @@ source("functions.R")
 
 ## Import data
 ```{r}
-reproduc <- read.csv(here::here("./Joined_annual_data/reproductive.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
-  dplyr::select(., -1)
+reproduc <- read.csv(here::here("./Joined_annual_data/reproductive.csv"), na.strings=c("NO PLANT", "none", "NA"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::select(., -1)%>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.factor)
 
-flowering <- read.csv(here::here("./Joined_annual_data/flowering.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
-  dplyr::select(., -1)
+flowering <- read.csv(here::here("./Joined_annual_data/flowering.csv"), na.strings=c("NO PLANT", "none", "NA"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::select(., -1)%>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.factor) 
+```
+
+## Import final models
+### Create full list
+```{r}
+source(knitr::purl("Reproductive_trait_analyses/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
+
+all_models <- list(
+flsucc_mods      , # flowering success
+fl_per_infl_mods , # mean flowers per inflorescence
+flowers_mods     , # total flowers/plant
+flsize_mods      , # mean flower size
+pods_mods        , # pods (follicles)
+peduncles_mods   ) # peduncles (inflorescences)
+
+names(all_models) <- c(
+"flsucc_mods"          ,
+"fl_per_infl_mods"     ,
+"flowers_mods"         ,
+"flsize_mods"          ,
+"pods_mods"            ,
+"peduncles_mods")
+```
+
+### Create separate lists of best vs. alt models for city_dist vs urb_score
+#### flowering success
+```{r}
+## Best
+### City_dist
+flsucc_mods_best_c <- flsucc_mods[c(1,4)]
+
+### Urb_score
+flsucc_mods_best_u <- flsucc_mods[c(2,6)]
+
+## Alt
+### City_dist
+flsucc_mods_alt_c <- flsucc_mods[3]
+
+### Urb_score
+flsucc_mods_alt_u <- flsucc_mods[5]
+```
+
+#### mean flowers per inflorescence
+```{r}
+## Best
+### City_dist
+fl_per_infl_mods_best_c <- fl_per_infl_mods[c(1,4)]
+
+### Urb_score
+fl_per_infl_mods_best_u <- fl_per_infl_mods[c(2,6)]
+
+## Alt
+### City_dist
+fl_per_infl_mods_alt_c <- fl_per_infl_mods[3]
+
+### Urb_score
+fl_per_infl_mods_alt_u <- fl_per_infl_mods[5]
 ```
 
 
-## MAKE DIAGNOSTIC RMD NEXT, THEN FIGURE OUT HOW TO STRUCTURE REST OF THIS
-### ***taken from old doc; update***
-##### Entire gradient: *Nothing sig for either
-###### City_dist
+#### total flowers/plant
 ```{r}
-car::Anova(flowering_gr_city_m1)
-# nothing significant
+## Best
+### City_dist
+flowers_mods_best_c <- flowers_mods[c(1,4)]
 
+### Urb_score
+flowers_mods_best_u <- flowers_mods[c(2,6)]
 
+## Alt
+### City_dist
+flowers_mods_alt_c <- flowers_mods[3]
 
-# ANy variation within families or populations?
-
-##### TACTIC 1: try bootstrapping #####
-# NOT PERFECT b/c can't nest family within pop but trying a few ways to get at the correct answer.
-# https://www.ssc.wisc.edu/sscc/pubs/MM/MM_TestEffects.html#test-of-random-parameter
-# library(pbkrtest) # Parametric Bootstrap, Kenward-Roger and Satterthwaite Based
-Methods for Test in Mixed Models
-# library(pbnm)
-# 
-# # JUST POPULATION
-# gmm <-  glmer(Flowered2020 ~ City_dist + (1|Population), # can't leave in Family... doesn't work
-#               family = binomial(link = "logit"),
-#               data = reproductive,
-#              nAGQ = 0)
-# 
-# # IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
-# gmm1 <-  glmer(Flowered2020 ~ City_dist + (1|Population/Family), 
-#               family = binomial(link = "logit"),
-#               data = reproductive,
-#              nAGQ = 0)
-# 
-# # POP:FAMILY
-# gmm2 <-  glmer(Flowered2020 ~ City_dist + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
-#               family = binomial(link = "logit"),
-#               data = reproductive,
-#              nAGQ = 0)
-# 
-# # UNIQUE FAMILIES
-# reproductive$Family_unique <- paste(reproductive$Population, reproductive$Family)
-# gmm3 <-  glmer(Flowered2020 ~ City_dist + (1|Family_unique),
-#               family = binomial(link = "logit"),
-#               data = reproductive,
-#              nAGQ = 0)
-# 
-# # EQUIVALENT TO FAM NESTED W/IN POP
-# gmm4 <-  glmer(Flowered2020 ~ City_dist + (1|Population:Family) + (1|Population),
-#               family = binomial(link = "logit"),
-#               data = reproductive,
-#              nAGQ = 0)
-# 
-# 
-# # REDUCED MODEL
-# gmmDG1 <- glm(Flowered2020 ~ City_dist,
-#               family = binomial(link = "logit"),
-#               data = reproductive)
-# 
-# ### RESULTS ###
-# # POPULATION (so, results are about populations)
-# pbgmmDg1 <- pbnm(gmm,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
-# summary(pbgmmDg1) # p = 0.031...  var among pops
-# 
-# # EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
-# pbgmmDg4 <- pbnm(gmm4,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
-# ranova_pop <- summary(pbgmmDg4) %T>%
-#   print() # p = 0.028... var among pops accounting for fams
-# 
-# # POP:FAMILY (so, results are about families)- accounts for fams being in same pop
-# pbgmmDg2 <- pbnm(gmm2,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
-# ranova_fam <- summary(pbgmmDg2) %T>%
-#   print() # p = 0.191... little var among families crossed w/ pops
-# 
-# # UNIQUE FAMILIES (so, results are about families)
-# pbgmmDg3 <- pbnm(gmm3,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
-# summary(pbgmmDg3) # p = 0.258... little var among families, period
-# 
-# 
-# 
-# sum.1 <- summary(gmm4)
-# 
-# variances1 <- print(VarCorr(gmm4),comp="Variance") %>%
-#   as.data.frame() %>%
-#   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
-#   dplyr::select(., c(grp, vcov, PVE)) %>%
-#   dplyr::rename(., Group = grp,
-#                 Variance = vcov)
-# 
-# # export percent variance explained
-# write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_Floweringsuccess_glmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
-# 
-# # export ranova
-# sink(here::here("./Figures_Tables/ranova_PVE/2020_Floweringsuccess_glmer_ranova.csv"))
-# print("POPULATION", sep="\n\n")
-# print(ranova_pop, sep="\n\n")
-#   cat("\n")
-# print("FAMILY", sep="\n\n")
-# print(ranova_fam, sep="\n\n")
-#   cat("\n")
-# if (ranova_pop[1] <= 0.05){
-#   print ('There is variance among populations')}
-# if (ranova_pop[1] > 0.05){
-#   print ("There is not much variance among populations")}
-# if (ranova_fam[1] <= 0.05){
-#   print ("There is variance among families")}
-# if (ranova_fam[1] > 0.05){
-#   print ("There is not much variance among families")}
-# sink()
-
+### Urb_score
+flowers_mods_alt_u <- flowers_mods[5]
 
 ```
 
-###### Urb_score
+
+#### mean flower size
 ```{r}
-car::Anova(flowering_gr_urb_m1)
-# not sig
+## Best
+### City_dist
+flsize_mods_best_c <- flsize_mods[c(1,4)]
 
+### Urb_score
+flsize_mods_best_u <- flsize_mods[c(2,5)]
 
+## Alt
+### City_dist
+flsize_mods_alt_c <- flsize_mods[3]
+
+### Urb_score- NONE
 ```
 
-##### Urban subtransects: *Nothing sig for either
-###### City_dist
+#### pods (follicles)
 ```{r}
-car::Anova(flowering_urbsubs_city_m1) # nothing sig
-car::Anova(flowering_urbsubs_city_m1_ME) # nothing sig
+## Best
+### City_dist
+pods_mods_best_c <- pods_mods[c(1,4)]
 
-AIC(flowering_urbsubs_city_m1, flowering_urbsubs_city_m1_ME) # <2 away
+### Urb_score
+pods_mods_best_u <- pods_mods[c(2,5)]
 
+## Alt
+### City_dist
+pods_mods_alt_c <- pods_mods[3]
 
-
-
-# ANy variation within families or populations?
-
-##### TACTIC 1: try bootstrapping #####
-# NOT PERFECT b/c can't nest family within pop but trying a few ways to get at the correct answer.
-# https://www.ssc.wisc.edu/sscc/pubs/MM/MM_TestEffects.html#test-of-random-parameter
-
-
-### MODEL 1: CITY_DIST ###
-##########################
-# 
-# # JUST POPULATION
-# gmm <-  glmer(Flowered2020 ~ City_dist + (1|Population), # can't leave in Family... doesn't work
-#               family = binomial(link = "logit"),
-#   data = reproductive %>% filter(Urb_Rur == "Urban"),
-#   nAGQ = 0)
-# 
-# # IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
-# gmm1 <-  glmer(Flowered2020 ~ City_dist + (1|Population/Family), 
-#               family = binomial(link = "logit"),
-#   data = reproductive %>% filter(Urb_Rur == "Urban"),
-#              nAGQ = 0)
-# 
-# # POP:FAMILY
-# gmm2 <-  glmer(Flowered2020 ~ City_dist + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
-#               family = binomial(link = "logit"),
-#   data = reproductive %>% filter(Urb_Rur == "Urban"),
-#              nAGQ = 0)
-# 
-# # UNIQUE FAMILIES
-# gmm3 <-  glmer(Flowered2020 ~ City_dist + (1|Family_unique),
-#               family = binomial(link = "logit"),
-#   data = reproductive %>% filter(Urb_Rur == "Urban"),
-#              nAGQ = 0)
-# 
-# # EQUIVALENT TO FAM NESTED W/IN POP
-# gmm4 <-  glmer(Flowered2020 ~ City_dist + (1|Population:Family) + (1|Population),
-#               family = binomial(link = "logit"),
-#   data = reproductive %>% filter(Urb_Rur == "Urban"),
-#              nAGQ = 0)
-# 
-# 
-# # REDUCED MODEL 1
-# gmmDG1 <- glm(Flowered2020 ~ City_dist,
-#               family = binomial(link = "logit"),
-#   data = reproductive %>% filter(Urb_Rur == "Urban"))
-# 
-# 
-# 
-# ### RESULTS ###
-# # POPULATION (so, results are about populations)
-# pbgmmDg1 <- pbnm(gmm,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
-# summary(pbgmmDg1) # p = 0.032...  var among pops
-# 
-# # EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
-# pbgmmDg4 <- pbnm(gmm4,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
-# ranova_pop <- summary(pbgmmDg4) %T>%
-#   print() # p = 0.049... var among pops accounting for fams
-# 
-# # POP:FAMILY (so, results are about families)- accounts for fams being in same pop
-# pbgmmDg2 <- pbnm(gmm2,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
-# ranova_fam <- summary(pbgmmDg2) %T>%
-#   print() # p = 0.23... little var among families crossed w/ pops
-# 
-# # UNIQUE FAMILIES (so, results are about families)
-# pbgmmDg3 <- pbnm(gmm3,gmmDG1,nsim=1000,tasks=10,cores=2,seed=3400835) 
-# summary(pbgmmDg3) # p = 0.23... little var among families, period
-# 
-# 
-# 
-# ### MODEL 2: TRANSECT_ID ###
-# ##########################
-# 
-# # JUST POPULATION
-# gmm.2 <-  glmer(Flowered2020 ~ Transect_ID + (1|Population), # can't leave in Family... doesn't work
-#               family = binomial(link = "logit"),
-#   data = reproductive %>% filter(Urb_Rur == "Urban"),
-#   nAGQ = 0)
-# 
-# # IDEAL MODEL (DOESN'T WORK w/glmer THOUGH)
-# gmm1.2 <-  glmer(Flowered2020 ~ Transect_ID + (1|Population/Family), 
-#               family = binomial(link = "logit"),
-#   data = reproductive %>% filter(Urb_Rur == "Urban"),
-#              nAGQ = 0)
-# 
-# # POP:FAMILY
-# gmm2.2 <-  glmer(Flowered2020 ~ Transect_ID + (1|Population:Family), # can't leave in Family as nested but CAN as crossed
-#               family = binomial(link = "logit"),
-#   data = reproductive %>% filter(Urb_Rur == "Urban"),
-#              nAGQ = 0)
-# 
-# # UNIQUE FAMILIES
-# gmm3.2 <-  glmer(Flowered2020 ~ Transect_ID + (1|Family_unique),
-#               family = binomial(link = "logit"),
-#   data = reproductive %>% filter(Urb_Rur == "Urban"),
-#              nAGQ = 0)
-# 
-# # EQUIVALENT TO FAM NESTED W/IN POP
-# gmm4.2 <-  glmer(Flowered2020 ~ Transect_ID + (1|Population:Family) + (1|Population),
-#               family = binomial(link = "logit"),
-#   data = reproductive %>% filter(Urb_Rur == "Urban"),
-#              nAGQ = 0)
-# 
-# # REDUCED MODEL 2
-# gmmDG1.2 <- glm(Flowered2020 ~ Transect_ID,
-#               family = binomial(link = "logit"),
-#   data = reproductive %>% filter(Urb_Rur == "Urban"))
-# 
-# 
-# 
-# ### RESULTS ###
-# # POPULATION (so, results are about populations)
-# pbgmmDg1.2 <- pbnm(gmm.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
-# summary(pbgmmDg1.2) # p = 0.027...  var among pops
-# 
-# # EQUIVALENT TO FAM NESTED W/IN POP (so, results are about populations)
-# pbgmmDg4.2 <- pbnm(gmm4.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
-# ranova_pop.2 <- summary(pbgmmDg4.2) %T>%
-#   print() # p = 0.049... var among pops accounting for fams
-# 
-# # POP:FAMILY (so, results are about families)- accounts for fams being in same pop
-# pbgmmDg2.2 <- pbnm(gmm2.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
-# ranova_fam.2 <- summary(pbgmmDg2.2) %T>%
-#   print() # p = 0.216... little var among families crossed w/ pops
-# 
-# # UNIQUE FAMILIES (so, results are about families)
-# pbgmmDg3.2 <- pbnm(gmm3.2,gmmDG1.2,nsim=1000,tasks=10,cores=2,seed=3400835) 
-# summary(pbgmmDg3.2) # p = 0.216... little var among families, period
-# 
-# 
-# 
-# 
-# sum.1 <- summary(gmm4)
-# 
-# variances1 <- print(VarCorr(gmm4),comp="Variance") %>%
-#   as.data.frame() %>%
-#   dplyr::mutate(., PVE = vcov / sum(vcov)) %>%
-#   dplyr::select(., c(grp, vcov, PVE)) %>%
-#   dplyr::rename(., Group = grp,
-#                 Variance = vcov)
-# 
-# # export percent variance explained
-# write.table(variances1, here::here("./Figures_Tables/ranova_PVE/2020_Floweringsuccess_urban_glmer_PVE.csv"), col.names=TRUE, sep=",", append=TRUE)
-# 
-# # export ranova
-# sink(here::here("./Figures_Tables/ranova_PVE/2020_Floweringsuccess_urban_glmer_ranova.csv"))
-# print("POPULATION", sep="\n\n")
-# print(ranova_pop, sep="\n\n")
-#   cat("\n")
-# print("FAMILY", sep="\n\n")
-# print(ranova_fam, sep="\n\n")
-#   cat("\n")
-# if (ranova_pop[1] <= 0.05){
-#   print ('There is variance among populations')}
-# if (ranova_pop[1] > 0.05){
-#   print ("There is not much variance among populations")}
-# if (ranova_fam[1] <= 0.05){
-#   print ("There is variance among families")}
-# if (ranova_fam[1] > 0.05){
-#   print ("There is not much variance among families")}
-#   
-# cat("\n")
-# cat("\n")
-# 
-# print("POPULATION", sep="\n\n")
-# print(ranova_pop.2, sep="\n\n")
-#   cat("\n")
-# print("FAMILY", sep="\n\n")
-# print(ranova_fam.2, sep="\n\n")
-#   cat("\n")
-# if (ranova_pop.2[1] <= 0.05){
-#   print ('Variance among populations differs by urban subtransect')}
-# if (ranova_pop.2[1] > 0.05){
-#   print ("Variance among populations does not differ by urban subtransect")}
-# if (ranova_fam.2[1] <= 0.05){
-#   print ("Variance among families differs by urban subtransect")}
-# if (ranova_fam.2[1] > 0.05){
-#   print ("Variance among families does not differ by urban subtransect")}
-# sink()
-```
-
-###### Urb_score
-```{r}
-car::Anova(flowering_urbsubs_usc_m1) # nothing sig
-car::Anova(flowering_urbsubs_usc_m1_ME) # nothing sig
-
-AIC(flowering_urbsubs_usc_m1, flowering_urbsubs_usc_m1_ME) # <2 away
+### Urb_score
+pods_mods_alt_u <- pods_mods[6]
 ```
 
 
-
-
-
-#### Sig difference between urb vs rural? (Odds ratio)
+#### peduncles (inflorescences)
 ```{r}
-# # How many plants flowered per subtransect? using 2019 alive plants
-# tib1 <- reproductive %>%
-#   filter(Alive_DC1 != '0')%>%
-#   group_by(Flowered2020, Urb_Rur) %>%
-#   tally()
-# tib1
-# 
-# 
-# Flowered_ttest <- matrix(c(21, 3, 556, 282), nrow = 2,
-#                          dimnames = list(
-#                            c("Urban", "Rural"),
-#                            c("Flowered", "Didn't Flower")))
-# 
-# fisher.test(Flowered_ttest, alternative = "two.sided")
-# # odds ratio = 3.5464
-# # p = 0.02859
-# # medium effect size
+## Best
+### City_dist
+peduncles_mods_best_c <- peduncles_mods[c(1,4)]
+
+### Urb_score
+peduncles_mods_best_u <- peduncles_mods[c(2,5)]
+
+## Alt
+### City_dist
+peduncles_mods_alt_c <- peduncles_mods[3]
+
+### Urb_score- NONE
+```
+
+# Ranova- RETURN HERE
+The point: to determine if there is much genetic diversity present within populations for natural selection to act on.
+- ranova can't handle GLMMTMB functions so I'll use lmer instead
+- Also using Pop/Fam instead of Pop:Fam or Pop/Fam_uniq like I did when making models earlier
+## Set seed for random processes (bootstrapping)
+```{r}
+set.seed(45)
+```
+
+## Gradient / City_dist
+# Anova
+## Flowering success
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy(flsucc_mods_best_c) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/FloweringSuccess_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy(flsucc_mods_best_u) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/FloweringSuccess_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(flsucc_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/FloweringSuccess_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(flsucc_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/FloweringSuccess_urbscore_alt.png"))
+```
+
+## Total flowers/plant
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy(flowers_mods_best_c) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/FlowersPerPlant_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy(flowers_mods_best_u) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/FlowersPerPlant_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(flowers_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/FlowersPerPlant_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(flowers_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/FlowersPerPlant_urbscore_alt.png"))
+```
 
 
-# How many plants flowered per subtransect? using 2020 alive plants
+## Mean flowers/inflorescence
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy(fl_per_infl_mods_best_c) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/MeanFlowersPerInflor_citydist.png"))
+```
 
-tib2 <- reproductive %>%
-  filter(Alive_DC1 == 1) %>%
-  group_by(Flowered2020, Urb_Rur) %>%
-  tally()
-tib2
+#### Urb_score
+```{r}
+make_all_anovas_tidy(fl_per_infl_mods_best_u) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/MeanFlowersPerInflor_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(fl_per_infl_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/MeanFlowersPerInflor_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(fl_per_infl_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/MeanFlowersPerInflor_urbscore_alt.png"))
+```
+
+
+## Mean flower size/inflorescence
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy(flsize_mods_best_c) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/FlowerSize_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy(flsize_mods_best_u) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/FlowerSize_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(flsize_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/FlowerSize_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+# NONE
+```
+
+
+## Pods
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy(pods_mods_best_c) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/Pods_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy(pods_mods_best_u) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/Pods_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(pods_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/Pods_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(pods_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/Pods_urbscore_alt.png"))
+```
+
+
+## Peduncles
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy(peduncles_mods_best_c) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/Peduncles_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy(peduncles_mods_best_u) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/Peduncles_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(peduncles_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/Peduncles_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+# NONE
+```
+
+# Odds Ratio
+## Flowering success: Compare urb vs rural populations (NS)
+```{r}
+Flowering_pops <- reproduc %>%
+  dplyr::group_by(Population, Year, Urb_Rur) %>%
+  dplyr::summarise(Pop_flowered = sum(Flowered)) %>%
+  dplyr::mutate(Pop_flowered = case_when(Pop_flowered >= 1 ~ 1,
+                                         Pop_flowered == 0 ~ 0)) %T>%
+  print()
+
+Flowering_pops_cumulative <- Flowering_pops %>%
+  dplyr::group_by(Population, Urb_Rur) %>%
+  dplyr::summarise(Pop_flowered = sum(Pop_flowered)) %>%
+  dplyr::mutate(Pop_flowered = case_when(Pop_flowered >= 1 ~ 1,
+                                         Pop_flowered == 0 ~ 0)) %T>%
+  print()
+
+Flowering_pops_urbrur_cumulative <- Flowering_pops_cumulative %>%
+  dplyr::group_by(Urb_Rur) %>%
+  dplyr::summarise(Pops_flowered = sum(Pop_flowered),
+                   Pops_total = n_distinct(Population)
+                   ) %T>%
+  print()
 
 
 Flowered_ttest2 <- matrix(c(
-  as.integer(tib2[2,3]),
-  as.integer(tib2[4,3]),
-  as.integer(tib2[4,3]),
-  as.integer(tib2[3,3])),
-  nrow = 2,
-  dimnames = list(
-    c("Rural", "Urban"),
-    c("Flowered", "Didn't Flower")))
-
-fisher.test(Flowered_ttest2, alternative = "two.sided")
-# odds ratio = 3.761
-# p = 0.0655
-# Medium effect size
-
-chisq.test(Flowered_ttest2)
-# X-squared = 3.823, df = 1, p-value = 0.05055
-
-
-
-
-
-# How many populations had at least one plant flower per subtransect? using 2020 alive plants
-
-tib3 <- reproductive %>%
-  group_by(Population, Flowered2020, Urb_Rur) %>%
-  dplyr::summarise(Pops = n_distinct(Population),
-                   Urb_Rur = first(Urb_Rur)) %>%
-  group_by(Population, Urb_Rur) %>%
-  dplyr::summarise(Flowered = sum(as.integer(Flowered2020)),
-                   Urb_Rur = first(Urb_Rur)) %>%
-  group_by(Urb_Rur, Flowered) %>%
-  dplyr::summarise(Pops = n_distinct(Population))
+  as.integer(Flowering_pops_urbrur_cumulative[1,2]),
   
-tib3
-# Flowered = 1: Flowered
-# Flowered = 0: Didn't flower
-
-
-
-Flowered_ttest3 <- matrix(c(
-  as.integer(tib3[2,3]),
-  as.integer(tib3[4,3]),
-  as.integer(tib3[4,3]),
-  as.integer(tib3[3,3])),
+  as.integer(Flowering_pops_urbrur_cumulative[2,2]),
+  
+  as.integer(Flowering_pops_urbrur_cumulative[1,3]) - as.integer(Flowering_pops_urbrur_cumulative[1,2]),
+  
+  as.integer(Flowering_pops_urbrur_cumulative[2,3]) - as.integer(Flowering_pops_urbrur_cumulative[2,2])
+  ),
+  
   nrow = 2,
   dimnames = list(
     c("Rural", "Urban"),
-    c("Flowered", "Didn't Flower")))
-
-fisher.test(Flowered_ttest3, alternative = "two.sided")
-# odds ratio = 0.5064
-# p = 0.5034
-# Medium effect size
-
-
-chisq.test(Flowered_ttest3)
-# X-squared = 0.3782, df = 1, p-value = 0.5386
-```
-
-
-
-#### Sig difference between urb:north vs urb:south? (Odds ratio)
-```{r}
-# How many plants flowered per subtransect? using 2020 alive plants
-
-tib4 <- reproductive %>%
-  filter(., Transect_ID != 'Rural') %>%
-  group_by(Flowered2020, Transect_ID) %>%
-  tally()
-tib4
-
-
-Flowered_ttest4 <- matrix(c(
-  as.integer(tib4[3,3]),
-  as.integer(tib4[4,3]),
-  as.integer(tib4[1,3]),
-  as.integer(tib4[2,3])),
-  nrow = 2,
-  dimnames = list(
-    c("North", "South"),
     c("Flowered", "Didn't Flower"))) %T>%
   print()
 
-fisher.test(Flowered_ttest4, alternative = "two.sided")
-# odds ratio = 0.782
-# p = 0.660 (CAN'T REJECT THE NULL)
-# negligible effect size
+fisher.test(Flowered_ttest2, alternative = "two.sided")
+# odds ratio = 2.136676 
+# p = 0.34
+# Small effect size
 
-chisq.test(Flowered_ttest4)
-# X-squared = 0.081128, df = 1, p-value = 0.7758
+chisq.test(Flowered_ttest2)
+# X-squared = 0.5472, df = 1, p-value = 0.4595
 
-
-
-
-
-
-# How many populations had at least one plant flower per subtransect? using 2020 alive plants
-
-tib5 <- reproductive %>%
-  filter(., Transect_ID != "Rural") %>%
-  group_by(Population, Flowered2020, Transect_ID) %>%
-  dplyr::summarise(Pops = n_distinct(Population),
-                   Transect_ID = first(Transect_ID)) %>%
-  group_by(Population, Transect_ID) %>%
-  dplyr::summarise(Flowered = sum(as.integer(Flowered2020)),
-                   Transect_ID = first(Transect_ID)) %>%
-  group_by(Transect_ID, Flowered) %>%
-  dplyr::summarise(Pops = n_distinct(Population))
-  
-tib5
-# Flowered = 0: Didn't flower
-# Flowered = 1: Did flower
-
-
-
-Flowered_ttest5 <- matrix(c(
-  as.integer(tib5[1,3]),
-  as.integer(tib5[3,3]),
-  as.integer(tib5[2,3]),
-  as.integer(tib5[4,3])),
-  nrow = 2,
-  dimnames = list(
-    c("North", "South"),
-    c("Didn't Flower", "Flowered"))) %T>%
-  print()
-
-fisher.test(Flowered_ttest5, alternative = "two.sided")
-# odds ratio = 0.851
-# p = 1 (NOT SIGNIFICANT; CAN'T REJECT NULL)
-# small effect size
-
-chisq.test(Flowered_ttest5)
-# X-squared = 0.41878, df = 1, p-value = 0.5175
 ```
 
 
-#### Block effect?
+## Flowering success: Compare corridor vs non-corridor pops (NS)
 ```{r}
-glmer(Flowered2020 ~ Block + (1|Population/Family),
-  data = reproductive,
-  family = binomial(link = "logit"),
-  nAGQ=1,
-  glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000)))
+Flowering_pops_urban <- reproduc %>%
+  dplyr::group_by(Population, Year, Transect_ID) %>%
+  dplyr::filter(Transect_ID != "Rural") %>%
+  dplyr::summarise(Pop_flowered = sum(Flowered)) %>%
+  dplyr::mutate(Pop_flowered = case_when(Pop_flowered >= 1 ~ 1,
+                                         Pop_flowered == 0 ~ 0)) %T>%
+  print()
 
-car::Anova(glmer(Flowered2020 ~ Block + (1|Population/Family),
-  data = reproductive,
-  family = binomial(link = "logit"),
-  nAGQ=1,
-  glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000))))
-# Block is significant, so yes, the number of plants that flowered DID significantly vary by block.
+Flowering_pops_urban_cumulative <- Flowering_pops_urban %>%
+  dplyr::group_by(Population, Transect_ID) %>%
+  dplyr::summarise(Pop_flowered = sum(Pop_flowered)) %>%
+  dplyr::mutate(Pop_flowered = case_when(Pop_flowered >= 1 ~ 1,
+                                         Pop_flowered == 0 ~ 0)) %T>%
+  print()
 
-summary(glmer(Flowered2020 ~ Block + (1|Population/Family),
-  data = reproductive,
-  family = binomial(link = "logit"),
-  nAGQ=1,
-  glmerControl(optimizer="bobyqa", optCtrl = list(maxfun = 100000))))
+Flowering_pops_transects_cumulative <- Flowering_pops_urban_cumulative %>%
+  dplyr::group_by(Transect_ID) %>%
+  dplyr::summarise(Pops_flowered = sum(Pop_flowered),
+                   Pops_total = n_distinct(Population)
+                   ) %T>%
+  print()
+
+
+Flowered_ttest2 <- matrix(c(
+  as.integer(Flowering_pops_transects_cumulative[1,2]),
+  
+  as.integer(Flowering_pops_transects_cumulative[2,2]),
+  
+  as.integer(Flowering_pops_transects_cumulative[1,3]) - as.integer(Flowering_pops_transects_cumulative[1,2]),
+  
+  as.integer(Flowering_pops_transects_cumulative[2,3]) - as.integer(Flowering_pops_transects_cumulative[2,2])
+  ),
+  
+  nrow = 2,
+  dimnames = list(
+    c("Non-Corridor", "Corridor"),
+    c("Flowered", "Didn't Flower"))) %T>%
+  print()
+
+fisher.test(Flowered_ttest2, alternative = "two.sided")
+# odds ratio = 0.8501017  
+# p = 1
+# Small effect size
+
+chisq.test(Flowered_ttest2)
+# X-squared = 1.3188e-31, df = 1, p-value = 1
+
 ```
