@@ -550,23 +550,89 @@ plot(DHARMa::simulateResiduals(peduncles_gr_usc1)) # looks good
 #### Urban Subtransects
 ##### City_dist
 ```{r}
-peduncles_urbsubs_city1 <- glmmTMB(Peduncles ~
+# peduncles_urbsubs_city1 <- glmmTMB(Peduncles ~
+#                            (1|Block) +
+#                            (1|Year) +
+#                            (1|Population/Family) +
+#                            City_dist * Transect_ID,
+#                          data = flowering %>%
+#                            dplyr::filter(Transect_ID != "Rural"),
+#                          family = poisson())
+# 
+# plot(DHARMa::simulateResiduals(peduncles_urbsubs_city1)) # issues with KS test and dispersion
+# testDispersion(peduncles_urbsubs_city1)
+# 
+# performance::check_model(peduncles_urbsubs_city1)
+
+# neg binomial- this works (nbinom1 doesn't)
+peduncles_urbsubs_city1 <- glmmTMB(Peduncles^2 ~
                            (1|Block) +
                            (1|Year) +
                            (1|Population/Family) +
                            City_dist * Transect_ID,
                          data = flowering %>%
                            dplyr::filter(Transect_ID != "Rural"),
-                         family = poisson())
+                         family = nbinom2)
 
-plot(DHARMa::simulateResiduals(peduncles_urbsubs_city1)) # issues with KS test and dispersion
-testDispersion(peduncles_urbsubs_city1)
+plot(DHARMa::simulateResiduals(peduncles_urbsubs_city1))
 
 performance::check_model(peduncles_urbsubs_city1)
 
-# neg binomial doesn't help
 
+# MAIN EFFECTS MODEL
+peduncles_urbsubs_city1_ME <- glmmTMB(Peduncles^2 ~
+                           (1|Block) +
+                           (1|Year) +
+                           (1|Population/Family) +
+                           City_dist + Transect_ID,
+                         data = flowering %>%
+                           dplyr::filter(Transect_ID != "Rural"),
+                         family = nbinom2)
+
+plot(DHARMa::simulateResiduals(peduncles_urbsubs_city1_ME))
+
+performance::check_model(peduncles_urbsubs_city1_ME)
+
+AIC(peduncles_urbsubs_city1, peduncles_urbsubs_city1_ME) # ME model best but <2 AIC from full
 ```
+
+##### Urb_score
+```{r}
+# neg binomial- nbinom2 has best results though residual vs predicted plot still has issues
+peduncles_urbsubs_usc1 <- glmmTMB(Peduncles ~
+                           (1|Block) +
+                           (1|Year) +
+                           (1|Population/Family) +
+                           Urb_score * Transect_ID,
+                         data = flowering %>%
+                           dplyr::filter(Transect_ID != "Rural"),
+                         family = nbinom2)
+
+plot(DHARMa::simulateResiduals(peduncles_urbsubs_usc1))
+DHARMa::testOutliers(peduncles_urbsubs_usc1) # no outliers
+performance::check_model(peduncles_urbsubs_usc1)
+# "To remove this pattern, you would need to make the dispersion parameter dependent on a predictor (e.g. in JAGS), or apply a transformation on the data."
+# -JAGS is a Bayesian software
+# -I tried transforming the response and it doesn't completely solve the issue. Looking at the performance::check_model() plots above, I think this isn't much to worry about.
+
+
+# MAIN EFFECTS MODEL
+peduncles_urbsubs_usc1_ME <- glmmTMB(Peduncles ~
+                           (1|Block) +
+                           (1|Year) +
+                           (1|Population/Family) +
+                           Urb_score + Transect_ID,
+                         data = flowering %>%
+                           dplyr::filter(Transect_ID != "Rural"),
+                         family = nbinom2)
+
+plot(DHARMa::simulateResiduals(peduncles_urbsubs_usc1_ME)) # looks good
+
+performance::check_model(peduncles_urbsubs_usc1_ME)
+
+AIC(peduncles_urbsubs_usc1, peduncles_urbsubs_usc1_ME) # ME model best model
+```
+
 # Models for use in analysis
 ## Flowering success
 ```{r}
@@ -723,12 +789,12 @@ peduncles_gr_city1 ,
 peduncles_gr_usc1 ,
 
 ## City_dist / urban subtransects
-peduncles_urbsubs_city1, # Best model
-peduncles_urbsubs_city1_ME, # Qualitatively identical model (<2 AIC away)
+peduncles_urbsubs_city1, # Qualitatively identical model (<2 AIC away)
+peduncles_urbsubs_city1_ME, # Best model
 
 ## Urbanization score  / urban subtransects
-peduncles_urbsubs_usc1, # Best model
-peduncles_urbsubs_usc1_ME # Qualitatively identical model (<2 AIC away)
+peduncles_urbsubs_usc1 #, # Best model
+# peduncles_urbsubs_usc1_ME 
 
 )
 
@@ -737,7 +803,6 @@ names(peduncles_mods) <- c("City_gr",
                      "Usc_gr",
                      "City_urbsubs_alt",
                      "City_urbsubs_best",
-                     "Usc_urbsubs_best",
-                     "Usc_urbsubs_alt")
+                     "Usc_urbsubs_best")
 ```
 
