@@ -1,7 +1,516 @@
----
-title: "Diagnostics"
-author: "Sophie Breitbart"
-date: "2/23/2022"
-output: html_document
----
 
+# Load libraries & functions
+```{r}
+source("libraries.R")
+source("functions.R")
+```
+
+# Import data
+```{r}
+heights <- read.csv(here::here("./Joined_annual_data/heights.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::select(., -1) %>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor)
+
+str(heights)
+
+
+
+survival <- read.csv(here::here("./Joined_annual_data/survival.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::select(., -1) %>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor)
+
+str(survival)
+
+```
+
+# Diagnostics
+## Heights
+### Early
+#### Gradient
+##### City_dist
+```{r}
+hist(heights$Total_Height_early,breaks = 80) # zero-inflated?
+
+height_e_gr_city_m1 <- glmmTMB(sqrt(Total_Height_early) ~ 
+                                 (1|Block) +
+                                 (1|Year) +
+                                 (1|Population/Family) +
+                                 City_dist,
+                        data = heights,
+                        REML = F)
+
+# Check model assumptions
+plot(DHARMa::simulateResiduals(height_e_gr_city_m1)) # looks good enough
+performance::check_model(height_e_gr_city_m1)
+
+car::Anova(height_e_gr_city_m1)
+```
+
+##### Urb_score
+```{r}
+height_e_gr_usc_m1 <- glmmTMB(sqrt(Total_Height_early) ~ 
+                                 (1|Block) +
+                                 (1|Year) +
+                                 (1|Population/Family) +
+                                 Urb_score,
+                        data = heights,
+                        REML = F)
+
+# Check model assumptions
+plot(DHARMa::simulateResiduals(height_e_gr_usc_m1)) # looks good enough
+performance::check_model(height_e_gr_usc_m1)
+
+car::Anova(height_e_gr_usc_m1)
+```
+
+#### Urban Subtransects
+##### City_dist
+```{r}
+height_e_urbsubs_city_m1 <- glmmTMB(sqrt(Total_Height_early) ~ 
+                                 (1|Block) +
+                                 (1|Year) +
+                                 (1|Population/Family) +
+                                 City_dist * Transect_ID,
+                        data = heights %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        ziformula = ~1,
+                        REML = F)
+
+# Check model assumptions
+plot(DHARMa::simulateResiduals(height_e_urbsubs_city_m1)) # looks good enough
+performance::check_model(height_e_urbsubs_city_m1)
+
+car::Anova(height_e_gr_city_m1)
+
+
+# MAIN EFFECTS MODEL
+height_e_urbsubs_city_m2 <- glmmTMB(sqrt(Total_Height_early) ~ 
+                                 (1|Block) +
+                                 (1|Year) +
+                                 (1|Population/Family) +
+                                 City_dist + Transect_ID,
+                        data = heights %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                         ziformula = ~1,
+                        REML = F)
+
+# Check model assumptions
+plot(DHARMa::simulateResiduals(height_e_urbsubs_city_m2)) # looks good enough
+performance::check_model(height_e_urbsubs_city_m2)
+
+AIC(height_e_urbsubs_city_m1, height_e_urbsubs_city_m2) # m2 better but <2 AIC from full
+```
+
+
+##### Urb_score
+```{r}
+height_e_urbsubs_usc_m1 <- glmmTMB(sqrt(Total_Height_early) ~ 
+                                 (1|Block) +
+                                 (1|Year) +
+                                 (1|Population/Family) +
+                                 Urb_score * Transect_ID,
+                        data = heights %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        ziformula = ~1,
+                        REML = F)
+
+# Check model assumptions
+plot(DHARMa::simulateResiduals(height_e_urbsubs_usc_m1)) # looks good enough
+performance::check_model(height_e_urbsubs_usc_m1)
+
+car::Anova(height_e_gr_usc_m1)
+
+
+# MAIN EFFECTS MODEL
+height_e_urbsubs_usc_m2 <- glmmTMB(sqrt(Total_Height_early) ~ 
+                                 (1|Block) +
+                                 (1|Year) +
+                                 (1|Population/Family) +
+                                 Urb_score + Transect_ID,
+                        data = heights %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                         ziformula = ~1,
+                        REML = F)
+
+# Check model assumptions
+plot(DHARMa::simulateResiduals(height_e_urbsubs_usc_m2)) # looks good enough
+performance::check_model(height_e_urbsubs_usc_m2)
+
+AIC(height_e_urbsubs_usc_m1, height_e_urbsubs_usc_m2) # m2 better but <2 AIC from full
+```
+
+### Late
+#### Gradient
+##### City_dist
+```{r}
+height_l_gr_city_m1 <- glmmTMB(sqrt(Total_Height_late) ~ 
+                                 (1|Block) +
+                                 (1|Year) +
+                                 (1|Population/Family) +
+                                 City_dist,
+                        data = heights,
+                        REML = F)
+
+# Check model assumptions
+plot(DHARMa::simulateResiduals(height_l_gr_city_m1)) # looks good enough
+performance::check_model(height_l_gr_city_m1)
+
+car::Anova(height_l_gr_city_m1)
+```
+
+##### Urb_score
+```{r}
+height_l_gr_usc_m1 <- glmmTMB(sqrt(Total_Height_late) ~ 
+                                 (1|Block) +
+                                 (1|Year) +
+                                 (1|Population/Family) +
+                                 Urb_score,
+                        data = heights,
+                        REML = F)
+
+# Check model assumptions
+plot(DHARMa::simulateResiduals(height_l_gr_usc_m1)) # looks good enough
+performance::check_model(height_l_gr_usc_m1)
+
+```
+
+#### Urban Subtransects
+##### City_dist
+```{r}
+height_l_urbsubs_city_m1 <- glmmTMB(sqrt(Total_Height_late) ~ 
+                                 (1|Block) +
+                                 (1|Year) +
+                                 (1|Population/Family) +
+                                 City_dist * Transect_ID,
+                        data = heights %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                          ziformula = ~1,
+                        REML = F)
+
+# Check model assumptions
+plot(DHARMa::simulateResiduals(height_l_urbsubs_city_m1)) # looks good enough
+performance::check_model(height_l_urbsubs_city_m1)
+
+car::Anova(height_l_urbsubs_city_m1)
+
+
+# MAIN EFFECTS MODEL
+height_l_urbsubs_city_m2 <- glmmTMB(sqrt(Total_Height_late) ~ 
+                                 (1|Block) +
+                                 (1|Year) +
+                                 (1|Population/Family) +
+                                 City_dist + Transect_ID,
+                        data = heights %>%
+                          dplyr::filter(Transect_ID != "Rural"),                        ziformula = ~1,
+                        REML = F)
+
+# Check model assumptions
+plot(DHARMa::simulateResiduals(height_l_urbsubs_city_m2)) # looks good enough
+performance::check_model(height_l_urbsubs_city_m2)
+
+AIC(height_l_urbsubs_city_m1, height_l_urbsubs_city_m2) # m2 better but <2 AIC from full
+```
+
+##### Urb_score
+```{r}
+height_l_urbsubs_usc_m1 <- glmmTMB(sqrt(Total_Height_late) ~ 
+                                 (1|Block) +
+                                 (1|Year) +
+                                 (1|Population/Family) +
+                                 Urb_score * Transect_ID,
+                        data = heights %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        ziformula = ~1,
+                        REML = F)
+
+# Check model assumptions
+plot(DHARMa::simulateResiduals(height_l_urbsubs_usc_m1)) # looks good enough
+performance::check_model(height_l_urbsubs_usc_m1)
+
+
+
+# MAIN EFFECTS MODEL
+height_l_urbsubs_usc_m2 <- glmmTMB(sqrt(Total_Height_late) ~ 
+                                 (1|Block) +
+                                 (1|Year) +
+                                 (1|Population/Family) +
+                                 Urb_score + Transect_ID,
+                        data = heights %>%
+                          dplyr::filter(Transect_ID != "Rural"),                        ziformula = ~1,
+                        REML = F)
+
+# Check model assumptions
+plot(DHARMa::simulateResiduals(height_l_urbsubs_usc_m2)) # looks good enough
+performance::check_model(height_l_urbsubs_usc_m2)
+
+AIC(height_l_urbsubs_usc_m1, height_l_urbsubs_usc_m2) # m2 better but <2 AIC from full
+```
+
+## Relative growth rate
+### Gradient
+#### City_dist
+```{r}
+
+```
+
+#### Urb_score
+```{r}
+
+```
+
+### Urban Subtransects
+#### City_dist
+```{r}
+
+```
+
+#### Urb_score
+```{r}
+
+```
+
+## Ramets
+### Early
+#### Gradient
+##### City_dist
+```{r}
+
+```
+
+##### Urb_score
+```{r}
+
+```
+
+#### Urban Subtransects
+##### City_dist
+```{r}
+
+```
+
+##### Urb_score
+```{r}
+
+```
+### Late
+#### Gradient
+##### City_dist
+```{r}
+
+```
+
+##### Urb_score
+```{r}
+
+```
+
+#### Urban Subtransects
+##### City_dist
+```{r}
+
+```
+
+##### Urb_score
+```{r}
+
+```
+## Mortality
+### Gradient
+#### City_dist
+```{r}
+
+```
+
+#### Urb_score
+```{r}
+
+```
+
+### Urban Subtransects
+#### City_dist
+```{r}
+
+```
+
+#### Urb_score
+```{r}
+
+```
+
+# Models for use in analysis
+## Heights- early
+```{r}
+heights_early_mods <- list(
+
+## City_dist / gradient
+height_e_gr_city_m1 ,
+
+## Urbanization score / gradient
+height_e_gr_usc_m1 ,
+
+## City_dist / urban subtransects
+height_e_urbsubs_city_m1, # Qualitatively identical model (<2 AIC away)
+height_e_urbsubs_city_m2, # Best model
+
+## Urbanization score  / urban subtransects
+height_e_urbsubs_usc_m1, # Qualitatively identical model (<2 AIC away)
+height_e_urbsubs_usc_m2 # Best model
+
+)
+
+
+names(heights_early_mods) <- c("City_gr",
+                     "Usc_gr",
+                     "City_urbsubs_alt",
+                     "City_urbsubs_best",
+                     "Usc_urbsubs_alt",
+                     "Usc_urbsubs_best")
+```
+
+## Heights- late
+```{r}
+heights_late_mods <- list(
+
+## City_dist / gradient
+height_l_gr_city_m1 ,
+
+## Urbanization score / gradient
+height_l_gr_usc_m1 ,
+
+## City_dist / urban subtransects
+height_l_urbsubs_city_m1, # Qualitatively identical model (<2 AIC away)
+height_l_urbsubs_city_m2, # Best model
+
+## Urbanization score  / urban subtransects
+height_l_urbsubs_usc_m1, # Qualitatively identical model (<2 AIC away)
+height_l_urbsubs_usc_m2 # Best model
+
+)
+
+
+names(heights_late_mods) <- c("City_gr",
+                     "Usc_gr",
+                     "City_urbsubs_alt",
+                     "City_urbsubs_best",
+                     "Usc_urbsubs_alt",
+                     "Usc_urbsubs_best")
+```
+
+
+## Relative growth rate
+```{r}
+rgr_mods <- list(
+
+## City_dist / gradient
+ ,
+
+## Urbanization score / gradient
+ ,
+
+## City_dist / urban subtransects
+, # Qualitatively identical model (<2 AIC away)
+, # Best model
+
+## Urbanization score  / urban subtransects
+, # Qualitatively identical model (<2 AIC away)
+ # Best model
+
+)
+
+
+names(rgr_mods) <- c("City_gr",
+                     "Usc_gr",
+                     "City_urbsubs_alt",
+                     "City_urbsubs_best",
+                     "Usc_urbsubs_alt",
+                     "Usc_urbsubs_best")
+```
+
+## Ramets: Early
+```{r}
+ramets_early_mods <- list(
+
+## City_dist / gradient
+ ,
+
+## Urbanization score / gradient
+ ,
+
+## City_dist / urban subtransects
+, # Qualitatively identical model (<2 AIC away)
+, # Best model
+
+## Urbanization score  / urban subtransects
+, # Qualitatively identical model (<2 AIC away)
+ # Best model
+
+)
+
+
+names(ramets_early_mods) <- c("City_gr",
+                     "Usc_gr",
+                     "City_urbsubs_alt",
+                     "City_urbsubs_best",
+                     "Usc_urbsubs_alt",
+                     "Usc_urbsubs_best")
+```
+
+## Ramets: Late
+```{r}
+ramets_early_mods <- list(
+
+## City_dist / gradient
+ ,
+
+## Urbanization score / gradient
+ ,
+
+## City_dist / urban subtransects
+, # Qualitatively identical model (<2 AIC away)
+, # Best model
+
+## Urbanization score  / urban subtransects
+, # Qualitatively identical model (<2 AIC away)
+ # Best model
+
+)
+
+
+names(ramets_early_mods) <- c("City_gr",
+                     "Usc_gr",
+                     "City_urbsubs_alt",
+                     "City_urbsubs_best",
+                     "Usc_urbsubs_alt",
+                     "Usc_urbsubs_best")
+```
+
+## Mortality
+```{r}
+mortality_mods <- list(
+
+## City_dist / gradient
+ ,
+
+## Urbanization score / gradient
+ ,
+
+## City_dist / urban subtransects
+, # Qualitatively identical model (<2 AIC away)
+, # Best model
+
+## Urbanization score  / urban subtransects
+, # Qualitatively identical model (<2 AIC away)
+ # Best model
+
+)
+
+
+names(mortality_mods) <- c("City_gr",
+                     "Usc_gr",
+                     "City_urbsubs_alt",
+                     "City_urbsubs_best",
+                     "Usc_urbsubs_alt",
+                     "Usc_urbsubs_best")
+```
