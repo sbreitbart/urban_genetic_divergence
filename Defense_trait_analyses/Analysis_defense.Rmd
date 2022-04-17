@@ -1233,57 +1233,113 @@ make_all_anovas_tidy_altmods(latex_mods_alt_c) %>%
 ```{r}
 # NONE
 ```
-## Herbivory- Early
+## Herbivory- Early: Binomial
 ### Best Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(herb_e_mods_best_c) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_e_citydist.png"))
+make_all_anovas_tidy(herb_e_bin_mods_best_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_e_bin_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(herb_e_mods_best_u) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_e_urbscore.png"))
+make_all_anovas_tidy(herb_e_bin_mods_best_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_e_bin_urbscore.png"))
 ```
 
 ### Alt Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy_altmods(herb_e_mods_alt_c) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_e_citydist_alt.png"))
+make_all_anovas_tidy_altmods(herb_e_bin_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_e_bin_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy_altmods(herb_e_mods_alt_u) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_e_urbscore_alt.png"))
+make_all_anovas_tidy_altmods(herb_e_bin_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_e_bin_urbscore_alt.png"))
 ```
 
-## Herbivory- Late
+## Herbivory- Early: Quantitative
 ### Best Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(herb_l_mods_best_c) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_l_citydist.png"))
+make_all_anovas_tidy(herb_e_quant_mods_best_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_e_quant_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(herb_l_mods_best_u) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_l_urbscore.png"))
+make_all_anovas_tidy(herb_e_quant_mods_best_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_e_quant_urbscore.png"))
 ```
 
 ### Alt Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy_altmods(herb_l_mods_alt_c) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_l_citydist_alt.png"))
+make_all_anovas_tidy_altmods(herb_e_quant_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_e_quant_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
-# NONE
+make_all_anovas_tidy_altmods(herb_e_quant_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_e_quant_urbscore_alt.png"))
+```
+
+
+## Herbivory- Late: Binomial
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy(herb_l_bin_mods_best_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_l_bin_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy(herb_l_bin_mods_best_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_l_bin_urbscore.png"))
+```
+
+### Alt Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(herb_l_bin_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_l_bin_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(herb_l_bin_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_l_bin_urbscore_alt.png"))
+```
+
+## Herbivory- Late: Quantitative
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy(herb_l_quant_mods_best_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_l_quant_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy(herb_l_quant_mods_best_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_l_quant_urbscore.png"))
+```
+
+### Alt Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(herb_l_quant_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_l_quant_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(herb_l_quant_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_l_quant_urbscore_alt.png"))
 ```
 
 
@@ -1345,8 +1401,7 @@ make_all_anovas_tidy_altmods(weev_quant_mods_alt_u) %>%
 
 # R-squared values
 ```{r}
-# took out lists 4 and 5 from all_models- the herbivory ones- because R.squaredGLMM can't intake models with beta family
-all_rsq <- lapply(all_models[-c(4:5)], lapply, r.squaredGLMM) %>%
+all_rsq <- lapply(all_models, lapply, r.squaredGLMM) %>%
   unlist(recursive = FALSE)
 
 # super low marginal R2 values. Some conditional R2 are higher (some ~0.15) but most low
