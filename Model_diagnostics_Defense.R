@@ -1,9 +1,9 @@
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 source("libraries.R")
 source("functions.R")
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # SLA & LDMC-----
 sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv")) %>%
   dplyr::select(., -c(1:2)) %>%
@@ -51,7 +51,7 @@ weevil %<>%
   dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # ldmc_gr_city_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + City_dist,
 #                         data = sla_ldmc,
 #                         REML = F)
@@ -114,7 +114,7 @@ ldmc_gr_city_m1 <- glmmTMB(LDMC ~ (1|Population:Fam_uniq) + (1|Block) + City_dis
 # performance::check_model(ldmc_gr_city_m1)
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # ldmc_gr_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + Urb_score,
 #                         data = sla_ldmc,
 #                         REML = F)
@@ -139,7 +139,7 @@ ldmc_gr_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + Urb_score,
                         REML = F)
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # ldmc_urbsubs_city_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
 #                         data = sla_ldmc %>%
 #                           dplyr::filter(Transect_ID != "Rural"),
@@ -183,7 +183,7 @@ ldmc_urbsubs_city_m2 <- glmmTMB(LDMC ~ (1|Block) + (1|Population:Fam_uniq) + Cit
 # AIC(ldmc_urbsubs_city_m1, ldmc_urbsubs_city_m2) # m2 lower but not by more than 2 AIC
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # ldmc_urbsubs_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
 #                         data = sla_ldmc %>%
 #                           dplyr::filter(Transect_ID != "Rural"),
@@ -229,7 +229,7 @@ ldmc_urbsubs_usc_m2 <- glmmTMB(LDMC ~ (1|Block) + (1|Population:Fam_uniq) + Urb_
 # AIC(ldmc_urbsubs_usc_m1, ldmc_urbsubs_usc_m2) # ME model best model but not <2 AIC away
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # sla_gr_city_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + City_dist,
 #                         data = sla_ldmc,
 #                         REML = F)
@@ -269,7 +269,7 @@ sla_gr_city_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population:Fam_uniq) + City_dist,
 
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # sla_gr_usc_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + Urb_score,
 #                         data = sla_ldmc,
 #                         REML = F)
@@ -290,7 +290,7 @@ sla_gr_usc_m1 <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population:Fam_uniq) + Urb_s
                         REML = F)
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # sla_urbsubs_city_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
 #                         data = sla_ldmc %>%
 #                           dplyr::filter(Transect_ID != "Rural"),
@@ -325,7 +325,7 @@ sla_urbsubs_city_m2 <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population:Fam_uniq) +
 # AIC(sla_urbsubs_city_m1, sla_urbsubs_city_m2) # qualitatively identical but m2 best model
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # sla_urbsubs_usc_m1 <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
 #                         data = sla_ldmc %>%
 #                           dplyr::filter(Transect_ID != "Rural"),
@@ -360,7 +360,7 @@ sla_urbsubs_usc_m2 <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population:Fam_uniq) + 
 # AIC(sla_urbsubs_usc_m1, sla_urbsubs_usc_m2) # qualitatively identical but m2 best model
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 ltx_gr_city_m1 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + City_dist,
                         data = latex,
                         REML = F)
@@ -376,7 +376,7 @@ ltx_gr_city_m1 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + 
 
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 ltx_gr_usc_m1 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + Urb_score,
                         data = latex,
                         REML = F)
@@ -392,7 +392,7 @@ ltx_gr_usc_m1 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + U
 
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # ltx_urbsubs_city_m1 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
 #                         data = latex %>%
 #                           dplyr::filter(Transect_ID != "Rural"),
@@ -451,7 +451,7 @@ ltx_urbsubs_city_m2 <- glmmTMB(sqrt(Latex_weight_mg) ~ (1|Block) + (1|Population
 # AIC(ltx_urbsubs_city_m1, ltx_urbsubs_city_m2) # m2 best but <2 AIC away
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # ltx_urbsubs_usc_m1 <- glmmTMB(Latex_weight_mg ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
 #                         data = latex %>%
 #                           dplyr::filter(Transect_ID != "Rural"),
@@ -507,7 +507,7 @@ ltx_urbsubs_usc_m2 <- glmmTMB(sqrt(Latex_weight_mg) ~ (1|Block) + (1|Population/
 # AIC(ltx_urbsubs_usc_m1, ltx_urbsubs_usc_m2) # m1 best
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # herbiv_e_gr_dist_m1 <- glmmTMB(Herbivory_mean_early ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
 #                               data = herbivory,
 #                               REML = F) # convergence issue
@@ -597,10 +597,11 @@ herbiv_e_gr_dist_m1 <- glmmTMB(Herbivory_mean_early_recode^(1/3)  ~  (1|Year) + 
                                 family = beta_family(link="logit"),
                                 REML = F)
 
+
 # car::Anova(herbiv_e_gr_dist_m1)
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # herbiv_e_gr_usc_m1 <- glmmTMB(Herbivory_mean_early ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
 #                               data = herbivory,
 #                               REML = F) 
@@ -654,7 +655,7 @@ herbiv_e_gr_usc_m1 <- glmmTMB(Herbivory_mean_early_recode^(1/3)  ~ (1|Block) + (
 # car::Anova(herbiv_e_gr_usc_m1)
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # herbiv_e_urbsubs_dist_m1 <- glmmTMB(Herbivory_mean_early ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
 #                               data = herbivory %>%
 #                                 dplyr::filter(Transect_ID != "Rural"),
@@ -744,7 +745,7 @@ herbiv_e_urbsubs_dist_m2 <- glmmTMB(Herbivory_mean_early_recode^(1/3)  ~ (1|Bloc
 # AIC(herbiv_e_urbsubs_dist_m1, herbiv_e_urbsubs_dist_m2) # m1 better but <2 AIC apart
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 herbiv_e_urbsubs_usc_m1 <- glmmTMB(Herbivory_mean_early_recode^(1/3)  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
                                 data = herbivory %>%
                                 dplyr::filter(Transect_ID != "Rural"),
@@ -768,7 +769,7 @@ herbiv_e_urbsubs_usc_m2 <- glmmTMB(Herbivory_mean_early_recode^(1/3)  ~ (1|Block
 # AIC(herbiv_e_urbsubs_usc_m1, herbiv_e_urbsubs_usc_m2) # m2 better but <2 AIC from m1
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # herbiv_l_gr_dist_m1 <- glmmTMB(Herbivory_mean_late ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
 #                               data = herbivory,
 #                               REML = F) # convergence issue
@@ -809,7 +810,7 @@ herbiv_l_gr_dist_m1 <- glmmTMB(Herbivory_mean_late_recode^(1/3)  ~  (1|Year) + (
 
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # test1 <- glmmTMB(Herbivory_mean_late_recode  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
 #                                 data = herbivory,
 #                                 family = beta_family(link="logit"),
@@ -835,7 +836,7 @@ herbiv_l_gr_usc_m1 <- glmmTMB(Herbivory_mean_late_recode^(1/3)  ~  (1|Block) + (
 car::Anova(herbiv_l_gr_usc_m1)
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # BETA FAMILY
 # test1 <- glmmTMB(Herbivory_mean_late_recode  ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
 #                                 data = herbivory %>%
@@ -875,7 +876,7 @@ herbiv_l_urbsubs_dist_m2 <- glmmTMB(Herbivory_mean_late_recode^(1/3)  ~  (1|Year
 #     herbiv_l_urbsubs_dist_m2) # m1 better but <2AIC away
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # BETA FAMILY
 # test1 <- glmmTMB(Herbivory_mean_late_recode  ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
 #                                 data = herbivory %>%
@@ -914,7 +915,7 @@ herbiv_l_urbsubs_usc_m2 <- glmmTMB(Herbivory_mean_late_recode^(1/3)  ~  (1|Year)
 #     herbiv_l_urbsubs_usc_m2) # m2 better model
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # BINARY MODEL-----
 # create binary column
 weevil$Scar_binary <- weevil$Scar_length_cm
@@ -957,7 +958,7 @@ weev_gr_dist_m1_quant <- glmmTMB(Scar_length_cm^(1/3) ~ (1|Block) + (1|Year) + (
 weev_gr_dist_m1_quant %>% car::Anova()
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # BINARY MODEL-----
 weev_gr_usc_m1_bin <- glmmTMB(Scar_binary ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score,
                               data = weevil,
@@ -995,7 +996,7 @@ weev_gr_usc_m1_quant <- glmmTMB(Scar_length_cm^(1/3) ~ (1|Block) + (1|Year) + (1
 weev_gr_usc_m1_quant %>% car::Anova()
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # BINARY MODEL-----
 weev_urbsubs_dist_m1_bin <- glmmTMB(Scar_binary ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist * Transect_ID,
                               data = weevil %>%
@@ -1063,7 +1064,7 @@ weev_urbsubs_dist_m2_quant <- glmmTMB(Scar_length_cm^(1/3) ~ (1|Block) + (1|Year
 # AIC(weev_urbsubs_dist_m1_quant, weev_urbsubs_dist_m2_quant) # m2 best but <2 AIC away
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 # BINARY MODEL-----
 weev_urbsubs_usc_m1_bin <- glmmTMB(Scar_binary ~ (1|Block) + (1|Year) + (1|Population/Family) + Urb_score * Transect_ID,
                               data = weevil %>%
@@ -1132,7 +1133,7 @@ weev_urbsubs_usc_m2_quant <- glmmTMB(Scar_length_cm^(1/3) ~ (1|Block) + (1|Year)
 
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 ldmc_mods <- list(
 
 ## City_dist / gradient
@@ -1160,7 +1161,7 @@ names(ldmc_mods) <- c("City_gr",
                      "Usc_urbsubs_best")
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 sla_mods <- list(
 
 ## City_dist / gradient
@@ -1188,7 +1189,7 @@ names(sla_mods) <- c("City_gr",
                      "Usc_urbsubs_best")
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 latex_mods <- list(
 
 ## City_dist / gradient
@@ -1208,7 +1209,7 @@ ltx_urbsubs_usc_m1 # Best model
 names(latex_mods) <- c("City_gr", "Usc_gr", "City_urbsubs_alt", "City_urbsubs_best", "Usc_urbsubs")
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 herb_early_mods <- list(
 
 ## City_dist / gradient
@@ -1234,7 +1235,7 @@ names(herb_early_mods) <- c("City_gr",
                             "Usc_urbsubs_best")
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 herb_late_mods <- list(
 
 ## City_dist / gradient
@@ -1258,7 +1259,7 @@ names(herb_late_mods) <- c("City_gr",
                             "Usc_urbsubs")
 
 
-## --------------------------------------------------------------------
+## ------------------------------------------------------------
 weev_mods_binomial <- list(
 
 ## City_dist / gradient

@@ -140,7 +140,8 @@ summary(m1)
 ## estimate at x = 67 (rural terminus): (67)*(-0.001820) + 0.358397 = 0.236457
 ## percent change, rur to urb: 
 #### percent_change <- ((urb_mean - rur_mean) / rur_mean) * 100
-percent_change <- ((0.358397 - 0.236457) / 0.236457) * 100
+percent_change <- (((0.358397 - 0.236457) / 0.236457) * 100) %T>%
+  print()
 
 
 # peak 6.6
@@ -150,5 +151,6 @@ summary(m2)
 ## estimate at x = 67 (rural terminus): (67)*(-0.0015764) + 0.2619764 = 0.1563576
 ## percent change, rur to urb: 
 #### percent_change <- ((urb_mean - rur_mean) / rur_mean) * 100
-percent_change <- ((0.2619764 - 0.1563576) / 0.1563576) * 100
+percent_change <- (((0.2619764 - 0.1563576) / 0.1563576) * 100) %T>%
+  print()
 ```

@@ -452,3 +452,12 @@ chisq.test(Flowered_ttest2)
 # X-squared = 1.3188e-31, df = 1, p-value = 1
 
 ```
+
+# R-squared values
+```{r}
+# took out lists 4 and 5 from all_models- the herbivory ones- because R.squaredGLMM can't intake models with beta family
+all_rsq <- lapply(all_models, lapply, r.squaredGLMM) %>%
+  unlist(recursive = FALSE)
+
+# pretty low marginal R2 values. Some conditional R2 are high but most low
+```

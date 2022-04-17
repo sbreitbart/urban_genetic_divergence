@@ -314,13 +314,16 @@ plot(DHARMa::simulateResiduals(flsize_gr_city1)) # looks great
 #### Urb_score
 ```{r}
 flsize_gr_usc1 <- glmmTMB(Overall_mean ~
-                             (1|Block) +
+                         #    (1|Block) +
                              (1|Year) +
                              (1|Population/Family) +
                              Urb_score, 
-                           data = flowering)
+                           data = flowering,
+                          REML = F) # it runs with block included, but anova dones't work, so I'll remove block
 
 plot(DHARMa::simulateResiduals(flsize_gr_usc1)) # looks great
+
+car::Anova(flsize_gr_usc1)
 ```
 
 ### Urban Subtransects

@@ -1272,6 +1272,9 @@ Calc_h2_qst(1.5491    ,
                     1.1931    ,
                     5.2429    )
 
+# Calc_h2_qst(1.5410      ,
+#                     1.2044      ,
+#                     5.2424      )
 
 # Herbivory: Early-----
 VarCorr(
@@ -1352,6 +1355,12 @@ CVA(1.5491,
     1.1931,
     5.2429,
     latex_mean[[1]])
+# 
+# 
+# CVA(1.5410      ,
+#     1.2044      ,
+#     5.2424,
+#     latex_mean[[1]])
 
 
 # practice example: weevil damage (quant)
