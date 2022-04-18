@@ -900,18 +900,162 @@ flextable::save_as_html(weev_quant_ranova1,
 
 ### Generalized LMM use bootstrapping with pbmodcomp()
 ```{r}
-# Herbivory (before flowering)-------
-## glmer can't handle beta distribution, and 
-## PBmodcomp can't handle GLMMTMB, so will skip this one
- 
+# Herbivory (before flowering) (binary)-------
+## test city_dist
+### take out fam
+full <- glmer(Herbivory_mean_early_binary ~
+                (1|Block) + (1|Year) + 
+                (1|Population) + City_dist,
+                              data = herbivory %>%
+                dplyr::filter(Transect_ID != "Rural"),
+                              family = "binomial"(link = "logit"),
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  )
 
-# Herbivory (after flowering)-------
-## glmer can't handle beta distribution, and 
-## PBmodcomp can't handle GLMMTMB, so will skip this one
+reduced <- glmer(Herbivory_mean_early_binary ~
+                (1|Block) + (1|Year) + 
+                (1|Population),
+                              data = herbivory %>%
+                dplyr::filter(Transect_ID != "Rural"),
+                              family = "binomial"(link = "logit"),
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  )
 
+herb_e_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 10,
+          cl = makeCluster(7))
+
+tidy(herb_e_ranova.pop) # Pop: p ~ 0.519
+
+
+### take out pop
+full <- glmer(Herbivory_mean_early_binary ~
+                (1|Block) + (1|Year) + 
+                (1|Fam_uniq) + City_dist + Transect_ID,
+                              data = herbivory %>%
+                dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  )
+
+reduced <- glmer(Herbivory_mean_early_binary ~
+                (1|Block) + (1|Year) + 
+                (1|Fam_uniq),
+                              data = herbivory %>%
+                dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  )
+
+herb_e_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 10,
+          cl = makeCluster(7))
+
+tidy(herb_e_ranova.fam) # Family: p ~ 0.758
+
+
+
+## test transect
+test_tr <- glmer(Herbivory_mean_early_binary ~
+                (1|Block) + (1|Year) + 
+                (1|Population/Family) + Transect_ID,
+                              data = herbivory %>%
+                dplyr::filter(Transect_ID != "Rural"),
+                              family = "binomial"(link = "logit"),
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+  )
+
+
+# merge Pop and Fam ranovas
+## test city_dist
+herb_e_bin_ranova1 <- CreateRanovaOutput_bootstrap(herb_e_ranova.fam, herb_e_ranova.pop, "Herbivory, before flowering: Binary (Distance)")
+
+## test transect
+herb_e_bin_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Herbivory, before flowering: Binary (Transect)")
+
+flextable::save_as_html(herb_e_bin_ranova1,
+                        herb_e_bin_ranova2,
+                        path = here::here("./Defense_trait_analyses/Tables/Ranova/herb_e_binary_transects.html"))
+
+# Herbivory (after flowering) (binary)-------
+## test city_dist
+### take out fam
+full <- glmer(Herbivory_mean_late_binary ~
+                (1|Block) + (1|Year) + 
+                (1|Population) + City_dist,
+                              data = herbivory %>%
+                dplyr::filter(Transect_ID != "Rural"),
+                              family = "binomial"(link = "logit"),
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  )
+
+reduced <- glmer(Herbivory_mean_late_binary ~
+                (1|Block) + (1|Year) + 
+                (1|Population),
+                              data = herbivory %>%
+                dplyr::filter(Transect_ID != "Rural"),
+                              family = "binomial"(link = "logit"),
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  )
+
+herb_l_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 10,
+          cl = makeCluster(7))
+
+tidy(herb_l_ranova.pop) # Pop: p ~ 0.383
+
+
+### take out pop
+full <- glmer(Herbivory_mean_late_binary ~
+                (1|Block) + (1|Year) + 
+                (1|Fam_uniq) + City_dist + Transect_ID,
+                              data = herbivory %>%
+                dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  )
+
+reduced <- glmer(Herbivory_mean_late_binary ~
+                (1|Block) + (1|Year) + 
+                (1|Fam_uniq),
+                              data = herbivory %>%
+                dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  )
+
+herb_l_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 10,
+          cl = makeCluster(7))
+
+tidy(herb_l_ranova.fam) # Family: p ~ 0.504
+
+
+
+## test transect
+test_tr <- glmer(Herbivory_mean_late_binary ~
+                (1|Block) + (1|Year) + 
+                (1|Population/Family) + Transect_ID,
+                              data = herbivory %>%
+                dplyr::filter(Transect_ID != "Rural"),
+                              family = "binomial"(link = "logit"),
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+  )
+
+
+# merge Pop and Fam ranovas
+## test city_dist
+herb_l_bin_ranova1 <- CreateRanovaOutput_bootstrap(herb_l_ranova.fam, herb_l_ranova.pop, "Herbivory, after flowering: Binary (Distance)")
+
+## test transect
+herb_l_bin_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Herbivory, after flowering: Binary (Transect)")
+
+flextable::save_as_html(herb_l_bin_ranova1,
+                        herb_l_bin_ranova2,
+                        path = here::here("./Defense_trait_analyses/Tables/Ranova/herb_l_binary_transects.html"))
 
 # Weevil scar length (binary)-----
-## test city_dist-----
+## test city_dist
 ### take out fam
 full <- glmer(Scar_binary ~
                 # (1|Block) + (1|Year) + 
@@ -971,7 +1115,7 @@ tidy(weev_ranova.fam) # Family: p ~ 0.523
 
 
 
-## test transect-----
+## test transect
 test_tr <- glmer(Scar_binary ~
                 # (1|Block) + (1|Year) + 
                 (1|Population/Family) + Transect_ID,
@@ -1501,34 +1645,55 @@ Calc_h2_qst(1.5491    ,
 #                     1.2044      ,
 #                     5.2424      )
 
-# Herbivory: Early-----
+# Herbivory, before flowering: Binomial-----
 VarCorr(
   update(
-    herb_e_mods_best_c[[1]], REML = T))
+    herb_e_bin_mods_best_c[[1]], REML = T))
 
 # residual variance:
 resid_var <- update(
-    herb_e_mods_best_c[[1]], REML = T) %>%
+    herb_e_bin_mods_best_c[[1]], REML = T) %>%
     sigma()
 
-Calc_h2_qst(5.5107e-05,
-         9.2087e-06,
+Calc_h2_qst(1.4560e-04,
+         1.5085e-05,
          resid_var)
 
-# Herbivory: Late-----
+
+
+# Herbivory, before flowering: quantitative-----
 VarCorr(
   update(
-    herb_l_mods_best_c[[1]], REML = T))
+    herb_e_quant_mods_best_c[[1]], REML = T))
+
+Calc_h2_qst(6.7798e-02  ,
+                    1.0892e-01 ,
+                    1.2284  )
+
+# Herbivory, after flowering: Binomial-----
+VarCorr(
+  update(
+    herb_l_bin_mods_best_c[[1]], REML = T))
 
 # residual variance:
 resid_var <- update(
-    herb_l_mods_best_c[[1]], REML = T) %>%
+    herb_l_bin_mods_best_c[[1]], REML = T) %>%
     sigma()
 
-Calc_h2_qst(2.4607e-01,
-         2.4987e-05,
+Calc_h2_qst(1.0308e-04,
+         1.6463e-05,
          resid_var)
 
+
+
+# Herbivory, after flowering: quantitative-----
+VarCorr(
+  update(
+    herb_l_quant_mods_best_c[[1]], REML = T))
+
+Calc_h2_qst(1.1326e-01  ,
+                    6.1346e-05 ,
+                    1.2806  )
 
 # Weevil: Binomial-----
 VarCorr(
