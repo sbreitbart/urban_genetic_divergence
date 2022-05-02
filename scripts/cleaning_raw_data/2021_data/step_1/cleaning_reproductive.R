@@ -12,7 +12,7 @@ library(magrittr)
 # Import data
 #-------------------
 # Data about flowering, pollen removal, inflor and follicle count, + other reproductive traits (Data collection 2)-----
-reproductive <- read.csv(here(
+reproductive <- read.csv(here::here(
   "./CommonGardenExperiment_2021Data/raw_data/2021_DC2_FloralTraits_final.csv"),
   header=T,
   stringsAsFactors=FALSE,
@@ -148,6 +148,6 @@ flowering_2021 <- flowering_2021 %>%
 # Export to new csv
 #-------------------
 write.csv(reproductive,
-          here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_reproductive_partialclean.csv"))
+          here::here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_reproductive_partialclean.csv"))
 write.csv(flowering_2021,
-          here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_floweringplants_partialclean.csv"))
+          here::here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_floweringplants_partialclean.csv"))

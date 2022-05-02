@@ -192,26 +192,26 @@ ramets_late_mods_alt_u <- ramets_late_mods[5]
 #### City_dist
 ```{r}
 make_all_anovas_tidy(heights_early_mods_best_c) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/heights_early_citydist.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/heights_early_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy(heights_early_mods_best_u) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/heights_early_urbscore.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/heights_early_urbscore.png"))
 ```
 
 ### Alternative Models
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(heights_early_mods_alt_c) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/heights_early_citydist_alt.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/heights_early_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(heights_early_mods_alt_u) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/heights_early_urbscore_alt.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/heights_early_urbscore_alt.png"))
 ```
 
 ## Heights- Late
@@ -219,26 +219,26 @@ make_all_anovas_tidy_altmods(heights_early_mods_alt_u) %>%
 #### City_dist
 ```{r}
 make_all_anovas_tidy(heights_late_mods_best_c) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/heights_late_citydist.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/heights_late_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy(heights_late_mods_best_u) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/heights_late_urbscore.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/heights_late_urbscore.png"))
 ```
 
 ### Alternative Models
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(heights_late_mods_alt_c) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/heights_late_citydist_alt.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/heights_late_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(heights_late_mods_alt_u) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/heights_late_urbscore_alt.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/heights_late_urbscore_alt.png"))
 ```
 
 
@@ -247,26 +247,26 @@ make_all_anovas_tidy_altmods(heights_late_mods_alt_u) %>%
 #### City_dist
 ```{r}
 make_all_anovas_tidy(rgr_mods_best_c) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/rgr_citydist.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/rgr_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy(rgr_mods_best_u) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/rgr_urbscore.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/rgr_urbscore.png"))
 ```
 
 ### Alternative Models
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(rgr_mods_alt_c) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/rgr_citydist_alt.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/rgr_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(rgr_mods_alt_u) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/rgr_urbscore_alt.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/rgr_urbscore_alt.png"))
 ```
 
 
@@ -275,26 +275,26 @@ make_all_anovas_tidy_altmods(rgr_mods_alt_u) %>%
 #### City_dist
 ```{r}
 make_all_anovas_tidy(ramets_early_mods_best_c) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/ramets_early_citydist.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/ramets_early_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy(ramets_early_mods_best_u) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/ramets_early_urbscore.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/ramets_early_urbscore.png"))
 ```
 
 ### Alternative Models
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(ramets_early_mods_alt_c) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/ramets_early_citydist_alt.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/ramets_early_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(ramets_early_mods_alt_u) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/ramets_early_urbscore_alt.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/ramets_early_urbscore_alt.png"))
 ```
 
 
@@ -303,26 +303,26 @@ make_all_anovas_tidy_altmods(ramets_early_mods_alt_u) %>%
 #### City_dist
 ```{r}
 make_all_anovas_tidy(ramets_late_mods_best_c) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/ramets_late_citydist.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/ramets_late_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy(ramets_late_mods_best_u) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/ramets_late_urbscore.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/ramets_late_urbscore.png"))
 ```
 
 ### Alternative Models
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(ramets_late_mods_alt_c) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/ramets_late_citydist_alt.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/ramets_late_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(ramets_late_mods_alt_u) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/ramets_late_urbscore_alt.png"))
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/ramets_late_urbscore_alt.png"))
 ```
 
 
@@ -341,5 +341,35 @@ all_rsq <- lapply(all_models, lapply, r.squaredGLMM) %>%
 ```{r}
 
 
+```
+# Find estimated marginal means at terminii- put this in figs script eventually
+## Urban Subtransects
+### City_dist
+#### Ramets, after flowering
+```{r}
+# create ggpredict object
+ramets_late_mods_best_c[2]
+ramets_late_urbsubs_01_pred <- ggeffects::ggpredict(heights_late_mods_best_c[[2]],
+                                   terms = c("City_dist", "Transect_ID"),
+                                   type = "fe") %>%
+  as.data.frame()
+
+# find EMM
+# PERCENT CHANGE, suburban to urban terminus:
+Calc_percent_change_urbsubs(ramets_late_urbsubs_01_pred) # 6.2%
+```
+
+
+#### Height, after flowering
+```{r}
+# create ggpredict object
+heights_late_mods_best_c[2]
+heights_late_urbsubs_01_pred <- ggeffects::ggpredict(heights_late_mods_best_c[[2]],
+                                   terms = c("City_dist", "Transect_ID"),
+                                   type = "fe") %>%
+  as.data.frame()
+
+# find EMM
+Calc_percent_change_transects(heights_late_urbsubs_01_pred) # 6.2%
 ```
 

@@ -1597,8 +1597,8 @@ make_all_anovas_tidy_altmods(weev_quant_mods_alt_u) %>%
 # R-squared values
 ```{r}
 all_rsq <- lapply(all_models, lapply, r.squaredGLMM) %>%
-  unlist(recursive = FALSE)
-
+  unlist(recursive = FALSE) %T>%
+  print()
 # super low marginal R2 values. Some conditional R2 are higher (some ~0.15) but most low
 ```
 
@@ -1684,8 +1684,6 @@ Calc_h2_qst(1.0308e-04,
          1.6463e-05,
          resid_var)
 
-
-
 # Herbivory, after flowering: quantitative-----
 VarCorr(
   update(
@@ -1736,7 +1734,7 @@ CVA <- function(fam_var, pop_var, resid_var, trait_mean){
 }
   
 
-# practice example: latex
+# practice example: latex-----
 latex_mean <- latex %>%
   dplyr::summarize(Mean = mean(Latex_weight_mg,
                                na.rm = T))
@@ -1753,7 +1751,7 @@ CVA(1.5491,
 #     latex_mean[[1]])
 
 
-# practice example: weevil damage (quant)
+# practice example: weevil damage (quant)-----
 weev_mean <- weevil %>%
   dplyr::filter(Scar_length_cm > 0) %>%
   dplyr::summarize(Mean = mean(Scar_length_cm,
@@ -1764,5 +1762,29 @@ CVA(0.13743,
     0.60462,
     weev_mean[[1]])
 
+
+# practice example: herbivore attack, before flowering (binomial)------
+herbiv_e_bin_mean <- herbivory %>%
+  dplyr::summarize(Mean = mean(Herbivory_mean_early_binary,
+                               na.rm = T))
+
+CVA(1.4560e-04,
+    1.5085e-05,
+    update(
+    herb_e_bin_mods_best_c[[1]], REML = T) %>%
+    sigma() ,
+    herbiv_e_bin_mean[[1]])
+
+# practice example: herbivore attack, after flowering (binomial)------
+herbiv_l_bin_mean <- herbivory %>%
+  dplyr::summarize(Mean = mean(Herbivory_mean_late_binary,
+                               na.rm = T))
+
+CVA(1.0308e-04,
+    1.6463e-05,
+    update(
+    herb_l_bin_mods_best_c[[1]], REML = T) %>%
+    sigma() ,
+    herbiv_l_bin_mean[[1]])
 ```
 

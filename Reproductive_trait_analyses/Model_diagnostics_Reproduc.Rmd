@@ -14,7 +14,16 @@ reproduc <- read.csv(here::here("./Joined_annual_data/reproductive.csv"), na.str
 flowering <- read.csv(here::here("./Joined_annual_data/flowering.csv"), na.strings=c("NO PLANT", "none", "NA"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
   dplyr::select(., -1)%>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.character) %>%
-    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.factor) 
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.factor) %>%
+    dplyr::mutate_at(vars(c(Date_oldest_inflor_flower,
+                            Date_youngest_inflor_flower,
+                            Date_first_follicle_2in)),
+                     as.Date,
+                     format = '%m/%d/%Y') %>%
+  dplyr::mutate(flowering_time = Date_youngest_inflor_flower-Date_oldest_inflor_flower + 1) # if I don't add 1, then it will say some plants flowered for 0 days
+%>%
+  relocate(flowering_time,
+           .before = Date_first_follicle_2in)
 # 
 # reproduc %<>%
 #   dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
@@ -382,6 +391,27 @@ plot(DHARMa::simulateResiduals(flsize_urbsubs_usc1_ME)) # issues with predicted 
 performance::check_model(flsize_urbsubs_usc1_ME)
 
 AIC(flsize_urbsubs_usc1, flsize_urbsubs_usc1_ME) # full model best
+```
+
+## Flowering time
+### Gradient
+#### City_dist
+```{r}
+fl_time_gr_city1 <- glmmTMB(as.numeric(flowering_time) ~
+                                          (1|Block) +
+                                          (1|Year) +
+                                          (1|Population/Family) +
+                                          City_dist, 
+                                        data = flowering,
+                            family = poisson)
+
+plot(DHARMa::simulateResiduals(fl_time_gr_city1)) # looks great
+performance::check_model(fl_time_gr_city1)
+
+car::Anova(fl_time_gr_city1)
+
+
+
 ```
 
 ## Pods

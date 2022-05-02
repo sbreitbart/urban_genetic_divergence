@@ -415,7 +415,7 @@ Calc_percent_change_urbsubs_intxn <- function(ggpredict_object){
   print(paste0("Percent change from suburban to urban terminus along non-corridor subtransect: ", PC_noncorr_suburbanTOurban, "%"))
 }
 Calc_percent_change_transects <- function(ggpredict_object){
-  baseline <- weev_quant_urbsubs_01_pred %>%
+  baseline <- ggpredict_object %>%
     dplyr::group_by(group) %>%
     dplyr::summarise(mean = mean(predicted))
   

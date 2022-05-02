@@ -154,3 +154,23 @@ summary(m2)
 percent_change <- (((0.2619764 - 0.1563576) / 0.1563576) * 100) %T>%
   print()
 ```
+
+# Heritability- not possible b/c no families within pops?
+```{r}
+# 6.6
+mod_66 <- lm(X6.6_main ~ City_dist,
+             data = cards,
+             REML = T)
+
+VarCorr(mod_66)
+
+# residual variance:
+resid_var <- update(
+    herb_e_bin_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+Calc_h2_qst(1.4560e-04,
+         1.5085e-05,
+         resid_var)
+```
+

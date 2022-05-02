@@ -1,0 +1,352 @@
+# Set up notebook
+## Load libraries and add functions
+
+```{r}
+source("libraries.R")
+source("functions.R")
+```
+
+## Import data
+
+```{r}
+heights <- read.csv(here::here("./Joined_annual_data/heights.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::select(., -1) %>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor) %>%
+  dplyr::mutate_at(vars(c("rel_growth_rate")), as.numeric)
+
+str(heights)
+
+
+
+survival <- read.csv(here::here("./Joined_annual_data/survival.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::select(., -1) %>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor)
+
+str(survival)
+```
+
+## Import final models
+### Create full list
+```{r}
+source(knitr::purl("Growth_trait_analyses/Model_diagnostics_Growth.Rmd", quiet=TRUE))
+
+all_models <- list(
+heights_early_mods,
+heights_late_mods,
+rgr_mods,
+ramets_early_mods,
+ramets_late_mods #,
+# mortality_mods -- add when ready
+)
+
+names(all_models) <- c(
+"heights_early_mods",
+"heights_late_mods",
+"rgr_mods",
+"ramets_early_mods",
+"ramets_late_mods" #,
+# "mortality_mods" -- add when ready
+  )
+```
+
+### Create separate lists of best vs. alt models for city_dist vs urb_score
+#### Heights- Early
+```{r}
+## Best
+### City_dist
+heights_early_mods_best_c <- heights_early_mods[c(1,4)]
+
+### Urb_score
+heights_early_mods_best_u <- heights_early_mods[c(2,6)]
+
+## Alt
+### City_dist
+heights_early_mods_alt_c <- heights_early_mods[3]
+
+### Urb_score
+heights_early_mods_alt_u <- heights_early_mods[5]
+```
+
+#### Heights- Late
+```{r}
+## Best
+### City_dist
+heights_late_mods_best_c <- heights_late_mods[c(1,4)]
+
+### Urb_score
+heights_late_mods_best_u <- heights_late_mods[c(2,6)]
+
+## Alt
+### City_dist
+heights_late_mods_alt_c <- heights_late_mods[3]
+
+### Urb_score
+heights_late_mods_alt_u <- heights_late_mods[5]
+```
+
+#### Relative growth rate
+```{r}
+## Best
+### City_dist
+rgr_mods_best_c <- rgr_mods[c(1,4)]
+
+### Urb_score
+rgr_mods_best_u <- rgr_mods[c(2,5)]
+
+## Alt
+### City_dist
+rgr_mods_alt_c <- rgr_mods[3]
+
+### Urb_score
+rgr_mods_alt_u <- rgr_mods[6]
+```
+
+#### Ramets- Early
+```{r}
+## Best
+### City_dist
+ramets_early_mods_best_c <- ramets_early_mods[c(1,4)]
+
+### Urb_score
+ramets_early_mods_best_u <- ramets_early_mods[c(2,6)]
+
+## Alt
+### City_dist
+ramets_early_mods_alt_c <- ramets_early_mods[3]
+
+### Urb_score
+ramets_early_mods_alt_u <- ramets_early_mods[5]
+```
+
+#### Ramets- Late
+```{r}
+## Best
+### City_dist
+ramets_late_mods_best_c <- ramets_late_mods[c(1,4)]
+
+### Urb_score
+ramets_late_mods_best_u <- ramets_late_mods[c(2,6)]
+
+## Alt
+### City_dist
+ramets_late_mods_alt_c <- ramets_late_mods[3]
+
+### Urb_score
+ramets_late_mods_alt_u <- ramets_late_mods[5]
+```
+
+#### Mortality
+```{r}
+# ## Best
+# ### City_dist
+# ldmc_mods_best_c <- ldmc_mods[c(1,4)]
+# 
+# ### Urb_score
+# ldmc_mods_best_u <- ldmc_mods[c(2,6)]
+# 
+# ## Alt
+# ### City_dist
+# ldmc_mods_alt_c <- ldmc_mods[3]
+# 
+# ### Urb_score
+# ldmc_mods_alt_u <- ldmc_mods[5]
+```
+
+# Create ggpredict objects
+## Height- after flowering
+### Gradient
+```{r}
+# city_dist
+heights_late_mods_best_c[1]
+heights_late_gradient_01_pred <- ggeffects::ggpredict(heights_late_mods_best_c[[1]],
+                                   terms = c("City_dist"),
+                                   type = "fe") %>%
+  as.data.frame() 
+
+# urb_score
+heights_late_mods_best_u[1]
+heights_late_gradient_02_pred <- ggeffects::ggpredict(heights_late_mods_best_u[[1]],
+                                   terms = c("Urb_score"),
+                                   type = "fe") %>%
+  as.data.frame()
+```
+
+### Urban Subtransects
+```{r}
+# city_dist
+heights_late_mods_best_c[2]
+heights_late_urbsubs_01_pred <- ggeffects::ggpredict(heights_late_mods_best_c[[2]],
+                                   terms = c("City_dist", "Transect_ID"),
+                                   type = "fe") %>%
+  as.data.frame()
+
+# urb_score
+heights_late_mods_best_u[2]
+heights_late_urbsubs_02_pred <- ggeffects::ggpredict(heights_late_mods_best_u[[2]],
+                                   terms = c("Urb_score", "Transect_ID"),
+                                   type = "fe")
+```
+
+
+# Create regression plots
+## first, create variable associated with replicated aesthetics of figs
+```{r}
+# Gradient figs
+rep_geoms <- c(geom_smooth(aes(x = x,
+                    y = predicted),
+                color = "#66a182",
+                size = 1,
+                se = F),
+    geom_ribbon(aes(x = x,
+                    ymin = predicted - std.error,
+                    ymax = predicted + std.error),
+                fill = "#66a182",
+                alpha = 0.3))
+
+# Transect figs
+rep_geoms2 <- c(geom_smooth(
+  aes(
+    x = x,
+    y = predicted,
+    color = group),
+  size = 1,
+  se = F),
+  geom_ribbon(aes(
+    x = x,
+    ymin = predicted - std.error,
+    ymax = predicted + std.error,
+    fill = group),
+    alpha = 0.3),
+  scale_colour_brewer(labels = c("Corridor",
+                                 "Non-Corridor"),
+                      palette = "Set2"),
+  scale_fill_brewer(labels = c("Corridor",
+                               "Non-Corridor"),
+                    palette = "Set2"))
+```
+
+## Urban Subtransects
+### City_dist
+```{r}
+# herbivory: Before flowering-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+heights_late_urbsubs_01_pred$group <- factor(heights_late_urbsubs_01_pred$group,
+                                   levels(heights_late_urbsubs_01_pred$group)[c(2,1)])
+levels(heights_late_urbsubs_01_pred$group)
+
+ggpred_Q2.citydist_height_late <- 
+ggplot(heights_late_urbsubs_01_pred) +
+  rep_geoms2 +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Height (After Flowering) (cm)"^{1/2}),
+       color = "Transect",
+       fill = "Transect") +
+  scale_y_continuous(limits = c(45, 65))+
+  xlim(0, NA) +
+  theme_1() +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
+                    label = paste0(" Distance: p = ", tidy_anova(heights_late_mods_best_c[[2]])$p[1])),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(heights_late_mods_best_c[[2]])$p[2])),
+                size = 4.5) 
+
+ggpred_Q2.citydist_height_late
+
+
+```
+
+# Create boxplots
+## Heights- Late
+```{r}
+ggplot(heights %>%
+         dplyr::filter(Transect_ID != "Rural"),
+       aes(x = Transect_ID,
+           y = Total_Height_late)) + 
+  geom_boxplot(
+       size = 0.5) + 
+  # geom_point(position = "jitter") + 
+  theme_pubclean()
+```
+
+# Find estimated marginal means at terminii
+## Gradient
+### City_dist
+#### Herbivory: Before flowering
+##### BINARY- can I do this??
+```{r}
+herb_e_bin_gradient_01_pred <- ggeffects::ggpredict(herb_e_bin_mods_best_c[[1]],
+                                   terms = c("City_dist"),
+                                   type = "fe") %>%
+  as.data.frame() 
+
+Calc_percent_change(herb_e_bin_gradient_01_pred) # 16.6%
+
+```
+
+#### Herbivory: After flowering
+##### BINARY- can I do this??
+```{r}
+herb_l_bin_gradient_01_pred <- ggeffects::ggpredict(herb_l_bin_mods_best_c[[1]],
+                                   terms = c("City_dist"),
+                                   type = "fe") %>%
+  as.data.frame() 
+
+Calc_percent_change(herb_l_bin_gradient_01_pred) # -10.3%
+
+```
+### Urbanization Score
+## Urban Subtransects
+### City_dist
+#### LDMC
+```{r}
+# PERCENT CHANGE, suburban to urban terminus:
+Calc_percent_change_urbsubs(ldmc_urbsubs_01_pred) # 10.9%
+```
+
+#### Herbivory: Before flowering- Binary
+```{r}
+herb_e_urbsubs_bin_01_pred <- ggeffects::ggpredict(herb_e_bin_mods_best_c[[2]],
+                                   terms = c("City_dist", "Transect_ID"),
+                                   type = "fe") %>%
+  as.data.frame()
+
+Calc_percent_change_urbsubs_intxn(herb_e_urbsubs_bin_01_pred)
+# "Percent change from suburban to urban terminus along corridor subtransect: -6.5%"
+# "Percent change from suburban to urban terminus along non-corridor subtransect: 25.3%"
+
+```
+
+#### Herbivory: Before flowering- Quantitative
+```{r}
+herb_e_quant_urbsubs_01_pred <- ggeffects::ggpredict(herb_e_quant_mods_best_c[[2]],
+                                   terms = c("City_dist", "Transect_ID"),
+                                   type = "fe") %>%
+  as.data.frame()
+
+# PERCENT CHANGE, suburban to urban terminus:
+Calc_percent_change_urbsubs(herb_e_quant_urbsubs_01_pred) # 48.6%
+```
+
+#### Herbivory: After flowering- Quantitative
+```{r}
+herb_l_quant_urbsubs_01_pred <- ggeffects::ggpredict(herb_l_quant_mods_best_c[[2]],
+                                   terms = c("City_dist", "Transect_ID"),
+                                   type = "fe") %>%
+  as.data.frame()
+
+Calc_percent_change_transects(herb_l_quant_urbsubs_01_pred)
+# "Percent change from non-corridor to corridor subtransect: -13.6%"
+
+```
+
+#### Weevil damage: Quantitative
+```{r}
+Calc_percent_change_transects(weev_quant_urbsubs_01_pred) # 6.2%
+```
+
+### Urbanization Score- not done

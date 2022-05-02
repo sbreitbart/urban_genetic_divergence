@@ -26,6 +26,7 @@ library(glmmTMB)
 library(magrittr)
 library(tidyverse)
 library(DHARMa)
+library(performance)
 ```
 
 ## Import data
@@ -171,7 +172,7 @@ nbin_mod2 <- glmmTMB(Herbivory_mean_early ~
 ```
 
 ## Beta Model
-
+### Regular herbivory values
 ```{r}
 beta_mod <- glmmTMB(Herbivory_mean_early_recode  ~
                       (1|Block) +
@@ -185,7 +186,49 @@ beta_mod <- glmmTMB(Herbivory_mean_early_recode  ~
 performance::check_model(beta_mod) # heavy right tail
 plot(DHARMa::simulateResiduals(beta_mod)) # fails KS test only
 
+
+# zero-augmented beta model
+beta_mod1 <- glmmTMB(Herbivory_mean_early_recode  ~
+                     # (1|Block) +
+                      (1|Year) +
+                      (1|Population/Family) +
+                      City_dist,
+                    data = herbivory,
+                    ziformula = ~1,
+                    family = beta_family(link="logit"),
+                    REML = F) # doesn't converge with all effects included
+
+plot(DHARMa::simulateResiduals(beta_mod1)) # fails KS test and residual vs. predicted plot problematic
+
 ```
+
+### Inverted herbivory values
+```{r}
+beta_mod_inv <- glmmTMB((1-Herbivory_mean_early)  ~
+                      (1|Block) +
+                      (1|Year) +
+                      (1|Population/Family) +
+                      City_dist,
+                    data = herbivory,
+                    family = beta_family(link="logit"),
+                    REML = F) # Error in eval(family$initialize) : y values must be 0 < y < 1
+
+plot(DHARMa::simulateResiduals(beta_mod_inv)) # fails KS test only
+
+
+# zero-augmented beta model
+beta_mod_inv2 <- glmmTMB((1-Herbivory_mean_early)  ~
+                     # (1|Block) +
+                      (1|Year) +
+                      (1|Population/Family) +
+                      City_dist,
+                    data = herbivory,
+                    ziformula = ~1,
+                    family = beta_family(link="logit"),
+                    REML = F) # same error as above
+
+```
+
 
 ## Hurdle model
 
