@@ -382,7 +382,7 @@ sla_urbsubs_usc_m2 <- glmmTMB(sqrt(SLA) ~ (1|Block) + (1|Population:Fam_uniq) + 
 ### Gradient
 #### City_dist
 ```{r}
-# sqrt looks better though no diff in p-val
+# sqrt looks better
 ltx_gr_city_m1 <- glmmTMB(sqrt(Latex_weight_mg) ~
                             (1|Block) +
                             (1|Population/Family) +
@@ -392,6 +392,7 @@ ltx_gr_city_m1 <- glmmTMB(sqrt(Latex_weight_mg) ~
 
 
 performance::check_model(ltx_gr_city_m1)
+plot(DHARMa::simulateResiduals(ltx_gr_city_m1))
 
 car::Anova(ltx_gr_city_m1)
 summary(ltx_gr_city_m1)

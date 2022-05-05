@@ -1,0 +1,483 @@
+---
+title: "Population-level BLUP models vs. plant-level mixed models"
+subtitle: "Purpose: understand why marginal R-squared values are so low yet significance levels <0.1"
+author: "Sophie Breitbart"
+date: "5/5/2022"
+output:
+  html_document:
+    toc: true
+    toc_depth: 4
+    toc_float:
+      collapsed: yes
+---
+
+```{r message=FALSE, warning=FALSE, echo=FALSE }
+# SET UP NOTEBOOK
+source("libraries.R")
+
+latex <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_latex_clean.csv")) %>%
+  dplyr::select(-1) %>%
+  dplyr::mutate_at(vars(c(1:7, 9:12, 15, 18, 21)), as.character) %>%
+    dplyr::mutate_at(vars(c(1:7, 9:12, 15, 18, 21)), as.factor) %>%
+  dplyr::filter(Latex_weight_mg >= 0)
+
+
+# HERBIVORY-----
+herbivory <- read.csv(here::here("./Joined_annual_data/herbivory.csv")) %>%
+  dplyr::select(-1) %>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor) 
+```
+
+# Compare BLUPS w/LMMs
+
+These models are testing for the effect of urbanization across the entire gradient (all populations are included).
+
+Urbanization is quantified as distance from the urban center.
+
+## Latex
+
+### Block is random
+
+#### Original linear mixed model
+
+```{r}
+latex_random_LMM <- glmmTMB(sqrt(Latex_weight_mg) ~
+                            (1|Block) + 
+                            (1|Population/Family) +
+                            City_dist,
+                          data = latex,
+                          REML = F)
+
+plot(DHARMa::simulateResiduals(latex_random_LMM))
+
+summary(latex_random_LMM)
+car::Anova(latex_random_LMM) # p = 0.62
+r.squaredGLMM(latex_random_LMM) # very small R-squared: R2m = 0.0005
+
+```
+
+#### BLUP model
+
+```{r}
+latex_random_LMM_without_citydist <- update(
+  latex_random_LMM,
+  .~. - City_dist
+)
+
+blup_fams_latex_rand <- ranef(
+  latex_random_LMM_without_citydist
+  )$cond[['Family:Population']] %>%
+  tibble::rownames_to_column("Family_Pop") %>%
+  dplyr::rename(estimate = 2)
+  
+
+blup_pops_latex_rand <- ranef(
+  latex_random_LMM_without_citydist
+)$cond$Population %>%
+  tibble::rownames_to_column("Population") %>%
+  dplyr::rename(estimate = 2) %>%
+  left_join(., latex %>% # add city_dist and other variables
+              dplyr::select(c(2,18,20,22)) %>%
+              dplyr::group_by(Population) %>%
+              dplyr::summarise(Population = first(Population),
+                               Transect_ID = first(Transect_ID),
+                               City_dist = first(City_dist),
+                               Urb_score = first(Urb_score)))
+
+# simpler linear model
+latex_random_LM <- glmmTMB(estimate ~ 
+                            City_dist,
+                          data = blup_pops_latex_rand)
+
+performance::check_model(latex_random_LM) # looks ok
+summary(latex_random_LM)
+car::Anova(latex_random_LM) # p = 0.63
+r.squaredGLMM(latex_random_LM) # still small R-squared though 10x larger than original MLM: R2m = 0.005
+
+```
+
+#### Conclusion
+
+> Between models, p-values extremely similar yet marginal R-square value of population-level model is 10x higher than plant-level model (still small, though- R2m(LM) = 0.005).
+>
+> This suggests that my experimental design is powerful enough to detect an effect of genetic divergence due to urbanization.
+>
+> Also suggests that random effect adds a lot of noise to the model.
+
+### Block is fixed
+
+#### Original linear mixed model
+
+```{r}
+latex_fixed_LMM <- glmmTMB((Latex_weight_mg)^(1/3) ~
+                            Block + 
+                            (1|Population/Family) +
+                            City_dist,
+                          data = latex,
+                          REML = F)
+
+plot(DHARMa::simulateResiduals(latex_fixed_LMM)) # looks fine
+
+summary(latex_fixed_LMM)
+car::Anova(latex_fixed_LMM) # p = 0.62
+r.squaredGLMM(latex_fixed_LMM) # R2m = 0.037
+
+```
+
+#### BLUP model
+
+```{r}
+latex_fixed_LMM_without_citydist <- update(
+  latex_fixed_LMM,
+  .~. - City_dist
+)
+
+blup_fams_latex_fixed <- ranef(
+  latex_fixed_LMM_without_citydist
+  )$cond[['Family:Population']] %>%
+  tibble::rownames_to_column("Family_Pop") %>%
+  dplyr::rename(estimate = 2)
+  
+
+blup_pops_latex_fixed <- ranef(
+  latex_fixed_LMM_without_citydist
+)$cond$Population %>%
+  tibble::rownames_to_column("Population") %>%
+  dplyr::rename(estimate = 2) %>%
+  left_join(., latex %>% # add city_dist and other variables
+              dplyr::select(c(2,18,20,22)) %>%
+              dplyr::group_by(Population) %>%
+              dplyr::summarise(Population = first(Population),
+                               Transect_ID = first(Transect_ID),
+                               City_dist = first(City_dist),
+                               Urb_score = first(Urb_score)))
+
+# simpler linear model
+latex_fixed_LM <- glmmTMB(estimate ~ 
+                            City_dist,
+                          data = blup_pops_latex_fixed)
+
+performance::check_model(latex_fixed_LM) # looks ok
+summary(latex_fixed_LM)
+car::Anova(latex_fixed_LM) # p = 0.64
+r.squaredGLMM(latex_fixed_LM) # R2m about 10x smaller than LMM: R2m = 0.004
+
+```
+
+#### Conclusion
+
+> Between models, p-values extremely similar yet marginal R-square value of population-level model is 10x LOWER than plant-level model (still small, though- R2m of plant-level (LMM) = 0.04).
+>
+> This suggests that my experimental design is powerful enough to detect an effect of genetic divergence due to urbanization.
+>
+> Also suggests that adding block as a fixed effect REMOVES a lot of noise from the LMM.
+
+------------------------------------------------------------------------
+
+## Herbivory: Before flowering (binary)
+
+### Year and Block are random
+
+#### Original linear mixed model
+
+```{r}
+# first, create new column with 0/1 indicating any herbivory
+herbivory %<>%
+  mutate(Herbivory_mean_early_binary = case_when(
+    Herbivory_mean_early == 0 ~ 0,
+    Herbivory_mean_early > 0 ~ 1)
+  )
+
+herb_early_binary_random_LMM <- glmmTMB(Herbivory_mean_early_binary ~
+          (1|Block) +
+          (1|Year) + 
+          (1|Population/Family) +
+          City_dist,
+        data = herbivory %>%
+          dplyr::filter(Year != 2019), # empty year
+        family = binomial,
+        REML = F)
+
+summary(herb_early_binary_random_LMM)
+car::Anova(herb_early_binary_random_LMM) # p = 0.044
+r.squaredGLMM(herb_early_binary_random_LMM) # R2m = 0.002
+
+```
+
+#### BLUP model
+
+```{r}
+
+herb_early_binary_random_LMM_without_citydist <- update(
+  herb_early_binary_random_LMM,
+  .~. - City_dist
+)
+
+blup_fams_herb_early_bin <- ranef(
+  herb_early_binary_random_LMM_without_citydist
+)$cond[['Family:Population']] %>%
+  tibble::rownames_to_column("Family_Pop") %>%
+  dplyr::rename(estimate = 2)
+
+
+blup_pops_herb_early_bin <- ranef(
+  herb_early_binary_random_LMM_without_citydist
+)$cond$Population %>%
+  tibble::rownames_to_column("Population") %>%
+  dplyr::rename(estimate = 2) %>%
+  left_join(., herbivory %>% # add city_dist and other variables
+              dplyr::select(c(Population,
+                            Transect_ID,
+                            City_dist,
+                            Urb_score)
+                            ) %>%
+              dplyr::group_by(Population) %>%
+              dplyr::summarise(Population  = first(Population),
+                               Transect_ID = first(Transect_ID),
+                               City_dist   = first(City_dist),
+                               Urb_score   = first(Urb_score)))
+
+# simpler linear model- convergence issue
+herb_early_binary_random_LM <- glmmTMB(estimate ~ 
+                            City_dist,
+                          data = blup_pops_herb_early_bin)
+
+performance::check_model(herb_early_binary_random_LM) # looks ok
+summary(herb_early_binary_random_LM) # not working
+car::Anova(herb_early_binary_random_LM) # not working
+r.squaredGLMM(herb_early_binary_random_LM) # R2m = 0.08
+
+```
+
+#### Conclusion
+
+> Between models, p-values extremely similar yet marginal R-square value of population-level model is 40x higher than plant-level model (R2m(LM) = 0.079).
+>
+> Also suggests that random effects add a lot of noise to the model.
+
+### Year and Block are fixed
+
+#### Original linear mixed model
+
+```{r}
+herb_early_binary_fixed_LMM <- glmmTMB(Herbivory_mean_early_binary ~
+          Block +
+          Year + 
+          (1|Population/Family) +
+          City_dist,
+        data = herbivory %>%
+          dplyr::filter(Year != 2019), # empty year
+        family = binomial,
+        REML = F)
+
+summary(herb_early_binary_fixed_LMM)
+car::Anova(herb_early_binary_fixed_LMM) # p = 0.046
+r.squaredGLMM(herb_early_binary_fixed_LMM) # R2m = 0.086
+
+```
+
+#### BLUP model
+
+```{r}
+
+herb_early_binary_fixed_LMM_without_citydist <- update(
+  herb_early_binary_fixed_LMM,
+  .~. - City_dist
+)
+
+blup_fams_herb_early_bin <- ranef(
+  herb_early_binary_fixed_LMM_without_citydist
+)$cond[['Family:Population']] %>%
+  tibble::rownames_to_column("Family_Pop") %>%
+  dplyr::rename(estimate = 2)
+
+
+blup_pops_herb_early_bin <- ranef(
+  herb_early_binary_fixed_LMM_without_citydist
+)$cond$Population %>%
+  tibble::rownames_to_column("Population") %>%
+  dplyr::rename(estimate = 2) %>%
+  left_join(., herbivory %>% # add city_dist and other variables
+              dplyr::select(c(Population,
+                            Transect_ID,
+                            City_dist,
+                            Urb_score)
+                            ) %>%
+              dplyr::group_by(Population) %>%
+              dplyr::summarise(Population  = first(Population),
+                               Transect_ID = first(Transect_ID),
+                               City_dist   = first(City_dist),
+                               Urb_score   = first(Urb_score)))
+
+# simpler linear model- convergence issue
+herb_early_binary_fixed_LM <- glmmTMB(estimate ~ 
+                            City_dist,
+                          data = blup_pops_herb_early_bin)
+
+performance::check_model(herb_early_binary_fixed_LM) # looks ok
+summary(herb_early_binary_fixed_LM) # not working
+car::Anova(herb_early_binary_fixed_LM) # not working
+r.squaredGLMM(herb_early_binary_fixed_LM) # R2m = 0.077
+
+```
+
+#### Conclusion
+
+> Between models, p-values AND marginal R-squared values extremely similar.
+>
+> Also suggests that adding block and year as a fixed effects removes some noise from the LMM.
+
+------------------------------------------------------------------------
+
+## Herbivory: After flowering (binary)
+
+### Year and Block are random
+
+#### Original linear mixed model
+
+```{r}
+# first, create new column with 0/1 indicating any herbivory
+herbivory %<>%
+  mutate(Herbivory_mean_late_binary = case_when(
+    Herbivory_mean_late == 0 ~ 0,
+    Herbivory_mean_late > 0 ~ 1)
+  )
+
+herb_late_binary_random_LMM <- glmmTMB(Herbivory_mean_late_binary ~
+          (1|Block) +
+          (1|Year) + 
+          (1|Population/Family) +
+          City_dist,
+        data = herbivory %>%
+          dplyr::filter(Year != "2019"),
+        family = binomial,
+        REML = F)
+
+summary(herb_late_binary_random_LMM)
+car::Anova(herb_late_binary_random_LMM) # p = 0.52
+r.squaredGLMM(herb_late_binary_random_LMM) # R2m = 0.0002
+
+```
+
+#### BLUP model
+
+```{r}
+
+herb_late_binary_random_LMM_without_citydist <- update(
+  herb_late_binary_random_LMM,
+  .~. - City_dist
+)
+
+blup_fams_herb_late_bin <- ranef(
+  herb_late_binary_random_LMM_without_citydist
+)$cond[['Family:Population']] %>%
+  tibble::rownames_to_column("Family_Pop") %>%
+  dplyr::rename(estimate = 2)
+
+
+blup_pops_herb_late_bin <- ranef(
+  herb_late_binary_random_LMM_without_citydist
+)$cond$Population %>%
+  tibble::rownames_to_column("Population") %>%
+  dplyr::rename(estimate = 2) %>%
+  left_join(., herbivory %>% # add city_dist and other variables
+              dplyr::select(c(Population,
+                            Transect_ID,
+                            City_dist,
+                            Urb_score)
+                            ) %>%
+              dplyr::group_by(Population) %>%
+              dplyr::summarise(Population  = first(Population),
+                               Transect_ID = first(Transect_ID),
+                               City_dist   = first(City_dist),
+                               Urb_score   = first(Urb_score)))
+
+# simpler linear model- convergence issue
+herb_late_binary_random_LM <- glmmTMB(estimate ~ 
+                            City_dist,
+                          data = blup_pops_herb_late_bin)
+
+performance::check_model(herb_late_binary_random_LM) # looks ok
+summary(herb_late_binary_random_LM) # not working
+car::Anova(herb_late_binary_random_LM) # not working
+r.squaredGLMM(herb_late_binary_random_LM) # R2m = 0.01
+
+```
+
+#### Conclusion
+
+> Between models, can't compare p-values due to convergence issues. Marginal R-square value of population-level model is ~50x higher than plant-level model (R2m(LM) = 0.01).
+>
+> Suggests that random effects add a lot of noise to the model.
+
+### Year and Block are fixed
+
+#### Original linear mixed model
+
+```{r}
+herb_late_binary_fixed_LMM <- glmmTMB(Herbivory_mean_late_binary ~
+          Block +
+          Year + 
+          (1|Population/Family) +
+          City_dist,
+        data = herbivory %>%
+          dplyr::filter(Year != "2019"),
+        family = binomial,
+        REML = F)
+
+summary(herb_late_binary_fixed_LMM)
+car::Anova(herb_late_binary_fixed_LMM) # p = 0.504
+r.squaredGLMM(herb_late_binary_fixed_LMM) # R2m = 0.028
+```
+
+#### BLUP model
+
+```{r}
+
+herb_late_binary_fixed_LMM_without_citydist <- update(
+  herb_late_binary_fixed_LMM,
+  .~. - City_dist
+)
+
+blup_fams_herb_late_bin <- ranef(
+  herb_late_binary_fixed_LMM_without_citydist
+)$cond[['Family:Population']] %>%
+  tibble::rownames_to_column("Family_Pop") %>%
+  dplyr::rename(estimate = 2)
+
+
+blup_pops_herb_late_bin <- ranef(
+  herb_late_binary_fixed_LMM_without_citydist
+)$cond$Population %>%
+  tibble::rownames_to_column("Population") %>%
+  dplyr::rename(estimate = 2) %>%
+  left_join(., herbivory %>% # add city_dist and other variables
+              dplyr::select(c(Population,
+                            Transect_ID,
+                            City_dist,
+                            Urb_score)
+                            ) %>%
+              dplyr::group_by(Population) %>%
+              dplyr::summarise(Population  = first(Population),
+                               Transect_ID = first(Transect_ID),
+                               City_dist   = first(City_dist),
+                               Urb_score   = first(Urb_score)))
+
+# simpler linear model- convergence issue
+herb_late_binary_fixed_LM <- glmmTMB(estimate ~ 
+                            City_dist,
+                          data = blup_pops_herb_late_bin)
+
+performance::check_model(herb_late_binary_fixed_LM) # looks ok
+summary(herb_late_binary_fixed_LM) # not working
+car::Anova(herb_late_binary_fixed_LM) # not working
+r.squaredGLMM(herb_late_binary_fixed_LM) # R2m = 0.01
+
+```
+
+#### Conclusion
+
+> Can't compare p-values between models but marginal R-square value of plant-level model is ~3x lower than population-level model (R2m(LM) = 0.01).
+>
+> Suggests that fixed effects remove noise from the LMM.
