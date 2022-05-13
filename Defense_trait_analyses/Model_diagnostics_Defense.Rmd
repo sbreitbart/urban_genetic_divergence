@@ -34,6 +34,7 @@ str(latex)
 # HERBIVORY-----
 herbivory <- read.csv(here::here("./Joined_annual_data/herbivory.csv")) %>%
   dplyr::select(-1) %>%
+  dplyr::filter(Year != 2019) %>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
     dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor) %T>%
   str()
@@ -557,6 +558,7 @@ ltx_urbsubs_usc_m2 <- glmmTMB(sqrt(Latex_weight_mg) ~ (1|Block) + (1|Population/
 ## Herbivory: Before flowering- 2020 and 2021 ONLY
 ### Gradient
 #### City_dist
+##### Block and year are random
 ```{r}
 # OLD DIAGNOSTICS-----
 # herbiv_e_gr_dist_m1 <- glmmTMB(Herbivory_mean_early ~ (1|Block) + (1|Year) + (1|Population/Family) + City_dist,
@@ -654,6 +656,7 @@ herbiv_e_gr_dist_m1_bin <- glmmTMB(Herbivory_mean_early_binary ~
 # plot(DHARMa::simulateResiduals(herbiv_e_gr_dist_m1_bin)) # looks great
 
 # car::Anova(herbiv_e_gr_dist_m1_bin)
+r.squaredGLMM((herbiv_e_gr_dist_m1_bin)) # R2m = 0.002
 
 
 # quantitative model
@@ -674,6 +677,104 @@ herbiv_e_gr_dist_m1_quant <- glmmTMB(log(Herbivory_mean_early) ~
 # 
 # car::Anova(herbiv_e_gr_dist_m1_quant)
 ```
+
+##### Block and year are fixed
+```{r}
+# herbiv_e_gr_dist_m1 <- glmmTMB(Herbivory_mean_early^(1/3) ~
+#                                  Block +
+#                                  Year +
+#                                  (1|Population/Family) +
+#                                  City_dist,
+#                               data = herbivory,
+#                               REML = F) # convergence issue
+# 
+# plot(DHARMa::simulateResiduals(herbiv_e_gr_dist_m1)) # still problematic
+# 
+# hist(herbivory$Herbivory_mean_early, breaks = 50) # zero-inflated?
+# 
+# # try binomial- still problematic
+# plot(
+#   DHARMa::simulateResiduals(
+#     glmmTMB(Herbivory_mean_early ~
+#                   Block +
+#                   Year +
+#                   (1|Population/Family) +
+#                   City_dist,
+#                 data = herbivory,
+#                 family = binomial,
+#                 REML = F)
+#     )
+#   )
+# 
+# performance::check_model(
+#     glmmTMB(Herbivory_mean_early ~
+#                   Block +
+#                   Year +
+#                   (1|Population/Family) +
+#                   City_dist,
+#                 data = herbivory,
+#                 family = binomial,
+#                 REML = F)
+#     )
+# 
+# # TRY BETA FAMILY
+# herbivory$Herbivory_mean_early_recode <- herbivory$Herbivory_mean_early
+# herbivory$Herbivory_mean_early_recode[herbivory$Herbivory_mean_early_recode == 1] <- 0.999999
+# herbivory$Herbivory_mean_early_recode[herbivory$Herbivory_mean_early_recode == 0] <- 0.000001
+# 
+# test1 <- glmmTMB(Herbivory_mean_early_recode  ~
+#                    Block +
+#                    Year +
+#                    (1|Population/Family) +
+#                    City_dist,
+#                                 data = herbivory,
+#                                 family = beta_family(link="logit"),
+#                                REML = F)
+# performance::check_model(test1) # heavy right tail
+# plot(DHARMa::simulateResiduals(test1))
+
+
+# TRY HURDLE MODEL-----
+# first, create new column with 0/1 indicating any herbivory
+herbivory %<>%
+  mutate(Herbivory_mean_early_binary = case_when(
+    Herbivory_mean_early == 0 ~ 0,
+    Herbivory_mean_early > 0 ~ 1)
+  )
+
+herbiv_e_gr_dist_m1_bin <- glmmTMB(Herbivory_mean_early_binary ~
+                               Block +
+                               Year + 
+                               (1|Population/Family) +
+                                City_dist,
+                              data = herbivory,
+                       family = binomial,
+                              REML = F)
+
+# Check model assumptions
+plot(DHARMa::simulateResiduals(herbiv_e_gr_dist_m1_bin)) # looks great
+
+car::Anova(herbiv_e_gr_dist_m1_bin)
+r.squaredGLMM((herbiv_e_gr_dist_m1_bin)) # R2m = 0.09
+
+
+# quantitative model
+herbiv_e_gr_dist_m1_quant <- glmmTMB(log(Herbivory_mean_early) ~
+                               Block +
+                               Year + 
+                               (1|Population/Family) +
+                                City_dist,
+                              data = herbivory %>%
+                        dplyr::filter(
+                          Herbivory_mean_early_binary == 1),
+                              REML = F) # log-transformed after looking at untransformed, sqrt, cube root models
+
+# Check model assumptions
+plot(DHARMa::simulateResiduals(herbiv_e_gr_dist_m1_quant)) # looks great
+performance::check_model(herbiv_e_gr_dist_m1_quant) # looks great
+car::Anova(herbiv_e_gr_dist_m1_quant)
+```
+
 
 #### Urb_score
 ```{r}

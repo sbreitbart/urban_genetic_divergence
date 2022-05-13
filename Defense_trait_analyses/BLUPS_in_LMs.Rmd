@@ -238,15 +238,15 @@ blup_pops_herb_early_bin <- ranef(
                                City_dist   = first(City_dist),
                                Urb_score   = first(Urb_score)))
 
-# simpler linear model- convergence issue
-herb_early_binary_random_LM <- glmmTMB(estimate ~ 
+# simpler linear model- convergence issue if I don't multiply response by large number. Maybe values were just too small? Were on the order of 1x10-9
+herb_early_binary_random_LM <- glmmTMB(estimate*1000000000 ~ 
                             City_dist,
                           data = blup_pops_herb_early_bin)
 
 performance::check_model(herb_early_binary_random_LM) # looks ok
-summary(herb_early_binary_random_LM) # not working
-car::Anova(herb_early_binary_random_LM) # not working
-r.squaredGLMM(herb_early_binary_random_LM) # R2m = 0.08
+summary(herb_early_binary_random_LM) # 
+car::Anova(herb_early_binary_random_LM) # p = 0.039
+r.squaredGLMM(herb_early_binary_random_LM) # R2m = 0.079
 
 ```
 
@@ -310,14 +310,14 @@ blup_pops_herb_early_bin <- ranef(
                                City_dist   = first(City_dist),
                                Urb_score   = first(Urb_score)))
 
-# simpler linear model- convergence issue
-herb_early_binary_fixed_LM <- glmmTMB(estimate ~ 
+# simpler linear model- convergence issue if I don't multiply response by large number. Estimates close to 0 otherwise
+herb_early_binary_fixed_LM <- glmmTMB(estimate*1000000000 ~ 
                             City_dist,
                           data = blup_pops_herb_early_bin)
 
 performance::check_model(herb_early_binary_fixed_LM) # looks ok
-summary(herb_early_binary_fixed_LM) # not working
-car::Anova(herb_early_binary_fixed_LM) # not working
+summary(herb_early_binary_fixed_LM) # 
+car::Anova(herb_early_binary_fixed_LM) # p = 0.04
 r.squaredGLMM(herb_early_binary_fixed_LM) # R2m = 0.077
 
 ```
@@ -394,20 +394,20 @@ blup_pops_herb_late_bin <- ranef(
                                Urb_score   = first(Urb_score)))
 
 # simpler linear model- convergence issue
-herb_late_binary_random_LM <- glmmTMB(estimate ~ 
+herb_late_binary_random_LM <- glmmTMB(estimate*1000000000 ~ 
                             City_dist,
                           data = blup_pops_herb_late_bin)
 
 performance::check_model(herb_late_binary_random_LM) # looks ok
-summary(herb_late_binary_random_LM) # not working
-car::Anova(herb_late_binary_random_LM) # not working
+summary(herb_late_binary_random_LM) #
+car::Anova(herb_late_binary_random_LM) # p = 0.47
 r.squaredGLMM(herb_late_binary_random_LM) # R2m = 0.01
 
 ```
 
 #### Conclusion
 
-> Between models, can't compare p-values due to convergence issues. Marginal R-square value of population-level model is ~50x higher than plant-level model (R2m(LM) = 0.01).
+> Between models, p-values are very similar. Marginal R-square value of population-level model is ~50x higher than plant-level model (R2m(LM) = 0.01).
 >
 > Suggests that random effects add a lot of noise to the model.
 
@@ -465,19 +465,19 @@ blup_pops_herb_late_bin <- ranef(
                                Urb_score   = first(Urb_score)))
 
 # simpler linear model- convergence issue
-herb_late_binary_fixed_LM <- glmmTMB(estimate ~ 
+herb_late_binary_fixed_LM <- glmmTMB(estimate*1000000000 ~ 
                             City_dist,
                           data = blup_pops_herb_late_bin)
 
 performance::check_model(herb_late_binary_fixed_LM) # looks ok
-summary(herb_late_binary_fixed_LM) # not working
-car::Anova(herb_late_binary_fixed_LM) # not working
+summary(herb_late_binary_fixed_LM) # 
+car::Anova(herb_late_binary_fixed_LM) # p = 0.46
 r.squaredGLMM(herb_late_binary_fixed_LM) # R2m = 0.01
 
 ```
 
 #### Conclusion
 
-> Can't compare p-values between models but marginal R-square value of plant-level model is ~3x lower than population-level model (R2m(LM) = 0.01).
+> P-values are very similar. Marginal R-square value of plant-level model is ~3x lower than population-level model (R2m(LM) = 0.01).
 >
 > Suggests that fixed effects remove noise from the LMM.
