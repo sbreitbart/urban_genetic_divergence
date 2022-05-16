@@ -14,6 +14,8 @@ output:
 ```{r message=FALSE, warning=FALSE, echo=FALSE }
 # SET UP NOTEBOOK
 source("libraries.R")
+library(r2glmm)
+library(rsq)
 
 latex <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_latex_clean.csv")) %>%
   dplyr::select(-1) %>%
@@ -29,11 +31,57 @@ herbivory <- read.csv(here::here("./Joined_annual_data/herbivory.csv")) %>%
     dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor) 
 ```
 
-# Compare BLUPS w/LMMs
+# Compare linear mixed models with linear models using BLUPs as estimates
 
 These models are testing for the effect of urbanization across the entire gradient (all populations are included).
 
 Urbanization is quantified as distance from the urban center.
+
+## CONCLUSIONS
+
++--------------------------------------+--------+-------+------------------------+--------+--------+
+|                                      | *P*-   | *P-*  | Partial R2 (distance)- | R2m-   | R2m-   |
+|                                      |        |       |                        |        |        |
+|                                      | LMM    | LM    | LMM                    | LMM    | LM     |
++======================================+========+=======+========================+========+========+
+| Latex (Random)                       | 0.62   | 0.63  |                        | 0.0005 | 0.005  |
++--------------------------------------+--------+-------+------------------------+--------+--------+
+| Latex (Fixed)                        | 0.62   | 0.64  | 0.001                  | 0.037  | 0.004  |
++--------------------------------------+--------+-------+------------------------+--------+--------+
+|                                      |        |       |                        |        |        |
++--------------------------------------+--------+-------+------------------------+--------+--------+
+| Herbivory: Before Flowering (Random) | 0.044  | 0.039 |                        | 0.002  | 0.079  |
++--------------------------------------+--------+-------+------------------------+--------+--------+
+| Herbivory: Before Flowering (Fixed)  | 0.046  | 0.040 | 0.004                  | 0.086  | 0.077  |
++--------------------------------------+--------+-------+------------------------+--------+--------+
+|                                      |        |       |                        |        |        |
++--------------------------------------+--------+-------+------------------------+--------+--------+
+| Herbivory: After Flowering (Random)  | 0.52   | 0.47  |                        | 0.0002 | 0.010  |
++--------------------------------------+--------+-------+------------------------+--------+--------+
+| Herbivory: After Flowering (Fixed)   | 0.50   | 0.46  | 0.001                  | 0.028  | 0.010  |
++--------------------------------------+--------+-------+------------------------+--------+--------+
+
+: (Random) and (Fixed) refer to Block (Latex) and Block & Year (Herbivory) being treated as random vs. fixed effects.
+
+> Conclusions:
+>
+> ***P-values***
+>
+> -   When comparing LMM with LMs AND models with fixed vs. random block/year effects, *p-values do not qualitatively change.*
+>
+> ***R2m values***
+>
+> -   Compared to LMMs, R2m values from LMs
+>
+>     -   INCREASE \~10-40x when block/year effects considered **random**.
+>
+>     -   DO NOT SIGNIFICANTLY CHANGE or DECREASE \~3x when block/year effects considered **fixed**.
+>
+> -   Compared to models with random effects, the R2m values of models with fixed effects
+>
+>     -   INCREASE 40-140x for LMMs
+>
+>     -   DO NOT SIGNIFICANTLY CHANGE for LMs
 
 ## Latex
 
@@ -91,6 +139,9 @@ latex_random_LM <- glmmTMB(estimate ~
                           data = blup_pops_latex_rand)
 
 performance::check_model(latex_random_LM) # looks ok
+rsq::rsq.partial( # this package doesn't work with glmmtmb objects
+  lm(estimate ~ City_dist,
+     data = blup_pops_latex_rand)) # partial R2 = 0.004
 summary(latex_random_LM)
 car::Anova(latex_random_LM) # p = 0.63
 r.squaredGLMM(latex_random_LM) # still small R-squared though 10x larger than original MLM: R2m = 0.005
@@ -122,7 +173,12 @@ plot(DHARMa::simulateResiduals(latex_fixed_LMM)) # looks fine
 summary(latex_fixed_LMM)
 car::Anova(latex_fixed_LMM) # p = 0.62
 r.squaredGLMM(latex_fixed_LMM) # R2m = 0.037
-
+r2glmm::r2beta(model = lmer((Latex_weight_mg)^(1/3) ~ # can't handle glmmtmb
+                            Block + 
+                            (1|Population/Family) +
+                            City_dist,
+                          data = latex,
+                    REML = F), method = 'sgv', data = latex) # Partial R2 (distance) = 0.001
 ```
 
 #### BLUP model
@@ -159,6 +215,9 @@ latex_fixed_LM <- glmmTMB(estimate ~
                           data = blup_pops_latex_fixed)
 
 performance::check_model(latex_fixed_LM) # looks ok
+rsq::rsq.partial( # this package doesn't work with glmmtmb objects
+  lm(estimate ~ City_dist,
+     data = blup_pops_latex_fixed)) # partial R2 = 0.004 (expected; same as R2m)
 summary(latex_fixed_LM)
 car::Anova(latex_fixed_LM) # p = 0.64
 r.squaredGLMM(latex_fixed_LM) # R2m about 10x smaller than LMM: R2m = 0.004
@@ -244,6 +303,9 @@ herb_early_binary_random_LM <- glmmTMB(estimate*1000000000 ~
                           data = blup_pops_herb_early_bin)
 
 performance::check_model(herb_early_binary_random_LM) # looks ok
+rsq::rsq.partial(
+  lm(estimate*1000000000 ~ City_dist,
+     data = blup_pops_herb_early_bin)) # partial R2 = 0.077
 summary(herb_early_binary_random_LM) # 
 car::Anova(herb_early_binary_random_LM) # p = 0.039
 r.squaredGLMM(herb_early_binary_random_LM) # R2m = 0.079
@@ -274,7 +336,17 @@ herb_early_binary_fixed_LMM <- glmmTMB(Herbivory_mean_early_binary ~
 summary(herb_early_binary_fixed_LMM)
 car::Anova(herb_early_binary_fixed_LMM) # p = 0.046
 r.squaredGLMM(herb_early_binary_fixed_LMM) # R2m = 0.086
-
+r2glmm::r2beta(model = glmer(Herbivory_mean_early_binary ~
+          Block +
+          Year + 
+          (1|Population/Family) +
+          City_dist,
+        data = herbivory %>%
+          dplyr::filter(Year != 2019), # empty year
+        family = binomial),
+        method = 'sgv',
+        data = herbivory %>%
+          dplyr::filter(Year != 2019)) # Partial R2 (distance) = 0.004
 ```
 
 #### BLUP model
@@ -316,6 +388,9 @@ herb_early_binary_fixed_LM <- glmmTMB(estimate*1000000000 ~
                           data = blup_pops_herb_early_bin)
 
 performance::check_model(herb_early_binary_fixed_LM) # looks ok
+rsq::rsq.partial(
+  lm(estimate*1000000000 ~ City_dist,
+     data = blup_pops_herb_early_bin)) # partial R2 = 0.076
 summary(herb_early_binary_fixed_LM) # 
 car::Anova(herb_early_binary_fixed_LM) # p = 0.04
 r.squaredGLMM(herb_early_binary_fixed_LM) # R2m = 0.077
@@ -399,6 +474,9 @@ herb_late_binary_random_LM <- glmmTMB(estimate*1000000000 ~
                           data = blup_pops_herb_late_bin)
 
 performance::check_model(herb_late_binary_random_LM) # looks ok
+rsq::rsq.partial(
+  lm(estimate*1000000000 ~ City_dist,
+     data = blup_pops_herb_late_bin)) # partial R2 = 0.01
 summary(herb_late_binary_random_LM) #
 car::Anova(herb_late_binary_random_LM) # p = 0.47
 r.squaredGLMM(herb_late_binary_random_LM) # R2m = 0.01
@@ -407,7 +485,7 @@ r.squaredGLMM(herb_late_binary_random_LM) # R2m = 0.01
 
 #### Conclusion
 
-> Between models, p-values are very similar. Marginal R-square value of population-level model is ~50x higher than plant-level model (R2m(LM) = 0.01).
+> Between models, p-values are very similar. Marginal R-square value of population-level model is \~50x higher than plant-level model (R2m(LM) = 0.01).
 >
 > Suggests that random effects add a lot of noise to the model.
 
@@ -429,6 +507,17 @@ herb_late_binary_fixed_LMM <- glmmTMB(Herbivory_mean_late_binary ~
 summary(herb_late_binary_fixed_LMM)
 car::Anova(herb_late_binary_fixed_LMM) # p = 0.504
 r.squaredGLMM(herb_late_binary_fixed_LMM) # R2m = 0.028
+r2glmm::r2beta(model = glmer(Herbivory_mean_late_binary ~
+          Block +
+          Year + 
+          (1|Population/Family) +
+          City_dist,
+        data = herbivory %>%
+          dplyr::filter(Year != "2019"),
+        family = binomial),
+        method = 'sgv',
+        data = herbivory %>%
+          dplyr::filter(Year != 2019)) # Partial R2 (distance) = 0.001
 ```
 
 #### BLUP model
@@ -470,14 +559,17 @@ herb_late_binary_fixed_LM <- glmmTMB(estimate*1000000000 ~
                           data = blup_pops_herb_late_bin)
 
 performance::check_model(herb_late_binary_fixed_LM) # looks ok
+rsq::rsq.partial(
+   lm(estimate*1000000000 ~ City_dist,
+      data = blup_pops_herb_late_bin)) # partial R2 = 0.010
 summary(herb_late_binary_fixed_LM) # 
 car::Anova(herb_late_binary_fixed_LM) # p = 0.46
-r.squaredGLMM(herb_late_binary_fixed_LM) # R2m = 0.01
+r.squaredGLMM(herb_late_binary_fixed_LM) # R2m = 0.010
 
 ```
 
 #### Conclusion
 
-> P-values are very similar. Marginal R-square value of plant-level model is ~3x lower than population-level model (R2m(LM) = 0.01).
+> P-values are very similar. Marginal R-square value of plant-level model is \~3x lower than population-level model (R2m(LM) = 0.01).
 >
 > Suggests that fixed effects remove noise from the LMM.
