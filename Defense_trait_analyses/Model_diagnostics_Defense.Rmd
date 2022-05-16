@@ -60,134 +60,85 @@ weevil %<>%
 ### Gradient
 #### City_dist
 ```{r}
-# ldmc_gr_city_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + City_dist,
-#                         data = sla_ldmc,
-#                         REML = F)
+# # Basic data exploration
+# plot(LDMC ~ City_dist, data = sla_ldmc) # outlier > 1.5? It's biologically possible though
+# plot(LDMC ~ City_dist, data = sla_ldmc %>%
+#           dplyr::filter(LDMC < 1))
 # 
-# performance::check_model(ldmc_gr_city_m1) # looks like an outlier. Remove and try again
-
-# performance::check_model(update(ldmc_gr_city_m1, . ~ . , data = sla_ldmc %>% dplyr::filter(LDMC < 1)))
-# # convergence problem. Take out block
-
-# performance::check_model(update(ldmc_gr_city_m1, . ~ (1|Population/Family) + City_dist , data = sla_ldmc %>%
-#                                   dplyr::filter(LDMC < 1))) # better! put back outlier to see if it changes
-
-# performance::check_model(update(ldmc_gr_city_m1, . ~ (1|Population/Family) + City_dist , data = sla_ldmc)) # still an outlier. Keep out. Still a bit right-skewed though, so try sqrt
-# 
-# performance::check_model(update(ldmc_gr_city_m1, sqrt(LDMC) ~ (1|Population/Family) + City_dist , data = sla_ldmc %>% dplyr::filter(LDMC < 1))) # convergence issue again. Stick with untransformed model
+# boxplot(LDMC ~ Block, data = sla_ldmc)
+# boxplot(LDMC ~ Block, data = sla_ldmc %>%
+#           dplyr::filter(LDMC < 1))
 
 
-# ldmc_gr_city_m1 <- glmmTMB(LDMC ~ (1|Population/Family) + City_dist,
-#                            data = sla_ldmc %>%
-#                              dplyr::filter(LDMC < 1.5))
-# 
-# car::Anova(ldmc_gr_city_m1)
-# # returning NaNs. Try making family unique and then crossing?
-# 
-# sla_ldmc %<>%
-#   dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
-# 
-# # this works: p = 0.19
-# car::Anova(update(ldmc_gr_city_m1,
-#                   . ~ (1|Population:Fam_uniq) + City_dist ,
-#                   data = sla_ldmc %>%
-#                     dplyr::filter(LDMC < 1)))
-# 
-# # gives same result (p = 0.19)
-# car::Anova(update(ldmc_gr_city_m1,
-#                              . ~ (1|Population:Family) + City_dist ,
-#                              data = sla_ldmc %>%
-#                                dplyr::filter(LDMC < 1)))
-# 
-# # this doesn't work though
-# car::Anova(update(ldmc_gr_city_m1,
-#                              . ~ (1|Population/Fam_uniq) + City_dist ,
-#                              data = sla_ldmc %>%
-#                                dplyr::filter(LDMC < 1)))
-# 
-# # this DOES work and gives same result as previous models
-# car::Anova(update(ldmc_gr_city_m1,
-#                              . ~ (1|Fam_uniq) + City_dist ,
-#                              data = sla_ldmc %>%
-#                                dplyr::filter(LDMC < 1)))
+ldmc_gr_city_m1 <- glmmTMB(sqrt(LDMC) ~
+                             Block +
+                             (1|Population/Family) +
+                             City_dist,
+                        data = sla_ldmc %>%
+                             dplyr::filter(LDMC < 1), # next highest LMDC is 0.7, so removing the one more than double that
+                        REML = F)
 
-
-# going to use this as final model
-ldmc_gr_city_m1 <- glmmTMB(LDMC ~ (1|Population:Fam_uniq) + (1|Block) + City_dist,
-                             data = sla_ldmc %>%
-                               dplyr::filter(LDMC < 1),
-                           REML = F)
-
-# car::Anova(ldmc_gr_city_m1)
+# DHARMa::simulateResiduals(ldmc_gr_city_m1) %>%
+#   plot
+# 
 # performance::check_model(ldmc_gr_city_m1)
 ```
 
 #### Urb_score
 ```{r}
-# ldmc_gr_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + Urb_score,
-#                         data = sla_ldmc,
-#                         REML = F)
-# 
-# performance::check_model(ldmc_gr_usc_m1) # remove same outlier
-# 
-# performance::check_model(update(ldmc_gr_usc_m1, . ~ . ,
-#                                 data = sla_ldmc %>%
-#                                   dplyr::filter(LDMC < 1)))
-# # works fine
-# 
-# car::Anova(update(ldmc_gr_usc_m1, . ~ . ,
-#                                 data = sla_ldmc %>%
-#                                   dplyr::filter(LDMC < 1)))
-# 
-# # I took out block: result barely changed. Subbed in Fam_uniq, result didn't change.
-# 
-
-ldmc_gr_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + Urb_score,
+ldmc_gr_usc_m1 <- glmmTMB(sqrt(LDMC) ~
+                             Block +
+                             (1|Population/Family) +
+                             Urb_score,
                         data = sla_ldmc %>%
-                                  dplyr::filter(LDMC < 1),
+                             dplyr::filter(LDMC < 1), # next highest LMDC is 0.7, so removing the one more than double that
                         REML = F)
+
+DHARMa::simulateResiduals(ldmc_gr_usc_m1) %>%
+  plot
+
+performance::check_model(ldmc_gr_usc_m1)
 ```
 
 ### Urban Subtransects
 #### City_dist
 ```{r}
-# ldmc_urbsubs_city_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + City_dist * Transect_ID,
-#                         data = sla_ldmc %>%
-#                           dplyr::filter(Transect_ID != "Rural"),
-#                         REML = F)
-# not converging. Try changing family
+# doesn't converge unless I remove block
+ldmc_urbsubs_city_m1 <- glmmTMB(log(LDMC) ~
+                             # Block +
+                             (1|Population/Family) +
+                             City_dist * Transect_ID,
+                        data = sla_ldmc %>%
+                             dplyr::filter(LDMC < 1 &
+                                             Transect_ID != "Rural"), # next highest LMDC is 0.7, so removing the one more than double that
+                        REML = F)
 
-# performance::check_model(update(ldmc_urbsubs_city_m1, . ~ (1|Block) + (1|Population:Family) + City_dist * Transect_ID,
-#                                 data = sla_ldmc %>%
-#                                   dplyr::filter(Transect_ID != "Rural") %>%
-#                                   dplyr::filter(LDMC < 1.5)))
-# # says CIty_dist and Transect ID are collinear. Otherwise looks fine. Same diagnostics as (1|Fam_uniq) and (1|Population:Fam_uniq)
+# DHARMa::simulateResiduals(ldmc_urbsubs_city_m1) %>%
+#   plot
 # 
-# car::Anova(update(ldmc_urbsubs_city_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + City_dist * Transect_ID,
-#                                 data = sla_ldmc %>%
-#                                   dplyr::filter(Transect_ID != "Rural") %>%
-#                                   dplyr::filter(LDMC < 1.5)),
+# performance::check_model(ldmc_urbsubs_city_m1)
+# 
+# car::Anova(ldmc_urbsubs_city_m1,
 #            type = "III") # interaxn not sig so will use type II SS
 # 
-# car::Anova(update(ldmc_urbsubs_city_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + City_dist * Transect_ID,
-#                                 data = sla_ldmc %>%
-#                                   dplyr::filter(Transect_ID != "Rural") %>%
-#                                   dplyr::filter(LDMC < 1.5)),
+# car::Anova(ldmc_urbsubs_city_m1,
 #            type = "II") # interaxn not sig
-# Final model
-ldmc_urbsubs_city_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population:Fam_uniq) + City_dist * Transect_ID,
-                        data = sla_ldmc %>%
-                          dplyr::filter(Transect_ID != "Rural"),
-                        REML = F)
 
 
 
 # MAIN EFFECTS MODEL
-ldmc_urbsubs_city_m2 <- glmmTMB(LDMC ~ (1|Block) + (1|Population:Fam_uniq) + City_dist + Transect_ID,
+ldmc_urbsubs_city_m2 <- glmmTMB(log(LDMC) ~
+                             # Block +
+                             (1|Population/Family) +
+                             City_dist + Transect_ID,
                         data = sla_ldmc %>%
-                                  dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5),
+                             dplyr::filter(LDMC < 1 &
+                                             Transect_ID != "Rural"), # next highest LMDC is 0.7, so removing the one more than double that
                         REML = F)
-
+# DHARMa::simulateResiduals(ldmc_urbsubs_city_m2) %>%
+#   plot
+# 
+# performance::check_model(ldmc_urbsubs_city_m2)
 # car::Anova(ldmc_urbsubs_city_m2)
 # 
 # # COMPARE AIC
@@ -196,49 +147,45 @@ ldmc_urbsubs_city_m2 <- glmmTMB(LDMC ~ (1|Block) + (1|Population:Fam_uniq) + Cit
 
 #### Urb_score
 ```{r}
-# ldmc_urbsubs_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population/Family) + Urb_score * Transect_ID,
-#                         data = sla_ldmc %>%
-#                           dplyr::filter(Transect_ID != "Rural"),
-#                         REML = F)
+ldmc_urbsubs_usc_m1 <- glmmTMB(log(LDMC) ~
+                             Block +
+                             (1|Population/Family) +
+                             Urb_score * Transect_ID,
+                        data = sla_ldmc %>%
+                             dplyr::filter(LDMC < 1 &
+                                             Transect_ID != "Rural"), # next highest LMDC is 0.7, so removing the one more than double that
+                        REML = F)
 
-# performance::check_model(ldmc_urbsubs_usc_m1) # not converging. Remove outlier and try again
-# 
-# 
-# performance::check_model(update(ldmc_urbsubs_usc_m1, . ~ .,
-#                                 data = sla_ldmc %>%
-#                                   dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5))) # still not converging. try using Fam_uniq
-# 
-# # this works. As does using (1|Fam_uniq)
-# performance::check_model(update(ldmc_urbsubs_usc_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score * Transect_ID,
-#                                 data = sla_ldmc %>%
-#                                   dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5)))
-# 
-# # gives same result as (1|Fam_uniq)
-# car::Anova(update(ldmc_urbsubs_usc_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score * Transect_ID,
-#                                 data = sla_ldmc %>%
-#                                   dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5)),
-#            type = "III") # interaxn not sig so try type II SS
-# 
-# 
-# car::Anova(update(ldmc_urbsubs_usc_m1, . ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score * Transect_ID,
-#                                 data = sla_ldmc %>%
-#                                   dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5)),
-#            type = "II")
+DHARMa::simulateResiduals(ldmc_urbsubs_usc_m1) %>%
+  plot
 
+performance::check_model(ldmc_urbsubs_usc_m1)
 
-ldmc_urbsubs_usc_m1 <- glmmTMB(LDMC ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score * Transect_ID,
-                                data = sla_ldmc %>%
-                                  dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5))
+car::Anova(ldmc_urbsubs_usc_m1,
+           type = "III") # interaxn not sig so will use type II SS
+
+car::Anova(ldmc_urbsubs_usc_m1,
+           type = "II") # interaxn not sig
+
 
 
 # MAIN EFFECTS MODEL
-ldmc_urbsubs_usc_m2 <- glmmTMB(LDMC ~ (1|Block) + (1|Population:Fam_uniq) + Urb_score + Transect_ID,
-                                data = sla_ldmc %>%
-                                  dplyr::filter(Transect_ID != "Rural" & LDMC < 1.5))
+ldmc_urbsubs_usc_m2 <- glmmTMB(log(LDMC) ~
+                             Block +
+                             (1|Population/Family) +
+                             Urb_score + Transect_ID,
+                        data = sla_ldmc %>%
+                             dplyr::filter(LDMC < 1 &
+                                             Transect_ID != "Rural"), # next highest LMDC is 0.7, so removing the one more than double that
+                        REML = F)
+DHARMa::simulateResiduals(ldmc_urbsubs_usc_m2) %>%
+  plot
 
-# car::Anova(ldmc_urbsubs_usc_m2)
-# 
-# AIC(ldmc_urbsubs_usc_m1, ldmc_urbsubs_usc_m2) # ME model best model but not <2 AIC away
+performance::check_model(ldmc_urbsubs_usc_m2)
+car::Anova(ldmc_urbsubs_usc_m2)
+
+# COMPARE AIC
+AIC(ldmc_urbsubs_usc_m1, ldmc_urbsubs_usc_m2) # m2 lower but not by more than 2 AIC
 ```
 
 ## SLA
