@@ -45,33 +45,34 @@ herbivores <- herbivores_all %>%
 ```
 
 # Diagnostics
-## Monarchs- no transformations
+## Monarchs- 
 ### Gradient
 #### City_dist
 ```{r}
 monarch_gr_city_m1 <- glmmTMB(Monarch_Quantity_Observed ~
-                                (1|Block) +
+                                Block +
                                 (1|Population/Family) +
-                                (1|Year) +
-                                (1|Sample) +
+                                Year +
+                                Sample +
                                 City_dist,
               data = herbivores,
-              family = poisson,
-              REML = F) 
+              family = nbinom2,
+              REML = F) # may be an outlier, but it's biologically relevant. And anova result doesn't change if it's included or excluded.
 
-#performance::check_model(monarch_gr_city_m1) # looks fine
+# performance::check_model(monarch_gr_city_m1) # looks fine
+# car::Anova(monarch_gr_city_m1)
 ```
 
 #### Urb_score
 ```{r}
 monarch_gr_usc_m1 <- glmmTMB(Monarch_Quantity_Observed ~
-                                (1|Block) +
+                                Block +
                                 (1|Population/Family) +
-                                (1|Year) +
-                                (1|Sample) +
+                                Year +
+                                Sample +
                                 Urb_score,
               data = herbivores,
-              family = poisson,
+              family = nbinom2,
               REML = F) 
 
 # performance::check_model(monarch_gr_usc_m1) # looks fine
@@ -82,34 +83,33 @@ monarch_gr_usc_m1 <- glmmTMB(Monarch_Quantity_Observed ~
 ```{r}
 # Full model
 monarch_urbsubs_city_m1 <- glmmTMB(Monarch_Quantity_Observed ~
-                                (1|Block) +
+                                Block +
                                 (1|Population/Family) +
-                                (1|Year) +
-                                (1|Sample) +
+                                Year +
+                                Sample +
                                 City_dist * Transect_ID,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
+              family = nbinom2,
               REML = F) 
 
-# performance::check_model(monarch_urbsubs_city_m1) # looks fine
+# performance::check_model(monarch_urbsubs_city_m1)
 
 
 # MAIN EFFECTS MODEL
 monarch_urbsubs_city_m2 <- glmmTMB(Monarch_Quantity_Observed ~
-                                (1|Block) +
+                                Block +
                                 (1|Population/Family) +
-                                (1|Year) +
-                                (1|Sample) +
+                                Year +
+                                Sample +
                                 City_dist + Transect_ID,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
+              family = nbinom2,
               REML = F) 
 
 # performance::check_model(monarch_urbsubs_city_m2) # looks fine
 
-#  
 # AIC(monarch_urbsubs_city_m1,
 #     monarch_urbsubs_city_m2) # m2 better but <2 AIC apart
 ```
@@ -118,154 +118,102 @@ monarch_urbsubs_city_m2 <- glmmTMB(Monarch_Quantity_Observed ~
 ```{r}
 # Full model
 monarch_urbsubs_usc_m1 <- glmmTMB(Monarch_Quantity_Observed ~
-                                (1|Block) +
+                                Block +
                                 (1|Population/Family) +
-                                (1|Year) +
-                                (1|Sample) +
+                                Year +
+                                Sample +
                                 Urb_score * Transect_ID,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
+              family = nbinom2,
               REML = F) 
 
-# performance::check_model(monarch_urbsubs_usc_m1) # looks fine
+# performance::check_model(monarch_urbsubs_usc_m1)
 
 
 # MAIN EFFECTS MODEL
 monarch_urbsubs_usc_m2 <- glmmTMB(Monarch_Quantity_Observed ~
-                                (1|Block) +
+                                Block +
                                 (1|Population/Family) +
-                                (1|Year) +
-                                (1|Sample) +
+                                Year +
+                                Sample +
                                 Urb_score + Transect_ID,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
+              family = nbinom2,
               REML = F) 
 
 # performance::check_model(monarch_urbsubs_usc_m2) # looks fine
- 
 # AIC(monarch_urbsubs_usc_m1,
 #     monarch_urbsubs_usc_m2) # m2 better but <2 AIC apart
 ```
 
 
-## Liriomyza asclepiadis- sqrt transformation for all mods
+## Liriomyza asclepiadis
 ### Gradient
 #### City_dist
 ```{r}
-# asclepiadis_gr_city_m1 <- glmmTMB(Liriomyza_asclepiadis ~
-#                                 (1|Block) +
-#                                 (1|Population/Family) +
-#                                 (1|Year) +
-#                                 (1|Sample) +
-#                                 City_dist,
-#               data = herbivores,
-#               family = poisson,
-#               REML = F) 
-# 
-# performance::check_model(asclepiadis_gr_city_m1) # try sqrt transformation
-# 
-# performance::check_model(
-#   update(
-#     asclepiadis_gr_city_m1, Liriomyza_asclepiadis^(1/2) ~ .
-#     )
-#   ) # looks good
-
-asclepiadis_gr_city_m1 <- glmmTMB(sqrt(Liriomyza_asclepiadis) ~
-                                (1|Block) +
+asclepiadis_gr_city_m1 <- glmmTMB(Liriomyza_asclepiadis ~
+                                Block +
                                 (1|Population/Family) +
-                                (1|Year) +
-                                (1|Sample) +
+                                Year +
+                                Sample +
                                 City_dist,
               data = herbivores,
-              family = poisson,
-              REML = F) 
+              family = nbinom2,
+              REML = F)
+
+# performance::check_model(asclepiadis_gr_city_m1)
+
 ```
 
 #### Urb_score
 ```{r}
-# asclepiadis_gr_usc_m1 <- glmmTMB(Liriomyza_asclepiadis ~
-#                                 (1|Block) +
-#                                 (1|Population/Family) +
-#                                 (1|Year) +
-#                                 (1|Sample) +
-#                                 Urb_score,
-#               data = herbivores,
-#               family = poisson,
-#               REML = F) 
-# 
-# performance::check_model(asclepiadis_gr_usc_m1) # try sqrt transformation
-# 
-# performance::check_model(
-#   update(
-#     asclepiadis_gr_usc_m1, Liriomyza_asclepiadis^(1/2) ~ .
-#     )
-#   ) # looks good
-
-
-asclepiadis_gr_usc_m1 <- glmmTMB(sqrt(Liriomyza_asclepiadis) ~
-                                (1|Block) +
+asclepiadis_gr_usc_m1 <- glmmTMB(Liriomyza_asclepiadis ~
+                                Block +
                                 (1|Population/Family) +
-                                (1|Year) +
-                                (1|Sample) +
+                                Year +
+                                Sample +
                                 Urb_score,
               data = herbivores,
-              family = poisson,
+              family = nbinom2,
               REML = F) 
+
+# performance::check_model(asclepiadis_gr_usc_m1)
+
 ```
 
 ### Urban Subtransects
 #### City_dist
 ```{r}
 # Full model
-# asclepiadis_urbsubs_city_m1 <- glmmTMB(Liriomyza_asclepiadis ~
-#                                 (1|Block) +
-#                                 (1|Population/Family) +
-#                                 (1|Year) +
-#                                 (1|Sample) +
-#                                 City_dist * Transect_ID,
-#               data = herbivores %>%
-#                 dplyr::filter(Transect_ID != "Rural"),
-#               family = poisson,
-#               REML = F) 
-# 
-# performance::check_model(asclepiadis_urbsubs_city_m1) # try sqrt transformation
-# 
-# performance::check_model(
-#   update(
-#     asclepiadis_urbsubs_city_m1, Liriomyza_asclepiadis^(1/2) ~ .
-#     )
-#   ) # looks good
-
-asclepiadis_urbsubs_city_m1 <- glmmTMB(sqrt(Liriomyza_asclepiadis) ~
-                                (1|Block) +
+asclepiadis_urbsubs_city_m1 <- glmmTMB(Liriomyza_asclepiadis ~
+                                Block +
                                 (1|Population/Family) +
-                                (1|Year) +
-                                (1|Sample) +
+                                Year +
+                                Sample +
                                 City_dist * Transect_ID,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
+              family = nbinom2,
               REML = F) 
 
+# performance::check_model(asclepiadis_urbsubs_city_m1)
 
 
 # MAIN EFFECTS MODEL
-asclepiadis_urbsubs_city_m2 <- glmmTMB(sqrt(Liriomyza_asclepiadis) ~
-                                (1|Block) +
+asclepiadis_urbsubs_city_m2 <- glmmTMB(Liriomyza_asclepiadis ~
+                                Block +
                                 (1|Population/Family) +
-                                (1|Year) +
-                                (1|Sample) +
+                                Year +
+                                Sample +
                                 City_dist + Transect_ID,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
+              family = nbinom2,
               REML = F) 
 
-# performance::check_model(asclepiadis_urbsubs_city_m2) # looks fine
-# 
-#  
+# performance::check_model(asclepiadis_urbsubs_city_m2)
 # AIC(asclepiadis_urbsubs_city_m1,
 #     asclepiadis_urbsubs_city_m2) # m2 better but <2 AIC apart
 ```
@@ -274,347 +222,142 @@ asclepiadis_urbsubs_city_m2 <- glmmTMB(sqrt(Liriomyza_asclepiadis) ~
 ```{r}
 # Full model
 asclepiadis_urbsubs_usc_m1 <- glmmTMB(Liriomyza_asclepiadis ~
-                                (1|Block) +
+                                Block +
                                 (1|Population/Family) +
-                                (1|Year) +
-                                (1|Sample) +
+                                Year +
+                                Sample +
                                 Urb_score * Transect_ID,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
+              family = nbinom2,
               REML = F)
 
-performance::check_model(asclepiadis_urbsubs_usc_m1) # try sqrt transformation
-
-performance::check_model(
-  update(
-    asclepiadis_urbsubs_usc_m1, Liriomyza_asclepiadis^(1/2) ~ .
-    )
-  ) # looks good
-
-asclepiadis_urbsubs_usc_m1 <- glmmTMB(sqrt(Liriomyza_asclepiadis) ~
-                                (1|Block) +
-                                (1|Population/Family) +
-                                (1|Year) +
-                                (1|Sample) +
-                                Urb_score * Transect_ID,
-              data = herbivores %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
-              REML = F) 
-
+# performance::check_model(asclepiadis_urbsubs_usc_m1)
 
 
 # MAIN EFFECTS MODEL
-asclepiadis_urbsubs_usc_m2 <- glmmTMB(sqrt(Liriomyza_asclepiadis) ~
-                                (1|Block) +
+asclepiadis_urbsubs_usc_m2 <- glmmTMB(Liriomyza_asclepiadis ~
+                                Block +
                                 (1|Population/Family) +
-                                (1|Year) +
-                                (1|Sample) +
+                                Year +
+                                Sample +
                                 Urb_score + Transect_ID,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
+              family = nbinom2,
               REML = F) 
 
-performance::check_model(asclepiadis_urbsubs_usc_m2) # looks fine
-
-
-AIC(asclepiadis_urbsubs_usc_m1,
-    asclepiadis_urbsubs_usc_m2) # m2 better but <2 AIC apart
+# performance::check_model(asclepiadis_urbsubs_usc_m2)
+# AIC(asclepiadis_urbsubs_usc_m1,
+#     asclepiadis_urbsubs_usc_m2) # m2 better but <2 AIC apart
 ```
 
 
 ## Labidomera clivicollis
-### Gradient- sqrt transformations
+### Gradient
 #### City_dist
 ```{r}
-# clivicollis_gr_city_m1 <- glmmTMB(Labidomera_clivicollis ~
-#                                 (1|Block) +
-#                                 (1|Population/Family) +
-#                                 (1|Year) +
-#                                 (1|Sample) +
-#                                 City_dist,
-#               data = herbivores,
-#               family = poisson,
-#               REML = F)
-
-# performance::check_model(clivicollis_gr_city_m1) # try sqrt transformation, though might just be some potential outliers
-# 
-# performance::check_model(
-#   update(
-#     clivicollis_gr_city_m1, Labidomera_clivicollis^(1/2) ~ .
-#     )
-#   ) # helped with homogeneity of variance. I think a few large values are impacting the plots but there are only about 2-4, so it's ok
-# 
-# # try removing potential outliers
-# performance::check_model(glmmTMB(sqrt(Labidomera_clivicollis) ~
-#                                 (1|Block) +
-#                                 (1|Population/Family) +
-#                                 (1|Year) +
-#                                 (1|Sample) +
-#                                 City_dist,
-#               data = herbivores %>%
-#                 dplyr::filter(Labidomera_clivicollis < 9),
-#               family = poisson,
-#               REML = F))
-# 
-# 
-# # see if ANOVA results change: (they don't; p >>0.3)
-# # original model
-# car::Anova(clivicollis_gr_city_m1)
-# 
-# # sqrt transformation
-# car::Anova(
-#   update(
-#     clivicollis_gr_city_m1, sqrt(Labidomera_clivicollis) ~ .))
-# 
-# # remove potential outliers
-# car::Anova(glmmTMB(Labidomera_clivicollis ~
-#                                 (1|Block) +
-#                                 (1|Population/Family) +
-#                                 (1|Year) +
-#                                 (1|Sample) +
-#                                 City_dist,
-#               data = herbivores %>%
-#                 dplyr::filter(Labidomera_clivicollis < 9),
-#               family = poisson,
-#               REML = F))
-# 
-# # remove potential outliers & sqrt tranformation
-# car::Anova(glmmTMB(sqrt(Labidomera_clivicollis) ~
-#                                 (1|Block) +
-#                                 (1|Population/Family) +
-#                                 (1|Year) +
-#                                 (1|Sample) +
-#                                 City_dist,
-#               data = herbivores %>%
-#                 dplyr::filter(Labidomera_clivicollis < 9),
-#               family = poisson,
-#               REML = F))
-# 
-# SO, i'll go with sqrt model.
-
-clivicollis_gr_city_m1 <- glmmTMB(sqrt(Labidomera_clivicollis) ~
-                                (1|Block) +
+clivicollis_gr_city_m1 <- glmmTMB(Labidomera_clivicollis ~
+                                Block +
                                 (1|Population/Family) +
-                                (1|Year) +
-                                (1|Sample) +
+                                Year +
+                                Sample +
                                 City_dist,
-              data = herbivores,
-              family = poisson,
-              REML = F)
+              data = herbivores %>%
+                dplyr::filter(Labidomera_clivicollis < 9),
+              family = nbinom2,
+              REML = F) # remove outliers to maintain homogeneity of variance
 
+# performance::check_model(clivicollis_gr_city_m1)
 ```
 
 #### Urb_score
 ```{r}
-# clivicollis_gr_usc_m1 <- glmmTMB(Labidomera_clivicollis ~
-#                                 (1|Block) +
-#                                 (1|Population/Family) +
-#                                 (1|Year) +
-#                                 (1|Sample) +
-#                                 Urb_score,
-#               data = herbivores,
-#               family = poisson,
-#               REML = F)
-# 
-# performance::check_model(clivicollis_gr_usc_m1) # try sqrt transformation, though might just be some potential outliers
-# 
-# performance::check_model(
-#   update(
-#     clivicollis_gr_usc_m1, Labidomera_clivicollis^(1/2) ~ .
-#     )
-#   ) # helped with homogeneity of variance. I think a few large values are impacting the plots but there are only about 2-4
-# 
-# # try removing potential outliers
-# performance::check_model(glmmTMB(sqrt(Labidomera_clivicollis) ~
-#                                 (1|Block) +
-#                                 (1|Population/Family) +
-#                                 (1|Year) +
-#                                 (1|Sample) +
-#                                 City_dist,
-#               data = herbivores %>%
-#                 dplyr::filter(Labidomera_clivicollis < 9),
-#               family = poisson,
-#               REML = F)) # not much change
-# 
-# 
-# # see if ANOVA results change: (they don't; p >>0.4)
-# # original model
-# car::Anova(clivicollis_gr_usc_m1)
-# 
-# # sqrt transformation
-# car::Anova(
-#   update(
-#     clivicollis_gr_usc_m1, sqrt(Labidomera_clivicollis) ~ .))
-# 
-# # remove potential outliers
-# car::Anova(glmmTMB(Labidomera_clivicollis ~
-#                                 (1|Block) +
-#                                 (1|Population/Family) +
-#                                 (1|Year) +
-#                                 (1|Sample) +
-#                                 Urb_score,
-#               data = herbivores %>%
-#                 dplyr::filter(Labidomera_clivicollis < 9),
-#               family = poisson,
-#               REML = F))
-# 
-# # remove potential outliers & sqrt tranformation
-# car::Anova(glmmTMB(sqrt(Labidomera_clivicollis) ~
-#                                 (1|Block) +
-#                                 (1|Population/Family) +
-#                                 (1|Year) +
-#                                 (1|Sample) +
-#                                 Urb_score,
-#               data = herbivores %>%
-#                 dplyr::filter(Labidomera_clivicollis < 9),
-#               family = poisson,
-#               REML = F))
-
-# SO, i'll go with sqrt model
-clivicollis_gr_usc_m1 <- glmmTMB(sqrt(Labidomera_clivicollis) ~
-                                (1|Block) +
+clivicollis_gr_usc_m1 <- glmmTMB(Labidomera_clivicollis ~
+                                Block +
                                 (1|Population/Family) +
-                                (1|Year) +
-                                (1|Sample) +
+                                Year +
+                                Sample +
                                 Urb_score,
-              data = herbivores,
-              family = poisson,
-              REML = F)
+              data = herbivores %>%
+                dplyr::filter(Labidomera_clivicollis < 9),
+              family = nbinom2,
+              REML = F) # remove outliers to maintain homogeneity of variance
+
+# performance::check_model(clivicollis_gr_usc_m1)
 
 ```
 
-### Urban Subtransects- presence/absence mods
+### Urban Subtransects
 #### City_dist
 ```{r}
 # Full model
-# clivicollis_urbsubs_city_m1 <- glmmTMB(Labidomera_clivicollis ~
-#                                 (1|Block) +
-#                                 (1|Population/Family) +
-#                                 (1|Year) +
-#                                 (1|Sample) +
-#                                 City_dist * Transect_ID,
-#               data = herbivores %>%
-#                 dplyr::filter(Transect_ID != "Rural"),
-#               family = poisson,
-#               REML = F)
-# 
-# performance::check_model(clivicollis_urbsubs_city_m1) # try sqrt transformation
-# 
-# performance::check_model(
-#   update(
-#     clivicollis_urbsubs_city_m1, Labidomera_clivicollis^(1/2) ~ .
-#     )
-#   ) # looks a bit worse... try making mod zero-inflated
-# 
-# performance::check_model(glmmTMB(Labidomera_clivicollis ~
-#                                 (1|Block) +
-#                                 (1|Population/Family) +
-#                                 (1|Year) +
-#                                 (1|Sample) +
-#                                 City_dist * Transect_ID,
-#               data = herbivores %>%
-#                 dplyr::filter(Transect_ID != "Rural"),
-#               family = poisson,
-#               ziformula = ~1,
-#               REML = F)) #that helped
-
-# I see that if I remove highest value, significant p-value goes from 0.02 to 0.3- major change. So it might be driving the trends. And I think the vast majority of values are 0... so I should use a presence/absence model for these ones
-
-herbivores$LC_binary <- ifelse(herbivores$Labidomera_clivicollis > 0, 1, 0)
-
-
-clivicollis_urbsubs_city_m1 <- glmmTMB(LC_binary ~
-                                (1|Block) +
+clivicollis_urbsubs_city_m1 <- glmmTMB(Labidomera_clivicollis ~
+                                Block +
                                 (1|Population/Family) +
-                                (1|Year) +
-                                (1|Sample) +
+                                Year +
+                                Sample +
                                 City_dist * Transect_ID,
               data = herbivores %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = binomial(),
-              REML = F) 
+                dplyr::filter(Transect_ID != "Rural" & Labidomera_clivicollis < 20), # remove outlier
+              family = nbinom2,
+              REML = F)
 
-performance::check_model(clivicollis_urbsubs_city_m1) 
-plot(simulateResiduals(clivicollis_urbsubs_city_m1)) # looks fine
+# performance::check_model(clivicollis_urbsubs_city_m1) 
 
 
 
 # MAIN EFFECTS MODEL
-clivicollis_urbsubs_city_m2 <- glmmTMB(LC_binary ~
-                                # (1|Block) +
+clivicollis_urbsubs_city_m2 <- glmmTMB(Labidomera_clivicollis ~
+                                Block +
                                 (1|Population/Family) +
-                                (1|Year) +
-                                (1|Sample) +
+                                Year +
+                                Sample +
                                 City_dist + Transect_ID,
               data = herbivores %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = binomial(),
-              REML = F) # was singular so took out block. now is fine
+                dplyr::filter(Transect_ID != "Rural" & Labidomera_clivicollis < 20), # remove outlier
+              family = nbinom2,
+              REML = F)
 
-performance::check_model(clivicollis_urbsubs_city_m2) # looks fine
-plot(simulateResiduals(clivicollis_urbsubs_city_m2)) # looks fine
+# performance::check_model(clivicollis_urbsubs_city_m2) 
 
 AIC(clivicollis_urbsubs_city_m1,
-    clivicollis_urbsubs_city_m2) # m2 better but <2 AIC apart
+    clivicollis_urbsubs_city_m2) # m1 better but <2 AIC apart
 ```
 
 #### Urb_score
 ```{r}
-herbivores %<>%
-  dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
-
-clivicollis_urbsubs_usc_m1 <- glmmTMB(LC_binary ~
-                                (1|Block) +
-                                (1|Fam_uniq) +
-                                (1|Year) +
-                                (1|Sample) +
+# Full model
+clivicollis_urbsubs_usc_m1 <- glmmTMB(Labidomera_clivicollis ~
+                                Block +
+                                (1|Population/Family) +
+                                Year +
+                                Sample +
                                 Urb_score * Transect_ID,
               data = herbivores %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = binomial(),
-              REML = F) # wasn't converging- nearly 0 variation at the pop level- so I took out pop, inserted all unique families, it converged, and had nearly same AIC as model with Pop/Fam, so I'll just use this as my alternate model because I won't be analyzing it anyway.
+                dplyr::filter(Transect_ID != "Rural" & Labidomera_clivicollis < 20), # remove outlier
+              family = nbinom2,
+              REML = F)
 
 # performance::check_model(clivicollis_urbsubs_usc_m1) 
-# plot(simulateResiduals(clivicollis_urbsubs_usc_m1)) # looks fine
+
 
 
 # MAIN EFFECTS MODEL
-# clivicollis_urbsubs_usc_m2 <- glmmTMB(LC_binary ~
-#                                 (1|Block) +
-#                                 (1|Fam_uniq) +
-#                                 (1|Year) +
-#                                 (1|Sample) +
-#                                 Urb_score + Transect_ID,
-#               data = herbivores %>%
-#                 dplyr::filter(Transect_ID != "Rural"),
-#               family = binomial(),
-#               REML = F) 
-# 
-# performance::check_model(clivicollis_urbsubs_usc_m2) # looks fine
-# plot(simulateResiduals(clivicollis_urbsubs_usc_m2)) # looks fine
-# 
-# AIC(clivicollis_urbsubs_usc_m1,
-#     clivicollis_urbsubs_usc_m2) # m2 better but <2 AIC apart
-
-# However, I'll still use m2 with Pop/Fam because it converged. I just wanted to compare both Fam_uniq models to evaluate which had lower AIC.
-
-
-clivicollis_urbsubs_usc_m2 <- glmmTMB(LC_binary ~
-                                # (1|Block) +
+clivicollis_urbsubs_usc_m2 <- glmmTMB(Labidomera_clivicollis ~
+                                Block +
                                 (1|Population/Family) +
-                                (1|Year) +
-                                (1|Sample) +
+                                Year +
+                                Sample +
                                 Urb_score + Transect_ID,
               data = herbivores %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = binomial(),
-              REML = F) # won't run unless I take out block
+                dplyr::filter(Transect_ID != "Rural" & Labidomera_clivicollis < 20), # remove outlier
+              family = nbinom2,
+              REML = F)
 
-performance::check_model(clivicollis_urbsubs_usc_m2) # looks fine
-plot(simulateResiduals(clivicollis_urbsubs_usc_m2)) # looks fine
+# performance::check_model(clivicollis_urbsubs_usc_m2) 
+# AIC(clivicollis_urbsubs_usc_m1,
+#     clivicollis_urbsubs_usc_m2) # m2 better but <2 AIC apart
 ```
 
 # Models for use in analysis
@@ -685,8 +428,8 @@ clivicollis_gr_city_m1 ,
 clivicollis_gr_usc_m1 ,
 
 ## City_dist / urban subtransects
-clivicollis_urbsubs_city_m1, # Qualitatively identical model (<2 AIC away)
-clivicollis_urbsubs_city_m2, # Best model
+clivicollis_urbsubs_city_m1, # Best model
+clivicollis_urbsubs_city_m2, # Qualitatively identical model (<2 AIC away)
 
 ## Urbanization score  / urban subtransects
 clivicollis_urbsubs_usc_m1, # Qualitatively identical model (<2 AIC away)
@@ -696,8 +439,8 @@ clivicollis_urbsubs_usc_m2 # Best model
 
 names(clivicollis_mods) <- c("City_gr",
                      "Usc_gr",
-                     "City_urbsubs_alt",
                      "City_urbsubs_best",
+                     "City_urbsubs_alt",
                      "Usc_urbsubs_alt",
                      "Usc_urbsubs_best")
 ```
