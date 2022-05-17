@@ -192,14 +192,13 @@ latex_mods_alt_c <- latex_mods[3]
 herb_e_bin_mods_best_c <- herb_early_mods_binomial[c(1,3)]
 
 ### Urb_score
-herb_e_bin_mods_best_u <- herb_early_mods_binomial[c(2,6)]
+herb_e_bin_mods_best_u <- herb_early_mods_binomial[c(2,5)]
 
 ## Alt
-### City_dist
-herb_e_bin_mods_alt_c <- herb_early_mods_binomial[4]
+### City_dist- NONE
 
 ### Urb_score
-herb_e_bin_mods_alt_u <- herb_early_mods_binomial[5]
+herb_e_bin_mods_alt_u <- herb_early_mods_binomial[4]
 
 ```
 
@@ -234,7 +233,7 @@ herb_l_bin_mods_best_u <- herb_late_mods_binomial[c(2,6)]
 ### City_dist
 herb_l_bin_mods_alt_c <- herb_late_mods_binomial[3]
 
-### Urb_score- NONE
+### Urb_score
 herb_l_bin_mods_alt_u <- herb_late_mods_binomial[5]
 
 ```
@@ -252,7 +251,7 @@ herb_l_quant_mods_best_u <- herb_late_mods_quant[c(2,6)]
 ### City_dist
 herb_l_quant_mods_alt_c <- herb_late_mods_quant[3]
 
-### Urb_score- NONE
+### Urb_score
 herb_l_quant_mods_alt_u <- herb_late_mods_quant[5]
 
 ```
@@ -1352,7 +1351,7 @@ flextable::save_as_html(weev_bin_ranova1,
 ### Best Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(ldmc_mods_best_c) %>%
+make_all_anovas_tidy_altmods(ldmc_mods_best_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/LDMC_citydist.png"))
 
 lapply(ldmc_mods_best_c, MuMIn::r.squaredGLMM)
@@ -1361,7 +1360,7 @@ lapply(ldmc_mods_best_c, MuMIn::r.squaredGLMM)
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(ldmc_mods_best_u) %>%
+make_all_anovas_tidy_altmods(ldmc_mods_best_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/LDMC_urbscore.png"))
 ```
 
@@ -1381,13 +1380,13 @@ make_all_anovas_tidy_altmods(ldmc_mods_alt_u) %>%
 ### Best Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(sla_mods_best_c) %>%
+make_all_anovas_tidy_altmods(sla_mods_best_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/sla_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(sla_mods_best_u) %>%
+make_all_anovas_tidy_altmods(sla_mods_best_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/sla_urbscore.png"))
 ```
 
@@ -1407,13 +1406,13 @@ make_all_anovas_tidy_altmods(sla_mods_alt_u) %>%
 ### Best Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(latex_mods_best_c) %>%
+make_all_anovas_tidy_altmods(latex_mods_best_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/latex_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(latex_mods_best_u) %>%
+make_all_anovas_tidy_altmods(latex_mods_best_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/latex_urbscore.png"))
 ```
 
@@ -1432,21 +1431,20 @@ make_all_anovas_tidy_altmods(latex_mods_alt_c) %>%
 ### Best Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(herb_e_bin_mods_best_c) %>%
+make_all_anovas_tidy_altmods(herb_e_bin_mods_best_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_e_bin_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(herb_e_bin_mods_best_u) %>%
+make_all_anovas_tidy_altmods(herb_e_bin_mods_best_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_e_bin_urbscore.png"))
 ```
 
 ### Alt Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy_altmods(herb_e_bin_mods_alt_c) %>%
-  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_e_bin_citydist_alt.png"))
+# NONE
 ```
 
 #### Urb_score
@@ -1459,13 +1457,13 @@ make_all_anovas_tidy_altmods(herb_e_bin_mods_alt_u) %>%
 ### Best Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(herb_e_quant_mods_best_c) %>%
+make_all_anovas_tidy_altmods(herb_e_quant_mods_best_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_e_quant_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(herb_e_quant_mods_best_u) %>%
+make_all_anovas_tidy_altmods(herb_e_quant_mods_best_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_e_quant_urbscore.png"))
 ```
 
@@ -1487,13 +1485,13 @@ make_all_anovas_tidy_altmods(herb_e_quant_mods_alt_u) %>%
 ### Best Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(herb_l_bin_mods_best_c) %>%
+make_all_anovas_tidy_altmods(herb_l_bin_mods_best_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_l_bin_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(herb_l_bin_mods_best_u) %>%
+make_all_anovas_tidy_altmods(herb_l_bin_mods_best_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_l_bin_urbscore.png"))
 ```
 
@@ -1514,13 +1512,13 @@ make_all_anovas_tidy_altmods(herb_l_bin_mods_alt_u) %>%
 ### Best Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(herb_l_quant_mods_best_c) %>%
+make_all_anovas_tidy_altmods(herb_l_quant_mods_best_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_l_quant_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(herb_l_quant_mods_best_u) %>%
+make_all_anovas_tidy_altmods(herb_l_quant_mods_best_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_l_quant_urbscore.png"))
 ```
 
@@ -1542,13 +1540,13 @@ make_all_anovas_tidy_altmods(herb_l_quant_mods_alt_u) %>%
 ### Best Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(weev_bin_mods_best_c) %>%
+make_all_anovas_tidy_altmods(weev_bin_mods_best_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/weev_bin_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(weev_bin_mods_best_u) %>%
+make_all_anovas_tidy_altmods(weev_bin_mods_best_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/weev_bin_urbscore.png"))
 ```
 
@@ -1570,13 +1568,13 @@ make_all_anovas_tidy_altmods(weev_bin_mods_alt_u) %>%
 ### Best Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(weev_quant_mods_best_c) %>%
+make_all_anovas_tidy_altmods(weev_quant_mods_best_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/weev_quant_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(weev_quant_mods_best_u) %>%
+make_all_anovas_tidy_altmods(weev_quant_mods_best_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/weev_quant_urbscore.png"))
 ```
 

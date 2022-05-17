@@ -106,6 +106,8 @@ make_all_anovas_tidy <- function(anova_list){
 
 ### For only one model (e.g., alt models), use this slightly
 ### altered function that doesn't include horizontal bar
+### *Can also be used for models that include other fixed effects
+### like year, block, sample
 make_all_anovas_tidy_altmods <- function(anova_list){
   return(
     lapply(anova_list, tidy_anova) %>%

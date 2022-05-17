@@ -71,8 +71,10 @@ names(urb_score_list) <- cards_vars
 ## Investigate non-normal-looking models
 ```{r}
 DoLinearReg("X17.6_main", "Urb_score", cards)
-DoLinearReg("log(X17.6_main)", "Urb_score", cards)
-car::Anova(lm(log(X17.6_main) ~ Urb_score, cards)) # now it's near p = 0.05 (it's 0.068)... so investigate further
+DoLinearReg("log(X17.6_main)", "Urb_score", cards) # looks better
+car::Anova(lm(log(X17.6_main) ~ Urb_score, cards))
+
+urb_score_list[[3]] <- DoLinearReg("log(X17.6_main)", "Urb_score", cards)
 ```
 
 # R-squared values
