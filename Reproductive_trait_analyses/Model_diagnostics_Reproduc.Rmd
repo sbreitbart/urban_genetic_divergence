@@ -20,16 +20,9 @@ flowering <- read.csv(here::here("./Joined_annual_data/flowering.csv"), na.strin
                             Date_first_follicle_2in)),
                      as.Date,
                      format = '%m/%d/%Y') %>%
-  dplyr::mutate(flowering_time = Date_youngest_inflor_flower-Date_oldest_inflor_flower + 1) # if I don't add 1, then it will say some plants flowered for 0 days
-%>%
+  dplyr::mutate(flowering_time = Date_youngest_inflor_flower-Date_oldest_inflor_flower + 1) %>% # if I don't add 1, then it will say some plants flowered for 0 days
   relocate(flowering_time,
            .before = Date_first_follicle_2in)
-# 
-# reproduc %<>%
-#   dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
-# 
-# flowering %<>%
-#   dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
 
 ```
 
@@ -39,51 +32,50 @@ flowering <- read.csv(here::here("./Joined_annual_data/flowering.csv"), na.strin
 #### City_dist
 ```{r}
 flsucc_gr_city1 <- glmmTMB(Flowered ~
-                             (1|Block) +
-                             (1|Year) +
+                             Block +
+                             Year +
                              (1|Population/Family) +
                              City_dist,
   data = reproduc,
   family = binomial(link = "logit"))
 
 
-plot(DHARMa::simulateResiduals(flsucc_gr_city1)) # looks great!
+# plot(DHARMa::simulateResiduals(flsucc_gr_city1))
 ```
 
 #### Urb_score
 ```{r}
 flsucc_gr_usc1 <- glmmTMB(Flowered ~
-                             (1|Block) +
-                             (1|Year) +
+                             Block +
+                             Year +
                              (1|Population/Family) +
                              Urb_score,
   data = reproduc,
   family = binomial(link = "logit"))
 
 
-plot(DHARMa::simulateResiduals(flsucc_gr_usc1)) # looks great!
+# plot(DHARMa::simulateResiduals(flsucc_gr_usc1))
 ```
 
 ### Urban subtransects
 #### City_dist
 ```{r}
 flsucc_urbsubs_city1 <- glmmTMB(Flowered ~
-                             (1|Block) +
-                             (1|Year) +
+                             Block +
+                             Year +
                              (1|Population/Family) +
                              City_dist * Transect_ID,
   data = reproduc %>%
     dplyr::filter(Transect_ID != "Rural"),
   family = binomial(link = "logit"))
 
-
-plot(DHARMa::simulateResiduals(flsucc_urbsubs_city1)) # looks great!
+# plot(DHARMa::simulateResiduals(flsucc_urbsubs_city1))
 
 
 ## MAIN EFFECTS
 flsucc_urbsubs_city1_ME <- glmmTMB(Flowered ~
-                             (1|Block) +
-                             (1|Year) +
+                             Block +
+                             Year +
                              (1|Population/Family) +
                              City_dist + Transect_ID,
   data = reproduc %>%
@@ -91,30 +83,28 @@ flsucc_urbsubs_city1_ME <- glmmTMB(Flowered ~
   family = binomial(link = "logit"))
 
 
-plot(DHARMa::simulateResiduals(flsucc_urbsubs_city1_ME)) # looks great!
-
-AIC(flsucc_urbsubs_city1, flsucc_urbsubs_city1_ME) # ME model best but <2 AIC away from full
+# plot(DHARMa::simulateResiduals(flsucc_urbsubs_city1_ME)) 
+# AIC(flsucc_urbsubs_city1, flsucc_urbsubs_city1_ME) # ME model best
 ```
 
 #### Urb_score
 ```{r}
 flsucc_urbsubs_usc1 <- glmmTMB(Flowered ~
-                             (1|Block) +
-                             (1|Year) +
+                             Block +
+                             Year +
                              (1|Population/Family) +
                              Urb_score * Transect_ID,
   data = reproduc %>%
     dplyr::filter(Transect_ID != "Rural"),
   family = binomial(link = "logit"))
 
-
-plot(DHARMa::simulateResiduals(flsucc_urbsubs_usc1)) # looks great!
+# plot(DHARMa::simulateResiduals(flsucc_urbsubs_usc1))
 
 
 ## MAIN EFFECTS
 flsucc_urbsubs_usc1_ME <- glmmTMB(Flowered ~
-                             (1|Block) +
-                             (1|Year) +
+                             Block +
+                             Year +
                              (1|Population/Family) +
                              Urb_score + Transect_ID,
   data = reproduc %>%
@@ -122,106 +112,19 @@ flsucc_urbsubs_usc1_ME <- glmmTMB(Flowered ~
   family = binomial(link = "logit"))
 
 
-plot(DHARMa::simulateResiduals(flsucc_urbsubs_usc1_ME)) # looks great!
-
-AIC(flsucc_urbsubs_usc1, flsucc_urbsubs_usc1_ME) # ME model best but <2 AIC away from full
-
+# plot(DHARMa::simulateResiduals(flsucc_urbsubs_usc1_ME))
+# AIC(flsucc_urbsubs_usc1, flsucc_urbsubs_usc1_ME) # ME model best
 ```
 
 
 ## Flower count
-### Mean flowers/inflorescence
-#### Gradient
-##### City_dist
-```{r}
-fl_per_infl_gr_city1 <- glmmTMB(mean_flower_count ~
-                                          (1|Block) +
-                                          (1|Year) +
-                                          (1|Population/Family) +
-                                          City_dist, 
-                                        data = flowering)
-
-plot(DHARMa::simulateResiduals(fl_per_infl_gr_city1)) # looks great
-
-```
-
-##### Urb_score
-```{r}
-fl_per_infl_gr_usc1 <- glmmTMB(mean_flower_count ~
-                                          (1|Block) +
-                                          (1|Year) +
-                                          (1|Population/Family) +
-                                          Urb_score, 
-                                        data = flowering)
-
-plot(DHARMa::simulateResiduals(fl_per_infl_gr_usc1)) # looks great
-
-```
-
-
-#### Urban Subtransects
-##### City_dist
-```{r}
-fl_per_infl_urbsubs_city1 <- glmmTMB(mean_flower_count ~
-                                          # (1|Block) +
-                                          (1|Year) +
-                                          (1|Population/Family) +
-                                          City_dist * Transect_ID, 
-                                        data = flowering %>%
-                                       dplyr::filter(Transect_ID != "Rural")) # doesn't converge unless I remove block
-
-plot(DHARMa::simulateResiduals(fl_per_infl_urbsubs_city1)) # looks great
-
-## MAIN EFFECTS
-fl_per_infl_urbsubs_city1_ME <- glmmTMB(mean_flower_count ~
-                                          # (1|Block) +
-                                          (1|Year) +
-                                          (1|Population/Family) +
-                                          City_dist + Transect_ID, 
-                                        data = flowering %>%
-                                       dplyr::filter(Transect_ID != "Rural")) # doesn't converge unless I remove block
-
-plot(DHARMa::simulateResiduals(fl_per_infl_urbsubs_city1_ME)) # looks great
-
-AIC(fl_per_infl_urbsubs_city1, fl_per_infl_urbsubs_city1_ME) # ME model better but <2 AIC away
-
-```
-
-##### Urb_score
-```{r}
-fl_per_infl_urbsubs_usc1 <- glmmTMB(mean_flower_count ~
-                                          # (1|Block) +
-                                          (1|Year) +
-                                          (1|Population/Family) +
-                                          Urb_score * Transect_ID, 
-                                        data = flowering %>%
-                                       dplyr::filter(Transect_ID != "Rural")) # doesn't converge unless I remove block
-
-plot(DHARMa::simulateResiduals(fl_per_infl_urbsubs_usc1)) # looks great
-
-
-
-## MAIN EFFECTS
-fl_per_infl_urbsubs_usc1_ME <- glmmTMB(mean_flower_count ~
-                                          # (1|Block) +
-                                          (1|Year) +
-                                          (1|Population/Family) +
-                                          Urb_score + Transect_ID, 
-                                        data = flowering %>%
-                                       dplyr::filter(Transect_ID != "Rural")) # doesn't converge unless I remove block
-
-plot(DHARMa::simulateResiduals(fl_per_infl_urbsubs_usc1_ME)) # looks great
-
-AIC(fl_per_infl_urbsubs_usc1, fl_per_infl_urbsubs_usc1_ME) # ME model better but <2 AIC away
-
-```
 ### Total flowers/plant
 #### Gradient
 ##### City_dist
 ```{r}
 flowers_gr_city1 <- glmmTMB(total_flower_count ~
-                                          (1|Block) +
-                                          (1|Year) +
+                                          Block +
+                                          Year +
                                           (1|Population/Family) +
                                           City_dist, 
                                         data = flowering,
@@ -234,8 +137,8 @@ plot(DHARMa::simulateResiduals(flowers_gr_city1)) # looks great
 ##### Urb_score
 ```{r}
 flowers_gr_usc1 <- glmmTMB(total_flower_count ~
-                                          (1|Block) +
-                                          (1|Year) +
+                                          Block +
+                                          Year +
                                           (1|Population/Family) +
                                           Urb_score, 
                                         data = flowering,
@@ -250,8 +153,8 @@ plot(DHARMa::simulateResiduals(flowers_gr_usc1)) # looks great
 ##### City_dist
 ```{r}
 flowers_urbsubs_city1 <- glmmTMB(total_flower_count ~
-                                          # (1|Block) +
-                                          (1|Year) +
+                                          # Block +
+                                          Year +
                                           (1|Population/Family) +
                                           City_dist * Transect_ID, 
                                         data = flowering %>%
@@ -263,8 +166,8 @@ plot(DHARMa::simulateResiduals(flowers_urbsubs_city1)) # looks great
 
 ## MAIN EFFECTS
 flowers_urbsubs_city1_ME <- glmmTMB(total_flower_count ~
-                                          # (1|Block) +
-                                          (1|Year) +
+                                          # Block +
+                                          Year +
                                           (1|Population/Family) +
                                           City_dist + Transect_ID, 
                                         data = flowering %>%
@@ -280,8 +183,8 @@ AIC(flowers_urbsubs_city1, flowers_urbsubs_city1_ME) # ME model better but <2 AI
 ##### Urb_score
 ```{r}
 flowers_urbsubs_usc1 <- glmmTMB(total_flower_count ~
-                                          (1|Block) +
-                                          (1|Year) +
+                                          Block +
+                                          Year +
                                           (1|Population/Family) +
                                           Urb_score * Transect_ID, 
                                         data = flowering %>%
@@ -293,8 +196,8 @@ plot(DHARMa::simulateResiduals(flowers_urbsubs_usc1)) # looks great
 
 ## MAIN EFFECTS
 flowers_urbsubs_usc1_ME <- glmmTMB(total_flower_count ~
-                                          (1|Block) +
-                                          (1|Year) +
+                                          Block +
+                                          Year +
                                           (1|Population/Family) +
                                           Urb_score + Transect_ID, 
                                         data = flowering %>%
@@ -311,8 +214,8 @@ AIC(flowers_urbsubs_usc1, flowers_urbsubs_usc1_ME) # ME model better but <2 AIC 
 #### City_dist
 ```{r}
 flsize_gr_city1 <- glmmTMB(Overall_mean ~
-                             (1|Block) +
-                             (1|Year) +
+                             Block +
+                             Year +
                              (1|Population/Family) +
                              City_dist, 
                            data = flowering)
@@ -323,8 +226,8 @@ plot(DHARMa::simulateResiduals(flsize_gr_city1)) # looks great
 #### Urb_score
 ```{r}
 flsize_gr_usc1 <- glmmTMB(Overall_mean ~
-                         #    (1|Block) +
-                             (1|Year) +
+                         #    Block +
+                             Year +
                              (1|Population/Family) +
                              Urb_score, 
                            data = flowering,
@@ -339,8 +242,8 @@ car::Anova(flsize_gr_usc1)
 #### City_dist
 ```{r}
 flsize_urbsubs_city1 <- glmmTMB(Overall_mean ~
-                             #(1|Block) +
-                             (1|Year) +
+                             #Block +
+                             Year +
                              (1|Population/Family) +
                              City_dist * Transect_ID, 
                            data = flowering %>%
@@ -350,8 +253,8 @@ plot(DHARMa::simulateResiduals(flsize_urbsubs_city1)) # looks great
 
 ## MAIN EFFECTS
 flsize_urbsubs_city1_ME <- glmmTMB(Overall_mean ~
-                             #(1|Block) +
-                             (1|Year) +
+                             #Block +
+                             Year +
                              (1|Population/Family) +
                              City_dist + Transect_ID, 
                            data = flowering %>%
@@ -365,8 +268,8 @@ AIC(flsize_urbsubs_city1, flsize_urbsubs_city1_ME) # ME best but <2 AIC from ful
 #### Urb_score
 ```{r}
 flsize_urbsubs_usc1 <- glmmTMB(Overall_mean ~
-                             (1|Block) +
-                             (1|Year) +
+                             Block +
+                             Year +
                              (1|Population/Family) +
                              Urb_score * Transect_ID, 
                            data = flowering %>%
@@ -376,8 +279,8 @@ plot(DHARMa::simulateResiduals(flsize_urbsubs_usc1)) # looks great
 
 ## MAIN EFFECTS
 flsize_urbsubs_usc1_ME <- glmmTMB(Overall_mean ~
-                             (1|Block) +
-                             (1|Year) +
+                             Block +
+                             Year +
                              (1|Population/Family) +
                              Urb_score + Transect_ID, 
                            data = flowering %>%
@@ -398,8 +301,8 @@ AIC(flsize_urbsubs_usc1, flsize_urbsubs_usc1_ME) # full model best
 #### City_dist
 ```{r}
 fl_time_gr_city1 <- glmmTMB(as.numeric(flowering_time) ~
-                                          (1|Block) +
-                                          (1|Year) +
+                                          Block +
+                                          Year +
                                           (1|Population/Family) +
                                           City_dist, 
                                         data = flowering,
@@ -419,8 +322,8 @@ car::Anova(fl_time_gr_city1)
 ##### City_dist
 ```{r}
 # pods_gr_city1 <- glmmTMB(Pods ~
-#                            (1|Block) +
-#                            (1|Year) +
+#                            Block +
+#                            Year +
 #                            (1|Population/Family) +
 #                            City_dist, 
 #                          data = flowering,
@@ -429,8 +332,8 @@ car::Anova(fl_time_gr_city1)
 # plot(DHARMa::simulateResiduals(pods_gr_city1)) # problem with residual vs predicted plot. Transformations (square, cube) don't help. Try negative binomial?
 
 pods_gr_city1 <- glmmTMB(Pods ~
-                           (1|Block) +
-                           (1|Year) +
+                           Block +
+                           Year +
                            (1|Population/Family) +
                            City_dist, 
                          data = flowering,
@@ -443,8 +346,8 @@ plot(DHARMa::simulateResiduals(pods_gr_city1)) # issue persists with negbin1, bu
 ##### Urb_score
 ```{r}
 # pods_gr_usc1.1 <- glmmTMB(Pods ~
-#                            (1|Block) +
-#                            (1|Year) +
+#                            Block +
+#                            Year +
 #                            (1|Population/Family) +
 #                            Urb_score,
 #                          data = flowering,
@@ -453,8 +356,8 @@ plot(DHARMa::simulateResiduals(pods_gr_city1)) # issue persists with negbin1, bu
 # plot(DHARMa::simulateResiduals(pods_gr_usc1.1)) # NO problem with residual vs predicted plot, unlike city_dist model. Try negative binomial just in case
 
 pods_gr_usc1 <- glmmTMB(Pods ~
-                           (1|Block) +
-                           (1|Year) +
+                           Block +
+                           Year +
                            (1|Population/Family) +
                            City_dist, 
                          data = flowering,
@@ -470,8 +373,8 @@ plot(DHARMa::simulateResiduals(pods_gr_usc1)) # issue persists with negbin1, but
 ##### City_dist
 ```{r}
 # pods_urbsubs_city1 <- glmmTMB(Pods ~
-#                            (1|Block) +
-#                            (1|Year) +
+#                            Block +
+#                            Year +
 #                            (1|Population/Family) +
 #                            City_dist * Transect_ID,
 #                          data = flowering %>%
@@ -481,8 +384,8 @@ plot(DHARMa::simulateResiduals(pods_gr_usc1)) # issue persists with negbin1, but
 # plot(DHARMa::simulateResiduals(pods_urbsubs_city1)) # problem with residual vs predicted plot and KS test. Transformations (square, cube) don't help. Try negative binomial?
 
 pods_urbsubs_city1 <- glmmTMB(Pods ~
-                           (1|Block) +
-                           (1|Year) +
+                           Block +
+                           Year +
                            (1|Population/Family) +
                            City_dist * Transect_ID,
                          data = flowering %>%
@@ -494,8 +397,8 @@ plot(DHARMa::simulateResiduals(pods_urbsubs_city1)) # issue disappears with negb
 
 # MAIN EFFECTS MODEL
 pods_urbsubs_city1_ME <- glmmTMB(Pods ~
-                           (1|Block) +
-                           (1|Year) +
+                           Block +
+                           Year +
                            (1|Population/Family) +
                            City_dist + Transect_ID,
                          data = flowering %>%
@@ -510,8 +413,8 @@ AIC(pods_urbsubs_city1, pods_urbsubs_city1_ME) # full model lower AIC but <2 awa
 ##### Urb_score
 ```{r}
 # pods_urbsubs_usc1 <- glmmTMB(Pods ~
-#                            (1|Block) +
-#                            (1|Year) +
+#                            Block +
+#                            Year +
 #                            (1|Population/Family) +
 #                            Urb_score * Transect_ID,
 #                          data = flowering %>%
@@ -521,8 +424,8 @@ AIC(pods_urbsubs_city1, pods_urbsubs_city1_ME) # full model lower AIC but <2 awa
 # plot(DHARMa::simulateResiduals(pods_urbsubs_usc1)) # problem with residual vs predicted plot. Try negative binomial like w/prev plots
 
 pods_urbsubs_usc1 <- glmmTMB(Pods^3 ~
-                           (1|Block) +
-                           (1|Year) +
+                           Block +
+                           Year +
                            (1|Population/Family) +
                            Urb_score * Transect_ID,
                          data = flowering %>%
@@ -535,8 +438,8 @@ performance::check_model(pods_urbsubs_usc1)
 
 # MAIN EFFECTS MODEL
 pods_urbsubs_usc1_ME <- glmmTMB(Pods^3 ~
-                           (1|Block) +
-                           (1|Year) +
+                           Block +
+                           Year +
                            (1|Population/Family) +
                            Urb_score + Transect_ID,
                          data = flowering %>%
@@ -555,8 +458,8 @@ AIC(pods_urbsubs_usc1, pods_urbsubs_usc1_ME) # full model best but <2  AIC away
 ##### City_dist
 ```{r}
 peduncles_gr_city1 <- glmmTMB(Peduncles ~
-                           (1|Block) +
-                           (1|Year) +
+                           Block +
+                           Year +
                            (1|Population/Family) +
                            City_dist,
                          data = flowering,
@@ -569,8 +472,8 @@ plot(DHARMa::simulateResiduals(peduncles_gr_city1)) # looks good
 ##### Urb_score
 ```{r}
 peduncles_gr_usc1 <- glmmTMB(Peduncles ~
-                           (1|Block) +
-                           (1|Year) +
+                           Block +
+                           Year +
                            (1|Population/Family) +
                            Urb_score,
                          data = flowering,
@@ -584,8 +487,8 @@ plot(DHARMa::simulateResiduals(peduncles_gr_usc1)) # looks good
 ##### City_dist
 ```{r}
 # peduncles_urbsubs_city1 <- glmmTMB(Peduncles ~
-#                            (1|Block) +
-#                            (1|Year) +
+#                            Block +
+#                            Year +
 #                            (1|Population/Family) +
 #                            City_dist * Transect_ID,
 #                          data = flowering %>%
@@ -599,8 +502,8 @@ plot(DHARMa::simulateResiduals(peduncles_gr_usc1)) # looks good
 
 # neg binomial- this works (nbinom1 doesn't)
 peduncles_urbsubs_city1 <- glmmTMB(Peduncles^2 ~
-                           (1|Block) +
-                           (1|Year) +
+                           Block +
+                           Year +
                            (1|Population/Family) +
                            City_dist * Transect_ID,
                          data = flowering %>%
@@ -614,8 +517,8 @@ performance::check_model(peduncles_urbsubs_city1)
 
 # MAIN EFFECTS MODEL
 peduncles_urbsubs_city1_ME <- glmmTMB(Peduncles^2 ~
-                           (1|Block) +
-                           (1|Year) +
+                           Block +
+                           Year +
                            (1|Population/Family) +
                            City_dist + Transect_ID,
                          data = flowering %>%
@@ -633,8 +536,8 @@ AIC(peduncles_urbsubs_city1, peduncles_urbsubs_city1_ME) # ME model best but <2 
 ```{r}
 # neg binomial- nbinom2 has best results though residual vs predicted plot still has issues
 peduncles_urbsubs_usc1 <- glmmTMB(Peduncles ~
-                           (1|Block) +
-                           (1|Year) +
+                           Block +
+                           Year +
                            (1|Population/Family) +
                            Urb_score * Transect_ID,
                          data = flowering %>%
@@ -651,8 +554,8 @@ performance::check_model(peduncles_urbsubs_usc1)
 
 # MAIN EFFECTS MODEL
 peduncles_urbsubs_usc1_ME <- glmmTMB(Peduncles ~
-                           (1|Block) +
-                           (1|Year) +
+                           Block +
+                           Year +
                            (1|Population/Family) +
                            Urb_score + Transect_ID,
                          data = flowering %>%
@@ -678,11 +581,9 @@ flsucc_gr_city1 ,
 flsucc_gr_usc1 ,
 
 ## City_dist / urban subtransects
-flsucc_urbsubs_city1, # Qualitatively identical model (<2 AIC away)
 flsucc_urbsubs_city1_ME, # Best model
 
 ## Urbanization score  / urban subtransects
-flsucc_urbsubs_usc1, # Qualitatively identical model (<2 AIC away)
 flsucc_urbsubs_usc1_ME # Best model
 
 )
@@ -690,9 +591,7 @@ flsucc_urbsubs_usc1_ME # Best model
 
 names(flsucc_mods) <- c("City_gr",
                      "Usc_gr",
-                     "City_urbsubs_alt",
                      "City_urbsubs_best",
-                     "Usc_urbsubs_alt",
                      "Usc_urbsubs_best")
 ```
 

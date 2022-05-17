@@ -55,7 +55,6 @@ source(knitr::purl("Reproductive_trait_analyses/Model_diagnostics_Reproduc.Rmd",
 
 all_models <- list(
 flsucc_mods      , # flowering success
-fl_per_infl_mods , # mean flowers per inflorescence
 flowers_mods     , # total flowers/plant
 flsize_mods      , # mean flower size
 pods_mods        , # pods (follicles)
@@ -63,7 +62,6 @@ peduncles_mods   ) # peduncles (inflorescences)
 
 names(all_models) <- c(
 "flsucc_mods"          ,
-"fl_per_infl_mods"     ,
 "flowers_mods"         ,
 "flsize_mods"          ,
 "pods_mods"            ,
@@ -87,24 +85,6 @@ flsucc_mods_alt_c <- flsucc_mods[3]
 ### Urb_score
 flsucc_mods_alt_u <- flsucc_mods[5]
 ```
-
-#### mean flowers per inflorescence
-```{r}
-## Best
-### City_dist
-fl_per_infl_mods_best_c <- fl_per_infl_mods[c(1,4)]
-
-### Urb_score
-fl_per_infl_mods_best_u <- fl_per_infl_mods[c(2,6)]
-
-## Alt
-### City_dist
-fl_per_infl_mods_alt_c <- fl_per_infl_mods[3]
-
-### Urb_score
-fl_per_infl_mods_alt_u <- fl_per_infl_mods[5]
-```
-
 
 #### total flowers/plant
 ```{r}
@@ -238,34 +218,6 @@ make_all_anovas_tidy_altmods(flowers_mods_alt_c) %>%
 ```{r}
 make_all_anovas_tidy_altmods(flowers_mods_alt_u) %>%
   save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/FlowersPerPlant_urbscore_alt.png"))
-```
-
-
-## Mean flowers/inflorescence
-### Best Models
-#### City_dist
-```{r}
-make_all_anovas_tidy(fl_per_infl_mods_best_c) %>%
-  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/MeanFlowersPerInflor_citydist.png"))
-```
-
-#### Urb_score
-```{r}
-make_all_anovas_tidy(fl_per_infl_mods_best_u) %>%
-  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/MeanFlowersPerInflor_urbscore.png"))
-```
-
-### Alternative Models
-#### City_dist
-```{r}
-make_all_anovas_tidy_altmods(fl_per_infl_mods_alt_c) %>%
-  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/MeanFlowersPerInflor_citydist_alt.png"))
-```
-
-#### Urb_score
-```{r}
-make_all_anovas_tidy_altmods(fl_per_infl_mods_alt_u) %>%
-  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/MeanFlowersPerInflor_urbscore_alt.png"))
 ```
 
 

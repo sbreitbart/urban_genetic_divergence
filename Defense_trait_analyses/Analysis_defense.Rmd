@@ -1597,7 +1597,7 @@ make_all_anovas_tidy_altmods(weev_quant_mods_alt_u) %>%
 all_rsq <- lapply(all_models, lapply, r.squaredGLMM) %>%
   unlist(recursive = FALSE) %T>%
   print()
-# super low marginal R2 values. Some conditional R2 are higher (some ~0.15) but most low
+
 ```
 
 # Calculate heritability & Qst
@@ -1605,29 +1605,24 @@ Just looking at gradient models- all pops included.
 h2 represents the average heritability across populations after removing the genetic effects due to population differences.
 ```{r}
 # LDMC-----
-## my final model, used in ANOVA, uses a crossed pop x fam random effect because the nested pop/fam returns NAn in the ANOVA. Here, I'll use the nested version of the final model and use REML = T.
-nested_ldmc <- glmmTMB(LDMC ~ (1|Population/Family) + City_dist,
-                            data = sla_ldmc %>%
-                              dplyr::filter(LDMC < 1.5),
-                       REML = T)
+VarCorr(
+  update(
+    ldmc_mods_best_c[[1]],
+    REML = T))
 
-VarCorr(nested_ldmc)
-
-Calc_h2_qst(4.3863e-07,
-                    3.1813e-03 ,
-                    5.5204e-02 )
+Calc_h2_qst(1.3396e-06,
+                    7.0523e-06 ,
+                    5.8534e-02 )
 
 # SLA-----
-## my final model, used in ANOVA, uses a crossed pop x fam random effect because the nested pop/fam returns NAn in the ANOVA. Here, I'll use the nested version of the final model and use REML = T.
-nested_sla <- glmmTMB(SLA ~ (1|Block) + (1|Population/Family) + City_dist,
-                        data = sla_ldmc,
-                        REML = T)
-  
-VarCorr(nested_sla)
+VarCorr(
+  update(
+    sla_mods_best_c[[1]],
+    REML = T))
 
-Calc_h2_qst(1.2678e-03  ,
-                    9.5834e-05  ,
-                    1.1524e+01  )
+Calc_h2_qst(2.9928e-06  ,
+                    8.0526e-06  ,
+                    4.0263e-01  )
 
 
 # Latex-----
@@ -1635,13 +1630,10 @@ VarCorr(
   update(
     latex_mods_best_c[[1]], REML = T))
 
-Calc_h2_qst(1.5491    ,
-                    1.1931    ,
-                    5.2429    )
+Calc_h2_qst(0.087004    ,
+                    0.080444    ,
+                    0.387433    )
 
-# Calc_h2_qst(1.5410      ,
-#                     1.2044      ,
-#                     5.2424      )
 
 # Herbivory, before flowering: Binomial-----
 VarCorr(
@@ -1653,8 +1645,8 @@ resid_var <- update(
     herb_e_bin_mods_best_c[[1]], REML = T) %>%
     sigma()
 
-Calc_h2_qst(1.4560e-04,
-         1.5085e-05,
+Calc_h2_qst(1.0789e-04,
+         2.1921e-05,
          resid_var)
 
 
@@ -1664,9 +1656,9 @@ VarCorr(
   update(
     herb_e_quant_mods_best_c[[1]], REML = T))
 
-Calc_h2_qst(6.7798e-02  ,
-                    1.0892e-01 ,
-                    1.2284  )
+Calc_h2_qst(0.074737  ,
+                    0.080819,
+                    1.229989  )
 
 # Herbivory, after flowering: Binomial-----
 VarCorr(
@@ -1678,8 +1670,8 @@ resid_var <- update(
     herb_l_bin_mods_best_c[[1]], REML = T) %>%
     sigma()
 
-Calc_h2_qst(1.0308e-04,
-         1.6463e-05,
+Calc_h2_qst(2.6336e-01,
+         6.7803e-05,
          resid_var)
 
 # Herbivory, after flowering: quantitative-----
@@ -1687,9 +1679,9 @@ VarCorr(
   update(
     herb_l_quant_mods_best_c[[1]], REML = T))
 
-Calc_h2_qst(1.1326e-01  ,
-                    6.1346e-05 ,
-                    1.2806  )
+Calc_h2_qst(1.4860e-01  ,
+                    7.7739e-05 ,
+                    1.2378e+00  )
 
 # Weevil: Binomial-----
 VarCorr(
@@ -1701,8 +1693,8 @@ resid_var <- update(
     weev_bin_mods_best_c[[1]], REML = T) %>%
     sigma()
 
-Calc_h2_qst(0.54796923,
-         0.00017582,
+Calc_h2_qst(0.55203099,
+         0.00019397,
          resid_var)
 
 
@@ -1712,9 +1704,9 @@ VarCorr(
   update(
     weev_quant_mods_best_c[[1]], REML = T))
 
-Calc_h2_qst(0.13743  ,
-                    0.07537 ,
-                    0.60462  )
+Calc_h2_qst(0.198485  ,
+                    0.091009 ,
+                    1.059765  )
 
 ```
 
