@@ -40,6 +40,16 @@ source("functions.R")
 
 ## Import data
 ```{r}
+# SLA & LDMC-----
+sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv")) %>%
+  dplyr::select(., -c(1:2)) %>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.factor)
+
+str(sla_ldmc)
+sla_ldmc %<>%
+  dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
+
 heights <- read.csv(here::here("./Joined_annual_data/heights.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
   dplyr::select(., -1) %>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
@@ -64,6 +74,8 @@ str(survival)
 source(knitr::purl("Growth_trait_analyses/Model_diagnostics_Growth.Rmd", quiet=TRUE))
 
 all_models <- list(
+ldmc_mods,
+sla_mods,
 heights_early_mods,
 heights_late_mods,
 rgr_mods,
@@ -73,6 +85,8 @@ ramets_late_mods #,
 )
 
 names(all_models) <- c(
+"ldmc_mods",
+"sla_mods",
 "heights_early_mods",
 "heights_late_mods",
 "rgr_mods",
@@ -83,6 +97,41 @@ names(all_models) <- c(
 ```
 
 ### Create separate lists of best vs. alt models for city_dist vs urb_score
+#### LDMC
+```{r}
+## Best
+### City_dist
+ldmc_mods_best_c <- ldmc_mods[c(1,4)]
+
+### Urb_score
+ldmc_mods_best_u <- ldmc_mods[c(2,6)]
+
+## Alt
+### City_dist
+ldmc_mods_alt_c <- ldmc_mods[3]
+
+### Urb_score
+ldmc_mods_alt_u <- ldmc_mods[5]
+```
+
+#### SLA
+```{r}
+## Best
+### City_dist
+sla_mods_best_c <- sla_mods[c(1,4)]
+
+### Urb_score
+sla_mods_best_u <- sla_mods[c(2,6)]
+
+## Alt
+### City_dist
+sla_mods_alt_c <- sla_mods[3]
+
+### Urb_score
+sla_mods_alt_u <- sla_mods[5]
+```
+
+
 #### Heights- Early
 ```{r}
 ## Best
@@ -187,6 +236,61 @@ ramets_late_mods_alt_u <- ramets_late_mods[5]
 
 # Ranova (RETURN)
 # Anova
+## LDMC
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(ldmc_mods_best_c) %>%
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/LDMC_citydist.png"))
+
+lapply(ldmc_mods_best_c, MuMIn::r.squaredGLMM)
+
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(ldmc_mods_best_u) %>%
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/LDMC_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(ldmc_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/LDMC_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(ldmc_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/LDMC_urbscore_alt.png"))
+```
+## SLA
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(sla_mods_best_c) %>%
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/sla_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(sla_mods_best_u) %>%
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/sla_urbscore.png"))
+```
+
+### Alt Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(sla_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/sla_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(sla_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/sla_urbscore_alt.png"))
+```
 ## Heights- Early
 ### Best Models
 #### City_dist
@@ -342,7 +446,7 @@ all_rsq <- lapply(all_models, lapply, r.squaredGLMM) %>%
 
 
 ```
-# Find estimated marginal means at terminii- put this in figs script eventually
+# Find estimated marginal means at terminii- put this in figs script eventually- ADD SLA/LDMC MODS
 ## Urban Subtransects
 ### City_dist
 #### Ramets, after flowering

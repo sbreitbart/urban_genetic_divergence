@@ -407,7 +407,7 @@ fl_time_urbsubs_usc1_ME <- glmmTMB(flowering_time_num ~
 # AIC(fl_time_urbsubs_usc1, fl_time_urbsubs_usc1_ME) # ME model best but <2 AIC from full
 ```
 
-## Flowering start
+## Flowering start- RETURN. better way to do this??
 ### Gradient
 #### City_dist
 ```{r}
@@ -424,72 +424,131 @@ performance::check_model(fl_start_gr_city1)
 car::Anova(fl_start_gr_city1)
 ```
 
+#### Urb_score
+```{r}
+fl_start_gr_usc1 <- glmmTMB(Julian_oldest_inflor ~
+                                         #  Block +
+                                           Year +
+                                          (1|Population/Family) +
+                                          Urb_score, 
+                                        data = flowering,
+                             family = poisson)
+
+plot(DHARMa::simulateResiduals(fl_start_gr_usc1))
+performance::check_model(fl_start_gr_usc1)
+car::Anova(fl_start_gr_usc1)
+```
+
+### Urban subtransects
+#### City_dist
+```{r}
+fl_start_urbsubs_city1 <- glmmTMB(Julian_oldest_inflor ~
+                                          # Block +
+                                      #     Year +
+                                          (1|Population/Family) +
+                                          City_dist * Transect_ID, 
+                                        data = flowering %>%
+                                    dplyr::filter(Transect_ID != "Rural"),
+                             family = poisson)
+
+plot(DHARMa::simulateResiduals(fl_start_urbsubs_city1))
+performance::check_model(fl_start_urbsubs_city1)
+car::Anova(fl_start_urbsubs_city1)
+summary(fl_start_urbsubs_city1)
+
+# Main effects model
+fl_start_urbsubs_city1_ME <- glmmTMB(Julian_oldest_inflor ~
+                                          # Block +
+                                      #     Year +
+                                          (1|Population/Family) +
+                                          City_dist + Transect_ID, 
+                                        data = flowering %>%
+                                    dplyr::filter(Transect_ID != "Rural"),
+                             family = poisson)
+
+plot(DHARMa::simulateResiduals(fl_start_urbsubs_city1_ME))
+performance::check_model(fl_start_urbsubs_city1_ME)
+car::Anova(fl_start_urbsubs_city1_ME)
+summary(fl_start_urbsubs_city1_ME)
+
+AIC(fl_start_urbsubs_city1, fl_start_urbsubs_city1_ME) # ME best model but <2 AIC from full
+```
+
+#### Urb_score
+```{r}
+# not converging
+fl_start_urbsubs_usc1 <- glmmTMB(Julian_oldest_inflor ~
+                                          # Block +
+                                      #     Year +
+                                          (1|Population/Family) +
+                                          Urb_score * Transect_ID, 
+                                        data = flowering %>%
+                                    dplyr::filter(Transect_ID != "Rural"),
+                             family = poisson)
+
+plot(DHARMa::simulateResiduals(fl_start_urbsubs_usc1))
+performance::check_model(fl_start_urbsubs_usc1)
+car::Anova(fl_start_urbsubs_usc1)
+summary(fl_start_urbsubs_usc1)
+
+
+
+# Main effects model
+# not converging
+fl_start_urbsubs_usc1_ME <- glmmTMB(Julian_oldest_inflor ~
+                                          # Block +
+                                      #     Year +
+                                          (1|Population/Family) +
+                                          Urb_score + Transect_ID, 
+                                        data = flowering %>%
+                                    dplyr::filter(Transect_ID != "Rural"),
+                             family = poisson)
+
+plot(DHARMa::simulateResiduals(fl_start_urbsubs_usc1_ME))
+performance::check_model(fl_start_urbsubs_usc1_ME)
+car::Anova(fl_start_urbsubs_usc1_ME)
+summary(fl_start_urbsubs_usc1_ME)
+
+AIC(fl_start_urbsubs_usc1, fl_start_urbsubs_usc1_ME) # ME best model but <2 AIC from full
+```
+
 ## Pods
 #### Gradient
 ##### City_dist
 ```{r}
-# pods_gr_city1 <- glmmTMB(Pods ~
-#                            Block +
-#                            Year +
-#                            (1|Population/Family) +
-#                            City_dist, 
-#                          data = flowering,
-#                          family = poisson())
-# 
-# plot(DHARMa::simulateResiduals(pods_gr_city1)) # problem with residual vs predicted plot. Transformations (square, cube) don't help. Try negative binomial?
-
 pods_gr_city1 <- glmmTMB(Pods ~
                            Block +
                            Year +
                            (1|Population/Family) +
-                           City_dist, 
+                           City_dist,
                          data = flowering,
-                         family = nbinom2)
+                         family = poisson)
 
-plot(DHARMa::simulateResiduals(pods_gr_city1)) # issue persists with negbin1, but NOT negbinom2. nbinom1 is quasi-poisson and nbinom2 is negative binomial. So I'll stick with that
+plot(DHARMa::simulateResiduals(pods_gr_city1))
+performance::check_model(pods_gr_city1)
+car::Anova(pods_gr_city1)
 
 ```
 
 ##### Urb_score
 ```{r}
-# pods_gr_usc1.1 <- glmmTMB(Pods ~
-#                            Block +
-#                            Year +
-#                            (1|Population/Family) +
-#                            Urb_score,
-#                          data = flowering,
-#                          family = poisson())
-# 
-# plot(DHARMa::simulateResiduals(pods_gr_usc1.1)) # NO problem with residual vs predicted plot, unlike city_dist model. Try negative binomial just in case
-
 pods_gr_usc1 <- glmmTMB(Pods ~
                            Block +
                            Year +
                            (1|Population/Family) +
-                           City_dist, 
+                           Urb_score,
                          data = flowering,
-                         family = nbinom2)
+                         family = poisson)
 
-plot(DHARMa::simulateResiduals(pods_gr_usc1)) # issue persists with negbin1, but NOT negbinom2. nbinom1 is quasi-poisson and nbinom2 is negative binomial. So I'll stick with that
-
-# AIC(pods_gr_usc1.1, pods_gr_usc1) # neg bin model significantly lower AIC, so use that one
+plot(DHARMa::simulateResiduals(pods_gr_usc1))
+performance::check_model(pods_gr_usc1)
+car::Anova(pods_gr_usc1)
 
 ```
 
 #### Urban Subtransects
 ##### City_dist
 ```{r}
-# pods_urbsubs_city1 <- glmmTMB(Pods ~
-#                            Block +
-#                            Year +
-#                            (1|Population/Family) +
-#                            City_dist * Transect_ID,
-#                          data = flowering %>%
-#                            dplyr::filter(Transect_ID != "Rural"),
-#                          family = poisson())
-# 
-# plot(DHARMa::simulateResiduals(pods_urbsubs_city1)) # problem with residual vs predicted plot and KS test. Transformations (square, cube) don't help. Try negative binomial?
-
 pods_urbsubs_city1 <- glmmTMB(Pods ~
                            Block +
                            Year +
@@ -497,9 +556,11 @@ pods_urbsubs_city1 <- glmmTMB(Pods ~
                            City_dist * Transect_ID,
                          data = flowering %>%
                            dplyr::filter(Transect_ID != "Rural"),
-                         family = nbinom2)
+                         family = poisson)
 
-plot(DHARMa::simulateResiduals(pods_urbsubs_city1)) # issue disappears with negbin1 AND negbinom2. nbinom1 is quasi-poisson and nbinom2 is negative binomial and I used NB2 above, So I'll stick with that
+plot(DHARMa::simulateResiduals(pods_urbsubs_city1))
+performance::check_model(pods_urbsubs_city1)
+car::Anova(pods_urbsubs_city1)
 
 
 # MAIN EFFECTS MODEL
@@ -510,57 +571,50 @@ pods_urbsubs_city1_ME <- glmmTMB(Pods ~
                            City_dist + Transect_ID,
                          data = flowering %>%
                            dplyr::filter(Transect_ID != "Rural"),
-                         family = nbinom2)
+                         family = poisson)
 
 plot(DHARMa::simulateResiduals(pods_urbsubs_city1_ME)) # looks fine
+performance::check_model(pods_urbsubs_city1_ME)
+car::Anova(pods_urbsubs_city1_ME)
 
-AIC(pods_urbsubs_city1, pods_urbsubs_city1_ME) # full model lower AIC but <2 away
+AIC(pods_urbsubs_city1, pods_urbsubs_city1_ME) # ME model lower AIC but <2 away
+
 ```
 
 ##### Urb_score
 ```{r}
-# pods_urbsubs_usc1 <- glmmTMB(Pods ~
-#                            Block +
-#                            Year +
-#                            (1|Population/Family) +
-#                            Urb_score * Transect_ID,
-#                          data = flowering %>%
-#                            dplyr::filter(Transect_ID != "Rural"),
-#                          family = poisson())
-# 
-# plot(DHARMa::simulateResiduals(pods_urbsubs_usc1)) # problem with residual vs predicted plot. Try negative binomial like w/prev plots
-
-pods_urbsubs_usc1 <- glmmTMB(Pods^3 ~
+pods_urbsubs_usc1 <- glmmTMB(Pods ~
                            Block +
                            Year +
                            (1|Population/Family) +
                            Urb_score * Transect_ID,
                          data = flowering %>%
                            dplyr::filter(Transect_ID != "Rural"),
-                         family = nbinom2)
+                         family = poisson)
 
-plot(DHARMa::simulateResiduals(pods_urbsubs_usc1)) # issue persists with negbin1 AND negbinom2, but NOT after I square or cube-transform (latter looks best). nbinom1 is quasi-poisson and nbinom2 is negative binomial and I used NB2 above, So I'll stick with that
-
+plot(DHARMa::simulateResiduals(pods_urbsubs_usc1))
 performance::check_model(pods_urbsubs_usc1)
+car::Anova(pods_urbsubs_usc1)
+
 
 # MAIN EFFECTS MODEL
-pods_urbsubs_usc1_ME <- glmmTMB(Pods^3 ~
+pods_urbsubs_usc1_ME <- glmmTMB(Pods ~
                            Block +
                            Year +
                            (1|Population/Family) +
                            Urb_score + Transect_ID,
                          data = flowering %>%
                            dplyr::filter(Transect_ID != "Rural"),
-                         family = nbinom2)
+                         family = poisson)
 
 plot(DHARMa::simulateResiduals(pods_urbsubs_usc1_ME)) # looks fine
-
 performance::check_model(pods_urbsubs_usc1_ME)
+car::Anova(pods_urbsubs_usc1_ME)
 
-AIC(pods_urbsubs_usc1, pods_urbsubs_usc1_ME) # full model best but <2  AIC away
+AIC(pods_urbsubs_usc1, pods_urbsubs_usc1_ME) # full model lower AIC but <2 away
 ```
 
-## Peduncles (Inflorescences)
+## Peduncles (Inflorescences)- RETURN HERE TO FIX RESIDUALS
 #### Gradient
 ##### City_dist
 ```{r}
@@ -570,9 +624,9 @@ peduncles_gr_city1 <- glmmTMB(Peduncles ~
                            (1|Population/Family) +
                            City_dist,
                          data = flowering,
-                         family = poisson())
+                         family = poisson)
 
-plot(DHARMa::simulateResiduals(peduncles_gr_city1)) # looks good
+plot(DHARMa::simulateResiduals(peduncles_gr_city1)) 
 
 ```
 
@@ -584,30 +638,15 @@ peduncles_gr_usc1 <- glmmTMB(Peduncles ~
                            (1|Population/Family) +
                            Urb_score,
                          data = flowering,
-                         family = poisson())
+                         family = poisson)
 
-plot(DHARMa::simulateResiduals(peduncles_gr_usc1)) # looks good
+plot(DHARMa::simulateResiduals(peduncles_gr_usc1)) 
 
 ```
 
 #### Urban Subtransects
 ##### City_dist
 ```{r}
-# peduncles_urbsubs_city1 <- glmmTMB(Peduncles ~
-#                            Block +
-#                            Year +
-#                            (1|Population/Family) +
-#                            City_dist * Transect_ID,
-#                          data = flowering %>%
-#                            dplyr::filter(Transect_ID != "Rural"),
-#                          family = poisson())
-# 
-# plot(DHARMa::simulateResiduals(peduncles_urbsubs_city1)) # issues with KS test and dispersion
-# testDispersion(peduncles_urbsubs_city1)
-# 
-# performance::check_model(peduncles_urbsubs_city1)
-
-# neg binomial- this works (nbinom1 doesn't)
 peduncles_urbsubs_city1 <- glmmTMB(Peduncles^2 ~
                            Block +
                            Year +
@@ -618,8 +657,6 @@ peduncles_urbsubs_city1 <- glmmTMB(Peduncles^2 ~
                          family = nbinom2)
 
 plot(DHARMa::simulateResiduals(peduncles_urbsubs_city1))
-
-performance::check_model(peduncles_urbsubs_city1)
 
 
 # MAIN EFFECTS MODEL
@@ -634,9 +671,9 @@ peduncles_urbsubs_city1_ME <- glmmTMB(Peduncles^2 ~
 
 plot(DHARMa::simulateResiduals(peduncles_urbsubs_city1_ME))
 
-performance::check_model(peduncles_urbsubs_city1_ME)
-
 AIC(peduncles_urbsubs_city1, peduncles_urbsubs_city1_ME) # ME model best but <2 AIC from full
+
+car::Anova(peduncles_urbsubs_city1_ME)
 ```
 
 ##### Urb_score
@@ -654,9 +691,6 @@ peduncles_urbsubs_usc1 <- glmmTMB(Peduncles ~
 plot(DHARMa::simulateResiduals(peduncles_urbsubs_usc1))
 DHARMa::testOutliers(peduncles_urbsubs_usc1) # no outliers
 performance::check_model(peduncles_urbsubs_usc1)
-# "To remove this pattern, you would need to make the dispersion parameter dependent on a predictor (e.g. in JAGS), or apply a transformation on the data."
-# -JAGS is a Bayesian software
-# -I tried transforming the response and it doesn't completely solve the issue. Looking at the performance::check_model() plots above, I think this isn't much to worry about.
 
 
 # MAIN EFFECTS MODEL
