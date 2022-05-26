@@ -184,14 +184,14 @@ heights_late_mods_alt_u <- heights_late_mods[5]
 rgr_mods_best_c <- rgr_mods[c(1,4)]
 
 ### Urb_score
-rgr_mods_best_u <- rgr_mods[c(2,5)]
+rgr_mods_best_u <- rgr_mods[c(2,6)]
 
 ## Alt
 ### City_dist
 rgr_mods_alt_c <- rgr_mods[3]
 
 ### Urb_score
-rgr_mods_alt_u <- rgr_mods[6]
+rgr_mods_alt_u <- rgr_mods[5]
 ```
 
 #### Ramets- Early
