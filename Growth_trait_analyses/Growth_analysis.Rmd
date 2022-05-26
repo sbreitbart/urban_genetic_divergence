@@ -249,6 +249,153 @@ ramets_late_mods_alt_u <- ramets_late_mods[5]
 ```
 
 # Ranova (RETURN)
+## Gradient
+### City_dist
+```{r}
+# LDMC-------
+ldmc_ranova_mod1 <- lmer(LDMC ~ (1|Population/Family) + (1|Block) + City_dist,
+                             data = sla_ldmc %>%
+                               dplyr::filter(LDMC < 1),
+                           REML = T)
+
+ldmc_ranova1 <- CreateRanovaOutput(ldmc_ranova_mod1, "LDMC") %T>%
+  flextable::save_as_html(.,
+                        path = here::here("./Growth_trait_analyses/Tables/Ranova/ldmc.html"))
+
+
+# SLA-----
+sla_ranova_mod1 <- lmer(SLA ~ (1|Population/Family) + (1|Block) + City_dist,
+                        data = sla_ldmc,
+                        REML = T)
+
+
+sla_ranova1 <- CreateRanovaOutput(sla_ranova_mod1, "SLA") %T>%
+  flextable::save_as_html(.,
+                        path = here::here("./Growth_trait_analyses/Tables/Ranova/sla.html"))
+
+
+```
+
+### Urb_score
+```{r}
+# LDMC-------
+ldmc_ranova_mod2 <- lmer(LDMC ~ (1|Population/Family) + (1|Block) + Urb_score,
+                             data = sla_ldmc %>%
+                               dplyr::filter(LDMC < 1),
+                           REML = T)
+
+ldmc_ranova1 <- CreateRanovaOutput(ldmc_ranova_mod2, "LDMC") %T>%
+  flextable::save_as_html(.,
+                        path = here::here("./Growth_trait_analyses/Tables/Ranova/Urb_score/ldmc.html"))
+
+
+# SLA-----
+# same output as Pop:Fam_uniq
+sla_ranova_mod2 <- lmer(sqrt(SLA) ~ (1|Population/Family) + (1|Block) + Urb_score,
+                        data = sla_ldmc,
+                        REML = T)
+
+
+sla_ranova1 <- CreateRanovaOutput(sla_ranova_mod2, "SLA") %T>%
+  flextable::save_as_html(.,
+                        path = here::here("./Growth_trait_analyses/Tables/Ranova/Urb_score/sla.html"))
+```
+
+## Urban subtransects
+### City_dist
+```{r}
+# LDMC-------
+## test City_dist
+ldmc_ranova_mod1 <- lmer(LDMC ~ (1|Population/Family) + (1|Block) + City_dist,
+                             data = sla_ldmc %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                           REML = T)
+
+## test Transect
+ldmc_ranova_mod2 <- lmer(LDMC ~ (1|Population/Family) + (1|Block) + Transect_ID,
+                             data = sla_ldmc %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                           REML = F)
+
+
+ldmc_ranova1 <- CreateRanovaOutput(ldmc_ranova_mod1, "LDMC (Distance)")
+ldmc_ranova2 <- CreateRanovaOutput_Q2(ldmc_ranova_mod2, "LDMC (Transect)")
+
+flextable::save_as_html(ldmc_ranova1,
+                        ldmc_ranova2,
+                        path = here::here("./Growth_trait_analyses/Tables/Ranova/ldmc_transects.html"))
+
+
+# SLA-----
+## test City_dist
+sla_ranova_mod1 <- lmer(sqrt(SLA) ~ (1|Population/Family) + (1|Block) + City_dist,
+                             data = sla_ldmc %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                           REML = T)
+
+## test transect
+sla_ranova_mod2 <- lmer(sqrt(SLA) ~ (1|Population/Family) + (1|Block) + Transect_ID,
+                             data = sla_ldmc %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                           REML = F)
+
+
+sla_ranova1 <- CreateRanovaOutput(sla_ranova_mod1, "SLA (Distance)")
+sla_ranova2 <- CreateRanovaOutput_Q2(sla_ranova_mod2, "SLA (Transect)")
+
+flextable::save_as_html(sla_ranova1,
+                        sla_ranova2,
+                        path = here::here("./Growth_trait_analyses/Tables/Ranova/sla_transects.html"))
+
+```
+
+### Urb_score
+```{r}
+# LDMC-------
+## test Urb_score
+ldmc_ranova_mod1 <- lmer(LDMC ~ (1|Population/Family) + (1|Block) + Urb_score,
+                             data = sla_ldmc %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                           REML = T)
+
+## test transect
+ldmc_ranova_mod2 <- lmer(LDMC ~ (1|Population/Family) + (1|Block) + Transect_ID,
+                             data = sla_ldmc %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                           REML = F)
+
+
+ldmc_ranova1 <- CreateRanovaOutput(ldmc_ranova_mod1, "LDMC (Urbanization Score)")
+ldmc_ranova2 <- CreateRanovaOutput_Q2(ldmc_ranova_mod2, "LDMC (Transect)")
+
+flextable::save_as_html(ldmc_ranova1,
+                        ldmc_ranova2,
+                        path = here::here("./Growth_trait_analyses/Tables/Ranova/Urb_score/ldmc_transects.html"))
+
+
+# SLA-----
+## test Urb_score
+sla_ranova_mod1 <- lmer(sqrt(SLA) ~ (1|Population/Family) + (1|Block) + Urb_score,
+                             data = sla_ldmc %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                           REML = T)
+
+## test transect
+sla_ranova_mod2 <- lmer(sqrt(SLA) ~ (1|Population/Family) + (1|Block) + Transect_ID,
+                             data = sla_ldmc %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                           REML = F)
+
+
+sla_ranova1 <- CreateRanovaOutput(sla_ranova_mod1, "SLA (Urbanization Score)")
+sla_ranova2 <- CreateRanovaOutput_Q2(sla_ranova_mod2, "SLA (Transect)")
+
+flextable::save_as_html(sla_ranova1,
+                        sla_ranova2,
+                        path = here::here("./Growth_trait_analyses/Tables/Ranova/Urb_score/sla_transects.html"))
+
+```
+
 
 # Anova
 

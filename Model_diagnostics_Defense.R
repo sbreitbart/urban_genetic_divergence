@@ -1,11 +1,9 @@
-# Load libraries & functions
-```{r}
+## ----------------------------------------------------------
 source("libraries.R")
 source("functions.R")
-```
 
-# Import data
-```{r}
+
+## ----------------------------------------------------------
 
 # LATEX-----
 latex <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_latex_clean.csv")) %>%
@@ -43,17 +41,13 @@ weevil <- read.csv(here::here("./Joined_annual_data/weevil.csv")) %>%
 
 weevil %<>%
   dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
-```
 
-# Diagnostics: Traits only measured in 2021
-## Latex
-### Gradient
-#### City_dist
-```{r}
+
+## ----------------------------------------------------------
 # Basic data exploration
-# plot(Latex_weight_mg ~ City_dist, data = latex) 
-# 
-# boxplot(Latex_weight_mg ~ Block, data = latex)
+plot(Latex_weight_mg ~ City_dist, data = latex) 
+
+boxplot(Latex_weight_mg ~ Block, data = latex)
 
 ltx_gr_city_m1 <- glmmTMB(Latex_weight_mg^(1/3) ~
                             Block +
@@ -66,10 +60,9 @@ ltx_gr_city_m1 <- glmmTMB(Latex_weight_mg^(1/3) ~
 # performance::check_model(ltx_gr_city_m1)
 # plot(DHARMa::simulateResiduals(ltx_gr_city_m1))
 # car::Anova(ltx_gr_city_m1)
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 ltx_gr_usc_m1 <- glmmTMB(Latex_weight_mg^(1/3) ~ Block +
                            (1|Population/Family) +
                            Urb_score,
@@ -80,11 +73,9 @@ performance::check_model(ltx_gr_usc_m1)
 plot(DHARMa::simulateResiduals(ltx_gr_usc_m1))
 car::Anova(ltx_gr_usc_m1)
 
-```
 
-### Urban Subtransects
-#### City_dist
-```{r}
+
+## ----------------------------------------------------------
 ltx_urbsubs_city_m1 <- glmmTMB(Latex_weight_mg^(1/3) ~
                                  Block +
                                  (1|Population/Family) +
@@ -113,10 +104,9 @@ ltx_urbsubs_city_m2 <- glmmTMB(Latex_weight_mg^(1/3) ~
 # car::Anova(ltx_urbsubs_city_m2)
 
 AIC(ltx_urbsubs_city_m1, ltx_urbsubs_city_m2) # m2 best but <2 AIC away
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 ltx_urbsubs_usc_m1 <- glmmTMB(Latex_weight_mg^(1/3) ~
                                  Block +
                                  (1|Population/Family) +
@@ -145,14 +135,9 @@ ltx_urbsubs_usc_m2 <- glmmTMB(Latex_weight_mg^(1/3) ~
 # car::Anova(ltx_urbsubs_usc_m2)
 
 AIC(ltx_urbsubs_usc_m1, ltx_urbsubs_usc_m2) # m1 best
-```
 
 
-# Diagnostics: Traits measured in 2019, 2020, and 2021
-## Herbivory: Before flowering
-### Gradient
-#### City_dist
-```{r}
+## ----------------------------------------------------------
 # # Basic data exploration
 # plot(Herbivory_mean_early ~ City_dist, data = herbivory) 
 # 
@@ -248,11 +233,9 @@ herbiv_e_gr_dist_m1_quant <- glmmTMB(log(Herbivory_mean_early) ~
 # plot(DHARMa::simulateResiduals(herbiv_e_gr_dist_m1_quant)) # looks great
 # performance::check_model(herbiv_e_gr_dist_m1_quant) # looks great
 # car::Anova(herbiv_e_gr_dist_m1_quant)
-```
 
 
-#### Urb_score
-```{r}
+## ----------------------------------------------------------
 # HURDLE MODEL
 herbiv_e_gr_usc_m1_bin <- glmmTMB(Herbivory_mean_early_binary ~
                                Block +
@@ -281,11 +264,9 @@ herbiv_e_gr_usc_m1_quant <- glmmTMB(log(Herbivory_mean_early) ~
 # plot(DHARMa::simulateResiduals(herbiv_e_gr_usc_m1_quant)) # looks great
 # performance::check_model(herbiv_e_gr_usc_m1_quant) # looks great
 # car::Anova(herbiv_e_gr_usc_m1_quant)
-```
 
-### Urban Subtransects
-#### City_dist
-```{r}
+
+## ----------------------------------------------------------
 # HURDLE MODEL
 herbiv_e_urbsubs_dist_m1_bin <- glmmTMB(Herbivory_mean_early_binary ~
                                Block +
@@ -348,10 +329,9 @@ herbiv_e_urbsubs_dist_m2_quant <- glmmTMB(log(Herbivory_mean_early) ~
 # plot(DHARMa::simulateResiduals(herbiv_e_urbsubs_dist_m2_quant)) # looks great
 # 
 # AIC(herbiv_e_urbsubs_dist_m1_quant, herbiv_e_urbsubs_dist_m2_quant) # m1 better but <2 AIC apart
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 # HURDLE MODEL
 herbiv_e_urbsubs_usc_m1_bin <- glmmTMB(Herbivory_mean_early_binary ~
                               Block +
@@ -412,12 +392,9 @@ herbiv_e_urbsubs_usc_m2_quant <- glmmTMB(log(Herbivory_mean_early) ~
 
 # plot(DHARMa::simulateResiduals(herbiv_e_urbsubs_usc_m2_quant)) # looks great
 # AIC(herbiv_e_urbsubs_usc_m1_quant, herbiv_e_urbsubs_usc_m2_quant) # m1 better but <2 AIC apart
-```
 
-## Herbivory: After flowering
-### Gradient
-#### City_dist
-```{r}
+
+## ----------------------------------------------------------
 ## Basic data exploration
 # plot(Herbivory_mean_late ~ City_dist, data = herbivory)
 # 
@@ -459,10 +436,9 @@ herbiv_l_gr_dist_m1_quant <- glmmTMB(log(Herbivory_mean_late) ~
 # performance::check_model(herbiv_l_gr_dist_m1_quant) # looks great
 # car::Anova(herbiv_l_gr_dist_m1_quant)
 
-```
 
-#### Urbanization Score
-```{r}
+
+## ----------------------------------------------------------
 # HURDLE MODEL-----
 herbiv_l_gr_usc_m1_bin <- glmmTMB(Herbivory_mean_late_binary ~
                                Block +
@@ -491,11 +467,9 @@ herbiv_l_gr_usc_m1_quant <- glmmTMB(log(Herbivory_mean_late) ~
 # plot(DHARMa::simulateResiduals(herbiv_l_gr_usc_m1_quant))
 # performance::check_model(herbiv_l_gr_usc_m1_quant) # looks great
 # car::Anova(herbiv_l_gr_usc_m1_quant)
-```
 
-### Urban Subtransects
-#### City_dist
-```{r}
+
+## ----------------------------------------------------------
 # HURDLE MODEL
 herbiv_l_urbsubs_dist_m1_bin <- glmmTMB(Herbivory_mean_late_binary ~
                                Block +
@@ -558,10 +532,9 @@ herbiv_l_urbsubs_dist_m2_quant <- glmmTMB(log(Herbivory_mean_late) ~
 # 
 # AIC(herbiv_l_urbsubs_dist_m1_quant, herbiv_l_urbsubs_dist_m2_quant) # m2 better but <2 AIC apart
 
-```
 
-#### Urbanization Score
-```{r}
+
+## ----------------------------------------------------------
 # HURDLE MODEL
 herbiv_l_urbsubs_usc_m1_bin <- glmmTMB(Herbivory_mean_late_binary ~
                                Block +
@@ -625,12 +598,9 @@ herbiv_l_urbsubs_usc_m2_quant <- glmmTMB(log(Herbivory_mean_late) ~
 
 # plot(DHARMa::simulateResiduals(herbiv_l_urbsubs_usc_m2_quant))
 # AIC(herbiv_l_urbsubs_usc_m1_quant, herbiv_l_urbsubs_usc_m2_quant) # m2 better but <2 AIC apart
-```
 
-## Weevil scar length- 2020 and 2021 ONLY
-### Gradient
-#### City_dist
-```{r}
+
+## ----------------------------------------------------------
 # # Basic data exploration
 # plot(Scar_length_cm ~ City_dist, data = weevil)
 # 
@@ -664,10 +634,9 @@ weev_gr_dist_m1_quant <- glmmTMB(log(Scar_length_cm) ~
 # performance::check_model(weev_gr_dist_m1_quant)
 # plot(DHARMa::simulateResiduals(weev_gr_dist_m1_quant)) # looks great
 # weev_gr_dist_m1_quant %>% car::Anova()
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 # BINARY MODEL-----
 weev_gr_usc_m1_bin <- glmmTMB(Scar_binary ~
                                 Block + 
@@ -695,11 +664,9 @@ weev_gr_usc_m1_quant <- glmmTMB(log(Scar_length_cm) ~
 # plot(DHARMa::simulateResiduals(weev_gr_usc_m1_quant))
 # weev_gr_usc_m1_quant %>% car::Anova()
 
-```
 
-### Urban Subtransects
-#### City_dist
-```{r}
+
+## ----------------------------------------------------------
 # BINARY MODEL-----
 weev_urbsubs_dist_m1_bin <- glmmTMB(Scar_binary ~
                                       Block + 
@@ -760,10 +727,9 @@ weev_urbsubs_dist_m2_quant <- glmmTMB(log(Scar_length_cm) ~
 # performance::check_model(weev_urbsubs_dist_m2_quant)
 # plot(DHARMa::simulateResiduals(weev_urbsubs_dist_m2_quant)) 
 # AIC(weev_urbsubs_dist_m1_quant, weev_urbsubs_dist_m2_quant) # m2 best but <2 AIC away
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 # BINARY MODEL-----
 weev_urbsubs_usc_m1_bin <- glmmTMB(Scar_binary ~
                                       Block + 
@@ -824,11 +790,9 @@ weev_urbsubs_usc_m2_quant <- glmmTMB(log(Scar_length_cm) ~
 # plot(DHARMa::simulateResiduals(weev_urbsubs_usc_m2_quant))
 # AIC(weev_urbsubs_usc_m1_quant, weev_urbsubs_usc_m2_quant) # m2 best but <2 AIC away
 
-```
 
-# Models for use in analysis
-## Latex
-```{r}
+
+## ----------------------------------------------------------
 latex_mods <- list(
 
 ## City_dist / gradient
@@ -846,10 +810,9 @@ ltx_urbsubs_usc_m1 # Best model
 )
 
 names(latex_mods) <- c("City_gr", "Usc_gr", "City_urbsubs_alt", "City_urbsubs_best", "Usc_urbsubs")
-```
 
-## Herbivory: Early- Hurdle models (Binomial and gaussian families)
-```{r}
+
+## ----------------------------------------------------------
 herb_early_mods_binomial <- list(
 
 ## City_dist / gradient
@@ -897,11 +860,9 @@ names(herb_early_mods_quant) <- c("City_gr",
                             "City_urbsubs_alt",
                             "Usc_urbsubs_best",
                             "Usc_urbsubs_alt")
-```
 
 
-## Herbivory: Late- Hurdle models (Binomial and gaussian families)
-```{r}
+## ----------------------------------------------------------
 herb_late_mods_binomial <- list(
 
 ## City_dist / gradient
@@ -951,11 +912,9 @@ names(herb_late_mods_quant) <- c("City_gr",
                             "City_urbsubs_best",
                             "Usc_urbsubs_alt",
                             "Usc_urbsubs_best")
-```
 
 
-## Weevil Scar- Hurdle models (Binomial and gaussian families)
-```{r}
+## ----------------------------------------------------------
 weev_mods_binomial <- list(
 
 ## City_dist / gradient
@@ -1006,5 +965,4 @@ names(weev_mods_quant) <- c("City_gr",
                       "City_urbsubs_best",
                       "Usc_urbsubs_alt",
                       "Usc_urbsubs_best")
-```
 
