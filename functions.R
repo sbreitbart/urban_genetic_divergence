@@ -442,3 +442,39 @@ Calc_percent_change_transects <- function(ggpredict_object){
   
 }
 
+
+
+## Create variable associated with replicated aesthetics
+##  of figs
+# Gradient figs
+rep_geoms <- c(geom_smooth(aes(x = x,
+                               y = predicted),
+                           color = "#66a182",
+                           size = 1,
+                           se = F),
+               geom_ribbon(aes(x = x,
+                               ymin = predicted - std.error,
+                               ymax = predicted + std.error),
+                           fill = "#66a182",
+                           alpha = 0.3))
+
+# Transect figs
+rep_geoms2 <- c(geom_smooth(
+  aes(
+    x = x,
+    y = predicted,
+    color = group),
+  size = 1,
+  se = F),
+  geom_ribbon(aes(
+    x = x,
+    ymin = predicted - std.error,
+    ymax = predicted + std.error,
+    fill = group),
+    alpha = 0.3),
+  scale_colour_brewer(labels = c("Corridor",
+                                 "Non-Corridor"),
+                      palette = "Set2"),
+  scale_fill_brewer(labels = c("Corridor",
+                               "Non-Corridor"),
+                    palette = "Set2"))

@@ -49,47 +49,6 @@ source("libraries.R")
 source("functions.R")
 ```
 
-## Import data
-
-```{r}
-
-
-# LATEX-----
-latex <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_latex_clean.csv")) %>%
-  dplyr::select(-1) %>%
-  dplyr::mutate_at(vars(c(1:7, 9:12, 15, 18, 21)), as.character) %>%
-    dplyr::mutate_at(vars(c(1:7, 9:12, 15, 18, 21)), as.factor) %T>%
-  str()
-
-latex %<>%
-  dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
-
-str(latex)
-
-
-# HERBIVORY-----
-herbivory <- read.csv(here::here("./Joined_annual_data/herbivory.csv")) %>%
-  dplyr::select(-1) %>%
-  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
-    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor) %T>%
-  str()
-
-herbivory %<>%
-  dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
-
-
-
-# WEEVIL DAMAGE-----
-weevil <- read.csv(here::here("./Joined_annual_data/weevil.csv")) %>%
-  dplyr::select(-1) %>%
-  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
-    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor) %T>%
-  str()
-
-weevil %<>%
-  dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
-```
-
 ## Import final models
 ### Create full list
 ```{r}

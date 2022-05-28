@@ -763,24 +763,486 @@ ramets_l_urbsubs_usc_m2 <- glmmTMB(Ramets_late ~
 ```
 
 ## Mortality
-### Gradient
-#### City_dist
+### Regular GLMERs
+#### Gradient
+##### City_dist
+```{r}
+# 2019
+surv_gr_city_m1_19 <- glmmTMB(Dead ~ 
+                                 Block +
+                            #     Year +
+                                 (1|Population/Family) +
+                                 City_dist,
+                        data = survival %>%
+                          dplyr::filter(Year == "2019"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_gr_city_m1_19))
+# performance::check_model(surv_gr_city_m1_19)
+# car::Anova(surv_gr_city_m1_19)
+
+
+# 2020
+surv_gr_city_m1_20 <- glmmTMB(Dead ~ 
+                                 Block +
+                            #     Year +
+                                 (1|Population/Family) +
+                                 City_dist,
+                        data = survival %>%
+                          dplyr::filter(Year == "2020"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_gr_city_m1_20))
+# performance::check_model(surv_gr_city_m1_20)
+# car::Anova(surv_gr_city_m1_20)
+
+
+# 2021
+surv_gr_city_m1_21 <- glmmTMB(Dead ~ 
+                                 Block +
+                            #     Year +
+                                 (1|Population/Family) +
+                                 City_dist,
+                        data = survival %>%
+                          dplyr::filter(Year == "2021"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_gr_city_m1_21))
+# performance::check_model(surv_gr_city_m1_21)
+# car::Anova(surv_gr_city_m1_21)
+
+
+# 2019-2021
+surv_gr_city_m1_all <- glmmTMB(Dead ~ 
+                                 Block +
+                                 Year +
+                                 (1|Population/Family) +
+                                 City_dist,
+                        data = survival ,
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_gr_city_m1_all))
+# performance::check_model(surv_gr_city_m1_all)
+# car::Anova(surv_gr_city_m1_all)
+
+
+# seasons survived until death
+survival_seasons <- survival %>%
+  mutate(seasons = case_when(
+    Dead == 1 & Year == 2019 ~ 1,
+    Dead == 1 & Year == 2020 ~ 2,
+    Dead == 1 & Year == 2021 ~ 3,
+    TRUE ~ 4)) %>%
+  group_by(Row, Column, Population, Block, Family, Replicate, Transect_ID, City_dist, Urb_score) %>%
+  summarise(seasons = first(seasons)) %>%
+  mutate(dead = case_when(
+    seasons == 4 ~ 0,
+    TRUE ~ 1
+  ))
+
+# how to fix diagnostics?
+surv_gr_city_m1_seasons <- glmmTMB(seasons ~ 
+                                 Block +
+                                 (1|Population/Family) +
+                                 City_dist,
+                        data = survival_seasons ,
+                        family = poisson,
+                        REML = F)
+
+
+plot(DHARMa::simulateResiduals(surv_gr_city_m1_seasons))
+performance::check_model(surv_gr_city_m1_seasons)
+car::Anova(surv_gr_city_m1_seasons)
+```
+
+##### Urb_score
+```{r}
+# 2019
+surv_gr_usc_m1_19 <- glmmTMB(Dead ~ 
+                                 Block +
+                            #     Year +
+                                 (1|Population/Family) +
+                                 Urb_score,
+                        data = survival %>%
+                          dplyr::filter(Year == "2019"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_gr_usc_m1_19))
+# performance::check_model(surv_gr_usc_m1_19)
+# car::Anova(surv_gr_usc_m1_19)
+
+
+# 2020
+surv_gr_usc_m1_20 <- glmmTMB(Dead ~ 
+                                 Block +
+                            #     Year +
+                                 (1|Population/Family) +
+                                 Urb_score,
+                        data = survival %>%
+                          dplyr::filter(Year == "2020"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_gr_usc_m1_20))
+# performance::check_model(surv_gr_usc_m1_20)
+# car::Anova(surv_gr_usc_m1_20)
+
+
+# 2021
+surv_gr_usc_m1_21 <- glmmTMB(Dead ~ 
+                                 Block +
+                            #     Year +
+                                 (1|Population/Family) +
+                                 Urb_score,
+                        data = survival %>%
+                          dplyr::filter(Year == "2021"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_gr_usc_m1_21))
+# performance::check_model(surv_gr_usc_m1_21)
+# car::Anova(surv_gr_usc_m1_21)
+
+
+# 2019-2021
+surv_gr_usc_m1_all <- glmmTMB(Dead ~ 
+                                 Block +
+                                 Year +
+                                 (1|Population/Family) +
+                                 Urb_score,
+                        data = survival ,
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_gr_usc_m1_all))
+# performance::check_model(surv_gr_usc_m1_all)
+# car::Anova(surv_gr_usc_m1_all)
+
+
+# Days to death
+```
+
+#### Urban Subtransects
+##### City_dist
+```{r}
+# 2019-----
+## Full model
+surv_urbsubs_city_m1_19 <- glmmTMB(Dead ~ 
+                                 Block +
+                            #     Year +
+                                 (1|Population/Family) +
+                                 City_dist * Transect_ID,
+                        data = survival %>%
+                          dplyr::filter(Year == "2019" & Transect_ID != "Rural"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_urbsubs_city_m1_19))
+# performance::check_model(surv_urbsubs_city_m1_19)
+# car::Anova(surv_urbsubs_city_m1_19)
+
+## Main effects model
+surv_urbsubs_city_m2_19 <- glmmTMB(Dead ~ 
+                                 Block +
+                            #     Year +
+                                 (1|Population/Family) +
+                                 City_dist + Transect_ID,
+                        data = survival %>%
+                          dplyr::filter(Year == "2019" & Transect_ID != "Rural"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_urbsubs_city_m2_19))
+# performance::check_model(surv_urbsubs_city_m2_19)
+# car::Anova(surv_urbsubs_city_m2_19)
+# AIC(surv_urbsubs_city_m1_19, surv_urbsubs_city_m2_19) # m1 best but <2 AIC from m2
+
+# 2020-----
+## Full model
+surv_urbsubs_city_m1_20 <- glmmTMB(Dead ~ 
+                                 Block +
+                            #     Year +
+                                 (1|Population/Family) +
+                                 City_dist * Transect_ID,
+                        data = survival %>%
+                          dplyr::filter(Year == "2020" & Transect_ID != "Rural"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_urbsubs_city_m1_20))
+# performance::check_model(surv_urbsubs_city_m1_20)
+# car::Anova(surv_urbsubs_city_m1_20)
+
+## Main effects model
+surv_urbsubs_city_m2_20 <- glmmTMB(Dead ~ 
+                                 Block +
+                            #     Year +
+                                 (1|Population/Family) +
+                                 City_dist + Transect_ID,
+                        data = survival %>%
+                          dplyr::filter(Year == "2020" & Transect_ID != "Rural"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_urbsubs_city_m2_20))
+# performance::check_model(surv_urbsubs_city_m2_20)
+# car::Anova(surv_urbsubs_city_m2_20)
+# AIC(surv_urbsubs_city_m1_20, surv_urbsubs_city_m2_20) # m1 best but <2 AIC from m2
+# 2021-----
+## Full model
+surv_urbsubs_city_m1_21 <- glmmTMB(Dead ~ 
+                                 Block +
+                            #     Year +
+                                 (1|Population/Family) +
+                                 City_dist * Transect_ID,
+                        data = survival %>%
+                          dplyr::filter(Year == "2021" & Transect_ID != "Rural"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_urbsubs_city_m1_21))
+# car::Anova(surv_urbsubs_city_m1_21)
+
+## Main effects model
+surv_urbsubs_city_m2_21 <- glmmTMB(Dead ~ 
+                                 Block +
+                            #     Year +
+                                 (1|Population/Family) +
+                                 City_dist + Transect_ID,
+                        data = survival %>%
+                          dplyr::filter(Year == "2021" & Transect_ID != "Rural"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_urbsubs_city_m2_21))
+# car::Anova(surv_urbsubs_city_m2_21)
+# AIC(surv_urbsubs_city_m1_21, surv_urbsubs_city_m2_21) # m2 best but <2 AIC from m2
+
+# all years-----
+## Full model
+surv_urbsubs_city_m1_all <- glmmTMB(Dead ~ 
+                                 Block +
+                                 Year +
+                                 (1|Population/Family) +
+                                 City_dist * Transect_ID,
+                        data = survival %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_urbsubs_city_m1_all))
+# car::Anova(surv_urbsubs_city_m1_all)
+
+## Main effects model
+surv_urbsubs_city_m2_all <- glmmTMB(Dead ~ 
+                                 Block +
+                                 Year +
+                                 (1|Population/Family) +
+                                 City_dist + Transect_ID,
+                        data = survival %>%
+                          dplyr::filter( Transect_ID != "Rural"),
+                        family = binomial,
+                        REML = F)
+
+
+plot(DHARMa::simulateResiduals(surv_urbsubs_city_m2_all))
+car::Anova(surv_urbsubs_city_m2_all)
+AIC(surv_urbsubs_city_m1_all, surv_urbsubs_city_m2_all) # m1 best but <2 AIC from m2
+
+
+```
+
+##### Urb_score
+```{r}
+# 2019-----
+## Full model
+surv_urbsubs_usc_m1_19 <- glmmTMB(Dead ~ 
+                                 Block +
+                            #     Year +
+                                 (1|Population/Family) +
+                                 Urb_score * Transect_ID,
+                        data = survival %>%
+                          dplyr::filter(Year == "2019" & Transect_ID != "Rural"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_urbsubs_usc_m1_19))
+# performance::check_model(surv_urbsubs_usc_m1_19)
+# car::Anova(surv_urbsubs_usc_m1_19)
+
+## Main effects model
+surv_urbsubs_usc_m2_19 <- glmmTMB(Dead ~ 
+                                 Block +
+                            #     Year +
+                                 (1|Population/Family) +
+                                 Urb_score + Transect_ID,
+                        data = survival %>%
+                          dplyr::filter(Year == "2019" & Transect_ID != "Rural"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_urbsubs_usc_m2_19))
+# performance::check_model(surv_urbsubs_usc_m2_19)
+# car::Anova(surv_urbsubs_usc_m2_19)
+# AIC(surv_urbsubs_usc_m1_19, surv_urbsubs_usc_m2_19) # m2 best but <2 AIC from m1
+
+# 2020-----
+## Full model
+surv_urbsubs_usc_m1_20 <- glmmTMB(Dead ~ 
+                                 Block +
+                            #     Year +
+                                 (1|Population/Family) +
+                                 Urb_score * Transect_ID,
+                        data = survival %>%
+                          dplyr::filter(Year == "2020" & Transect_ID != "Rural"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_urbsubs_usc_m1_20))
+# performance::check_model(surv_urbsubs_usc_m1_20)
+# car::Anova(surv_urbsubs_usc_m1_20)
+
+## Main effects model
+surv_urbsubs_usc_m2_20 <- glmmTMB(Dead ~ 
+                                 Block +
+                            #     Year +
+                                 (1|Population/Family) +
+                                 Urb_score + Transect_ID,
+                        data = survival %>%
+                          dplyr::filter(Year == "2020" & Transect_ID != "Rural"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_urbsubs_usc_m2_20))
+# performance::check_model(surv_urbsubs_usc_m2_20)
+# car::Anova(surv_urbsubs_usc_m2_20)
+# AIC(surv_urbsubs_usc_m1_20, surv_urbsubs_usc_m2_20) # m1 best but <2 AIC from m2
+
+# 2021-----
+## Full model
+surv_urbsubs_usc_m1_21 <- glmmTMB(Dead ~ 
+                                 Block +
+                            #     Year +
+                                 (1|Population/Family) +
+                                 Urb_score * Transect_ID,
+                        data = survival %>%
+                          dplyr::filter(Year == "2021" & Transect_ID != "Rural"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_urbsubs_usc_m1_21))
+# car::Anova(surv_urbsubs_usc_m1_21)
+
+## Main effects model
+surv_urbsubs_usc_m2_21 <- glmmTMB(Dead ~ 
+                                 Block +
+                            #     Year +
+                                 (1|Population/Family) +
+                                 Urb_score + Transect_ID,
+                        data = survival %>%
+                          dplyr::filter(Year == "2021" & Transect_ID != "Rural"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_urbsubs_usc_m2_21))
+# car::Anova(surv_urbsubs_usc_m2_21)
+# AIC(surv_urbsubs_usc_m1_21, surv_urbsubs_usc_m2_21) # m2 best but <2 AIC from m2
+
+# all years-----
+## Full model
+surv_urbsubs_usc_m1_all <- glmmTMB(Dead ~ 
+                                 Block +
+                                 Year +
+                                 (1|Population/Family) +
+                                 Urb_score * Transect_ID,
+                        data = survival %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_urbsubs_usc_m1_all))
+# car::Anova(surv_urbsubs_usc_m1_all)
+
+## Main effects model
+surv_urbsubs_usc_m2_all <- glmmTMB(Dead ~ 
+                                 Block +
+                                 Year +
+                                 (1|Population/Family) +
+                                 Urb_score + Transect_ID,
+                        data = survival %>%
+                          dplyr::filter( Transect_ID != "Rural"),
+                        family = binomial,
+                        REML = F)
+
+
+# plot(DHARMa::simulateResiduals(surv_urbsubs_usc_m2_all))
+# car::Anova(surv_urbsubs_usc_m2_all)
+# AIC(surv_urbsubs_usc_m1_all, surv_urbsubs_usc_m2_all) # m1 best but <2 AIC from m2
+```
+
+### Cox proportional hazards regressions
+#### Gradient
+##### City_dist
+```{r}
+install.packages("survival")
+library(survival)
+test <- coxph(Surv(seasons, dead) ~
+            #    (1|Population/Family) +
+                Block + City_dist,
+      data = survival_seasons) %T>% 
+  summary() # doesn't work with random effect
+
+
+# use finalfit package
+# doesn't work with nested random effect so try calculating blups for each population? but then which models to use?
+library(finalfit)
+explanatory <- c("Block", "City_dist", 
+                "frailty(Population)")
+dependent_os <- "Surv(seasons, dead)"
+
+survival_seasons %>% 
+    finalfit(dependent_os, explanatory)
+```
+
+##### Urb_score
 ```{r}
 
 ```
 
-#### Urb_score
+#### Urban Subtransects
+##### City_dist
 ```{r}
 
 ```
 
-### Urban Subtransects
-#### City_dist
-```{r}
-
-```
-
-#### Urb_score
+##### Urb_score
 ```{r}
 
 ```
