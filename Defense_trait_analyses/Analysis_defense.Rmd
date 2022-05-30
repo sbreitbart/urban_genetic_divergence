@@ -289,7 +289,7 @@ weev_q_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod1, "Weevil Damage: Qua
 full <- glmer(Herbivory_mean_early_binary ~
                                Block +
                                Year + 
-                               (1|Population/Family) +
+                               (1|Population) +
                                 City_dist,
                               data = herbivory,
                        family = binomial,
@@ -303,7 +303,7 @@ herbiv_e_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,          
           cl = makeCluster(7))
 
-tidy(herbiv_e_ranova.pop) # p = 0.040
+tidy(herbiv_e_ranova.pop) # p = 0.047
 
 
 
@@ -502,28 +502,6 @@ weev_q_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod2, "Weevil Damage: Qua
 
 # Weevil scar length (binary)-----
 # take out block and year- doesn't converge with both included
-full <- glmer(Scar_binary ~
-                # Block + Year + 
-                (1|Population/Family) + Urb_score,
-                              data = weevil,
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
-
-reduced <- update(full, .~. - Urb_score)
-
-weev_ranova <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(7))
-
-tidy(weev_ranova) # p ~ 0.661
-
-
-
-
-
 # take out fam
 full <- glmer(Scar_binary ~
                 # Block + Year + 

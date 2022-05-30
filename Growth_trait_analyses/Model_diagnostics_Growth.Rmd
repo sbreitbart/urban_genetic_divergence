@@ -10,10 +10,7 @@ source("functions.R")
 sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv")) %>%
   dplyr::select(., -c(1:2)) %>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.character) %>%
-    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.factor)
-
-str(sla_ldmc)
-sla_ldmc %<>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.factor) %>%
   dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
 
 
@@ -21,7 +18,8 @@ heights <- read.csv(here::here("./Joined_annual_data/heights.csv"), na.strings=c
   dplyr::select(., -1) %>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
     dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor) %>%
-  dplyr::mutate_at(vars(c("rel_growth_rate")), as.numeric)
+  dplyr::mutate_at(vars(c("rel_growth_rate")), as.numeric) %>%
+  dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
 
 str(heights)
 
@@ -1211,7 +1209,7 @@ surv_urbsubs_usc_m2_all <- glmmTMB(Dead ~
 #### Gradient
 ##### City_dist
 ```{r}
-install.packages("survival")
+# install.packages("survival")
 library(survival)
 test <- coxph(Surv(seasons, dead) ~
             #    (1|Population/Family) +
