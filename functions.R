@@ -269,6 +269,7 @@ CreateRanovaOutput_Q2 <- function(lmer_model, var_name){
     dplyr::rename(.,
                   p = 3,
                   Variable = 1) %>%
+    dplyr::filter(grepl('Transect_ID', Variable)) %>%
     dplyr::mutate(p = replace(p,
                               p < 0.001,
                               "<0.001")) %>%

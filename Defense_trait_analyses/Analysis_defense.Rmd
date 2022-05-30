@@ -303,7 +303,7 @@ herbiv_e_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,          
           cl = makeCluster(7))
 
-tidy(herbiv_e_ranova.pop) 
+tidy(herbiv_e_ranova.pop) # p = 0.040
 
 
 
@@ -321,10 +321,10 @@ full <- glmer(Herbivory_mean_early_binary ~
 reduced <- update(full, .~. - City_dist)
 
 herbiv_e_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 10,
+          nsim = 1000,
                     cl = makeCluster(7))
 
-tidy(herbiv_e_ranova.fam) # Family: p ~ 0.044
+tidy(herbiv_e_ranova.fam) # Family: p ~ 0.046
 
 
 
@@ -349,10 +349,10 @@ full <- glmer(Herbivory_mean_late_binary ~
 reduced <- update(full, .~. - City_dist)
 
 herbiv_l_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 20,          
+          nsim = 1000,          
           cl = makeCluster(7))
 
-tidy(herbiv_l_ranova.pop) # Pop: p ~ 0.063
+tidy(herbiv_l_ranova.pop) # Pop: p ~ 0.482
 
 
 
@@ -368,10 +368,10 @@ full <- glmer(Herbivory_mean_late_binary ~
 reduced <- update(full, .~. - City_dist)
 
 herbiv_l_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 10,
+          nsim = 1000,
                     cl = makeCluster(7))
 
-tidy(herbiv_l_ranova.fam) # Family: p ~ 0.
+tidy(herbiv_l_ranova.fam) # Family: p ~ 0.502
 
 
 
@@ -382,34 +382,9 @@ herbiv_l_bin_ranova1 <- CreateRanovaOutput_bootstrap(herbiv_l_ranova.fam, herbiv
 
 
 # Weevil scar length (binary)-----
-
-# not converging with block and year
-full <- glmer(Scar_binary ~
-                # Block + Year + 
-                (1|Population/Family) + City_dist,
-                              data = weevil,
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
-
-reduced <- update(full, .~. - City_dist)
-
-weev_ranova <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(7))
-
-
-tidy(weev_ranova) # p ~ 0.495
-
-
-
-
-
 # take out fam
 full <- glmer(Scar_binary ~
-                # Block + Year + 
+                Block + Year + 
                 (1|Population) + City_dist,
                               data = weevil,
                               family = "binomial"(link = "logit"),
@@ -424,7 +399,7 @@ weev_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,          
           cl = makeCluster(7))
 
-tidy(weev_ranova.pop) # Pop: p ~ 0.512
+tidy(weev_ranova.pop) # Pop: p ~ 0.500
 
 
 
@@ -432,7 +407,7 @@ tidy(weev_ranova.pop) # Pop: p ~ 0.512
 
 # take out pop
 full <- glmer(Scar_binary ~
-                # Block + Year + 
+                 Block + Year + 
                 (1|Fam_uniq) + City_dist,
                               data = weevil,
                               family = "binomial"(link = "logit"),
@@ -447,7 +422,7 @@ weev_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
                     cl = makeCluster(7))
 
-tidy(weev_ranova.fam) # Family: p ~ 0.495
+tidy(weev_ranova.fam) # Family: p ~ 0.472
 
 
 
@@ -457,7 +432,7 @@ weev_bin_ranova1 <- CreateRanovaOutput_bootstrap(weev_ranova.fam, weev_ranova.po
   flextable::save_as_html(path = here::here("./Defense_trait_analyses/Tables/Ranova/weevil_binary.html"))
 ```
 
-## Gradient / Urb_score
+## Gradient / Urb_score- NOT UPDATED AS OF 5/28/22
 ### Gaussian models use ranova()
 ```{r}
 ############ MEASURED ONLY IN 2020 #############
@@ -606,16 +581,18 @@ weev_bin_ranova1 <- CreateRanovaOutput_bootstrap(weev_ranova.fam, weev_ranova.po
 
 # Latex-----
 ## test City_dist
-latex_ranova_mod1 <- lmer(Latex_weight_mg^(1/2) ~ (1|Population/Family) + Block + City_dist,
+latex_ranova_mod1 <- lmer(Latex_weight_mg^(1/3) ~ (1|Population/Family) + Block + City_dist,
                              data = latex %>%
                           dplyr::filter(Transect_ID != "Rural"),
                            REML = T)
 
 ## test transect
-latex_ranova_mod2 <- lmer(Latex_weight_mg^(1/2) ~ (1|Population/Family) + Block + Transect_ID,
+latex_ranova_mod2 <- lmer(Latex_weight_mg^(1/3) ~ (1|Population/Family) + Block + Transect_ID,
                              data = latex %>%
                           dplyr::filter(Transect_ID != "Rural"),
                            REML = F)
+
+
 
 
 latex_ranova1 <- CreateRanovaOutput(latex_ranova_mod1, "Latex (Distance)")
@@ -662,6 +639,7 @@ flextable::save_as_html(herb_e_quant_ranova1,
                         herb_e_quant_ranova2,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/herb_e_quant_transects.html"))
 
+
 # Herbivory (after flowering) (quantitative)-------
 ## test City_dist
 herb_l_quant_ranova_mod1 <- lmer(log(Herbivory_mean_late) ~
@@ -695,16 +673,18 @@ flextable::save_as_html(herb_l_quant_ranova1,
                         herb_l_quant_ranova2,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/herb_l_quant_transects.html"))
 
+
+
 # Weevil scar length (quantitative)-----
 
 ## test City_dist
-weev_quant_ranova_mod1 <- lmer(Scar_length_cm^(1/3) ~ (1|Population/Family) + Block + City_dist,
+weev_quant_ranova_mod1 <- lmer(log(Scar_length_cm) ~ (1|Population/Family) + Block + City_dist,
                              data = weevil %>%
                           dplyr::filter(Scar_length_cm > 0 & Transect_ID != "Rural"),
                            REML = T)
 
 ## test transect
-weev_quant_ranova_mod2 <- lmer(Scar_length_cm^(1/3) ~ (1|Population/Family) + Block + Transect_ID,
+weev_quant_ranova_mod2 <- lmer(log(Scar_length_cm) ~ (1|Population/Family) + Block + Transect_ID,
                              data = weevil %>%
                           dplyr::filter(Scar_length_cm > 0 & Transect_ID != "Rural"),
                            REML = F)
@@ -742,10 +722,10 @@ reduced <- glmer(Herbivory_mean_early_binary ~
   )
 
 herb_e_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 10,
+          nsim = 1000,
           cl = makeCluster(7))
 
-tidy(herb_e_ranova.pop) # Pop: p ~ 0.519
+tidy(herb_e_ranova.pop) # Pop: p ~ 0.474
 
 
 ### take out pop
@@ -766,10 +746,10 @@ reduced <- glmer(Herbivory_mean_early_binary ~
   )
 
 herb_e_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 10,
+          nsim = 1000,
           cl = makeCluster(7))
 
-tidy(herb_e_ranova.fam) # Family: p ~ 0.758
+tidy(herb_e_ranova.fam) # Family: p ~ 0.697
 
 
 
@@ -797,6 +777,8 @@ flextable::save_as_html(herb_e_bin_ranova1,
                         herb_e_bin_ranova2,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/herb_e_binary_transects.html"))
 
+
+
 # Herbivory (after flowering) (binary)-------
 ## test city_dist
 ### take out fam
@@ -819,10 +801,10 @@ reduced <- glmer(Herbivory_mean_late_binary ~
   )
 
 herb_l_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 10,
+          nsim = 1000,
           cl = makeCluster(7))
 
-tidy(herb_l_ranova.pop) # Pop: p ~ 0.383
+tidy(herb_l_ranova.pop) # Pop: p ~ 0.202
 
 
 ### take out pop
@@ -843,10 +825,10 @@ reduced <- glmer(Herbivory_mean_late_binary ~
   )
 
 herb_l_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 10,
+          nsim = 1000,
           cl = makeCluster(7))
 
-tidy(herb_l_ranova.fam) # Family: p ~ 0.504
+tidy(herb_l_ranova.fam) # Family: p ~ 0.390
 
 
 
@@ -878,37 +860,37 @@ flextable::save_as_html(herb_l_bin_ranova1,
 ## test city_dist
 ### take out fam
 full <- glmer(Scar_binary ~
-                # Block + Year + 
+                Block + Year + 
                 (1|Population) + City_dist,
                               data = weevil %>%
                 dplyr::filter(Transect_ID != "Rural"),
                               family = "binomial"(link = "logit"),
              na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
+  # ,control=glmerControl(optimizer="bobyqa",
+  #                           optCtrl=list(maxfun=2e5))
   )
 
 reduced <- glmer(Scar_binary ~
-                # Block + Year + 
+                Block + Year + 
                 (1|Population),
                               data = weevil %>%
                 dplyr::filter(Transect_ID != "Rural"),
                               family = "binomial"(link = "logit"),
              na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
+  # ,control=glmerControl(optimizer="bobyqa",
+  #                           optCtrl=list(maxfun=2e5))
   )
 
 weev_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(7))
 
-tidy(weev_ranova.pop) # Pop: p ~ 0.242
+tidy(weev_ranova.pop) # Pop: p ~ 0.353
 
 
 ### take out pop
 full <- glmer(Scar_binary ~
-                # Block + Year + 
+                Block + Year + 
                 (1|Fam_uniq) + City_dist + Transect_ID,
                               data = weevil %>%
                 dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
@@ -918,7 +900,7 @@ full <- glmer(Scar_binary ~
   )
 
 reduced <- glmer(Scar_binary ~
-                # Block + Year + 
+                 Block + Year + 
                 (1|Fam_uniq),
                               data = weevil %>%
                 dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
@@ -931,13 +913,13 @@ weev_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(7))
 
-tidy(weev_ranova.fam) # Family: p ~ 0.523
+tidy(weev_ranova.fam) # Family: p ~ 0.633
 
 
 
 ## test transect
 test_tr <- glmer(Scar_binary ~
-                # Block + Year + 
+                Block + Year + 
                 (1|Population/Family) + Transect_ID,
                               data = weevil %>%
                 dplyr::filter(Transect_ID != "Rural"),
@@ -960,7 +942,7 @@ flextable::save_as_html(weev_bin_ranova1,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/weevil_binary_transects.html"))
 ```
 
-## Urban Subtransects / Urb_score
+## Urban Subtransects / Urb_score- NOT UPDATED AS OF 5/28/22
 ### Gaussian models use ranova()
 ```{r}
 ############ MEASURED ONLY IN 2020 #############
