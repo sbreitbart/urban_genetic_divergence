@@ -179,6 +179,12 @@ r2glmm::r2beta(model = lmer((Latex_weight_mg)^(1/3) ~ # can't handle glmmtmb
                             City_dist,
                           data = latex,
                     REML = F), method = 'sgv', data = latex) # Partial R2 (distance) = 0.001
+
+tmp4 <- latex %>%
+  dplyr::filter(!is.na(Latex_weight_mg))
+predict(latex_fixed_LMM)
+plot(tmp4$City_dist, predict(latex_fixed_LMM))
+
 ```
 
 #### BLUP model
@@ -208,6 +214,12 @@ blup_pops_latex_fixed <- ranef(
                                Transect_ID = first(Transect_ID),
                                City_dist = first(City_dist),
                                Urb_score = first(Urb_score)))
+
+blup_pops_latex_fixed$estimate # these values are small- around 0.02- but they still seem biologically relevant.
+
+# plot BLUPS vs. dist_city
+plot(blup_pops_latex_fixed$City_dist, blup_pops_latex_fixed$estimate) # these are identity-linked, so no transformations needed. Suggests pretty small amount of variation among pops related to urbanization, which we see reflected in very small r-sq of city_dist.
+
 
 # simpler linear model
 latex_fixed_LM <- glmmTMB(estimate ~ 
@@ -298,13 +310,13 @@ blup_pops_herb_early_bin <- ranef(
                                Urb_score   = first(Urb_score)))
 
 # simpler linear model- convergence issue if I don't multiply response by large number. Maybe values were just too small? Were on the order of 1x10-9
-herb_early_binary_random_LM <- glmmTMB(estimate*1000000000 ~ 
+herb_early_binary_random_LM <- glmmTMB(estimate*1000 ~ 
                             City_dist,
                           data = blup_pops_herb_early_bin)
 
 performance::check_model(herb_early_binary_random_LM) # looks ok
 rsq::rsq.partial(
-  lm(estimate*1000000000 ~ City_dist,
+  lm(estimate*1000 ~ City_dist,
      data = blup_pops_herb_early_bin)) # partial R2 = 0.077
 summary(herb_early_binary_random_LM) # 
 car::Anova(herb_early_binary_random_LM) # p = 0.039
@@ -347,6 +359,9 @@ r2glmm::r2beta(model = glmer(Herbivory_mean_early_binary ~
         method = 'sgv',
         data = herbivory %>%
           dplyr::filter(Year != 2019)) # Partial R2 (distance) = 0.004
+
+
+plot(tmp$City_dist, predict(herb_early_binary_fixed_LMM))
 ```
 
 #### BLUP model
@@ -382,14 +397,24 @@ blup_pops_herb_early_bin <- ranef(
                                City_dist   = first(City_dist),
                                Urb_score   = first(Urb_score)))
 
+# plot BLUPS vs. dist_city
+plot(blup_pops_herb_early_bin$City_dist, blup_pops_herb_early_bin$estimate*1000) # range from -1 to 1, so must be logit-transformed. Transform w/inverse logit to get probabilities btwn 0-1
+
+logit.x <- log(x/(1-x))
+inv.logit.x <- exp(logit.x)/(1+exp(logit.x))
+
+blup_pops_herb_early_bin$inv.logit <- exp(blup_pops_herb_early_bin$estimate*1000) / (1+exp(blup_pops_herb_early_bin$estimate*1000))
+
+plot(blup_pops_herb_early_bin$City_dist, blup_pops_herb_early_bin$inv.logit) # these are between 0-1; specifically, 4.9x10^-9 to 5 x 10^-9. Super tiny. begs the question: biologically relevant?? or just negligible? (seems the latter)
+
 # simpler linear model- convergence issue if I don't multiply response by large number. Estimates close to 0 otherwise
-herb_early_binary_fixed_LM <- glmmTMB(estimate*1000000000 ~ 
+herb_early_binary_fixed_LM <- glmmTMB(estimate*1000 ~ 
                             City_dist,
                           data = blup_pops_herb_early_bin)
 
 performance::check_model(herb_early_binary_fixed_LM) # looks ok
 rsq::rsq.partial(
-  lm(estimate*1000000000 ~ City_dist,
+  lm(estimate*1000 ~ City_dist,
      data = blup_pops_herb_early_bin)) # partial R2 = 0.076
 summary(herb_early_binary_fixed_LM) # 
 car::Anova(herb_early_binary_fixed_LM) # p = 0.04
@@ -469,13 +494,13 @@ blup_pops_herb_late_bin <- ranef(
                                Urb_score   = first(Urb_score)))
 
 # simpler linear model- convergence issue
-herb_late_binary_random_LM <- glmmTMB(estimate*1000000000 ~ 
+herb_late_binary_random_LM <- glmmTMB(estimate*1000 ~ 
                             City_dist,
                           data = blup_pops_herb_late_bin)
 
 performance::check_model(herb_late_binary_random_LM) # looks ok
 rsq::rsq.partial(
-  lm(estimate*1000000000 ~ City_dist,
+  lm(estimate*1000 ~ City_dist,
      data = blup_pops_herb_late_bin)) # partial R2 = 0.01
 summary(herb_late_binary_random_LM) #
 car::Anova(herb_late_binary_random_LM) # p = 0.47
@@ -518,6 +543,17 @@ r2glmm::r2beta(model = glmer(Herbivory_mean_late_binary ~
         method = 'sgv',
         data = herbivory %>%
           dplyr::filter(Year != 2019)) # Partial R2 (distance) = 0.001
+
+# logit-transformed data
+tmp2 <- herbivory %>%
+          dplyr::filter(Year != 2019 & !is.na(Herbivory_mean_late_binary))
+plot(tmp2$City_dist, predict(herb_late_binary_fixed_LMM))
+
+# inv.logit-transformed data
+plot(tmp2$City_dist, predict(herb_late_binary_fixed_LMM))
+tmp2$predict <- predict(herb_late_binary_fixed_LMM)
+tmp2$inv.logit <- exp(tmp2$predict) / (1+exp(tmp2$predict))
+plot(tmp2$City_dist, tmp2$inv.logit)
 ```
 
 #### BLUP model
@@ -553,14 +589,25 @@ blup_pops_herb_late_bin <- ranef(
                                City_dist   = first(City_dist),
                                Urb_score   = first(Urb_score)))
 
+# plot BLUPS vs. dist_city
+plot(blup_pops_herb_late_bin$City_dist, blup_pops_herb_late_bin$estimate*1000) # range from -1 to 1, so must be logit-transformed. Transform w/inverse logit to get probabilities btwn 0-1
+
+logit.x <- log(x/(1-x))
+inv.logit.x <- exp(logit.x)/(1+exp(logit.x))
+
+blup_pops_herb_late_bin$inv.logit <- exp(blup_pops_herb_late_bin$estimate*1000) / (1+exp(blup_pops_herb_late_bin$estimate*1000))
+
+plot(blup_pops_herb_late_bin$City_dist, blup_pops_herb_late_bin$inv.logit) # these are between 0-1; specifically, 4.9x10^-9 to 5 x 10^-9. Super tiny. begs the question: biologically relevant?? or just negligible? (seems the latter)
+
+
 # simpler linear model- convergence issue
-herb_late_binary_fixed_LM <- glmmTMB(estimate*1000000000 ~ 
+herb_late_binary_fixed_LM <- glmmTMB(estimate*1000 ~ 
                             City_dist,
                           data = blup_pops_herb_late_bin)
 
 performance::check_model(herb_late_binary_fixed_LM) # looks ok
 rsq::rsq.partial(
-   lm(estimate*1000000000 ~ City_dist,
+   lm(estimate*1000 ~ City_dist,
       data = blup_pops_herb_late_bin)) # partial R2 = 0.010
 summary(herb_late_binary_fixed_LM) # 
 car::Anova(herb_late_binary_fixed_LM) # p = 0.46

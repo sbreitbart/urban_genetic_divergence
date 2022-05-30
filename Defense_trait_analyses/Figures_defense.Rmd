@@ -678,7 +678,7 @@ ggpred_Q2.citydist_herb_e_bin <-
 ggplot(herb_e_bin_urbsubs_01_pred) +
   rep_geoms2 +
   labs(x = "Distance to Urban Center (km)",
-       y = "Chance of Herbivory \n (after flowering)",
+       y = "Chance of Herbivory \n (before flowering)",
        color = "Transect",
        fill = "Transect") +
   scale_y_continuous(labels = scales::percent_format(
@@ -1249,27 +1249,17 @@ dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q2_urbsubs_urbs
 
 
 # Create boxplots
-## Latex
-```{r}
-ggplot(latex,
-       aes(x = Pop_ID,
-           y = Latex_weight_mg)) + 
-  geom_boxplot(
-       size = 0.5) + 
-  geom_point(position = "jitter") + 
-  theme_pubclean()
-```
-
 ## Weevil damage
 ```{r}
 ggplot(weevil %>%
          dplyr::filter(Transect_ID != "Rural" &
                          Scar_length_cm != 0),
        aes(x = Transect_ID,
-           y = Scar_length_cm)) + 
+           y = Scar_length_cm,
+           color = Transect_ID)) + 
   geom_boxplot(
        size = 0.5) + 
-  geom_point(position = "jitter") + 
+ # geom_point(position = "jitter") + 
   theme_pubclean()
 ```
 
