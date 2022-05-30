@@ -1,9 +1,9 @@
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 source("libraries.R")
 source("functions.R")
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 
 # LATEX-----
 latex <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_latex_clean.csv")) %>%
@@ -43,11 +43,11 @@ weevil %<>%
   dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 # Basic data exploration
-plot(Latex_weight_mg ~ City_dist, data = latex) 
-
-boxplot(Latex_weight_mg ~ Block, data = latex)
+# plot(Latex_weight_mg ~ City_dist, data = latex) 
+# 
+# boxplot(Latex_weight_mg ~ Block, data = latex)
 
 ltx_gr_city_m1 <- glmmTMB(Latex_weight_mg^(1/3) ~
                             Block +
@@ -62,7 +62,7 @@ ltx_gr_city_m1 <- glmmTMB(Latex_weight_mg^(1/3) ~
 # car::Anova(ltx_gr_city_m1)
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 ltx_gr_usc_m1 <- glmmTMB(Latex_weight_mg^(1/3) ~ Block +
                            (1|Population/Family) +
                            Urb_score,
@@ -75,7 +75,7 @@ car::Anova(ltx_gr_usc_m1)
 
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 ltx_urbsubs_city_m1 <- glmmTMB(Latex_weight_mg^(1/3) ~
                                  Block +
                                  (1|Population/Family) +
@@ -106,7 +106,7 @@ ltx_urbsubs_city_m2 <- glmmTMB(Latex_weight_mg^(1/3) ~
 AIC(ltx_urbsubs_city_m1, ltx_urbsubs_city_m2) # m2 best but <2 AIC away
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 ltx_urbsubs_usc_m1 <- glmmTMB(Latex_weight_mg^(1/3) ~
                                  Block +
                                  (1|Population/Family) +
@@ -137,7 +137,7 @@ ltx_urbsubs_usc_m2 <- glmmTMB(Latex_weight_mg^(1/3) ~
 AIC(ltx_urbsubs_usc_m1, ltx_urbsubs_usc_m2) # m1 best
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 # # Basic data exploration
 # plot(Herbivory_mean_early ~ City_dist, data = herbivory) 
 # 
@@ -235,7 +235,7 @@ herbiv_e_gr_dist_m1_quant <- glmmTMB(log(Herbivory_mean_early) ~
 # car::Anova(herbiv_e_gr_dist_m1_quant)
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 # HURDLE MODEL
 herbiv_e_gr_usc_m1_bin <- glmmTMB(Herbivory_mean_early_binary ~
                                Block +
@@ -266,7 +266,7 @@ herbiv_e_gr_usc_m1_quant <- glmmTMB(log(Herbivory_mean_early) ~
 # car::Anova(herbiv_e_gr_usc_m1_quant)
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 # HURDLE MODEL
 herbiv_e_urbsubs_dist_m1_bin <- glmmTMB(Herbivory_mean_early_binary ~
                                Block +
@@ -331,7 +331,7 @@ herbiv_e_urbsubs_dist_m2_quant <- glmmTMB(log(Herbivory_mean_early) ~
 # AIC(herbiv_e_urbsubs_dist_m1_quant, herbiv_e_urbsubs_dist_m2_quant) # m1 better but <2 AIC apart
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 # HURDLE MODEL
 herbiv_e_urbsubs_usc_m1_bin <- glmmTMB(Herbivory_mean_early_binary ~
                               Block +
@@ -394,7 +394,7 @@ herbiv_e_urbsubs_usc_m2_quant <- glmmTMB(log(Herbivory_mean_early) ~
 # AIC(herbiv_e_urbsubs_usc_m1_quant, herbiv_e_urbsubs_usc_m2_quant) # m1 better but <2 AIC apart
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 ## Basic data exploration
 # plot(Herbivory_mean_late ~ City_dist, data = herbivory)
 # 
@@ -438,7 +438,7 @@ herbiv_l_gr_dist_m1_quant <- glmmTMB(log(Herbivory_mean_late) ~
 
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 # HURDLE MODEL-----
 herbiv_l_gr_usc_m1_bin <- glmmTMB(Herbivory_mean_late_binary ~
                                Block +
@@ -469,7 +469,7 @@ herbiv_l_gr_usc_m1_quant <- glmmTMB(log(Herbivory_mean_late) ~
 # car::Anova(herbiv_l_gr_usc_m1_quant)
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 # HURDLE MODEL
 herbiv_l_urbsubs_dist_m1_bin <- glmmTMB(Herbivory_mean_late_binary ~
                                Block +
@@ -534,7 +534,7 @@ herbiv_l_urbsubs_dist_m2_quant <- glmmTMB(log(Herbivory_mean_late) ~
 
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 # HURDLE MODEL
 herbiv_l_urbsubs_usc_m1_bin <- glmmTMB(Herbivory_mean_late_binary ~
                                Block +
@@ -600,7 +600,7 @@ herbiv_l_urbsubs_usc_m2_quant <- glmmTMB(log(Herbivory_mean_late) ~
 # AIC(herbiv_l_urbsubs_usc_m1_quant, herbiv_l_urbsubs_usc_m2_quant) # m2 better but <2 AIC apart
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 # # Basic data exploration
 # plot(Scar_length_cm ~ City_dist, data = weevil)
 # 
@@ -636,7 +636,7 @@ weev_gr_dist_m1_quant <- glmmTMB(log(Scar_length_cm) ~
 # weev_gr_dist_m1_quant %>% car::Anova()
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 # BINARY MODEL-----
 weev_gr_usc_m1_bin <- glmmTMB(Scar_binary ~
                                 Block + 
@@ -666,7 +666,7 @@ weev_gr_usc_m1_quant <- glmmTMB(log(Scar_length_cm) ~
 
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 # BINARY MODEL-----
 weev_urbsubs_dist_m1_bin <- glmmTMB(Scar_binary ~
                                       Block + 
@@ -729,7 +729,7 @@ weev_urbsubs_dist_m2_quant <- glmmTMB(log(Scar_length_cm) ~
 # AIC(weev_urbsubs_dist_m1_quant, weev_urbsubs_dist_m2_quant) # m2 best but <2 AIC away
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 # BINARY MODEL-----
 weev_urbsubs_usc_m1_bin <- glmmTMB(Scar_binary ~
                                       Block + 
@@ -792,7 +792,7 @@ weev_urbsubs_usc_m2_quant <- glmmTMB(log(Scar_length_cm) ~
 
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 latex_mods <- list(
 
 ## City_dist / gradient
@@ -812,7 +812,7 @@ ltx_urbsubs_usc_m1 # Best model
 names(latex_mods) <- c("City_gr", "Usc_gr", "City_urbsubs_alt", "City_urbsubs_best", "Usc_urbsubs")
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 herb_early_mods_binomial <- list(
 
 ## City_dist / gradient
@@ -862,7 +862,7 @@ names(herb_early_mods_quant) <- c("City_gr",
                             "Usc_urbsubs_alt")
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 herb_late_mods_binomial <- list(
 
 ## City_dist / gradient
@@ -914,7 +914,7 @@ names(herb_late_mods_quant) <- c("City_gr",
                             "Usc_urbsubs_best")
 
 
-## ----------------------------------------------------------
+## --------------------------------------------------------------------
 weev_mods_binomial <- list(
 
 ## City_dist / gradient

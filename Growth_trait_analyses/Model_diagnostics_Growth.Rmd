@@ -1477,3 +1477,175 @@ names(mortality_mods) <- c("City_gr",
                      "Usc_urbsubs_alt",
                      "Usc_urbsubs_best")
 ```
+
+## Create full list
+```{r}
+
+all_models <- list(
+ldmc_mods,
+sla_mods,
+heights_early_mods,
+heights_late_mods,
+rgr_mods,
+ramets_early_mods,
+ramets_late_mods #,
+# mortality_mods -- add when ready
+)
+
+names(all_models) <- c(
+"ldmc_mods",
+"sla_mods",
+"heights_early_mods",
+"heights_late_mods",
+"rgr_mods",
+"ramets_early_mods",
+"ramets_late_mods" #,
+# "mortality_mods" -- add when ready
+  )
+```
+
+## Create separate lists of best vs. alt models for city_dist vs urb_score
+### LDMC
+
+```{r}
+## Best
+### City_dist
+ldmc_mods_best_c <- ldmc_mods[c(1,4)]
+
+### Urb_score
+ldmc_mods_best_u <- ldmc_mods[c(2,6)]
+
+## Alt
+### City_dist
+ldmc_mods_alt_c <- ldmc_mods[3]
+
+### Urb_score
+ldmc_mods_alt_u <- ldmc_mods[5]
+```
+
+### SLA
+
+```{r}
+## Best
+### City_dist
+sla_mods_best_c <- sla_mods[c(1,4)]
+
+### Urb_score
+sla_mods_best_u <- sla_mods[c(2,6)]
+
+## Alt
+### City_dist
+sla_mods_alt_c <- sla_mods[3]
+
+### Urb_score
+sla_mods_alt_u <- sla_mods[5]
+```
+
+### Heights- Early
+
+```{r}
+## Best
+### City_dist
+heights_early_mods_best_c <- heights_early_mods[c(1,4)]
+
+### Urb_score
+heights_early_mods_best_u <- heights_early_mods[c(2,6)]
+
+## Alt
+### City_dist
+heights_early_mods_alt_c <- heights_early_mods[3]
+
+### Urb_score
+heights_early_mods_alt_u <- heights_early_mods[5]
+```
+
+### Heights- Late
+
+```{r}
+## Best
+### City_dist
+heights_late_mods_best_c <- heights_late_mods[c(1,4)]
+
+### Urb_score
+heights_late_mods_best_u <- heights_late_mods[c(2,6)]
+
+## Alt
+### City_dist
+heights_late_mods_alt_c <- heights_late_mods[3]
+
+### Urb_score
+heights_late_mods_alt_u <- heights_late_mods[5]
+```
+
+### Relative growth rate
+
+```{r}
+## Best
+### City_dist
+rgr_mods_best_c <- rgr_mods[c(1,4)]
+
+### Urb_score
+rgr_mods_best_u <- rgr_mods[c(2,6)]
+
+## Alt
+### City_dist
+rgr_mods_alt_c <- rgr_mods[3]
+
+### Urb_score
+rgr_mods_alt_u <- rgr_mods[5]
+```
+
+### Ramets- Early
+
+```{r}
+## Best
+### City_dist
+ramets_early_mods_best_c <- ramets_early_mods[c(1,4)]
+
+### Urb_score
+ramets_early_mods_best_u <- ramets_early_mods[c(2,6)]
+
+## Alt
+### City_dist
+ramets_early_mods_alt_c <- ramets_early_mods[3]
+
+### Urb_score
+ramets_early_mods_alt_u <- ramets_early_mods[5]
+```
+
+### Ramets- Late
+
+```{r}
+## Best
+### City_dist
+ramets_late_mods_best_c <- ramets_late_mods[c(1,4)]
+
+### Urb_score
+ramets_late_mods_best_u <- ramets_late_mods[c(2,6)]
+
+## Alt
+### City_dist
+ramets_late_mods_alt_c <- ramets_late_mods[3]
+
+### Urb_score
+ramets_late_mods_alt_u <- ramets_late_mods[5]
+```
+
+### Mortality
+
+```{r}
+# ## Best
+# ### City_dist
+# ldmc_mods_best_c <- ldmc_mods[c(1,4)]
+# 
+# ### Urb_score
+# ldmc_mods_best_u <- ldmc_mods[c(2,6)]
+# 
+# ## Alt
+# ### City_dist
+# ldmc_mods_alt_c <- ldmc_mods[3]
+# 
+# ### Urb_score
+# ldmc_mods_alt_u <- ldmc_mods[5]
+```
+

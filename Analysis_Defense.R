@@ -1,71 +1,150 @@
----
-title: "Defense Trait Analysis"
-author: "Sophie Breitbart"
-output:
-  html_document:
-    number_sections: true
-    df_print: paged
-    toc: yes
-    toc_depth: 6
-    toc_float:
-      collapsed: yes
-  pdf_document:
-    toc: yes
-    toc_depth: '2'
-editor_options: 
-  chunk_output_type: console
-NOTES:
-  -Still to do--
-    -try to do an RDA (or PCA?) with all the traits
-    -make a ReadMe file for each level
-    -calculate heritability coefficients
-
-# WHEN TOTALLY DONE, type this:
-# renv::activate()
-# renv::snapshot()
----
-
-+-----------------------------+-----------+-----------+-----------+
-| Trait                       | 2019 Data | 2020 Data | 2021 Data |
-+=============================+:=========:+:=========:+:=========:+
-| Herbivory: Before flowering |           | X         | X         |
-+-----------------------------+-----------+-----------+-----------+
-| Herbivory: After flowering  | X         | X         | X         |
-+-----------------------------+-----------+-----------+-----------+
-| Weevil damage: Quantitative |           | X         | X         |
-+-----------------------------+-----------+-----------+-----------+
-| Weevil damage: Binary       |           | X         | X         |
-+-----------------------------+-----------+-----------+-----------+
-| Cardenolide Concentration   |           | X         |           |
-+-----------------------------+-----------+-----------+-----------+
-| Latex Volume                |           | X         |           |
-+-----------------------------+-----------+-----------+-----------+
-
-# Set up notebook
-## Load libraries and add functions
-
-```{r}
+## --------------------------------------------------------------------
 source("libraries.R")
 source("functions.R")
-```
 
-## Import final models
-```{r}
+
+## --------------------------------------------------------------------
 source(knitr::purl("Defense_trait_analyses/Model_diagnostics_Defense.Rmd", quiet=TRUE))
-```
 
-# Ranova
-The point: to determine if there is much genetic diversity present within populations for natural selection to act on.
-- ranova can't handle GLMMTMB functions so I'll use lmer instead
-- Also using Pop/Fam instead of Pop:Fam or Pop/Fam_uniq like I did when making models earlier
-## Set seed for random processes (bootstrapping)
-```{r}
+all_models <- list(
+latex_mods         , # Latex
+herb_early_mods_binomial    , # Herbivory, before flowering:  binomial (part of hurdle models)
+herb_early_mods_quant    , # Herbivory, before flowering: quantitative (part of hurdle models)
+herb_late_mods_binomial    , # Herbivory, after flowering:  binomial (part of hurdle models)
+herb_late_mods_quant    , # Herbivory, after flowering: quantitative (part of hurdle models)
+weev_mods_binomial , # Weevil scar: binomial (part of hurdle models)
+weev_mods_quant)     # Weevil scar: quantitative (part of hurdle models)
+
+names(all_models) <- c(
+"latex_mods"         ,
+"herb_early_mods_binomial"    ,
+"herb_early_mods_quant"    ,
+"herb_late_mods_binomial"     ,
+"herb_late_mods_quant"     ,
+"weev_mods_binomial" ,
+"weev_mods_quant")
+
+
+## --------------------------------------------------------------------
+## Best
+### City_dist
+latex_mods_best_c <- latex_mods[c(1,4)]
+
+### Urb_score
+latex_mods_best_u <- latex_mods[c(2,5)]
+
+## Alt
+### City_dist
+latex_mods_alt_c <- latex_mods[3]
+
+### Urb_score- NONE
+
+
+
+## --------------------------------------------------------------------
+## Best
+### City_dist
+herb_e_bin_mods_best_c <- herb_early_mods_binomial[c(1,3)]
+
+### Urb_score
+herb_e_bin_mods_best_u <- herb_early_mods_binomial[c(2,5)]
+
+## Alt
+### City_dist- NONE
+
+### Urb_score
+herb_e_bin_mods_alt_u <- herb_early_mods_binomial[4]
+
+
+
+## --------------------------------------------------------------------
+## Best
+### City_dist
+herb_e_quant_mods_best_c <- herb_early_mods_quant[c(1,3)]
+
+### Urb_score
+herb_e_quant_mods_best_u <- herb_early_mods_quant[c(2,5)]
+
+## Alt
+### City_dist
+herb_e_quant_mods_alt_c <- herb_early_mods_quant[4]
+
+### Urb_score
+herb_e_quant_mods_alt_u <- herb_early_mods_quant[6]
+
+
+
+## --------------------------------------------------------------------
+## Best
+### City_dist
+herb_l_bin_mods_best_c <- herb_late_mods_binomial[c(1,4)]
+
+### Urb_score
+herb_l_bin_mods_best_u <- herb_late_mods_binomial[c(2,6)]
+
+## Alt
+### City_dist
+herb_l_bin_mods_alt_c <- herb_late_mods_binomial[3]
+
+### Urb_score
+herb_l_bin_mods_alt_u <- herb_late_mods_binomial[5]
+
+
+
+## --------------------------------------------------------------------
+## Best
+### City_dist
+herb_l_quant_mods_best_c <- herb_late_mods_quant[c(1,4)]
+
+### Urb_score
+herb_l_quant_mods_best_u <- herb_late_mods_quant[c(2,6)]
+
+## Alt
+### City_dist
+herb_l_quant_mods_alt_c <- herb_late_mods_quant[3]
+
+### Urb_score
+herb_l_quant_mods_alt_u <- herb_late_mods_quant[5]
+
+
+
+## --------------------------------------------------------------------
+## Best
+### City_dist
+weev_bin_mods_best_c <- weev_mods_binomial[c(1,4)]
+
+### Urb_score
+weev_bin_mods_best_u <- weev_mods_binomial[c(2,6)]
+
+## Alt
+### City_dist
+weev_bin_mods_alt_c <- weev_mods_binomial[3]
+
+### Urb_score
+weev_bin_mods_alt_u <- weev_mods_binomial[5]
+
+
+## --------------------------------------------------------------------
+## Best
+### City_dist
+weev_quant_mods_best_c <- weev_mods_quant[c(1,4)]
+
+### Urb_score
+weev_quant_mods_best_u <- weev_mods_quant[c(2,6)]
+
+## Alt
+### City_dist
+weev_quant_mods_alt_c <- weev_mods_quant[3]
+
+### Urb_score
+weev_quant_mods_alt_u <- weev_mods_quant[5]
+
+
+## --------------------------------------------------------------------
 set.seed(45)
-```
 
-## Gradient / City_dist
-### Gaussian models use ranova()
-```{r}
+
+## --------------------------------------------------------------------
 ############ MEASURED ONLY IN 2020 #############
 ################################################
 
@@ -129,10 +208,9 @@ weev_quant_ranova_mod1 <- lmer(log(Scar_length_cm) ~
 weev_q_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod1, "Weevil Damage: Quantitative") %T>%
   flextable::save_as_html(.,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/weevil_quant.html"))
-```
 
-### Generalized LMM use bootstrapping with pbmodcomp()
-```{r}
+
+## --------------------------------------------------------------------
 # NOT PERFECT b/c can't nest family within pop
 # Ben Bolker says it should work too: https://stackoverflow.com/questions/69842066/testing-for-the-significance-of-a-random-effect-in-a-mixed-model
 # https://github.com/glmmTMB/glmmTMB/issues/456
@@ -285,11 +363,9 @@ tidy(weev_ranova.fam) # Family: p ~ 0.472
 # merge Pop and Fam ranovas
 weev_bin_ranova1 <- CreateRanovaOutput_bootstrap(weev_ranova.fam, weev_ranova.pop, "Weevil Damage: Binary") %T>%
   flextable::save_as_html(path = here::here("./Defense_trait_analyses/Tables/Ranova/weevil_binary.html"))
-```
 
-## Gradient / Urb_score- NOT UPDATED AS OF 5/28/22
-### Gaussian models use ranova()
-```{r}
+
+## --------------------------------------------------------------------
 ############ MEASURED ONLY IN 2020 #############
 ################################################
 
@@ -336,10 +412,9 @@ weev_quant_ranova_mod2 <- lmer(Scar_length_cm^(1/3) ~ Block + Year + (1|Populati
 weev_q_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod2, "Weevil Damage: Quantitative") %T>%
   flextable::save_as_html(.,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/Urb_score/weevil_quant.html"))
-```
 
-### Generalized LMM use bootstrapping with pbmodcomp()
-```{r}
+
+## --------------------------------------------------------------------
 # NOT PERFECT b/c can't nest family within pop
 # Ben Bolker says it should work too: https://stackoverflow.com/questions/69842066/testing-for-the-significance-of-a-random-effect-in-a-mixed-model
 # https://github.com/glmmTMB/glmmTMB/issues/456
@@ -403,11 +478,9 @@ tidy(weev_ranova.fam) # Family: p ~ 0.661
 # merge Pop and Fam ranovas
 weev_bin_ranova1 <- CreateRanovaOutput_bootstrap(weev_ranova.fam, weev_ranova.pop, "Weevil Damage: Binary") %T>%
   flextable::save_as_html(path = here::here("./Defense_trait_analyses/Tables/Ranova/Urb_score/weevil_binary.html"))
-```
 
-## Urban Subtransects / City_dist
-### Gaussian models use ranova()
-```{r}
+
+## --------------------------------------------------------------------
 ############ MEASURED ONLY IN 2020 #############
 ################################################
 
@@ -529,10 +602,9 @@ weev_quant_ranova2 <- CreateRanovaOutput_Q2(weev_quant_ranova_mod2, "Weevil Dama
 flextable::save_as_html(weev_quant_ranova1,
                         weev_quant_ranova2,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/weev_quant_transects.html"))
-```
 
-### Generalized LMM use bootstrapping with pbmodcomp()
-```{r}
+
+## --------------------------------------------------------------------
 # Herbivory (before flowering) (binary)-------
 ## test city_dist
 ### take out fam
@@ -773,11 +845,9 @@ weev_bin_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Weevil Damage: Binary (Trans
 flextable::save_as_html(weev_bin_ranova1,
                         weev_bin_ranova2,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/weevil_binary_transects.html"))
-```
 
-## Urban Subtransects / Urb_score- NOT UPDATED AS OF 5/28/22
-### Gaussian models use ranova()
-```{r}
+
+## --------------------------------------------------------------------
 ############ MEASURED ONLY IN 2020 #############
 ################################################
 
@@ -850,10 +920,9 @@ weev_quant_ranova2 <- CreateRanovaOutput_Q2(weev_quant_ranova_mod2, "Weevil Dama
 flextable::save_as_html(weev_quant_ranova1,
                         weev_quant_ranova2,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/Urb_score/weev_quant_transects.html"))
-```
 
-### Generalized LMM use bootstrapping with pbmodcomp()
-```{r}
+
+## --------------------------------------------------------------------
 # Herbivory (before flowering)-------
 ## glmer can't handle beta distribution, and 
 ## PBmodcomp can't handle GLMMTMB, so will skip this one
@@ -938,211 +1007,154 @@ weev_bin_ranova2 # created in city_dist chunk above
 flextable::save_as_html(weev_bin_ranova1,
                         weev_bin_ranova2,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/Urb_score/weevil_binary_transects.html"))
-```
 
-# Anova
-## Latex
-### Best Models
-#### City_dist
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(latex_mods_best_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/latex_citydist.png"))
-```
 
-#### Urb_score
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(latex_mods_best_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/latex_urbscore.png"))
-```
 
-### Alt Models
-#### City_dist
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(latex_mods_alt_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/latex_citydist_alt.png"))
-```
 
-#### Urb_score
-```{r}
+
+## --------------------------------------------------------------------
 # NONE
-```
-## Herbivory- Early: Binomial
-### Best Models
-#### City_dist
-```{r}
+
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(herb_e_bin_mods_best_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_e_bin_citydist.png"))
-```
 
-#### Urb_score
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(herb_e_bin_mods_best_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_e_bin_urbscore.png"))
-```
 
-### Alt Models
-#### City_dist
-```{r}
+
+## --------------------------------------------------------------------
 # NONE
-```
 
-#### Urb_score
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(herb_e_bin_mods_alt_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_e_bin_urbscore_alt.png"))
-```
 
-## Herbivory- Early: Quantitative
-### Best Models
-#### City_dist
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(herb_e_quant_mods_best_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_e_quant_citydist.png"))
-```
 
-#### Urb_score
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(herb_e_quant_mods_best_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_e_quant_urbscore.png"))
-```
 
-### Alt Models
-#### City_dist
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(herb_e_quant_mods_alt_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_e_quant_citydist_alt.png"))
-```
 
-#### Urb_score
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(herb_e_quant_mods_alt_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_e_quant_urbscore_alt.png"))
-```
 
 
-## Herbivory- Late: Binomial
-### Best Models
-#### City_dist
-```{r}
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(herb_l_bin_mods_best_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_l_bin_citydist.png"))
-```
 
-#### Urb_score
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(herb_l_bin_mods_best_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_l_bin_urbscore.png"))
-```
 
-### Alt Models
-#### City_dist
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(herb_l_bin_mods_alt_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_l_bin_citydist_alt.png"))
-```
 
-#### Urb_score
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(herb_l_bin_mods_alt_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_l_bin_urbscore_alt.png"))
-```
 
-## Herbivory- Late: Quantitative
-### Best Models
-#### City_dist
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(herb_l_quant_mods_best_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_l_quant_citydist.png"))
-```
 
-#### Urb_score
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(herb_l_quant_mods_best_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/herb_l_quant_urbscore.png"))
-```
 
-### Alt Models
-#### City_dist
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(herb_l_quant_mods_alt_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_l_quant_citydist_alt.png"))
-```
 
-#### Urb_score
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(herb_l_quant_mods_alt_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/herb_l_quant_urbscore_alt.png"))
-```
 
 
-## Weevil Scar- Binomial
-### Best Models
-#### City_dist
-```{r}
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(weev_bin_mods_best_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/weev_bin_citydist.png"))
-```
 
-#### Urb_score
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(weev_bin_mods_best_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/weev_bin_urbscore.png"))
-```
 
-### Alt Models
-#### City_dist
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(weev_bin_mods_alt_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/weev_bin_citydist_alt.png"))
-```
 
-#### Urb_score
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(weev_bin_mods_alt_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/weev_bin_urbscore_alt.png"))
-```
 
 
-## Weevil Scar- Quantitative
-### Best Models
-#### City_dist
-```{r}
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(weev_quant_mods_best_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/weev_quant_citydist.png"))
-```
 
-#### Urb_score
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(weev_quant_mods_best_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Best_models/weev_quant_urbscore.png"))
-```
 
-### Alt Models
-#### City_dist
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(weev_quant_mods_alt_c) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/weev_quant_citydist_alt.png"))
-```
 
-#### Urb_score
-```{r}
+
+## --------------------------------------------------------------------
 make_all_anovas_tidy_altmods(weev_quant_mods_alt_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/weev_quant_urbscore_alt.png"))
-```
 
 
-# R-squared values
-```{r}
+## --------------------------------------------------------------------
 all_rsq <- lapply(all_models, lapply, r.squaredGLMM) %>%
   unlist(recursive = FALSE) %T>%
   print()
 
-```
 
-# Calculate heritability & Qst
-Just looking at gradient models- all pops included. 
-h2 represents the average heritability across populations after removing the genetic effects due to population differences.
-```{r}
+
+## --------------------------------------------------------------------
 # LDMC-----
 VarCorr(
   update(
@@ -1247,10 +1259,9 @@ Calc_h2_qst(0.198485  ,
                     0.091009 ,
                     1.059765  )
 
-```
 
-# Calculate additive genetic coefficient of variation
-```{r}
+
+## --------------------------------------------------------------------
 CVA <- function(fam_var, pop_var, resid_var, trait_mean){
   add_var <- 2*(fam_var^2)
   total_wp_var <- (fam_var^2) + # family
@@ -1315,5 +1326,4 @@ CVA(1.0308e-04,
     herb_l_bin_mods_best_c[[1]], REML = T) %>%
     sigma() ,
     herbiv_l_bin_mean[[1]])
-```
 

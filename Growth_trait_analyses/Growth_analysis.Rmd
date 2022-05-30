@@ -41,214 +41,20 @@ source("libraries.R")
 source("functions.R")
 ```
 
-## Import data
-
-```{r}
-# SLA & LDMC-----
-sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv")) %>%
-  dplyr::select(., -c(1:2)) %>%
-  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.character) %>%
-    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.factor)
-
-str(sla_ldmc)
-sla_ldmc %<>%
-  dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
-
-heights <- read.csv(here::here("./Joined_annual_data/heights.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
-  dplyr::select(., -1) %>%
-  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
-    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor) %>%
-  dplyr::mutate_at(vars(c("rel_growth_rate")), as.numeric)
-
-str(heights)
-
-
-
-survival <- read.csv(here::here("./Joined_annual_data/survival.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
-  dplyr::select(., -1) %>%
-  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
-    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor)
-
-str(survival)
-```
-
 ## Import final models
 
 ### Create full list
 
 ```{r}
 source(knitr::purl("Growth_trait_analyses/Model_diagnostics_Growth.Rmd", quiet=TRUE))
-
-all_models <- list(
-ldmc_mods,
-sla_mods,
-heights_early_mods,
-heights_late_mods,
-rgr_mods,
-ramets_early_mods,
-ramets_late_mods #,
-# mortality_mods -- add when ready
-)
-
-names(all_models) <- c(
-"ldmc_mods",
-"sla_mods",
-"heights_early_mods",
-"heights_late_mods",
-"rgr_mods",
-"ramets_early_mods",
-"ramets_late_mods" #,
-# "mortality_mods" -- add when ready
-  )
-```
-
-### Create separate lists of best vs. alt models for city_dist vs urb_score
-
-#### LDMC
-
-```{r}
-## Best
-### City_dist
-ldmc_mods_best_c <- ldmc_mods[c(1,4)]
-
-### Urb_score
-ldmc_mods_best_u <- ldmc_mods[c(2,6)]
-
-## Alt
-### City_dist
-ldmc_mods_alt_c <- ldmc_mods[3]
-
-### Urb_score
-ldmc_mods_alt_u <- ldmc_mods[5]
-```
-
-#### SLA
-
-```{r}
-## Best
-### City_dist
-sla_mods_best_c <- sla_mods[c(1,4)]
-
-### Urb_score
-sla_mods_best_u <- sla_mods[c(2,6)]
-
-## Alt
-### City_dist
-sla_mods_alt_c <- sla_mods[3]
-
-### Urb_score
-sla_mods_alt_u <- sla_mods[5]
-```
-
-#### Heights- Early
-
-```{r}
-## Best
-### City_dist
-heights_early_mods_best_c <- heights_early_mods[c(1,4)]
-
-### Urb_score
-heights_early_mods_best_u <- heights_early_mods[c(2,6)]
-
-## Alt
-### City_dist
-heights_early_mods_alt_c <- heights_early_mods[3]
-
-### Urb_score
-heights_early_mods_alt_u <- heights_early_mods[5]
-```
-
-#### Heights- Late
-
-```{r}
-## Best
-### City_dist
-heights_late_mods_best_c <- heights_late_mods[c(1,4)]
-
-### Urb_score
-heights_late_mods_best_u <- heights_late_mods[c(2,6)]
-
-## Alt
-### City_dist
-heights_late_mods_alt_c <- heights_late_mods[3]
-
-### Urb_score
-heights_late_mods_alt_u <- heights_late_mods[5]
-```
-
-#### Relative growth rate
-
-```{r}
-## Best
-### City_dist
-rgr_mods_best_c <- rgr_mods[c(1,4)]
-
-### Urb_score
-rgr_mods_best_u <- rgr_mods[c(2,6)]
-
-## Alt
-### City_dist
-rgr_mods_alt_c <- rgr_mods[3]
-
-### Urb_score
-rgr_mods_alt_u <- rgr_mods[5]
-```
-
-#### Ramets- Early
-
-```{r}
-## Best
-### City_dist
-ramets_early_mods_best_c <- ramets_early_mods[c(1,4)]
-
-### Urb_score
-ramets_early_mods_best_u <- ramets_early_mods[c(2,6)]
-
-## Alt
-### City_dist
-ramets_early_mods_alt_c <- ramets_early_mods[3]
-
-### Urb_score
-ramets_early_mods_alt_u <- ramets_early_mods[5]
-```
-
-#### Ramets- Late
-
-```{r}
-## Best
-### City_dist
-ramets_late_mods_best_c <- ramets_late_mods[c(1,4)]
-
-### Urb_score
-ramets_late_mods_best_u <- ramets_late_mods[c(2,6)]
-
-## Alt
-### City_dist
-ramets_late_mods_alt_c <- ramets_late_mods[3]
-
-### Urb_score
-ramets_late_mods_alt_u <- ramets_late_mods[5]
-```
-
-#### Mortality
-
-```{r}
-# ## Best
-# ### City_dist
-# ldmc_mods_best_c <- ldmc_mods[c(1,4)]
-# 
-# ### Urb_score
-# ldmc_mods_best_u <- ldmc_mods[c(2,6)]
-# 
-# ## Alt
-# ### City_dist
-# ldmc_mods_alt_c <- ldmc_mods[3]
-# 
-# ### Urb_score
-# ldmc_mods_alt_u <- ldmc_mods[5]
 ```
 
 # Ranova
+## Set seed for random processes (bootstrapping)
+```{r}
+set.seed(45)
+```
+
 ## gaussian distribution models
 ### Gradient
 #### City_dist
@@ -798,7 +604,6 @@ flextable::save_as_html(# ramets_l_ranova1,
 ```
 
 # Anova
-
 ## LDMC
 
 ### Best Models
@@ -1047,8 +852,6 @@ make_all_anovas_tidy_altmods(ramets_late_mods_alt_u) %>%
 ```{r}
 all_rsq <- lapply(all_models, lapply, r.squaredGLMM) %>%
   unlist(recursive = FALSE)
-
-# super low marginal R2 values
 ```
 
 # Calculate heritability & Qst (RETURN)
