@@ -966,3 +966,139 @@ names(weev_mods_quant) <- c("City_gr",
                       "Usc_urbsubs_alt",
                       "Usc_urbsubs_best")
 
+
+## --------------------------------------------------------------------
+
+all_models <- list(
+latex_mods         , # Latex
+herb_early_mods_binomial    , # Herbivory, before flowering:  binomial (part of hurdle models)
+herb_early_mods_quant    , # Herbivory, before flowering: quantitative (part of hurdle models)
+herb_late_mods_binomial    , # Herbivory, after flowering:  binomial (part of hurdle models)
+herb_late_mods_quant    , # Herbivory, after flowering: quantitative (part of hurdle models)
+weev_mods_binomial , # Weevil scar: binomial (part of hurdle models)
+weev_mods_quant)     # Weevil scar: quantitative (part of hurdle models)
+
+names(all_models) <- c(
+"latex_mods"         ,
+"herb_early_mods_binomial"    ,
+"herb_early_mods_quant"    ,
+"herb_late_mods_binomial"     ,
+"herb_late_mods_quant"     ,
+"weev_mods_binomial" ,
+"weev_mods_quant")
+
+
+## --------------------------------------------------------------------
+## Best
+### City_dist
+latex_mods_best_c <- latex_mods[c(1,4)]
+
+### Urb_score
+latex_mods_best_u <- latex_mods[c(2,5)]
+
+## Alt
+### City_dist
+latex_mods_alt_c <- latex_mods[3]
+
+### Urb_score- NONE
+
+
+
+## --------------------------------------------------------------------
+## Best
+### City_dist
+herb_e_bin_mods_best_c <- herb_early_mods_binomial[c(1,3)]
+
+### Urb_score
+herb_e_bin_mods_best_u <- herb_early_mods_binomial[c(2,5)]
+
+## Alt
+### City_dist- NONE
+
+### Urb_score
+herb_e_bin_mods_alt_u <- herb_early_mods_binomial[4]
+
+
+
+## --------------------------------------------------------------------
+## Best
+### City_dist
+herb_e_quant_mods_best_c <- herb_early_mods_quant[c(1,3)]
+
+### Urb_score
+herb_e_quant_mods_best_u <- herb_early_mods_quant[c(2,5)]
+
+## Alt
+### City_dist
+herb_e_quant_mods_alt_c <- herb_early_mods_quant[4]
+
+### Urb_score
+herb_e_quant_mods_alt_u <- herb_early_mods_quant[6]
+
+
+
+## --------------------------------------------------------------------
+## Best
+### City_dist
+herb_l_bin_mods_best_c <- herb_late_mods_binomial[c(1,4)]
+
+### Urb_score
+herb_l_bin_mods_best_u <- herb_late_mods_binomial[c(2,6)]
+
+## Alt
+### City_dist
+herb_l_bin_mods_alt_c <- herb_late_mods_binomial[3]
+
+### Urb_score
+herb_l_bin_mods_alt_u <- herb_late_mods_binomial[5]
+
+
+
+## --------------------------------------------------------------------
+## Best
+### City_dist
+herb_l_quant_mods_best_c <- herb_late_mods_quant[c(1,4)]
+
+### Urb_score
+herb_l_quant_mods_best_u <- herb_late_mods_quant[c(2,6)]
+
+## Alt
+### City_dist
+herb_l_quant_mods_alt_c <- herb_late_mods_quant[3]
+
+### Urb_score
+herb_l_quant_mods_alt_u <- herb_late_mods_quant[5]
+
+
+
+## --------------------------------------------------------------------
+## Best
+### City_dist
+weev_bin_mods_best_c <- weev_mods_binomial[c(1,4)]
+
+### Urb_score
+weev_bin_mods_best_u <- weev_mods_binomial[c(2,6)]
+
+## Alt
+### City_dist
+weev_bin_mods_alt_c <- weev_mods_binomial[3]
+
+### Urb_score
+weev_bin_mods_alt_u <- weev_mods_binomial[5]
+
+
+## --------------------------------------------------------------------
+## Best
+### City_dist
+weev_quant_mods_best_c <- weev_mods_quant[c(1,4)]
+
+### Urb_score
+weev_quant_mods_best_u <- weev_mods_quant[c(2,6)]
+
+## Alt
+### City_dist
+weev_quant_mods_alt_c <- weev_mods_quant[3]
+
+### Urb_score
+weev_quant_mods_alt_u <- weev_mods_quant[5]
+

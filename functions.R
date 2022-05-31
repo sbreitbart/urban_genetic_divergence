@@ -1,5 +1,9 @@
 # Functions
 
+############################################################
+######################## ANOVA #############################
+############################################################
+
 ## Create tidy anova tables-----
 ### GOALS:
 ### 1. Perform car::Anova() on each model in list
@@ -136,8 +140,12 @@ make_all_anovas_tidy_altmods <- function(anova_list){
 }
 
 
-## Do linear regression on multiple models-----
-# (for cardenolide analysis)
+
+############################################################
+########## Do linear regression on multiple models #########
+############# (for cardenolide analysis)####################
+############################################################
+
 DoLinearReg <- function(response_var, predictor_var, input_data){
   
   # first, make the formula as a string
@@ -158,6 +166,10 @@ DoLinearReg <- function(response_var, predictor_var, input_data){
 }
 
 
+
+############################################################
+##################### RANOVAS ##############################
+############################################################
 
 ## Create tidy ranova table-----
 ### assessing if variation among pops/fams varies with
@@ -290,6 +302,12 @@ CreateRanovaOutput_Q2 <- function(lmer_model, var_name){
   return(tab1)
 }
 
+
+
+############################################################
+##################### HERITABILITY & QST ###################
+############################################################
+
 ## Calculate heritability
 Calc_narrow_sense_h <- function(fam_var, pop_var, resid_var){
   add_var <- 2*(fam_var^2)
@@ -309,7 +327,9 @@ Calc_qst <- function(fam_var, pop_var){
 }
 
 ## Calculate h2 and Qst in same function
-Calc_h2_qst <- Calc_narrow_sense_h <- function(fam_var, pop_var, resid_var){
+Calc_h2_qst <- function(fam_var,
+                                               pop_var,
+                                               resid_var){
   add_var <- 2*(fam_var^2)
   total_wp_var <- (fam_var^2) + # family
     (pop_var^2) + # population
@@ -324,8 +344,52 @@ Calc_h2_qst <- Calc_narrow_sense_h <- function(fam_var, pop_var, resid_var){
   print(paste0("Qst: ", qst))
 }
 
+CVA <- function(fam_var,
+                pop_var,
+                resid_var,
+                trait_mean){
+  add_var <- 2*(fam_var^2)
+  total_wp_var <- (fam_var^2) + # family
+    (pop_var^2) + # population
+    (resid_var^2) # residual
+  
+  cva <- sqrt(add_var) / trait_mean
+  
+  return(cva)
+}
 
-## Create theme for figures-----
+calc_quantgenvars <-  function(fam_var,
+                               pop_var,
+                               resid_var,
+                               trait_mean,
+                               variable_name){
+  add_var <- 2*(fam_var^2)
+  total_wp_var <- (fam_var^2) + # family
+    (pop_var^2) + # population
+    (resid_var^2) # residual
+  h2 <- add_var/total_wp_var
+  
+  num_qst <- pop_var^2
+  dem_qst <- pop_var^2 + (2*(fam_var^2))
+  qst <- num_qst/dem_qst
+  
+  cva <- sqrt(add_var) / trait_mean
+  
+  print(paste0("Narrow-sense heritability: ", round(h2, 3)))
+  print(paste0("Qst: ", round(qst, 3)))
+  print(paste0("CVA: ", round(cva, 3)))
+
+return(data.frame(trait = variable_name,
+                  h2  = h2,
+                  qst = qst,
+                  cva = cva))
+}
+
+###########################################################
+##################### FIGURES #############################
+###########################################################
+
+## Create theme for figures
 theme_1 <- function(){ 
   
   theme(
@@ -342,7 +406,45 @@ theme_1 <- function(){
   )
 }
 
-## Calculate percent change-----
+## Create variable associated with replicated aesthetics
+# Gradient figs
+rep_geoms <- c(geom_smooth(aes(x = x,
+                               y = predicted),
+                           color = "#66a182",
+                           size = 1,
+                           se = F),
+               geom_ribbon(aes(x = x,
+                               ymin = predicted - std.error,
+                               ymax = predicted + std.error),
+                           fill = "#66a182",
+                           alpha = 0.3))
+
+# Transect figs
+rep_geoms2 <- c(geom_smooth(
+  aes(
+    x = x,
+    y = predicted,
+    color = group),
+  size = 1,
+  se = F),
+  geom_ribbon(aes(
+    x = x,
+    ymin = predicted - std.error,
+    ymax = predicted + std.error,
+    fill = group),
+    alpha = 0.3),
+  scale_colour_brewer(labels = c("Corridor",
+                                 "Non-Corridor"),
+                      palette = "Set2"),
+  scale_fill_brewer(labels = c("Corridor",
+                               "Non-Corridor"),
+                    palette = "Set2"))
+
+
+
+###########################################################
+################## PERCENT CHANGE #########################
+###########################################################
 ### Gradient/city_dist models
 Calc_percent_change <- function(ggpredict_object){
   baseline_numbers <- ggpredict_object %>%
@@ -357,6 +459,7 @@ Calc_percent_change <- function(ggpredict_object){
   print(baseline_numbers)
   return(paste0("Percent change, from rural to urban terminus: ", round(percent_change, 1), "%"))
 }
+
 ### Urban subtransects/city_dist models
 Calc_percent_change_urbsubs <- function(ggpredict_object){
   baseline_numbers <- ggpredict_object %>%
@@ -442,40 +545,3 @@ Calc_percent_change_transects <- function(ggpredict_object){
                PC_noncorrTOcorridor, "%"))
   
 }
-
-
-
-## Create variable associated with replicated aesthetics
-##  of figs
-# Gradient figs
-rep_geoms <- c(geom_smooth(aes(x = x,
-                               y = predicted),
-                           color = "#66a182",
-                           size = 1,
-                           se = F),
-               geom_ribbon(aes(x = x,
-                               ymin = predicted - std.error,
-                               ymax = predicted + std.error),
-                           fill = "#66a182",
-                           alpha = 0.3))
-
-# Transect figs
-rep_geoms2 <- c(geom_smooth(
-  aes(
-    x = x,
-    y = predicted,
-    color = group),
-  size = 1,
-  se = F),
-  geom_ribbon(aes(
-    x = x,
-    ymin = predicted - std.error,
-    ymax = predicted + std.error,
-    fill = group),
-    alpha = 0.3),
-  scale_colour_brewer(labels = c("Corridor",
-                                 "Non-Corridor"),
-                      palette = "Set2"),
-  scale_fill_brewer(labels = c("Corridor",
-                               "Non-Corridor"),
-                    palette = "Set2"))

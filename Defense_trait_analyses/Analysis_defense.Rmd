@@ -1139,35 +1139,26 @@ all_rsq <- lapply(all_models, lapply, r.squaredGLMM) %>%
 
 ```
 
-# Calculate heritability & Qst
+# Calculate heritability, Qst, and CVA
 Just looking at gradient models- all pops included. 
+
 h2 represents the average heritability across populations after removing the genetic effects due to population differences.
+
+"[CVA] provides a measure of genetic variation standardized by the mean, allowing to qualitatively comparing genetic variation among different traits"
+
 ```{r}
-# LDMC-----
-VarCorr(
-  update(
-    ldmc_mods_best_c[[1]],
-    REML = T))
-
-Calc_h2_qst(1.3396e-06,
-                    7.0523e-06 ,
-                    5.8534e-02 )
-
-# SLA-----
-VarCorr(
-  update(
-    sla_mods_best_c[[1]],
-    REML = T))
-
-Calc_h2_qst(2.9928e-06  ,
-                    8.0526e-06  ,
-                    4.0263e-01  )
+calc_quantgenvars()
 
 
 # Latex-----
 VarCorr(
   update(
     latex_mods_best_c[[1]], REML = T))
+
+update(
+    latex_mods_best_c[[1]], 
+    -City_dist,
+    REML = T) %>% VarCorr()
 
 Calc_h2_qst(0.087004    ,
                     0.080444    ,
@@ -1251,17 +1242,12 @@ Calc_h2_qst(0.198485  ,
 
 # Calculate additive genetic coefficient of variation
 ```{r}
-CVA <- function(fam_var, pop_var, resid_var, trait_mean){
-  add_var <- 2*(fam_var^2)
-  total_wp_var <- (fam_var^2) + # family
-    (pop_var^2) + # population
-    (resid_var^2) # residual
-  
-    cva <- sqrt(add_var) / trait_mean
-    
-    return(cva)
-}
-  
+Calc_h2_qst()
+
+# CVA(fam_var,
+#     pop_var,
+#     resid_var,
+#     trait_mean)
 
 # practice example: latex-----
 latex_mean <- latex %>%

@@ -854,46 +854,94 @@ all_rsq <- lapply(all_models, lapply, r.squaredGLMM) %>%
   unlist(recursive = FALSE)
 ```
 
-# Calculate heritability & Qst (RETURN)
+# Calculate heritability & Qst
+```{r}
+# LDMC-----
+VarCorr(
+  update(
+    ldmc_mods_best_c[[1]],
+    REML = T))
+
+Calc_h2_qst(1.3396e-06,
+            7.0523e-06 ,
+            5.8534e-02 )
+
+# SLA-----
+VarCorr(
+  update(
+    sla_mods_best_c[[1]],
+    REML = T))
+
+Calc_h2_qst(2.9928e-06  ,
+            8.0526e-06  ,
+            4.0263e-01  )
+
+# heights, early-----
+VarCorr(
+  update(
+    heights_early_mods_best_c[[1]],
+    REML = T))
+
+Calc_h2_qst(0.36649 ,
+ 0.14126 ,
+ 1.12561  )
+
+# heights, late-----
+VarCorr(
+  update(
+    heights_late_mods_best_c[[1]],
+    REML = T))
+
+Calc_h2_qst( 0.49538 ,
+0.21298 ,
+1.56541)
+
+# RGR-----
+VarCorr(
+  update(
+    rgr_mods_best_c[[1]],
+    REML = T))
+
+Calc_h2_qst(  4.4689e-06,
+2.8540e-03,
+5.5411e-02)
+
+# Ramets, early-----
+VarCorr(
+  update(
+    ramets_early_mods_best_c[[1]],
+    REML = T))
+
+# residual variance:
+resid_var <- update(
+    ramets_early_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+Calc_h2_qst( 0.247471,
+ 0.081492,
+ resid_var)
+
+
+# Ramets, late-----
+VarCorr(
+  update(
+    ramets_late_mods_best_c[[1]],
+    REML = T))
+
+# residual variance:
+resid_var <- update(
+    ramets_late_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+Calc_h2_qst(0.188467,
+ 0.046818,
+ resid_var)
+
+```
 
 # Calculate additive genetic coefficient of variation (RETURN)
 
 ```{r}
 
 
-```
-
-# Find estimated marginal means at terminii- put this in figs script eventually- ADD SLA/LDMC MODS
-
-## Urban Subtransects
-
-### City_dist
-
-#### Ramets, after flowering
-
-```{r}
-# create ggpredict object
-ramets_late_mods_best_c[2]
-ramets_late_urbsubs_01_pred <- ggeffects::ggpredict(heights_late_mods_best_c[[2]],
-                                   terms = c("City_dist", "Transect_ID"),
-                                   type = "fe") %>%
-  as.data.frame()
-
-# find EMM
-# PERCENT CHANGE, suburban to urban terminus:
-Calc_percent_change_urbsubs(ramets_late_urbsubs_01_pred) # 6.2%
-```
-
-#### Height, after flowering
-
-```{r}
-# create ggpredict object
-heights_late_mods_best_c[2]
-heights_late_urbsubs_01_pred <- ggeffects::ggpredict(heights_late_mods_best_c[[2]],
-                                   terms = c("City_dist", "Transect_ID"),
-                                   type = "fe") %>%
-  as.data.frame()
-
-# find EMM
-Calc_percent_change_transects(heights_late_urbsubs_01_pred) # 6.2%
 ```
