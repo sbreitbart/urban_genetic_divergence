@@ -1144,162 +1144,171 @@ Just looking at gradient models- all pops included.
 
 h2 represents the average heritability across populations after removing the genetic effects due to population differences.
 
-"[CVA] provides a measure of genetic variation standardized by the mean, allowing to qualitatively comparing genetic variation among different traits"
-
+"[CVA, or additive genetic coefficient of variation] provides a measure of genetic variation standardized by the mean, allowing to qualitatively comparing genetic variation among different traits"
+## Calculate values per trait
 ```{r}
-calc_quantgenvars()
-
-
 # Latex-----
-VarCorr(
-  update(
-    latex_mods_best_c[[1]], REML = T))
-
 update(
     latex_mods_best_c[[1]], 
-    -City_dist,
+    .~. -City_dist, # omitting city_dist
     REML = T) %>% VarCorr()
 
-Calc_h2_qst(0.087004    ,
-                    0.080444    ,
-                    0.387433    )
+latex_mean <- latex %>%
+  dplyr::summarize(Mean = mean(Latex_weight_mg,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_latex <- calc_quantgenvars( 0.086644,
+                   0.079411,
+                   0.387388,
+                   latex_mean,
+                   "Latex")
 
 
 # Herbivory, before flowering: Binomial-----
-VarCorr(
-  update(
-    herb_e_bin_mods_best_c[[1]], REML = T))
+
+update(
+    herb_e_bin_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
 
 # residual variance:
 resid_var <- update(
     herb_e_bin_mods_best_c[[1]], REML = T) %>%
     sigma()
 
-Calc_h2_qst(1.0789e-04,
-         2.1921e-05,
-         resid_var)
+herb_e_bin_mean <- herbivory %>%
+  dplyr::summarize(Mean = mean(Herbivory_mean_early_binary,
+                               na.rm = T)) %>%
+  as.numeric()
 
+qg_herb_e_bin <- calc_quantgenvars(  1.8027e-04,
+                    2.1094e-05,
+                   resid_var,
+                   herb_e_bin_mean,
+                   "Chance of herbivory (before flowering)")
 
 
 # Herbivory, before flowering: quantitative-----
-VarCorr(
-  update(
-    herb_e_quant_mods_best_c[[1]], REML = T))
 
-Calc_h2_qst(0.074737  ,
-                    0.080819,
-                    1.229989  )
+update(
+    herb_e_quant_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+herb_e_quant_mean <- herbivory %>% dplyr::filter(Herbivory_mean_early_binary == 1) %>%
+  dplyr::summarize(Mean = mean(Herbivory_mean_early,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_herb_e_quant <- calc_quantgenvars( 0.076138  ,
+                    0.068185  ,
+                   1.230037 ,
+                   herb_e_quant_mean,
+                   "Herbivory (before flowering)")
 
 # Herbivory, after flowering: Binomial-----
-VarCorr(
-  update(
-    herb_l_bin_mods_best_c[[1]], REML = T))
+
+update(
+    herb_l_bin_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
 
 # residual variance:
 resid_var <- update(
     herb_l_bin_mods_best_c[[1]], REML = T) %>%
     sigma()
 
-Calc_h2_qst(2.6336e-01,
-         6.7803e-05,
-         resid_var)
+herb_l_bin_mean <- herbivory %>%
+  dplyr::summarize(Mean = mean(Herbivory_mean_late_binary,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_herb_l_bin <- calc_quantgenvars(2.3267e-01,
+                   6.1084e-05,
+                   resid_var,
+                   herb_l_bin_mean,
+                   "Chance of herbivory (after flowering)")
+
+
 
 # Herbivory, after flowering: quantitative-----
-VarCorr(
-  update(
-    herb_l_quant_mods_best_c[[1]], REML = T))
 
-Calc_h2_qst(1.4860e-01  ,
-                    7.7739e-05 ,
-                    1.2378e+00  )
+update(
+    herb_l_quant_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+herb_l_quant_mean <- herbivory %>% dplyr::filter(Herbivory_mean_late_binary == 1) %>%
+  dplyr::summarize(Mean = mean(Herbivory_mean_late,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_herb_l_quant <- calc_quantgenvars( 1.5181e-01 ,
+                   8.5992e-05,
+                  1.2381e+00,
+                   herb_l_quant_mean,
+                   "Herbivory (after flowering)")
+
 
 # Weevil: Binomial-----
-VarCorr(
-  update(
-    weev_bin_mods_best_c[[1]], REML = T))
+
+update(
+    weev_bin_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
 
 # residual variance:
 resid_var <- update(
     weev_bin_mods_best_c[[1]], REML = T) %>%
     sigma()
 
-Calc_h2_qst(0.55203099,
-         0.00019397,
-         resid_var)
+weev_bin_mean <- weevil %>%
+  dplyr::summarize(Mean = mean(Scar_binary ,
+                               na.rm = T)) %>%
+  as.numeric()
 
+qg_weev_bin <- calc_quantgenvars(0.54935944  ,
+                     0.00015261,
+                   resid_var,
+                   weev_bin_mean,
+                   "Chance of weevil damage")
 
 
 # Weevil damage: quantitative-----
-VarCorr(
-  update(
-    weev_quant_mods_best_c[[1]], REML = T))
 
-Calc_h2_qst(0.198485  ,
-                    0.091009 ,
-                    1.059765  )
+update(
+    weev_quant_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+weev_quant_mean <- weevil %>%
+  dplyr::filter(Scar_length_cm > 0) %>%
+  dplyr::summarize(Mean = mean(Scar_length_cm,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_weev_quant <- calc_quantgenvars( 0.20088 ,
+                  0.10085 ,
+                 1.05936 ,
+                   weev_quant_mean,
+                   "Weevil scar length")
 
 ```
 
-# Calculate additive genetic coefficient of variation
+## Combine values into one table and export
 ```{r}
-Calc_h2_qst()
+qg_joined <- list(qg_latex,
+                  qg_herb_e_bin,
+                  qg_herb_e_quant,
+                  qg_herb_l_bin,
+                  qg_herb_l_quant,
+                  qg_weev_bin,
+                  qg_weev_quant) %>% 
+  bind_rows() %>%
+  dplyr::mutate_at(2:4, round, 3) %>%
+  write.csv(file = "./Defense_trait_analyses/Tables/quant_gen_defense.csv",
+          row.names=FALSE)
 
-# CVA(fam_var,
-#     pop_var,
-#     resid_var,
-#     trait_mean)
-
-# practice example: latex-----
-latex_mean <- latex %>%
-  dplyr::summarize(Mean = mean(Latex_weight_mg,
-                               na.rm = T))
-
-CVA(1.5491,
-    1.1931,
-    5.2429,
-    latex_mean[[1]])
-# 
-# 
-# CVA(1.5410      ,
-#     1.2044      ,
-#     5.2424,
-#     latex_mean[[1]])
-
-
-# practice example: weevil damage (quant)-----
-weev_mean <- weevil %>%
-  dplyr::filter(Scar_length_cm > 0) %>%
-  dplyr::summarize(Mean = mean(Scar_length_cm,
-                               na.rm = T))
-
-CVA(0.13743,
-    0.07537,
-    0.60462,
-    weev_mean[[1]])
-
-
-# practice example: herbivore attack, before flowering (binomial)------
-herbiv_e_bin_mean <- herbivory %>%
-  dplyr::summarize(Mean = mean(Herbivory_mean_early_binary,
-                               na.rm = T))
-
-CVA(1.4560e-04,
-    1.5085e-05,
-    update(
-    herb_e_bin_mods_best_c[[1]], REML = T) %>%
-    sigma() ,
-    herbiv_e_bin_mean[[1]])
-
-# practice example: herbivore attack, after flowering (binomial)------
-herbiv_l_bin_mean <- herbivory %>%
-  dplyr::summarize(Mean = mean(Herbivory_mean_late_binary,
-                               na.rm = T))
-
-CVA(1.0308e-04,
-    1.6463e-05,
-    update(
-    herb_l_bin_mods_best_c[[1]], REML = T) %>%
-    sigma() ,
-    herbiv_l_bin_mean[[1]])
 ```
 
