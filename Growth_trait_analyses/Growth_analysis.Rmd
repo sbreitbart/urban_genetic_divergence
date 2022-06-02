@@ -854,94 +854,164 @@ all_rsq <- lapply(all_models, lapply, r.squaredGLMM) %>%
   unlist(recursive = FALSE)
 ```
 
-# Calculate heritability & Qst
+# Calculate heritability, Qst, and CVA
+Just looking at gradient models- all pops included. 
+
+h2 represents the average heritability across populations after removing the genetic effects due to population differences.
+
+"[CVA, or additive genetic coefficient of variation] provides a measure of genetic variation standardized by the mean, allowing to qualitatively comparing genetic variation among different traits"
 ```{r}
 # LDMC-----
-VarCorr(
-  update(
-    ldmc_mods_best_c[[1]],
-    REML = T))
+update(
+    ldmc_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
 
-Calc_h2_qst(1.3396e-06,
-            7.0523e-06 ,
-            5.8534e-02 )
+ldmc_mean <- sla_ldmc %>%
+  dplyr::filter(LDMC < 1) %>% # as done in model
+  dplyr::summarize(Mean = mean(LDMC,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_ldmc <- calc_quantgenvars( 9.4956e-06,
+                   2.2071e-05,
+                   0.387388,
+                   5.8581e-02,
+                   "LDMC")
+
 
 # SLA-----
-VarCorr(
-  update(
-    sla_mods_best_c[[1]],
-    REML = T))
+update(
+    sla_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
 
-Calc_h2_qst(2.9928e-06  ,
-            8.0526e-06  ,
-            4.0263e-01  )
+sla_mean <- sla_ldmc %>%
+  dplyr::summarize(Mean = mean(SLA,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_sla <- calc_quantgenvars(4.5386e-06,
+                   9.5195e-06,
+                    4.0241e-01,
+                   sla_mean,
+                   "SLA")
+
 
 # heights, early-----
-VarCorr(
-  update(
-    heights_early_mods_best_c[[1]],
-    REML = T))
 
-Calc_h2_qst(0.36649 ,
- 0.14126 ,
- 1.12561  )
+update(
+    heights_early_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+heights_e_mean <- heights %>%
+  dplyr::summarize(Mean = mean(Total_Height_early,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_heights_e <- calc_quantgenvars(0.36591,
+                                  0.15034 ,
+                                  1.12547 ,
+                   heights_e_mean,
+                   "Height (before flowering)")
+
 
 # heights, late-----
-VarCorr(
-  update(
-    heights_late_mods_best_c[[1]],
-    REML = T))
 
-Calc_h2_qst( 0.49538 ,
-0.21298 ,
-1.56541)
+update(
+    heights_late_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+heights_l_mean <- heights %>%
+  dplyr::summarize(Mean = mean(Total_Height_late,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_heights_l <- calc_quantgenvars(0.49420 ,
+                                  0.22338  ,
+                                  1.56537  ,
+                   heights_l_mean,
+                   "Height (after flowering)")
 
 # RGR-----
-VarCorr(
-  update(
-    rgr_mods_best_c[[1]],
-    REML = T))
+update(
+    rgr_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
 
-Calc_h2_qst(  4.4689e-06,
-2.8540e-03,
-5.5411e-02)
+rgr_mean <- heights %>%
+  dplyr::summarize(Mean = mean(rel_growth_rate,
+                               na.rm = T)) %>%
+  as.numeric()
+ 
+qg_rgr <- calc_quantgenvars( 3.8967e-06 ,
+                             2.6174e-03 ,
+                            5.5405e-02,
+                   rgr_mean,
+                   "Relative growth rate")
 
 # Ramets, early-----
-VarCorr(
-  update(
-    ramets_early_mods_best_c[[1]],
-    REML = T))
+update(
+    ramets_early_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+ramets_e_mean <- heights %>%
+  dplyr::summarize(Mean = mean(Ramets_early,
+                               na.rm = T)) %>%
+  as.numeric()
 
 # residual variance:
 resid_var <- update(
     ramets_early_mods_best_c[[1]], REML = T) %>%
     sigma()
-
-Calc_h2_qst( 0.247471,
- 0.081492,
- resid_var)
-
+ 
+qg_ramets_e <- calc_quantgenvars( 0.247111,
+                             0.080902,
+                            resid_var,
+                   ramets_e_mean,
+                   "Ramets (before flowering)")
 
 # Ramets, late-----
-VarCorr(
-  update(
-    ramets_late_mods_best_c[[1]],
-    REML = T))
+update(
+    ramets_late_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+ramets_l_mean <- heights %>%
+  dplyr::summarize(Mean = mean(Ramets_late,
+                               na.rm = T)) %>%
+  as.numeric()
 
 # residual variance:
 resid_var <- update(
     ramets_late_mods_best_c[[1]], REML = T) %>%
     sigma()
+ 
+qg_ramets_l <- calc_quantgenvars( 0.187996,
+                             0.052465,
+                            resid_var,
+                   ramets_l_mean,
+                   "Ramets (after flowering)")
 
-Calc_h2_qst(0.188467,
- 0.046818,
- resid_var)
 
 ```
 
-# Calculate additive genetic coefficient of variation (RETURN)
-
+## Combine values into one table and export
 ```{r}
-
+qg_joined <- list(qg_ldmc,
+                  qg_sla,
+                  qg_heights_e,
+                  qg_heights_l,
+                  qg_rgr,
+                  qg_ramets_e,
+                  qg_ramets_l
+                  ) %>% 
+  bind_rows() %>%
+  dplyr::mutate_at(2:4, round, 3) %>%
+  write.csv(file = "./Growth_trait_analyses/Tables/quant_gen_growth.csv",
+          row.names=FALSE)
 
 ```

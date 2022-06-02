@@ -50,55 +50,146 @@ ldmc_urbsubs_02_pred <- ggeffects::ggpredict(ldmc_mods_best_u[[2]],
 ## SLA
 ### Gradient
 ```{r}
+sla_ldmc$sla_cuberoot <- (sla_ldmc$SLA)^(1/3)
+
+sla_mod1 <- update(
+  sla_mods_best_c[[1]],
+  sla_cuberoot ~ .
+)
+
+sla_mod2 <- update(
+  sla_mods_best_u[[1]],
+  sla_cuberoot ~ .
+)
+
 # city_dist
-sla_mods_best_c[1]
-sla_gradient_01_pred <- ggeffects::ggpredict(sla_mods_best_c[[1]],
+sla_mods_best_c[1] # CUBE ROOT transformed
+sla_gradient_01_pred <- ggeffects::ggpredict(sla_mod1,
                                    terms = c("City_dist"),
                                    type = "fe") %>%
   as.data.frame() 
 
 # urb_score
-sla_mods_best_u[1] # SQRT-TRANSFORMED
-sla_gradient_02_pred <- ggeffects::ggpredict(sla_mods_best_u[[1]],
+sla_mods_best_u[1] # CUBE ROOT transformed
+sla_gradient_02_pred <- ggeffects::ggpredict(sla_mod2,
                                    terms = c("Urb_score"),
                                    type = "fe") %>%
   as.data.frame()
-### NOTE: Model has sqrt-transformed response. Back-transforming predictions to original response scale. Standard errors are still on the sqrt-scale.
 
 ```
 
 ### Urban Subtransects
 ```{r}
+sla_mod3 <- update(
+  sla_mods_best_c[[2]],
+  sla_cuberoot ~ .
+)
+
+sla_mod4 <- update(
+  sla_mods_best_u[[2]],
+  sla_cuberoot ~ .
+)
+
 # city_dist
-sla_mods_best_c[2]# SQRT-TRANSFORMED
-sla_urbsubs_01_pred <- ggeffects::ggpredict(sla_mods_best_c[[2]],
+sla_mods_best_c[2] # CUBE ROOT transformed
+sla_urbsubs_01_pred <- ggeffects::ggpredict(sla_mod3,
                                    terms = c("City_dist", "Transect_ID"),
                                    type = "fe") %>%
   as.data.frame()
-### NOTE: Model has sqrt-transformed response. Back-transforming predictions to original response scale. Standard errors are still on the sqrt-scale.
-
 
 # urb_score
-sla_mods_best_u[2]# SQRT-TRANSFORMED
-sla_urbsubs_02_pred <- ggeffects::ggpredict(sla_mods_best_u[[2]],
+sla_mods_best_u[2] # CUBE ROOT transformed
+sla_urbsubs_02_pred <- ggeffects::ggpredict(sla_mod4,
                                    terms = c("Urb_score", "Transect_ID"),
                                    type = "fe")
-### NOTE: Model has sqrt-transformed response. Back-transforming predictions to original response scale. Standard errors are still on the sqrt-scale.
 ```
+
+## Height- before flowering
+### Gradient
+```{r}
+
+heights$heights_e_cuberoot <- (heights$Total_Height_early)^(1/3)
+
+heights_e_mod1 <- update(
+  heights_early_mods_best_c[[1]],
+  heights_e_cuberoot ~ .
+)
+
+heights_e_mod2 <- update(
+  heights_early_mods_best_u[[1]],
+  heights_e_cuberoot ~ .
+)
+
+
+# city_dist
+heights_early_mods_best_c[1] # cube root transfomred
+heights_early_gradient_01_pred <- ggeffects::ggpredict(heights_e_mod1,
+                                   terms = c("City_dist"),
+                                   type = "fe") %>%
+  as.data.frame() 
+
+# urb_score
+heights_early_mods_best_u[1] # cube root transfomred
+heights_early_gradient_02_pred <- ggeffects::ggpredict(heights_e_mod2,
+                                   terms = c("Urb_score"),
+                                   type = "fe") %>%
+  as.data.frame()
+```
+
+### Urban Subtransects
+```{r}
+
+heights_e_mod3 <- update(
+  heights_early_mods_best_c[[2]],
+  heights_e_cuberoot ~ .
+)
+
+heights_e_mod4 <- update(
+  heights_early_mods_best_u[[2]],
+  heights_e_cuberoot ~ .
+)
+
+# city_dist
+heights_early_mods_best_c[2] # cube root transfomred
+heights_early_urbsubs_01_pred <- ggeffects::ggpredict(heights_e_mod3,
+                                   terms = c("City_dist", "Transect_ID"),
+                                   type = "fe") %>%
+  as.data.frame()
+
+# urb_score
+heights_early_mods_best_u[2] # cube root transfomred
+heights_early_urbsubs_02_pred <- ggeffects::ggpredict(heights_e_mod4,
+                                   terms = c("Urb_score", "Transect_ID"),
+                                   type = "fe")
+```
+
 
 ## Height- after flowering
 ### Gradient
 ```{r}
+heights$heights_l_cuberoot <- (heights$Total_Height_late)^(1/3)
+
+heights_l_mod1 <- update(
+  heights_late_mods_best_c[[1]],
+  heights_l_cuberoot ~ .
+)
+
+heights_l_mod2 <- update(
+  heights_late_mods_best_u[[1]],
+  heights_l_cuberoot ~ .
+)
+
+
 # city_dist
-heights_late_mods_best_c[1]
-heights_late_gradient_01_pred <- ggeffects::ggpredict(heights_late_mods_best_c[[1]],
+heights_late_mods_best_c[1] # cube root transfomred
+heights_late_gradient_01_pred <- ggeffects::ggpredict(heights_l_mod1,
                                    terms = c("City_dist"),
                                    type = "fe") %>%
   as.data.frame() 
 
 # urb_score
-heights_late_mods_best_u[1]
-heights_late_gradient_02_pred <- ggeffects::ggpredict(heights_late_mods_best_u[[1]],
+heights_late_mods_best_u[1] # cube root transfomred
+heights_late_gradient_02_pred <- ggeffects::ggpredict(heights_l_mod2,
                                    terms = c("Urb_score"),
                                    type = "fe") %>%
   as.data.frame()
@@ -106,21 +197,163 @@ heights_late_gradient_02_pred <- ggeffects::ggpredict(heights_late_mods_best_u[[
 
 ### Urban Subtransects
 ```{r}
+
+heights_l_mod3 <- update(
+  heights_late_mods_best_c[[2]],
+  heights_l_cuberoot ~ .
+)
+
+heights_l_mod4 <- update(
+  heights_late_mods_best_u[[2]],
+  heights_l_cuberoot ~ .
+)
 # city_dist
-heights_late_mods_best_c[2]
-heights_late_urbsubs_01_pred <- ggeffects::ggpredict(heights_late_mods_best_c[[2]],
+heights_late_mods_best_c[2] # cube root transfomred
+heights_late_urbsubs_01_pred <- ggeffects::ggpredict(heights_l_mod3,
                                    terms = c("City_dist", "Transect_ID"),
                                    type = "fe") %>%
   as.data.frame()
 
 # urb_score
-heights_late_mods_best_u[2]
-heights_late_urbsubs_02_pred <- ggeffects::ggpredict(heights_late_mods_best_u[[2]],
+heights_late_mods_best_u[2] # cube root transfomred
+heights_late_urbsubs_02_pred <- ggeffects::ggpredict(heights_l_mod4,
+                                   terms = c("Urb_score", "Transect_ID"),
+                                   type = "fe")
+```
+
+## Relative growth rate
+### Gradient
+```{r}
+heights$rgr_cuberoot <- (heights$rel_growth_rate)^(1/3)
+
+rgr_mod1 <- update(
+  rgr_mods_best_c[[1]],
+  rgr_cuberoot ~ .
+)
+
+rgr_mod2 <- update(
+  rgr_mods_best_u[[1]],
+  rgr_cuberoot ~ .
+)
+
+# city_dist
+rgr_mods_best_c[1] # CUBE ROOT transformed
+rgr_gradient_01_pred <- ggeffects::ggpredict(rgr_mod1,
+                                   terms = c("City_dist"),
+                                   type = "fe") %>%
+  as.data.frame() 
+
+# urb_score
+rgr_mods_best_u[1] # CUBE ROOT transformed
+rgr_gradient_02_pred <- ggeffects::ggpredict(rgr_mod2,
+                                   terms = c("Urb_score"),
+                                   type = "fe") %>%
+  as.data.frame()
+
+```
+
+### Urban Subtransects
+```{r}
+rgr_mod3 <- update(
+  rgr_mods_best_c[[2]],
+  rgr_cuberoot ~ .
+)
+
+rgr_mod4 <- update(
+  rgr_mods_best_u[[2]],
+  rgr_cuberoot ~ .
+)
+
+# city_dist
+rgr_mods_best_c[2] # CUBE ROOT transformed
+rgr_urbsubs_01_pred <- ggeffects::ggpredict(rgr_mod3,
+                                   terms = c("City_dist", "Transect_ID"),
+                                   type = "fe") %>%
+  as.data.frame()
+
+# urb_score
+rgr_mods_best_u[2] # CUBE ROOT transformed
+rgr_urbsubs_02_pred <- ggeffects::ggpredict(rgr_mod4,
                                    terms = c("Urb_score", "Transect_ID"),
                                    type = "fe")
 ```
 
 
+## Ramets- before flowering
+### Gradient
+```{r}
+
+# city_dist
+ramets_early_mods_best_c[1] 
+ramets_early_gradient_01_pred <- ggeffects::ggpredict(ramets_early_mods_best_c[[1]] ,
+                                   terms = c("City_dist"),
+                                   type = "fe") %>%
+  as.data.frame() 
+
+# urb_score
+ramets_early_mods_best_u[1] 
+ramets_early_gradient_02_pred <- ggeffects::ggpredict(ramets_early_mods_best_u[[1]],
+                                   terms = c("Urb_score"),
+                                   type = "fe") %>%
+  as.data.frame()
+```
+
+### Urban Subtransects
+```{r}
+
+# city_dist
+ramets_early_mods_best_c[2] 
+ramets_early_urbsubs_01_pred <- ggeffects::ggpredict(ramets_early_mods_best_c[[2]] ,
+                                   terms = c("City_dist", "Transect_ID"),
+                                   type = "fe") %>%
+  as.data.frame()
+
+# urb_score
+ramets_early_mods_best_u[2] 
+ramets_early_urbsubs_02_pred <- ggeffects::ggpredict(ramets_early_mods_best_u[[2]] ,
+                                   terms = c("Urb_score", "Transect_ID"),
+                                   type = "fe")
+```
+
+
+## Ramets- after flowering
+### Gradient
+```{r}
+
+# city_dist
+ramets_late_mods_best_c[1] 
+ramets_late_gradient_01_pred <- ggeffects::ggpredict(ramets_late_mods_best_c[[1]] ,
+                                   terms = c("City_dist"),
+                                   type = "fe") %>%
+  as.data.frame() 
+
+# urb_score
+ramets_late_mods_best_u[1] 
+ramets_late_gradient_02_pred <- ggeffects::ggpredict(ramets_late_mods_best_u[[1]],
+                                   terms = c("Urb_score"),
+                                   type = "fe") %>%
+  as.data.frame()
+```
+
+### Urban Subtransects
+```{r}
+
+# city_dist
+ramets_late_mods_best_c[2] 
+ramets_late_urbsubs_01_pred <- ggeffects::ggpredict(ramets_late_mods_best_c[[2]] ,
+                                   terms = c("City_dist", "Transect_ID"),
+                                   type = "fe") %>%
+  as.data.frame()
+
+# urb_score
+ramets_late_mods_best_u[2] 
+ramets_late_urbsubs_02_pred <- ggeffects::ggpredict(ramets_late_mods_best_u[[2]] ,
+                                   terms = c("Urb_score", "Transect_ID"),
+                                   type = "fe")
+```
+
+
+## Mortality ??
 # Create regression plots
 ## Gradient
 ### City_dist
