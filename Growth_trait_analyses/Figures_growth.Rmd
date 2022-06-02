@@ -354,6 +354,26 @@ ramets_late_urbsubs_02_pred <- ggeffects::ggpredict(ramets_late_mods_best_u[[2]]
 
 
 ## Mortality ??
+### Gradient
+```{r}
+# city_dist
+mortality_gradient_01_pred <- ggeffects::ggpredict(surv_gr_city_m1_seasons,
+                                   terms = c("City_dist"),
+                                   type = "fe") %>%
+  as.data.frame() 
+
+# urb_score
+mortality_gradient_02_pred <- ggeffects::ggpredict(surv_gr_usc_m1_seasons,
+                                   terms = c("Urb_score"),
+                                   type = "fe") %>%
+  as.data.frame()
+```
+
+### Urban subtransects
+```{r}
+
+```
+
 # Create regression plots
 ## Gradient
 ### City_dist
@@ -364,16 +384,17 @@ ggplot(ldmc_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
        y = "Leaf Dry Matter Content") +
-  ylim(0.15, 0.18) +
+  ylim(NA, 0.19) +
   theme_1() +
   
 # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
-                    label = paste0(" Distance: p = ", tidy_anova(ldmc_mods_best_c[[1]])$p)),
-                size = 4.5)
+                    label = paste0(" Distance: p = ", tidy_anova(ldmc_mods_best_c[[1]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5)
 
 ggpred_Q1.citydist_ldmc
-
 
 
 # SLA-----
@@ -381,16 +402,124 @@ ggpred_Q1.citydist_sla <- ggplot(sla_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
        y = expression("Specific Leaf Area "(cm^2/g))) +
-  ylim(18, 26) +
+  ylim(NA, 2.76) +
   theme_1() +
 #   # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
-                    label = paste0(" Distance: p = ", tidy_anova(sla_mods_best_c[[1]])$p)),
-                size = 4.5)
+                    label = paste0(" Distance: p = ", tidy_anova(sla_mods_best_c[[1]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5)
 
 ggpred_Q1.citydist_sla
 
 
+
+# Height, before flowering-----
+ggpred_Q1.citydist_height_e <- ggplot(heights_early_gradient_01_pred) +
+  rep_geoms +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Height (before flowering) (cm)" ^{1/3})) +
+  # ylim(18, 26) +
+  theme_1() +
+#   # adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.15, npcy = 0.08,
+                    label = paste0(" Distance: p = ", tidy_anova(heights_early_mods_best_c[[1]])%>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.citydist_height_e
+
+
+# Height, after flowering-----
+ggpred_Q1.citydist_height_l <- ggplot(heights_late_gradient_01_pred) +
+  rep_geoms +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Height (after flowering) (cm)" ^{1/3})) +
+  ylim(1.8,2.6) +
+  theme_1() +
+#   # adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.15, npcy = 0.08,
+                    label = paste0(" Distance: p = ", tidy_anova(heights_late_mods_best_c[[1]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.citydist_height_l
+
+
+
+# RGR-----
+ggpred_Q1.citydist_rgr <- ggplot(rgr_gradient_01_pred) +
+  rep_geoms +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Relative growth rate " ^{1/3})) +
+  ylim(0.198, 0.212) +
+  theme_1() +
+#   # adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+                    label = paste0(" Distance: p = ", tidy_anova(rgr_mods_best_c[[1]])%>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.citydist_rgr
+
+
+# Ramets, before flowering-----
+ggpred_Q1.citydist_ramets_e <- ggplot(ramets_early_gradient_01_pred) +
+  rep_geoms +
+  labs(x = "Distance to Urban Center (km)",
+       y = "Ramets (before flowering)") +
+  ylim(1.4, NA) +
+  theme_1() +
+   # adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.1, npcy = 0.08,
+                    label = paste0(" Distance: p = ", tidy_anova(ramets_early_mods_best_c[[1]])%>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.citydist_ramets_e
+
+
+
+# Ramets, after flowering-----
+ggpred_Q1.citydist_ramets_l <- ggplot(ramets_late_gradient_01_pred) +
+  rep_geoms +
+  labs(x = "Distance to Urban Center (km)",
+       y = "Ramets (after flowering)") +
+  # ylim(NA, 1.95) +
+  theme_1() +
+   # adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.15, npcy = 0.08,
+                    label = paste0(" Distance: p = ", tidy_anova(ramets_late_mods_best_c[[1]])%>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.citydist_ramets_l
+
+
+# Mortality-----
+
+ggpred_Q1.citydist_mortality <- 
+ggplot(mortality_gradient_01_pred) +
+  rep_geoms +
+  labs(x = "Distance to Urban Center (km)",
+       y = "Seasons survived") +
+ # ylim(NA, 0.19) +
+  theme_1() +
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+                    label = paste0(" Distance: p = ", tidy_anova(surv_gr_city_m1_seasons) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.citydist_mortality
 
 ```
 
@@ -561,6 +690,108 @@ ggpred_Q2.urbsubs_sla
 
 
 ```
+
+## Combine plots into one figure
+### Gradient / City_dist
+```{r}
+gradient_citydist_plots <- ggarrange(
+ggpred_Q1.citydist_ldmc,
+ggpred_Q1.citydist_sla,
+ggpred_Q1.citydist_height_e,
+ggpred_Q1.citydist_height_l,
+ggpred_Q1.citydist_rgr,
+ggpred_Q1.citydist_ramets_e,
+ggpred_Q1.citydist_ramets_l,
+ggpred_Q1.citydist_mortality +
+            font("x.text"),
+          ncol = 4,
+          nrow = 2,
+          align = "hv",
+          labels = list("A", "B", "C", "D", "E", "F", "G"),
+          font.label = (size =16),
+          common.legend = T,
+          legend = "top") %T>%
+  plot
+
+dev.copy2pdf(file = here::here("./Growth_trait_analyses/Figures/Q1_grad_citydist_Growth.pdf"),
+             width = 14, height = 7.5)
+```
+
+
+### Gradient / Urbanization Score
+```{r}
+gradient_urbscore_plots <- ggarrange(
+  ggpred_Q1.urbscore_latex,
+  ggpred_Q1.urbscore_herb_e_bin,
+  ggpred_Q1.urbscore_herb_e_quant,
+  ggpred_Q1.urbscore_herb_l_bin,
+  ggpred_Q1.urbscore_herb_l_quant,
+  ggpred_Q1.urbscore_weev_bin,
+  ggpred_Q1.urbscore_weev_quant +
+            font("x.text"),
+          ncol = 4,
+          nrow = 2,
+          align = "hv",
+          labels = list("A", "B", "C", "D", "E", "F", "G"),
+          font.label = (size =16),
+          common.legend = T,
+          legend = "top") %T>%
+  plot
+
+dev.copy2pdf(file = here::here("./Growth_trait_analyses/Figures/Q1_grad_urbscore_Growth.pdf"),
+             width = 14, height = 7.5)
+```
+
+### Urb Subtransects / City_dist
+```{r}
+urbsubs_citydist_plots <- ggarrange(
+  ggpred_Q2.citydist_latex,
+  ggpred_Q2.citydist_herb_e_bin,
+  ggpred_Q2.citydist_herb_e_quant,
+  ggpred_Q2.citydist_herb_l_bin,
+  ggpred_Q2.citydist_herb_l_quant,
+  ggpred_Q2.citydist_weev_bin,
+  ggpred_Q2.citydist_weev_quant +
+            font("x.text"),
+          ncol = 4,
+          nrow = 2,
+          align = "hv",
+          labels = list("A", "B", "C", "D", "E", "F", "G"),
+          font.label = (size =16),
+          common.legend = T,
+          legend = "top") %T>%
+  plot
+
+dev.copy2pdf(file = here::here("./Growth_trait_analyses/Figures/Q2_urbsubs_citydist_Growth.pdf"),
+             width = 14.5, height = 8)
+```
+
+
+### Urb Subtransects / Urbanization Score
+```{r}
+urbsubs_urbscore_plots <- ggarrange(
+  ggpred_Q2.urbsubs_latex,
+  ggpred_Q2.urbsubs_herb_e_bin,
+  ggpred_Q2.urbsubs_herb_e_quant,
+  ggpred_Q2.urbsubs_herb_l_bin,
+  ggpred_Q2.urbsubs_herb_l_quant,
+  ggpred_Q2.urbsubs_weev_bin,
+  ggpred_Q2.urbsubs_weev_quant +
+            font("x.text"),
+          ncol = 4,
+          nrow = 2,
+          align = "hv",
+          labels = list("A", "B", "C", "D", "E", "F", "G"),
+          font.label = (size =16),
+          common.legend = T,
+          legend = "top") %T>%
+  plot
+
+dev.copy2pdf(file = here::here("./Growth_trait_analyses/Figures/Q2_urbsubs_urbscore_Growth.pdf"),
+             width = 14.5, height = 8)
+```
+
+
 
 # Create boxplots
 ## Heights- Late
