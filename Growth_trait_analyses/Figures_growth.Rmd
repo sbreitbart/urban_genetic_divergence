@@ -371,6 +371,16 @@ mortality_gradient_02_pred <- ggeffects::ggpredict(surv_gr_usc_m1_seasons,
 
 ### Urban subtransects
 ```{r}
+# city_dist
+mortality_urbsubs_01_pred <- ggeffects::ggpredict(surv_urbsubs_city_m2_seasons,
+                                   terms = c("City_dist", "Transect_ID"),
+                                   type = "fe") %>%
+  as.data.frame()
+
+# urb_score
+mortality_urbsubs_02_pred <- ggeffects::ggpredict(surv_urbsubs_usc_m2_seasons,
+                                   terms = c("Urb_score", "Transect_ID"),
+                                   type = "fe")
 
 ```
 
@@ -514,7 +524,7 @@ ggplot(mortality_gradient_01_pred) +
   
 # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
-                    label = paste0(" Distance: p = ", tidy_anova(surv_gr_city_m1_seasons) %>%
+                    label = paste0(" Distance: p = ", tidy_anova(mortality_mods_best_c[[1]]) %>%
 dplyr::filter(Predictor == "Distance to City Center") %>%
 dplyr::select(p))),
 size = 4.5)
@@ -669,7 +679,7 @@ theme_1() +
   
 # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
-                    label = paste0(" Urb. Score: p = ", tidy_anova(surv_gr_usc_m1_seasons) %>%
+                    label = paste0(" Urb. Score: p = ", tidy_anova(mortality_mods_best_u[[1]]) %>%
 dplyr::filter(Predictor == "Urbanization Score") %>%
 dplyr::select(p))),
 size = 4.5)
@@ -902,6 +912,296 @@ ggpred_Q2.citydist_ramets_l
 
 # Mortality
 
+# Mortality-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+mortality_urbsubs_01_pred$group <- factor(mortality_urbsubs_01_pred$group,                    levels(mortality_urbsubs_01_pred$group)[c(2,1)])
+
+levels(mortality_urbsubs_01_pred$group)
+
+ggpred_Q2.citydist_mortality <- 
+ggplot(mortality_urbsubs_01_pred) +
+  labs(x = "Distance to Urban Center (km)",
+       y = "Seasons survived",
+       color = "Transect",
+       fill = "Transect") +
+  ylim(NA, 4) +
+  xlim(0, NA) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
+                    label = paste0(" Distance: p = ", tidy_anova(mortality_mods_best_c[[2]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(mortality_mods_best_c[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.citydist_mortality
+
+```
+
+### Urb score
+```{r}
+# LDMC-----
+
+levels(ldmc_urbsubs_02_pred$group)
+
+ggpred_Q2.urbsubs_ldmc <-
+ggplot(ldmc_urbsubs_02_pred) +
+  labs(x = "Urbanization Score",
+       y = "Leaf Dry Matter Content",
+       color = "Transect",
+       fill = "Transect") +
+  ylim(NA, 0.24) +
+  xlim(4, -2) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.97,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(ldmc_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(ldmc_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.urbsubs_ldmc
+
+
+
+# SLA-----
+
+levels(sla_urbsubs_02_pred$group)
+
+ggpred_Q2.urbsubs_sla <- 
+ggplot(sla_urbsubs_02_pred) +
+  labs(x = "Urbanization Score",
+       y = expression("Specific Leaf Area "(cm^2/g)),
+       color = "Transect",
+       fill = "Transect") +
+  ylim(NA, 2.8) +
+  xlim(4, -2) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(sla_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(sla_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.urbsubs_sla
+
+
+# Height, before flowering-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+heights_early_urbsubs_02_pred$group <- factor(heights_early_urbsubs_02_pred$group,                    levels(heights_early_urbsubs_02_pred$group)[c(2,1)])
+
+levels(heights_early_urbsubs_02_pred$group)
+
+ggpred_Q2.urbsubs_height_e <- 
+ggplot(heights_early_urbsubs_02_pred) +
+  labs(x = "Urbanization Score",
+       y = expression("Height (before flowering) (cm)" ^{1/3}), 
+       color = "Transect",
+       fill = "Transect") +
+  ylim(0.5, 1) +
+  xlim(4, -2) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(heights_early_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(heights_early_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.urbsubs_height_e
+
+# Height, after flowering-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+heights_late_urbsubs_02_pred$group <- factor(heights_late_urbsubs_02_pred$group,                    levels(heights_late_urbsubs_02_pred$group)[c(2,1)])
+
+levels(heights_late_urbsubs_02_pred$group)
+
+ggpred_Q2.urbsubs_height_l <- 
+ggplot(heights_late_urbsubs_02_pred) +
+  labs(x = "Urbanization Score",
+       y = expression("Height (after flowering) (cm)" ^{1/3}), 
+       color = "Transect",
+       fill = "Transect") +
+  ylim(NA, 2.6) +
+  xlim(4, -2) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(heights_late_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(heights_late_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.urbsubs_height_l
+
+
+# Relative growth rate-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+rgr_urbsubs_02_pred$group <- factor(rgr_urbsubs_02_pred$group,                    levels(rgr_urbsubs_02_pred$group)[c(2,1)])
+
+levels(rgr_urbsubs_02_pred$group)
+
+ggpred_Q2.urbsubs_rgr <- 
+ggplot(rgr_urbsubs_02_pred) +
+  labs(x = "Urbanization Score",
+       y = expression("Relative growth rate "^{1/3}),
+       color = "Transect",
+       fill = "Transect") +
+  ylim(NA, 0.225) +
+  xlim(4, -2) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.97,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(rgr_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(rgr_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.79,
+                    label = paste0(" U x S: p = ", tidy_anova(rgr_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score x Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.urbsubs_rgr
+
+
+
+# Ramets, before flowering-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+ramets_early_urbsubs_02_pred$group <- factor(ramets_early_urbsubs_02_pred$group,                    levels(ramets_early_urbsubs_02_pred$group)[c(2,1)])
+
+levels(ramets_early_urbsubs_02_pred$group)
+
+ggpred_Q2.urbsubs_ramets_e <- 
+ggplot(ramets_early_urbsubs_02_pred) +
+  labs(x = "Urbanization Score",
+       y = expression("Ramets (before flowering) (cm)" ^{1/3}), 
+       color = "Transect",
+       fill = "Transect") +
+#  ylim(NA, 22) +
+  xlim(4, -2) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.14,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(ramets_early_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
+                    label = paste0(" Transect: p = ", tidy_anova(ramets_early_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.urbsubs_ramets_e
+
+# Ramets, after flowering-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+ramets_late_urbsubs_02_pred$group <- factor(ramets_late_urbsubs_02_pred$group,                    levels(ramets_late_urbsubs_02_pred$group)[c(2,1)])
+
+levels(ramets_late_urbsubs_02_pred$group)
+
+ggpred_Q2.urbsubs_ramets_l <- 
+ggplot(ramets_late_urbsubs_02_pred) +
+  labs(x = "Urbanization Score",
+       y = expression("ramets (after flowering) (cm)" ^{1/3}), 
+       color = "Transect",
+       fill = "Transect") +
+  ylim(1.5, 2) +
+  xlim(4, -2) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.14,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(ramets_late_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
+                    label = paste0(" Transect: p = ", tidy_anova(ramets_late_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.urbsubs_ramets_l
+
+# Mortality-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+mortality_urbsubs_02_pred$group <- factor(mortality_urbsubs_02_pred$group,                    levels(mortality_urbsubs_02_pred$group)[c(2,1)])
+
+levels(mortality_urbsubs_02_pred$group)
+
+ggpred_Q2.urbsubs_mortality <- 
+ggplot(mortality_urbsubs_02_pred) +
+  labs(x = "Urbanization Score",
+       y = "Seasons survived",
+       color = "Transect",
+       fill = "Transect") +
+  ylim(NA, 4) +
+  xlim(4, -2) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(mortality_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(mortality_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.urbsubs_mortality
+
 ```
 
 ## Combine plots into one figure
@@ -959,13 +1259,14 @@ dev.copy2pdf(file = here::here("./Growth_trait_analyses/Figures/Q1_grad_urbscore
 ### Urb Subtransects / City_dist
 ```{r}
 urbsubs_citydist_plots <- ggarrange(
-  ggpred_Q2.citydist_latex,
-  ggpred_Q2.citydist_herb_e_bin,
-  ggpred_Q2.citydist_herb_e_quant,
-  ggpred_Q2.citydist_herb_l_bin,
-  ggpred_Q2.citydist_herb_l_quant,
-  ggpred_Q2.citydist_weev_bin,
-  ggpred_Q2.citydist_weev_quant +
+  ggpred_Q2.citydist_ldmc,
+  ggpred_Q2.citydist_sla,
+  ggpred_Q2.citydist_height_e,
+  ggpred_Q2.citydist_height_l,
+  ggpred_Q2.citydist_rgr,
+  ggpred_Q2.citydist_ramets_e,
+  ggpred_Q2.citydist_ramets_l,
+  ggpred_Q2.citydist_mortality +
             font("x.text"),
           ncol = 4,
           nrow = 2,
@@ -984,13 +1285,14 @@ dev.copy2pdf(file = here::here("./Growth_trait_analyses/Figures/Q2_urbsubs_cityd
 ### Urb Subtransects / Urbanization Score
 ```{r}
 urbsubs_urbscore_plots <- ggarrange(
-  ggpred_Q2.urbsubs_latex,
-  ggpred_Q2.urbsubs_herb_e_bin,
-  ggpred_Q2.urbsubs_herb_e_quant,
-  ggpred_Q2.urbsubs_herb_l_bin,
-  ggpred_Q2.urbsubs_herb_l_quant,
-  ggpred_Q2.urbsubs_weev_bin,
-  ggpred_Q2.urbsubs_weev_quant +
+  ggpred_Q2.urbsubs_ldmc,
+  ggpred_Q2.urbsubs_sla,
+  ggpred_Q2.urbsubs_height_e,
+  ggpred_Q2.urbsubs_height_l,
+  ggpred_Q2.urbsubs_rgr,
+  ggpred_Q2.urbsubs_ramets_e,
+  ggpred_Q2.urbsubs_ramets_l,
+  ggpred_Q2.urbsubs_mortality +
             font("x.text"),
           ncol = 4,
           nrow = 2,
@@ -1021,28 +1323,31 @@ ggplot(heights %>%
 ```
 
 # Find estimated marginal means at terminii
-## Gradient
-### City_dist
-### Urbanization Score
 ## Urban Subtransects
 ### City_dist
-#### LDMC
-```{r}
-# PERCENT CHANGE, suburban to urban terminus:
-Calc_percent_change_urbsubs(ldmc_urbsubs_01_pred) # 10.9%
-```
 
 #### Ramets, after flowering
 
 ```{r}
 # PERCENT CHANGE, suburban to urban terminus:
-Calc_percent_change_urbsubs(ramets_late_urbsubs_01_pred) # 6.2%
+Calc_percent_change_urbsubs(ramets_late_urbsubs_01_pred) # -15.5%
+```
+
+#### Height, before flowering
+
+```{r}
+Calc_percent_change_transects(heights_early_urbsubs_01_pred) # 10.9%
 ```
 
 #### Height, after flowering
 
 ```{r}
-Calc_percent_change_transects(heights_late_urbsubs_01_pred) # 6.2%
+Calc_percent_change_transects(heights_late_urbsubs_01_pred) # 4.7%
 ```
 
-### Urbanization Score
+### Urbanization score
+#### SLA
+```{r}
+# PERCENT CHANGE, suburban to urban terminus:
+Calc_percent_change_urbsubs(sla_urbsubs_02_pred) # 3.7%
+```

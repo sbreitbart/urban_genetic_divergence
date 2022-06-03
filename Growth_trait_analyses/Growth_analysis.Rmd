@@ -635,8 +635,6 @@ flextable::save_as_html(# ramets_l_ranova1,
 make_all_anovas_tidy_altmods(ldmc_mods_best_c) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/LDMC_citydist.png"))
 
-lapply(ldmc_mods_best_c, MuMIn::r.squaredGLMM)
-
 ```
 
 #### Urb_score
@@ -703,14 +701,14 @@ make_all_anovas_tidy_altmods(sla_mods_alt_u) %>%
 #### City_dist
 
 ```{r}
-make_all_anovas_tidy(heights_early_mods_best_c) %>%
+make_all_anovas_tidy_altmods(heights_early_mods_best_c) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/heights_early_citydist.png"))
 ```
 
 #### Urb_score
 
 ```{r}
-make_all_anovas_tidy(heights_early_mods_best_u) %>%
+make_all_anovas_tidy_altmods(heights_early_mods_best_u) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/heights_early_urbscore.png"))
 ```
 
@@ -737,14 +735,14 @@ make_all_anovas_tidy_altmods(heights_early_mods_alt_u) %>%
 #### City_dist
 
 ```{r}
-make_all_anovas_tidy(heights_late_mods_best_c) %>%
+make_all_anovas_tidy_altmods(heights_late_mods_best_c) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/heights_late_citydist.png"))
 ```
 
 #### Urb_score
 
 ```{r}
-make_all_anovas_tidy(heights_late_mods_best_u) %>%
+make_all_anovas_tidy_altmods(heights_late_mods_best_u) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/heights_late_urbscore.png"))
 ```
 
@@ -753,14 +751,14 @@ make_all_anovas_tidy(heights_late_mods_best_u) %>%
 #### City_dist
 
 ```{r}
-make_all_anovas_tidy_altmods(heights_late_mods_alt_c) %>%
+make_all_anovas_tidy_altmods_altmods(heights_late_mods_alt_c) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/heights_late_citydist_alt.png"))
 ```
 
 #### Urb_score
 
 ```{r}
-make_all_anovas_tidy_altmods(heights_late_mods_alt_u) %>%
+make_all_anovas_tidy_altmods_altmods(heights_late_mods_alt_u) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/heights_late_urbscore_alt.png"))
 ```
 
@@ -771,14 +769,14 @@ make_all_anovas_tidy_altmods(heights_late_mods_alt_u) %>%
 #### City_dist
 
 ```{r}
-make_all_anovas_tidy(rgr_mods_best_c) %>%
+make_all_anovas_tidy_altmods(rgr_mods_best_c) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/rgr_citydist.png"))
 ```
 
 #### Urb_score
 
 ```{r}
-make_all_anovas_tidy(rgr_mods_best_u) %>%
+make_all_anovas_tidy_altmods(rgr_mods_best_u) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/rgr_urbscore.png"))
 ```
 
@@ -787,14 +785,14 @@ make_all_anovas_tidy(rgr_mods_best_u) %>%
 #### City_dist
 
 ```{r}
-make_all_anovas_tidy_altmods(rgr_mods_alt_c) %>%
+make_all_anovas_tidy_altmods_altmods(rgr_mods_alt_c) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/rgr_citydist_alt.png"))
 ```
 
 #### Urb_score
 
 ```{r}
-make_all_anovas_tidy_altmods(rgr_mods_alt_u) %>%
+make_all_anovas_tidy_altmods_altmods(rgr_mods_alt_u) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/rgr_urbscore_alt.png"))
 ```
 
@@ -805,14 +803,14 @@ make_all_anovas_tidy_altmods(rgr_mods_alt_u) %>%
 #### City_dist
 
 ```{r}
-make_all_anovas_tidy(ramets_early_mods_best_c) %>%
+make_all_anovas_tidy_altmods(ramets_early_mods_best_c) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/ramets_early_citydist.png"))
 ```
 
 #### Urb_score
 
 ```{r}
-make_all_anovas_tidy(ramets_early_mods_best_u) %>%
+make_all_anovas_tidy_altmods(ramets_early_mods_best_u) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/ramets_early_urbscore.png"))
 ```
 
@@ -821,14 +819,14 @@ make_all_anovas_tidy(ramets_early_mods_best_u) %>%
 #### City_dist
 
 ```{r}
-make_all_anovas_tidy_altmods(ramets_early_mods_alt_c) %>%
+make_all_anovas_tidy_altmods_altmods(ramets_early_mods_alt_c) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/ramets_early_citydist_alt.png"))
 ```
 
 #### Urb_score
 
 ```{r}
-make_all_anovas_tidy_altmods(ramets_early_mods_alt_u) %>%
+make_all_anovas_tidy_altmods_altmods(ramets_early_mods_alt_u) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/ramets_early_urbscore_alt.png"))
 ```
 
@@ -839,14 +837,14 @@ make_all_anovas_tidy_altmods(ramets_early_mods_alt_u) %>%
 #### City_dist
 
 ```{r}
-make_all_anovas_tidy(ramets_late_mods_best_c) %>%
+make_all_anovas_tidy_altmods(ramets_late_mods_best_c) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/ramets_late_citydist.png"))
 ```
 
 #### Urb_score
 
 ```{r}
-make_all_anovas_tidy(ramets_late_mods_best_u) %>%
+make_all_anovas_tidy_altmods(ramets_late_mods_best_u) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/ramets_late_urbscore.png"))
 ```
 
@@ -866,7 +864,36 @@ make_all_anovas_tidy_altmods(ramets_late_mods_alt_u) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/ramets_late_urbscore_alt.png"))
 ```
 
-## Mortality (RETURN)
+## Mortality
+#### City_dist
+
+```{r}
+make_all_anovas_tidy_altmods(mortality_mods_best_c) %>%
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/mortality_citydist.png"))
+```
+
+#### Urb_score
+
+```{r}
+make_all_anovas_tidy_altmods(mortality_mods_best_u) %>%
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/mortality_urbscore.png"))
+```
+
+### Alternative Models
+
+#### City_dist
+
+```{r}
+make_all_anovas_tidy_altmods(mortality_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/mortality_citydist_alt.png"))
+```
+
+#### Urb_score
+
+```{r}
+make_all_anovas_tidy_altmods(mortality_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/mortality_urbscore_alt.png"))
+```
 
 # R-squared values
 
@@ -1018,6 +1045,28 @@ qg_ramets_l <- calc_quantgenvars( 0.187996,
                    "Ramets (after flowering)")
 
 
+# Survival-----
+update(
+    mortality_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+surv_mean <- survival_seasons %>%
+  as.data.frame %>%
+  dplyr::summarize(Mean = mean(seasons ,
+                               na.rm = T)) %>%
+  as.numeric()
+
+# residual variance:
+resid_var <- update(
+     mortality_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+qg_survival <- calc_quantgenvars(6.1473e-07,
+                   1.3817e-05,
+                   resid_var ,
+                   surv_mean,
+                   "Seasons survived")
 ```
 
 ## Combine values into one table and export
@@ -1028,7 +1077,8 @@ qg_joined <- list(qg_ldmc,
                   qg_heights_l,
                   qg_rgr,
                   qg_ramets_e,
-                  qg_ramets_l
+                  qg_ramets_l,
+                  qg_survival
                   ) %>% 
   bind_rows() %>%
   dplyr::mutate_at(2:4, round, 3) %>%

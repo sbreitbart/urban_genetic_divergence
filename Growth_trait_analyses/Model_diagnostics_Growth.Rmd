@@ -1021,7 +1021,7 @@ surv_urbsubs_city_m2_seasons <- glmmTMB(seasons ~
 
 
 # Response: 0 or 1, as dead/alive-----
-## 2019-----
+## 2019
 ## Full model
 surv_urbsubs_city_m1_19 <- glmmTMB(Dead ~ 
                                  Block +
@@ -1055,7 +1055,7 @@ surv_urbsubs_city_m2_19 <- glmmTMB(Dead ~
 # car::Anova(surv_urbsubs_city_m2_19)
 # AIC(surv_urbsubs_city_m1_19, surv_urbsubs_city_m2_19) # m1 best but <2 AIC from m2
 
-## 2020-----
+## 2020
 ## Full model
 surv_urbsubs_city_m1_20 <- glmmTMB(Dead ~ 
                                  Block +
@@ -1088,7 +1088,7 @@ surv_urbsubs_city_m2_20 <- glmmTMB(Dead ~
 # performance::check_model(surv_urbsubs_city_m2_20)
 # car::Anova(surv_urbsubs_city_m2_20)
 # AIC(surv_urbsubs_city_m1_20, surv_urbsubs_city_m2_20) # m1 best but <2 AIC from m2
-## 2021-----
+## 2021
 ## Full model
 surv_urbsubs_city_m1_21 <- glmmTMB(Dead ~ 
                                  Block +
@@ -1120,7 +1120,7 @@ surv_urbsubs_city_m2_21 <- glmmTMB(Dead ~
 # car::Anova(surv_urbsubs_city_m2_21)
 # AIC(surv_urbsubs_city_m1_21, surv_urbsubs_city_m2_21) # m2 best but <2 AIC from m2
 
-## all years-----
+## all years
 ## Full model
 surv_urbsubs_city_m1_all <- glmmTMB(Dead ~ 
                                  Block +
@@ -1194,7 +1194,7 @@ surv_urbsubs_usc_m2_seasons <- glmmTMB(seasons ~
 
 
 # Response: 0 or 1, as dead/alive-----
-# 2019-----
+# 2019
 ## Full model
 surv_urbsubs_usc_m1_19 <- glmmTMB(Dead ~ 
                                  Block +
@@ -1228,7 +1228,7 @@ surv_urbsubs_usc_m2_19 <- glmmTMB(Dead ~
 # car::Anova(surv_urbsubs_usc_m2_19)
 # AIC(surv_urbsubs_usc_m1_19, surv_urbsubs_usc_m2_19) # m2 best but <2 AIC from m1
 
-# 2020-----
+# 2020
 ## Full model
 surv_urbsubs_usc_m1_20 <- glmmTMB(Dead ~ 
                                  Block +
@@ -1262,7 +1262,7 @@ surv_urbsubs_usc_m2_20 <- glmmTMB(Dead ~
 # car::Anova(surv_urbsubs_usc_m2_20)
 # AIC(surv_urbsubs_usc_m1_20, surv_urbsubs_usc_m2_20) # m1 best but <2 AIC from m2
 
-# 2021-----
+# 2021
 ## Full model
 surv_urbsubs_usc_m1_21 <- glmmTMB(Dead ~ 
                                  Block +
@@ -1294,7 +1294,7 @@ surv_urbsubs_usc_m2_21 <- glmmTMB(Dead ~
 # car::Anova(surv_urbsubs_usc_m2_21)
 # AIC(surv_urbsubs_usc_m1_21, surv_urbsubs_usc_m2_21) # m2 best but <2 AIC from m2
 
-# all years-----
+# all years
 ## Full model
 surv_urbsubs_usc_m1_all <- glmmTMB(Dead ~ 
                                  Block +
@@ -1646,18 +1646,18 @@ names(ramets_late_mods) <- c("City_gr",
 mortality_mods <- list(
 
 ## City_dist / gradient
- ,
+ surv_gr_city_m1_seasons,
 
 ## Urbanization score / gradient
- ,
+ surv_gr_usc_m1_seasons,
 
 ## City_dist / urban subtransects
-, # Qualitatively identical model (<2 AIC away)
-, # Best model
+surv_urbsubs_city_m1_seasons, # Qualitatively identical model (<2 AIC away)
+surv_urbsubs_city_m2_seasons, # Best model
 
 ## Urbanization score  / urban subtransects
-, # Qualitatively identical model (<2 AIC away)
- # Best model
+surv_urbsubs_usc_m1_seasons, # Qualitatively identical model (<2 AIC away)
+surv_urbsubs_usc_m2_seasons # Best model
 
 )
 
@@ -1680,8 +1680,8 @@ heights_early_mods,
 heights_late_mods,
 rgr_mods,
 ramets_early_mods,
-ramets_late_mods #,
-# mortality_mods -- add when ready
+ramets_late_mods,
+mortality_mods 
 )
 
 names(all_models) <- c(
@@ -1691,8 +1691,8 @@ names(all_models) <- c(
 "heights_late_mods",
 "rgr_mods",
 "ramets_early_mods",
-"ramets_late_mods" #,
-# "mortality_mods" -- add when ready
+"ramets_late_mods" ,
+"mortality_mods" 
   )
 ```
 
@@ -1826,18 +1826,18 @@ ramets_late_mods_alt_u <- ramets_late_mods[5]
 ### Mortality
 
 ```{r}
-# ## Best
-# ### City_dist
-# ldmc_mods_best_c <- ldmc_mods[c(1,4)]
-# 
-# ### Urb_score
-# ldmc_mods_best_u <- ldmc_mods[c(2,6)]
-# 
-# ## Alt
-# ### City_dist
-# ldmc_mods_alt_c <- ldmc_mods[3]
-# 
-# ### Urb_score
-# ldmc_mods_alt_u <- ldmc_mods[5]
+## Best
+### City_dist
+mortality_mods_best_c <- mortality_mods[c(1,4)]
+
+### Urb_score
+mortality_mods_best_u <- mortality_mods[c(2,6)]
+
+## Alt
+### City_dist
+mortality_mods_alt_c <- mortality_mods[3]
+
+### Urb_score
+mortality_mods_alt_u <- mortality_mods[5]
 ```
 
