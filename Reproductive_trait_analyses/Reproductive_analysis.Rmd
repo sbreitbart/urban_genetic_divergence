@@ -35,124 +35,9 @@ source("libraries.R")
 source("functions.R")
 ```
 
-## Import data
-```{r}
-reproduc <- read.csv(here::here("./Joined_annual_data/reproductive.csv"), na.strings=c("NO PLANT", "none", "NA"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
-  dplyr::select(., -1)%>%
-  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.character) %>%
-    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.factor)
-
-flowering <- read.csv(here::here("./Joined_annual_data/flowering.csv"), na.strings=c("NO PLANT", "none", "NA"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
-  dplyr::select(., -1)%>%
-  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.character) %>%
-    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.factor) 
-```
-
 ## Import final models
-### Create full list
 ```{r}
 source(knitr::purl("Reproductive_trait_analyses/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
-
-all_models <- list(
-flsucc_mods      , # flowering success
-flowers_mods     , # total flowers/plant
-flsize_mods      , # mean flower size
-pods_mods        , # pods (follicles)
-peduncles_mods   ) # peduncles (inflorescences)
-
-names(all_models) <- c(
-"flsucc_mods"          ,
-"flowers_mods"         ,
-"flsize_mods"          ,
-"pods_mods"            ,
-"peduncles_mods")
-```
-
-### Create separate lists of best vs. alt models for city_dist vs urb_score
-#### flowering success
-```{r}
-## Best
-### City_dist
-flsucc_mods_best_c <- flsucc_mods[c(1,4)]
-
-### Urb_score
-flsucc_mods_best_u <- flsucc_mods[c(2,6)]
-
-## Alt
-### City_dist
-flsucc_mods_alt_c <- flsucc_mods[3]
-
-### Urb_score
-flsucc_mods_alt_u <- flsucc_mods[5]
-```
-
-#### total flowers/plant
-```{r}
-## Best
-### City_dist
-flowers_mods_best_c <- flowers_mods[c(1,4)]
-
-### Urb_score
-flowers_mods_best_u <- flowers_mods[c(2,6)]
-
-## Alt
-### City_dist
-flowers_mods_alt_c <- flowers_mods[3]
-
-### Urb_score
-flowers_mods_alt_u <- flowers_mods[5]
-
-```
-
-
-#### mean flower size
-```{r}
-## Best
-### City_dist
-flsize_mods_best_c <- flsize_mods[c(1,4)]
-
-### Urb_score
-flsize_mods_best_u <- flsize_mods[c(2,5)]
-
-## Alt
-### City_dist
-flsize_mods_alt_c <- flsize_mods[3]
-
-### Urb_score- NONE
-```
-
-#### pods (follicles)
-```{r}
-## Best
-### City_dist
-pods_mods_best_c <- pods_mods[c(1,4)]
-
-### Urb_score
-pods_mods_best_u <- pods_mods[c(2,5)]
-
-## Alt
-### City_dist
-pods_mods_alt_c <- pods_mods[3]
-
-### Urb_score
-pods_mods_alt_u <- pods_mods[6]
-```
-
-
-#### peduncles (inflorescences)
-```{r}
-## Best
-### City_dist
-peduncles_mods_best_c <- peduncles_mods[c(1,4)]
-
-### Urb_score
-peduncles_mods_best_u <- peduncles_mods[c(2,5)]
-
-## Alt
-### City_dist
-peduncles_mods_alt_c <- peduncles_mods[3]
-
-### Urb_score- NONE
 ```
 
 # Ranova- RETURN HERE
@@ -170,13 +55,13 @@ set.seed(45)
 ### Best Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(flsucc_mods_best_c) %>%
+make_all_anovas_tidy_altmods(flsucc_mods_best_c) %>%
   save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/FloweringSuccess_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(flsucc_mods_best_u) %>%
+make_all_anovas_tidy_altmods(flsucc_mods_best_u) %>%
   save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/FloweringSuccess_urbscore.png"))
 ```
 
@@ -197,13 +82,13 @@ make_all_anovas_tidy_altmods(flsucc_mods_alt_u) %>%
 ### Best Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(flowers_mods_best_c) %>%
+make_all_anovas_tidy_altmods(flowers_mods_best_c) %>%
   save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/FlowersPerPlant_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(flowers_mods_best_u) %>%
+make_all_anovas_tidy_altmods(flowers_mods_best_u) %>%
   save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/FlowersPerPlant_urbscore.png"))
 ```
 
@@ -225,13 +110,13 @@ make_all_anovas_tidy_altmods(flowers_mods_alt_u) %>%
 ### Best Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(flsize_mods_best_c) %>%
+make_all_anovas_tidy_altmods(flsize_mods_best_c) %>%
   save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/FlowerSize_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(flsize_mods_best_u) %>%
+make_all_anovas_tidy_altmods(flsize_mods_best_u) %>%
   save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/FlowerSize_urbscore.png"))
 ```
 
@@ -248,17 +133,102 @@ make_all_anovas_tidy_altmods(flsize_mods_alt_c) %>%
 ```
 
 
+## Flowering time
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(fltime_mods_best_c) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/Floweringtime_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(fltime_mods_best_u) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/Floweringtime_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(fltime_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/Floweringtime_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(fltime_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/Floweringtime_urbscore_alt.png"))
+```
+
+
+## Flowering start
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(flstart_mods_best_c) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/Floweringstart_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+# working with 3 dfs instead of 2, so tweaking function to reflect his
+
+lapply(flstart_mods_best_u, tidy_anova) %>%
+      lapply(., as.data.frame) %>%
+      purrr::reduce(full_join) %>%
+      replace(., is.na(.), "-") %>%
+      dplyr::filter(Predictor != "(Intercept)") %>%
+  dplyr::mutate(Sites = ifelse(row_number() == 5, "Urban Only",Sites)) %>%
+    dplyr::mutate(Sites = ifelse(row_number() == 6, "Urban Only",Sites)) %>%
+      dplyr::mutate(Sites = ifelse(row_number() == 7, "Urban Only",Sites)) %>%
+
+      flextable::flextable() %>% 
+      merge_v(j = "Response") %>% 
+    #  merge_v(j = "Sites") %>% 
+      valign(valign = "top") %>%
+      flextable::autofit() %>%
+      merge_at(i = 1:2, j = 2) %>% 
+      merge_at(i = 3:4, j = 2) %>% 
+      merge_at(i = 5:7, j = 2) %>% 
+      align(j = c(1, 3), align = "left", part = "all") %>%
+      align(j = c(2,4,5), align = "center", part = "all") %>%
+      align(j = c(2,4,5), align = "center", part = "header") %>%
+      flextable::compose(i = 1, j = 4, part = "header",
+                         value = as_paragraph("χ", as_sup("2"))) %>%
+      flextable::compose(i = 1, j = 5, part = "header",
+                         value = as_paragraph(as_i("p"))) %>%
+      fontsize(size = 12, part = "header") %>%
+      fontsize(size = 12, part = "body") %>%
+      #theme_booktabs()%>%
+      fix_border_issues() %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/Floweringstart_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(flstart_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/Floweringstart_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+# NONE
+```
+
+
+
 ## Pods
 ### Best Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(pods_mods_best_c) %>%
+make_all_anovas_tidy_altmods(pods_mods_best_c) %>%
   save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/Pods_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(pods_mods_best_u) %>%
+make_all_anovas_tidy_altmods(pods_mods_best_u) %>%
   save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/Pods_urbscore.png"))
 ```
 
@@ -280,13 +250,13 @@ make_all_anovas_tidy_altmods(pods_mods_alt_u) %>%
 ### Best Models
 #### City_dist
 ```{r}
-make_all_anovas_tidy(peduncles_mods_best_c) %>%
+make_all_anovas_tidy_altmods(peduncles_mods_best_c) %>%
   save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/Peduncles_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
-make_all_anovas_tidy(peduncles_mods_best_u) %>%
+make_all_anovas_tidy_altmods(peduncles_mods_best_u) %>%
   save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/Peduncles_urbscore.png"))
 ```
 

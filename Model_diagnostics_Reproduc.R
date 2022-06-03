@@ -1,11 +1,9 @@
-# Load libraries & functions
-```{r}
+## ----------------------------------------------------------
 source("libraries.R")
 source("functions.R")
-```
 
-# Import data
-```{r}
+
+## ----------------------------------------------------------
 reproduc <- read.csv(here::here("./Joined_annual_data/reproductive.csv"), na.strings=c("NO PLANT", "none", "NA"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
   dplyr::select(., -1)%>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.character) %>%
@@ -25,13 +23,9 @@ flowering <- read.csv(here::here("./Joined_annual_data/flowering.csv"), na.strin
            .before = Date_first_follicle_2in) %>%
   dplyr::mutate(Julian_oldest_inflor = as.numeric(format(Date_oldest_inflor_flower, "%j")))
 
-```
 
-# Model diagnostics
-## Flowering success
-### Gradient
-#### City_dist
-```{r}
+
+## ----------------------------------------------------------
 flsucc_gr_city1 <- glmmTMB(Flowered ~
                              Block +
                              Year +
@@ -42,10 +36,9 @@ flsucc_gr_city1 <- glmmTMB(Flowered ~
 
 
 # plot(DHARMa::simulateResiduals(flsucc_gr_city1))
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 flsucc_gr_usc1 <- glmmTMB(Flowered ~
                              Block +
                              Year +
@@ -56,11 +49,9 @@ flsucc_gr_usc1 <- glmmTMB(Flowered ~
 
 
 # plot(DHARMa::simulateResiduals(flsucc_gr_usc1))
-```
 
-### Urban subtransects
-#### City_dist
-```{r}
+
+## ----------------------------------------------------------
 flsucc_urbsubs_city1 <- glmmTMB(Flowered ~
                              Block +
                              Year +
@@ -86,10 +77,9 @@ flsucc_urbsubs_city1_ME <- glmmTMB(Flowered ~
 
 # plot(DHARMa::simulateResiduals(flsucc_urbsubs_city1_ME)) 
 # AIC(flsucc_urbsubs_city1, flsucc_urbsubs_city1_ME) # ME model best
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 flsucc_urbsubs_usc1 <- glmmTMB(Flowered ~
                              Block +
                              Year +
@@ -115,13 +105,9 @@ flsucc_urbsubs_usc1_ME <- glmmTMB(Flowered ~
 
 # plot(DHARMa::simulateResiduals(flsucc_urbsubs_usc1_ME))
 # AIC(flsucc_urbsubs_usc1, flsucc_urbsubs_usc1_ME) # ME model best
-```
 
 
-## Flower count/plant (per 3 inflors)
-### Gradient
-#### City_dist
-```{r}
+## ----------------------------------------------------------
 ## Basic data exploration
 # plot(total_flower_count ~ City_dist, data = flowering)
 # 
@@ -140,10 +126,9 @@ flowers_gr_city1 <- glmmTMB(total_flower_count ~
 
 # plot(DHARMa::simulateResiduals(flowers_gr_city1)) 
 
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 flowers_gr_usc1 <- glmmTMB(total_flower_count ~
                                           Block +
                                           Year +
@@ -154,12 +139,9 @@ flowers_gr_usc1 <- glmmTMB(total_flower_count ~
 
 # plot(DHARMa::simulateResiduals(flowers_gr_usc1))
 
-```
 
 
-### Urban Subtransects
-#### City_dist
-```{r}
+## ----------------------------------------------------------
 flowers_urbsubs_city1 <- glmmTMB(total_flower_count ~
                                          Block +
                                           Year +
@@ -182,10 +164,9 @@ flowers_urbsubs_city1_ME <- glmmTMB(total_flower_count ~
 
 # plot(DHARMa::simulateResiduals(flowers_urbsubs_city1_ME))
 # AIC(flowers_urbsubs_city1, flowers_urbsubs_city1_ME) # ME model better but <2 AIC from full
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 flowers_urbsubs_usc1 <- glmmTMB(total_flower_count ~
                                           Block +
                                           Year +
@@ -210,12 +191,9 @@ flowers_urbsubs_usc1_ME <- glmmTMB(total_flower_count ~
 
 # plot(DHARMa::simulateResiduals(flowers_urbsubs_usc1_ME))
 # AIC(flowers_urbsubs_usc1, flowers_urbsubs_usc1_ME) # ME model better but <2 AIC from full
-```
 
-## Mean flower size/inflorescence
-### Gradient
-#### City_dist
-```{r}
+
+## ----------------------------------------------------------
 ## Basic data exploration
 # plot(Overall_mean ~ City_dist, data = flowering)
 # 
@@ -232,10 +210,9 @@ flsize_gr_city1 <- glmmTMB(Overall_mean ~
 
 # plot(DHARMa::simulateResiduals(flsize_gr_city1))
 # performance::check_model(flsize_gr_city1)
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 flsize_gr_usc1 <- glmmTMB(Overall_mean ~
                              Block +
                              Year +
@@ -246,11 +223,9 @@ flsize_gr_usc1 <- glmmTMB(Overall_mean ~
 
 # plot(DHARMa::simulateResiduals(flsize_gr_usc1))
 # performance::check_model(flsize_gr_usc1)
-```
 
-### Urban Subtransects
-#### City_dist
-```{r}
+
+## ----------------------------------------------------------
 flsize_urbsubs_city1 <- glmmTMB(Overall_mean ~
                              Block +
                              Year +
@@ -275,10 +250,9 @@ flsize_urbsubs_city1_ME <- glmmTMB(Overall_mean ~
 # plot(DHARMa::simulateResiduals(flsize_urbsubs_city1_ME))
 # performance::check_model(flsize_urbsubs_city1_ME)
 # AIC(flsize_urbsubs_city1, flsize_urbsubs_city1_ME) # full model best but <2 AIC from ME
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 # doesn't converge unless block removed
 flsize_urbsubs_usc1 <- glmmTMB(Overall_mean ~
                             # Block +
@@ -304,12 +278,9 @@ flsize_urbsubs_usc1_ME <- glmmTMB(Overall_mean ~
 # plot(DHARMa::simulateResiduals(flsize_urbsubs_usc1_ME))
 # performance::check_model(flsize_urbsubs_usc1_ME)
 # AIC(flsize_urbsubs_usc1, flsize_urbsubs_usc1_ME) # full model best
-```
 
-## Flowering time
-### Gradient
-#### City_dist
-```{r}
+
+## ----------------------------------------------------------
 flowering$flowering_time_num <- as.numeric(flowering$flowering_time)
 
 fl_time_gr_city1 <- glmmTMB(flowering_time_num ~
@@ -323,10 +294,9 @@ fl_time_gr_city1 <- glmmTMB(flowering_time_num ~
 # plot(DHARMa::simulateResiduals(fl_time_gr_city1))
 # performance::check_model(fl_time_gr_city1)
 # car::Anova(fl_time_gr_city1)
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 fl_time_gr_usc1 <- glmmTMB(flowering_time_num ~
                                            Block +
                                            Year +
@@ -338,11 +308,9 @@ fl_time_gr_usc1 <- glmmTMB(flowering_time_num ~
 # plot(DHARMa::simulateResiduals(fl_time_gr_usc1))
 # performance::check_model(fl_time_gr_usc1)
 # car::Anova(fl_time_gr_usc1)
-```
 
-### Urban Subtransects
-#### City_dist
-```{r}
+
+## ----------------------------------------------------------
 # full model
 fl_time_urbsubs_city1 <- glmmTMB(flowering_time_num ~
                                            Block +
@@ -372,10 +340,9 @@ fl_time_urbsubs_city1_ME <- glmmTMB(flowering_time_num ~
 # performance::check_model(fl_time_urbsubs_city1_ME)
 # car::Anova(fl_time_urbsubs_city1_ME)
 # AIC(fl_time_urbsubs_city1, fl_time_urbsubs_city1_ME) # ME model best but <2 AIC from full
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 # full model
 fl_time_urbsubs_usc1 <- glmmTMB(flowering_time_num ~
                                            Block +
@@ -405,12 +372,9 @@ fl_time_urbsubs_usc1_ME <- glmmTMB(flowering_time_num ~
 # performance::check_model(fl_time_urbsubs_usc1_ME)
 # car::Anova(fl_time_urbsubs_usc1_ME)
 # AIC(fl_time_urbsubs_usc1, fl_time_urbsubs_usc1_ME) # ME model best but <2 AIC from full
-```
 
-## Flowering start
-### Gradient
-#### City_dist
-```{r}
+
+## ----------------------------------------------------------
 fl_start_gr_city1 <- glmmTMB(Julian_oldest_inflor ~
                                            Block +
                                            Year +
@@ -422,10 +386,9 @@ fl_start_gr_city1 <- glmmTMB(Julian_oldest_inflor ~
 plot(DHARMa::simulateResiduals(fl_start_gr_city1))
 performance::check_model(fl_start_gr_city1)
 car::Anova(fl_start_gr_city1)
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 fl_start_gr_usc1 <- glmmTMB(Julian_oldest_inflor ~
                                          #  Block +
                                            Year +
@@ -437,11 +400,9 @@ fl_start_gr_usc1 <- glmmTMB(Julian_oldest_inflor ~
 plot(DHARMa::simulateResiduals(fl_start_gr_usc1))
 performance::check_model(fl_start_gr_usc1)
 car::Anova(fl_start_gr_usc1)
-```
 
-### Urban subtransects
-#### City_dist
-```{r}
+
+## ----------------------------------------------------------
 fl_start_urbsubs_city1 <- glmmTMB(Julian_oldest_inflor ~
                                            Block +
                                       #     Year +
@@ -472,10 +433,9 @@ car::Anova(fl_start_urbsubs_city1_ME)
 summary(fl_start_urbsubs_city1_ME)
 
 AIC(fl_start_urbsubs_city1, fl_start_urbsubs_city1_ME) # ME best model but <2 AIC from full
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 # not converging
 # fl_start_urbsubs_usc1 <- glmmTMB(Julian_oldest_inflor ~
 #                                           # Block +
@@ -532,12 +492,9 @@ summary(fl_start_urbsubs_usc1_m2)
 
 
 # AIC(fl_start_urbsubs_usc1, fl_start_urbsubs_usc1_ME) # ME best model but <2 AIC from full
-```
 
-## Pods
-#### Gradient
-##### City_dist
-```{r}
+
+## ----------------------------------------------------------
 pods_gr_city1 <- glmmTMB(Pods ~
                            Block +
                            Year +
@@ -550,10 +507,9 @@ plot(DHARMa::simulateResiduals(pods_gr_city1))
 performance::check_model(pods_gr_city1)
 car::Anova(pods_gr_city1)
 
-```
 
-##### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 pods_gr_usc1 <- glmmTMB(Pods ~
                            Block +
                            Year +
@@ -566,11 +522,9 @@ plot(DHARMa::simulateResiduals(pods_gr_usc1))
 performance::check_model(pods_gr_usc1)
 car::Anova(pods_gr_usc1)
 
-```
 
-#### Urban Subtransects
-##### City_dist
-```{r}
+
+## ----------------------------------------------------------
 pods_urbsubs_city1 <- glmmTMB(Pods ~
                            Block +
                            Year +
@@ -601,10 +555,9 @@ car::Anova(pods_urbsubs_city1_ME)
 
 AIC(pods_urbsubs_city1, pods_urbsubs_city1_ME) # ME model lower AIC but <2 away
 
-```
 
-##### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 pods_urbsubs_usc1 <- glmmTMB(Pods ~
                            Block +
                            Year +
@@ -634,12 +587,9 @@ performance::check_model(pods_urbsubs_usc1_ME)
 car::Anova(pods_urbsubs_usc1_ME)
 
 AIC(pods_urbsubs_usc1, pods_urbsubs_usc1_ME) # full model lower AIC but <2 away
-```
 
-## Peduncles (Inflorescences)
-#### Gradient
-##### City_dist
-```{r}
+
+## ----------------------------------------------------------
 hist(flowering$Peduncles) # very right-skewed. Looks like there might be a few outliers
 
 peduncles_gr_city1 <- glmmTMB(Peduncles^3 ~
@@ -654,10 +604,9 @@ plot(DHARMa::simulateResiduals(peduncles_gr_city1))
 performance::check_model(peduncles_gr_city1)
 performance::check_outliers(peduncles_gr_city1) # no outliers
 car::Anova(peduncles_gr_city1)
-```
 
-##### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 peduncles_gr_usc1 <- glmmTMB(Peduncles^3 ~
                            Block +
                            Year +
@@ -669,11 +618,9 @@ peduncles_gr_usc1 <- glmmTMB(Peduncles^3 ~
 plot(DHARMa::simulateResiduals(peduncles_gr_usc1)) 
 performance::check_model(peduncles_gr_usc1)
 car::Anova(peduncles_gr_usc1)
-```
 
-#### Urban Subtransects
-##### City_dist
-```{r}
+
+## ----------------------------------------------------------
 peduncles_urbsubs_city1 <- glmmTMB(Peduncles^2 ~
                            Block +
                            Year +
@@ -701,10 +648,9 @@ plot(DHARMa::simulateResiduals(peduncles_urbsubs_city1_ME))
 AIC(peduncles_urbsubs_city1, peduncles_urbsubs_city1_ME) # ME model best but <2 AIC from full
 
 car::Anova(peduncles_urbsubs_city1_ME)
-```
 
-##### Urb_score
-```{r}
+
+## ----------------------------------------------------------
 # neg binomial- nbinom2 has best results though residual vs predicted plot still has issues
 peduncles_urbsubs_usc1 <- glmmTMB(Peduncles ~
                            Block +
@@ -735,11 +681,9 @@ plot(DHARMa::simulateResiduals(peduncles_urbsubs_usc1_ME)) # looks good
 performance::check_model(peduncles_urbsubs_usc1_ME)
 
 AIC(peduncles_urbsubs_usc1, peduncles_urbsubs_usc1_ME) #full model best model
-```
 
-# Models for use in analysis
-## Flowering success
-```{r}
+
+## ----------------------------------------------------------
 flsucc_mods <- list(
 
 ## City_dist / gradient
@@ -761,10 +705,9 @@ names(flsucc_mods) <- c("City_gr",
                      "Usc_gr",
                      "City_urbsubs_best",
                      "Usc_urbsubs_best")
-```
 
-## Flowers total
-```{r}
+
+## ----------------------------------------------------------
 flowers_mods <- list(
 
 ## City_dist / gradient
@@ -790,10 +733,9 @@ names(flowers_mods) <- c("City_gr",
                      "City_urbsubs_best",
                    #  "Usc_urbsubs_alt",
                      "Usc_urbsubs_best")
-```
 
-## Flower size
-```{r}
+
+## ----------------------------------------------------------
 flsize_mods <- list(
 
 ## City_dist / gradient
@@ -818,10 +760,9 @@ names(flsize_mods) <- c("City_gr",
                      "City_urbsubs_best",
                      "City_urbsubs_alt",
                      "Usc_urbsubs_best")
-```
 
-## Flowering time
-```{r}
+
+## ----------------------------------------------------------
 fltime_mods <- list(
 
 ## City_dist / gradient
@@ -846,10 +787,9 @@ names(fltime_mods) <- c("City_gr",
                      "City_urbsubs_best",
                      "Usc_urbsubs_alt",
                      "Usc_urbsubs_best")
-```
 
-## Flowering start
-```{r}
+
+## ----------------------------------------------------------
 flstart_mods <- list(
 
 ## City_dist / gradient
@@ -874,10 +814,9 @@ names(flstart_mods) <- c("City_gr",
                      "City_urbsubs_best",
                      "Usc_urbsubs_transectonly",
                      "Usc_urbsubs_urbscoreonly")
-```
 
-## Pods
-```{r}
+
+## ----------------------------------------------------------
 pods_mods <- list(
 
 ## City_dist / gradient
@@ -904,10 +843,9 @@ names(pods_mods) <- c("City_gr",
                      "Usc_urbsubs_alt",
                      "Usc_urbsubs_best"
                      )
-```
 
-## Peduncles
-```{r}
+
+## ----------------------------------------------------------
 peduncles_mods <- list(
 
 ## City_dist / gradient
@@ -932,12 +870,9 @@ names(peduncles_mods) <- c("City_gr",
                      "City_urbsubs_alt",
                      "City_urbsubs_best",
                      "Usc_urbsubs_best")
-```
 
 
-# Final models
-## Create final list
-```{r}
+## ----------------------------------------------------------
 all_models <- list(
 flsucc_mods      , # flowering success
 flowers_mods     , # total flowers/plant
@@ -955,11 +890,9 @@ names(all_models) <- c(
 "flstart_mods",
 "pods_mods"            ,
 "peduncles_mods")
-```
 
-## Create separate lists of best vs. alt models for city_dist vs urb_score
-### flowering success
-```{r}
+
+## ----------------------------------------------------------
 ## Best
 ### City_dist
 flsucc_mods_best_c <- flsucc_mods[c(1,4)]
@@ -973,10 +906,9 @@ flsucc_mods_alt_c <- flsucc_mods[3]
 
 ### Urb_score
 flsucc_mods_alt_u <- flsucc_mods[5]
-```
 
-### total flowers/plant
-```{r}
+
+## ----------------------------------------------------------
 ## Best
 ### City_dist
 flowers_mods_best_c <- flowers_mods[c(1,4)]
@@ -991,11 +923,9 @@ flowers_mods_alt_c <- flowers_mods[3]
 ### Urb_score
 flowers_mods_alt_u <- flowers_mods[5]
 
-```
 
 
-### mean flower size
-```{r}
+## ----------------------------------------------------------
 ## Best
 ### City_dist
 flsize_mods_best_c <- flsize_mods[c(1,4)]
@@ -1008,45 +938,9 @@ flsize_mods_best_u <- flsize_mods[c(2,5)]
 flsize_mods_alt_c <- flsize_mods[3]
 
 ### Urb_score- NONE
-```
 
-### flowering time
-```{r}
-## Best
-### City_dist
-fltime_mods_best_c <- fltime_mods[c(1,4)]
 
-### Urb_score
-fltime_mods_best_u <- fltime_mods[c(2,6)]
-
-## Alt
-### City_dist
-fltime_mods_alt_c <- fltime_mods[3]
-
-### Urb_score
-fltime_mods_alt_u <- fltime_mods[5]
-
-```
-
-### flowering start
-```{r}
-## Best
-### City_dist
-flstart_mods_best_c <- flstart_mods[c(1,4)]
-
-### Urb_score
-flstart_mods_best_u <- flstart_mods[c(2,5,6)] # includes transect-only and urbscore-only mods
-
-## Alt
-### City_dist
-flstart_mods_alt_c <- flstart_mods[3]
-
-### Urb_score
-# NONE
-
-```
-### pods (follicles)
-```{r}
+## ----------------------------------------------------------
 ## Best
 ### City_dist
 pods_mods_best_c <- pods_mods[c(1,4)]
@@ -1060,11 +954,9 @@ pods_mods_alt_c <- pods_mods[3]
 
 ### Urb_score
 pods_mods_alt_u <- pods_mods[6]
-```
 
 
-### peduncles (inflorescences)
-```{r}
+## ----------------------------------------------------------
 ## Best
 ### City_dist
 peduncles_mods_best_c <- peduncles_mods[c(1,4)]
@@ -1077,5 +969,4 @@ peduncles_mods_best_u <- peduncles_mods[c(2,5)]
 peduncles_mods_alt_c <- peduncles_mods[3]
 
 ### Urb_score- NONE
-```
 
