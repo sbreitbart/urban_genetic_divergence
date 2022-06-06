@@ -1,0 +1,197 @@
+---
+title: "Multivariate trait correlations"
+author: "Sophie Breitbart"
+date: "6/6/2022"
+output: html_document
+---
+
+# Load libraries
+```{r}
+source("libraries.R")
+```
+
+# Import data
+## Reproductive traits
+```{r}
+source(knitr::purl("Reproductive_trait_analyses/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
+
+# save list of models as reprod_models
+reprod_models <- all_models
+```
+
+## Defense traits
+```{r}
+source(knitr::purl("Defense_trait_analyses/Model_diagnostics_Defense.Rmd", quiet=TRUE))
+
+# save list of models as defense_models
+defense_models <- all_models
+```
+
+## Growth traits
+```{r}
+source(knitr::purl("Growth_trait_analyses/Model_diagnostics_Growth.Rmd", quiet=TRUE))
+
+# save list of models as growth_models
+growth_models <- all_models
+```
+
+# Extract only city_dist/gradient models
+## Defense traits
+```{r}
+defense_city_gr <- defense_models %>%
+  purrr::flatten() %>%
+  keep(grepl('gr', names(.))) %>%
+  keep(grepl('City', names(.)))
+
+names(defense_city_gr) <- c(
+"latex_mods"         ,
+"herb_early_mods_binomial"    ,
+"herb_early_mods_quant"    ,
+"herb_late_mods_binomial"     ,
+"herb_late_mods_quant"     ,
+"weev_mods_binomial" ,
+"weev_mods_quant")
+```
+
+## Growth traits
+```{r}
+growth_city_gr <- growth_models %>%
+  purrr::flatten() %>%
+  keep(grepl('gr', names(.))) %>%
+  keep(grepl('City', names(.)))
+
+names(growth_city_gr) <- c(
+"ldmc_mods",
+"sla_mods",
+"heights_early_mods",
+"heights_late_mods",
+"rgr_mods",
+"ramets_early_mods",
+"ramets_late_mods" ,
+"mortality_mods" 
+  )
+```
+
+## Reproductive traits
+```{r}
+reprod_city_gr <- reprod_models %>%
+  purrr::flatten() %>%
+  keep(grepl('gr', names(.))) %>%
+  keep(grepl('City', names(.)))
+
+names(reprod_city_gr) <- c(
+"flsucc_mods"          ,
+"flowers_mods"         ,
+"flsize_mods"          ,
+"fltime_mods",
+"flstart_mods",
+"pods_mods"            ,
+"peduncles_mods")
+```
+
+
+## Cardenolide model
+```{r}
+# cardenolides per population (pooled)
+cards <-  read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_cardenolides_clean.csv")) %>%
+  dplyr::select(., -1)
+
+cards$Population <- as.character(cards$Population)
+```
+
+## Join lists (without cardenolides yet)
+```{r}
+all <- c(reprod_city_gr,
+  growth_city_gr,
+  defense_city_gr)
+```
+
+# Generate df of BLUPs from each trait
+```{r}
+blup_list <- function(list){
+  
+  all_blups <- list[[1]] %>%
+    ranef() %>%
+    extract2("cond") %>%
+    extract2("Population") %>%
+    rownames_to_column("Population") %>%
+    dplyr::select("Population")
+  
+  for (i in 1:length(list)){
+    
+    var_name <- list[[i]][["call"]][["formula"]][[2]] %>%
+      toString()
+    
+    blup <- list[[i]] %>%
+      ranef() %>%
+      extract2("cond") %>%
+      extract2("Population") %>%
+      rownames_to_column("Population") %>%
+      rename(!!var_name:=2)
+      
+    all_blups <- join(all_blups, blup, by = "Population")
+  }
+  return(all_blups)
+}
+
+all_blups <- blup_list(all) %>%
+# back-transform traits transformed in lmers
+  dplyr::mutate(Peduncles =          .[[8]]^(1/3), # inverse of x^3
+                LDMC =               .[[9]]^2, # inverse of sqrt(x)
+                SLA =                .[[10]]^3, # inverse of x^(1/3)
+                Total_height_early = .[[11]]^3, # "
+                Total_height_late =  .[[12]]^3, # "
+                Rel_growth_rate =    .[[13]]^3, # "
+                Latex =              .[[17]]^3, # "
+                Herbivory_mean_early=exp(.[[19]]), # inverse of log
+                Herbivory_mean_late =exp(.[[21]]), # "
+                Scar_length_cm =     exp(.[[23]])) %>% # "
+  dplyr::select(-c(8:13, 17, 19, 21, 23)) %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  left_join(., cards[,c(2,10)], by = "Population") %>% # add cardenolides
+  dplyr::mutate(cardenolides = total) %>%
+  dplyr::select(-total)
+```
+
+# Generate correlation matrix
+```{r}
+correlations <- rcorr(as.matrix(all_blups[-1])) # take out population column
+
+# save r values as separate df
+correlations.r <- correlations$r %>%
+  as.data.frame() %>%
+  mutate_all(~ifelse(is.nan(.), NA, .))
+
+# save p values as separate df
+correlations.p <- correlations$P %>%
+  as.data.frame()
+
+corr_without_herbiv_late <- rcorr(as.matrix(all_blups[,c(-1, -22)]))# this variable had 1s for nearly each population. As a result, the correlogram was nearly blank. So I took out the variable and now the results are much more refined
+
+correlations2.r <- corr_without_herbiv_late$r %>%
+  as.data.frame() %>%
+  mutate_all(~ifelse(is.nan(.), NA, .))
+
+library(kableExtra)
+correlations2.p <- corr_without_herbiv_late$P %>%
+  as.data.frame() %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  mutate(across(where(is.numeric), round, 3)) %>%
+  kable(format = "html") %>%
+    kable_styling() 
+
+```
+
+# Visualize matrix
+```{r}
+library(GGally)
+ggcorr(as.matrix(correlations.r),
+       method = c("everything", "pearson")) # doesn't work. I think it's because herbivory_late is nearly all 1s
+
+ggcorr(as.matrix(correlations2.r),
+       method = c("everything", "pearson"))
+
+
+
+```
+
