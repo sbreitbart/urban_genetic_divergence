@@ -151,47 +151,216 @@ all_blups <- blup_list(all) %>%
   left_join(., cards[,c(2,10)], by = "Population") %>% # add cardenolides
   dplyr::mutate(cardenolides = total) %>%
   dplyr::select(-total)
+
+oldnames <- colnames(all_blups)
+newnames <- c("Population",
+             "Flowering (0/1)",
+             "Total Flower Count",
+             "Mean Flower Size",
+             "Flowering Time",
+             "Date of Oldest \nInflorescence",
+             "Follicles",
+             "Ramets \n(before flowering)",
+             "Ramets \n(after flowering)",
+             "Seasons Survived",
+             "Herbivory (0/1) \n(before flowering)",
+             "Herbivory (0/1) \n(after flowering)",
+             "R. lineaticollis \ndamage (0/1)",
+             "Peduncles",
+             "Leaf Dry Matter \nContent (LDMC)",
+             "Specific Leaf Area \n(SLA)",
+             "Total Plant Height \n(before flowering)",
+             "Total Plant Height \n(after flowering)",
+             "Relative Growth \nRate",
+             "Latex Exudation",
+             "Herbivory (>0) \n(before flowering)",
+             "Herbivory (>0) \n(after flowering)",
+             "R. lineaticollis \nScar Length",
+             "Total Cardenolide \nConcentration"
+)
+
+all_blups %<>%
+  rename_at(vars(oldnames), ~ newnames)
 ```
 
 # Generate correlation matrix
 ```{r}
-correlations <- rcorr(as.matrix(all_blups[-1])) # take out population column
+# correlations <- rcorr(as.matrix(all_blups[-1])) # take out population column
+# 
+# # save r values as separate df
+# correlations.r <- correlations$r %>%
+#   as.data.frame() %>%
+#   mutate_all(~ifelse(is.nan(.), NA, .))
+# 
+# # save p values as separate df
+# correlations.p <- correlations$P %>%
+#   as.data.frame()
 
-# save r values as separate df
-correlations.r <- correlations$r %>%
-  as.data.frame() %>%
-  mutate_all(~ifelse(is.nan(.), NA, .))
+# the variable in col 22 (Herbivory_mean_late) had 1s for each population except for one (which was 0.999). As a result, the correlogram was nearly blank. So I took out the variable and now the results are much more refined.
 
-# save p values as separate df
-correlations.p <- correlations$P %>%
-  as.data.frame()
-
-corr_without_herbiv_late <- rcorr(as.matrix(all_blups[,c(-1, -22)]))# this variable had 1s for nearly each population. As a result, the correlogram was nearly blank. So I took out the variable and now the results are much more refined
-
-correlations2.r <- corr_without_herbiv_late$r %>%
-  as.data.frame() %>%
-  mutate_all(~ifelse(is.nan(.), NA, .))
-
-library(kableExtra)
-correlations2.p <- corr_without_herbiv_late$P %>%
+# save table of r values as separate object
+correlations2.r <- as.matrix(all_blups[,c(-1, -22)]) %>%
+  rcorr() %>%
+  pluck("r") %>%
   as.data.frame() %>%
   mutate_all(~ifelse(is.nan(.), NA, .)) %>%
-  mutate(across(where(is.numeric), round, 3)) %>%
-  kable(format = "html") %>%
-    kable_styling() 
+  mutate(across(where(is.numeric), round, 3)) 
+
+# then export it
+correlations2.r %>%
+  tibble::rownames_to_column(" ") %>%
+   flextable() %>%
+  save_as_html(., path = here::here("./correlations/r_values.html"))
+
+# same with p values
+correlations2.p <- as.matrix(all_blups[,c(-1, -22)]) %>%
+  rcorr() %>%
+  pluck("P") %>%
+  as.data.frame() %>%
+  mutate_all(~ifelse(is.nan(.), NA, .))  %>%
+  mutate(across(where(is.numeric), round, 3))
+
+correlations2.p %>%
+  tibble::rownames_to_column(" ") %>%
+   flextable() %>%
+  save_as_html(., path = here::here("./correlations/p_values.html"))
 
 ```
 
-# Visualize matrix
+# Visualize
+## Scatterplot matrix
 ```{r}
-library(GGally)
-ggcorr(as.matrix(correlations.r),
-       method = c("everything", "pearson")) # doesn't work. I think it's because herbivory_late is nearly all 1s
 
-ggcorr(as.matrix(correlations2.r),
+correlations2.r[correlations2.r == 1] <- NA # replace all perfect correlations (1; var A on var A; var B on var B; etc.) with NAs
+
+ggpairs(correlations2.r) 
+
+dev.copy2pdf(file = here::here("./correlations/scatterplot_matrix_longnames.pdf"),
+             width = 30, height = 30)
+
+```
+
+## Scatterplot + bar plot + r values
+```{r}
+library(PerformanceAnalytics)
+chart.Correlation(correlations2.r,
+                  histogram = TRUE,
+                  method = "pearson")
+
+dev.copy2pdf(file = here::here("./correlations/loess_scatterplot_matrix.pdf"),
+             width = 20, height = 20)
+```
+
+## Heatmaps
+### Show p and r values
+```{r}
+library(corrplot)
+
+col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+
+# show with p values
+corrplot(
+  cor(all_blups[,c(-1, -22)],
+             use="complete.obs"),
+  method = "shade",
+  shade.col = NA,
+  tl.col = "black",
+  tl.srt = 45,
+  col = col(200),
+ # addCoef.col = "black",
+  cl.pos = "n",
+  order = "AOE",
+  diag = FALSE,
+  type = "upper",
+  p.mat = cor.mtest(all_blups[,c(-1, -22)], conf.level = 0.95)$p,
+  insig = 'p-value',
+  sig.level = -1)
+
+dev.copy2pdf(file = here::here("./correlations/heatmap_with_p.pdf"),
+             width = 20, height = 20)
+
+# show with p value asterisks
+corrplot(
+  cor(all_blups[,c(-1, -22)],
+             use="complete.obs"),
+  shade.col = NA,
+  tl.col = "black",
+  tl.srt = 45,
+  col = col(200),
+  cl.pos = "n",
+  order = "AOE",
+  diag = FALSE,
+  type = "upper",
+  p.mat = cor.mtest(all_blups[,c(-1, -22)], conf.level = 0.95)$p,
+  sig.level = c(0.001, 0.01, 0.05),
+   method = 'color',
+   pch.cex = 0.9,
+   insig = 'label_sig',
+   pch.col = 'grey20')
+
+dev.copy2pdf(file = here::here("./correlations/heatmap_with_p_asterisks.pdf"),
+             width = 20, height = 20)
+
+
+# show with r values
+corrplot(
+  cor(all_blups[,c(-1, -22)],
+             use="complete.obs"),
+  method = "shade",
+  shade.col = NA,
+  tl.col = "black",
+  tl.srt = 45,
+  col = col(200),
+  addCoef.col = "black",
+  cl.pos = "n",
+  order = "AOE",
+  diag = FALSE,
+  type = "upper")
+
+
+dev.copy2pdf(file = here::here("./correlations/heatmap_with_r.pdf"),
+             width = 20, height = 20)
+```
+
+### No p or r values
+```{r}
+# heatmap
+library(GGally)
+# ggcorr(as.matrix(correlations.r),
+#        method = c("everything", "pearson")) # doesn't work. I think it's because herbivory_late is nearly all 1s
+
+# this needs matrix with old variable names- doesn't do well with spaces. So make new r matrix
+
+
+heatmap_rcorr <- blup_list(all) %>%
+# back-transform traits transformed in lmers
+  dplyr::mutate(Peduncles =          .[[8]]^(1/3), # inverse of x^3
+                LDMC =               .[[9]]^2, # inverse of sqrt(x)
+                SLA =                .[[10]]^3, # inverse of x^(1/3)
+                Total_height_early = .[[11]]^3, # "
+                Total_height_late =  .[[12]]^3, # "
+                Rel_growth_rate =    .[[13]]^3, # "
+                Latex =              .[[17]]^3, # "
+                Herbivory_mean_early=exp(.[[19]]), # inverse of log
+                Herbivory_mean_late =exp(.[[21]]), # "
+                Scar_length_cm =     exp(.[[23]])) %>% # "
+  dplyr::select(-c(8:13, 17, 19, 21, 23)) %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  left_join(., cards[,c(2,10)], by = "Population") %>% # add cardenolides
+  dplyr::mutate(cardenolides = total) %>%
+  dplyr::select(-total, -Population, -Herbivory_mean_late) %>%
+  as.matrix() %>%
+  rcorr() %>%
+  pluck("r") %>%
+  as.data.frame() %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  mutate(across(where(is.numeric), round, 3)) 
+
+
+ggcorr(as.matrix(heatmap_rcorr),
        method = c("everything", "pearson"))
 
-
-
+dev.copy2pdf(file = here::here("./correlations/heatmap.pdf"),
+             width = 14, height = 14)
 ```
 
