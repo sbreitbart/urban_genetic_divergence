@@ -8,8 +8,8 @@ source("functions.R")
 ```{r}
 reproduc <- read.csv(here::here("./Joined_annual_data/reproductive.csv"), na.strings=c("NO PLANT", "none", "NA"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
   dplyr::select(., -1)%>%
-  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.character) %>%
-    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.factor)
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year")), as.factor)
 
 flowering <- read.csv(here::here("./Joined_annual_data/flowering.csv"), na.strings=c("NO PLANT", "none", "NA"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
   dplyr::select(., -1)%>%
@@ -62,13 +62,13 @@ flsucc_gr_usc1 <- glmmTMB(Flowered ~
 #### City_dist
 ```{r}
 flsucc_urbsubs_city1 <- glmmTMB(Flowered ~
-                             Block +
-                             Year +
+                              Block +
+                              Year +
                              (1|Population/Family) +
                              City_dist * Transect_ID,
   data = reproduc %>%
     dplyr::filter(Transect_ID != "Rural"),
-  family = binomial(link = "logit"))
+  family = binomial)
 
 # plot(DHARMa::simulateResiduals(flsucc_urbsubs_city1))
 
@@ -85,7 +85,7 @@ flsucc_urbsubs_city1_ME <- glmmTMB(Flowered ~
 
 
 # plot(DHARMa::simulateResiduals(flsucc_urbsubs_city1_ME)) 
-# AIC(flsucc_urbsubs_city1, flsucc_urbsubs_city1_ME) # ME model best
+# AIC(flsucc_urbsubs_city1, flsucc_urbsubs_city1_ME) # ME model best but <2 from full
 ```
 
 #### Urb_score
@@ -114,7 +114,7 @@ flsucc_urbsubs_usc1_ME <- glmmTMB(Flowered ~
 
 
 # plot(DHARMa::simulateResiduals(flsucc_urbsubs_usc1_ME))
-# AIC(flsucc_urbsubs_usc1, flsucc_urbsubs_usc1_ME) # ME model best
+# AIC(flsucc_urbsubs_usc1, flsucc_urbsubs_usc1_ME) # ME model best but <2 from full
 ```
 
 
@@ -750,9 +750,11 @@ flsucc_gr_city1 ,
 flsucc_gr_usc1 ,
 
 ## City_dist / urban subtransects
+flsucc_urbsubs_city1, # qualitatively identical model
 flsucc_urbsubs_city1_ME, # Best model
 
 ## Urbanization score  / urban subtransects
+flsucc_urbsubs_usc1, # qualitatively identical model
 flsucc_urbsubs_usc1_ME # Best model
 
 )
@@ -760,8 +762,11 @@ flsucc_urbsubs_usc1_ME # Best model
 
 names(flsucc_mods) <- c("City_gr",
                      "Usc_gr",
+                     "City_urbsubs_alt",
                      "City_urbsubs_best",
-                     "Usc_urbsubs_best")
+                     "Usc_urbsubs_alt",
+                     "Usc_urbsubs_best"
+)
 ```
 
 ## Flowers total

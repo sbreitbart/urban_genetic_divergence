@@ -276,50 +276,296 @@ peduncles_urbsubs_02_pred <- ggeffects::ggpredict(peduncles_mods_best_u[[2]] ,
 ## Gradient
 ### City_dist
 ```{r}
-# LDMC-----
-ggpred_Q1.citydist_ldmc <- 
-ggplot(ldmc_gradient_01_pred) +
+# Flowering success-----
+ggpred_Q1.citydist_flsucc <- 
+ggplot(flsucc_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = "Leaf Dry Matter Content") +
-  ylim(NA, 0.19) +
+       y = "Flowering success") +
+  ylim(NA, 1) +
   theme_1() +
   
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
-                    label = paste0(" Distance: p = ", tidy_anova(ldmc_mods_best_c[[1]]) %>%
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.94,
+                    label = paste0(" Distance: p = ", tidy_anova(flsucc_mods_best_c[[1]]) %>%
 dplyr::filter(Predictor == "Distance to City Center") %>%
 dplyr::select(p))),
 size = 4.5)
 
-ggpred_Q1.citydist_ldmc
+ggpred_Q1.citydist_flsucc
 
 
+
+# Flower count-----
+ggpred_Q1.citydist_flowers <- 
+ggplot(flowers_gradient_01_pred) +
+  rep_geoms +
+  labs(x = "Distance to Urban Center (km)",
+       y = "Flower count") +
+#  ylim(NA, 1) +
+  theme_1() +
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.94,
+                    label = paste0(" Distance: p = ", tidy_anova(flowers_mods_best_c[[1]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.citydist_flowers
+
+
+
+
+# Flower size-----
+ggpred_Q1.citydist_flsize <- 
+ggplot(flsize_gradient_01_pred) +
+  rep_geoms +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Flower size (" ~ mm^{3}~")")) +
+#  ylim(NA, 1) +
+  theme_1() +
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
+                    label = paste0(" Distance: p = ", tidy_anova(flsize_mods_best_c[[1]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.citydist_flsize
+
+
+
+# Flowering duration-----
+ggpred_Q1.citydist_fltime <- 
+ggplot(fltime_gradient_01_pred) +
+  rep_geoms +
+  labs(x = "Distance to Urban Center (km)",
+       y = "Flowering duration (days)") +
+#  ylim(NA, 1) +
+  theme_1() +
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
+                    label = paste0(" Distance: p = ", tidy_anova(fltime_mods_best_c[[1]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.citydist_fltime
+
+
+
+
+# Flowering duration-----
+ggpred_Q1.citydist_flstart <- 
+ggplot(flstart_gradient_01_pred) +
+  rep_geoms +
+  labs(x = "Distance to Urban Center (km)",
+       y = "Julian date of first flower") +
+#  ylim(NA, 1) +
+  theme_1() +
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.96,
+                    label = paste0(" Distance: p = ", tidy_anova(flstart_mods_best_c[[1]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.citydist_flstart
+
+
+# Pods-----
+ggpred_Q1.citydist_pods <- 
+ggplot(pods_gradient_01_pred) +
+  rep_geoms +
+  labs(x = "Distance to Urban Center (km)",
+       y = "Follicles") +
+#  ylim(NA, 1) +
+  theme_1() +
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
+                    label = paste0(" Distance: p = ", tidy_anova(pods_mods_best_c[[1]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.citydist_pods
+
+
+
+# Inflorescences (peduncles)-----
+ggpred_Q1.citydist_peduncles <- 
+ggplot(peduncles_gradient_01_pred) +
+  rep_geoms +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Inflorescences" ^3)) +
+  ylim(0, 60) +
+  theme_1() +
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
+                    label = paste0(" Distance: p = ", tidy_anova(peduncles_mods_best_c[[1]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.citydist_peduncles
 
 ```
 
 ### Urb_score
 ```{r}
-# LDMC-----
-ggpred_Q1.urbscore_ldmc <- 
-ggplot(ldmc_gradient_02_pred) +
+# Flowering success-----
+ggpred_Q1.urbscore_flsucc <- 
+ggplot(flsucc_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
-       y = "Leaf Dry Matter Content") +
- ylim(0.165, NA) +
+       y = "Flowering success") +
+ ylim(NA, 1) +
     xlim(4, -4) +
   theme_1() +
   
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
-                    label = paste0(" Urb. Score: p = ", tidy_anova(ldmc_mods_best_u[[1]]) %>%
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.94,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(flsucc_mods_best_u[[1]]) %>%
 dplyr::filter(Predictor == "Urbanization Score") %>%
 dplyr::select(p))),
 size = 4.5)
 
-ggpred_Q1.urbscore_ldmc
+ggpred_Q1.urbscore_flsucc
 
 
+
+# Flower count-----
+ggpred_Q1.urbscore_flowers <- 
+ggplot(flowers_gradient_02_pred) +
+  rep_geoms +
+  labs(x = "Urbanization Score",
+       y = "Flower count") +
+# ylim(NA, 1) +
+    xlim(4, -4) +
+  theme_1() +
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.94,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(flowers_mods_best_u[[1]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.urbscore_flowers
+
+
+
+
+# Flower size-----
+ggpred_Q1.urbscore_flsize <- 
+ggplot(flsize_gradient_02_pred) +
+  rep_geoms +
+  labs(x = "Urbanization Score",
+       y = expression("Flower size (" ~ mm^{3}~")")) +
+# ylim(NA, 1) +
+    xlim(4, -4) +
+  theme_1() +
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(flsize_mods_best_u[[1]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.urbscore_flsize
+
+
+# Flowering duration-----
+ggpred_Q1.urbscore_fltime <- 
+ggplot(fltime_gradient_02_pred) +
+  rep_geoms +
+  labs(x = "Urbanization Score",
+       y = "Flowering duration (days)") +
+# ylim(NA, 1) +
+    xlim(4, -4) +
+  theme_1() +
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.96,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(fltime_mods_best_u[[1]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.urbscore_fltime
+
+
+
+# Flowering start-----
+ggpred_Q1.urbscore_flstart <- 
+ggplot(flstart_gradient_02_pred) +
+  rep_geoms +
+  labs(x = "Urbanization Score",
+       y = "Julian date of first flower") +
+# ylim(NA, 1) +
+    xlim(4, -4) +
+  theme_1() +
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.96,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(flstart_mods_best_u[[1]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.urbscore_flstart
+
+
+
+
+# Pods-----
+ggpred_Q1.urbscore_pods <- 
+ggplot(pods_gradient_02_pred) +
+  rep_geoms +
+  labs(x = "Urbanization Score",
+       y = "Follicles") +
+# ylim(NA, 1) +
+    xlim(4, -4) +
+  theme_1() +
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(pods_mods_best_u[[1]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.urbscore_pods
+
+
+
+
+
+# Inflorescences (peduncles)-----
+ggpred_Q1.urbscore_peduncles <- 
+ggplot(peduncles_gradient_02_pred) +
+  rep_geoms +
+  labs(x = "Urbanization Score",
+       y = expression("Inflorescences" ^3)) +
+#  ylim(0, 60) +
+    xlim(4, -4) +
+  theme_1() +
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(peduncles_mods_best_u[[1]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.urbscore_peduncles
 
 ```
 
@@ -432,14 +678,13 @@ ggpred_Q2.urbsubs_ldmc
 ### Gradient / City_dist
 ```{r}
 gradient_citydist_plots <- ggarrange(
-# ggpred_Q1.citydist_ldmc,
-# ggpred_Q1.citydist_sla,
-# ggpred_Q1.citydist_height_e,
-# ggpred_Q1.citydist_height_l,
-# ggpred_Q1.citydist_rgr,
-# ggpred_Q1.citydist_ramets_e,
-# ggpred_Q1.citydist_ramets_l,
-# ggpred_Q1.citydist_mortality +
+ggpred_Q1.citydist_flsucc,
+ggpred_Q1.citydist_flowers,
+ggpred_Q1.citydist_flsize,
+ggpred_Q1.citydist_fltime,
+ggpred_Q1.citydist_flstart,
+ggpred_Q1.citydist_pods,
+ggpred_Q1.citydist_peduncles +
             font("x.text"),
           ncol = 4,
           nrow = 2,
@@ -458,14 +703,13 @@ dev.copy2pdf(file = here::here("./Reproductive_trait_analyses/Figures/Q1_grad_ci
 ### Gradient / Urbanization Score
 ```{r}
 gradient_urbscore_plots <- ggarrange(
-# ggpred_Q1.urbscore_ldmc,
-# ggpred_Q1.urbscore_sla,
-# ggpred_Q1.urbscore_height_e,
-# ggpred_Q1.urbscore_height_l,
-# ggpred_Q1.urbscore_rgr,
-# ggpred_Q1.urbscore_ramets_e,
-# ggpred_Q1.urbscore_ramets_l,
-# ggpred_Q1.urbscore_mortality +
+ggpred_Q1.urbscore_flsucc,
+ggpred_Q1.urbscore_flowers,
+ggpred_Q1.urbscore_flsize,
+ggpred_Q1.urbscore_fltime,
+ggpred_Q1.urbscore_flstart,
+ggpred_Q1.urbscore_pods,
+ggpred_Q1.urbscore_peduncles  +
             font("x.text"),
           ncol = 4,
           nrow = 2,
