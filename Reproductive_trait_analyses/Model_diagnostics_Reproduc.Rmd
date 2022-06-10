@@ -167,10 +167,10 @@ flowers_urbsubs_city1 <- glmmTMB(total_flower_count ~
                                           City_dist * Transect_ID, 
                                         data = flowering %>%
                                    dplyr::filter(Transect_ID != "Rural"),
-                            family = nbinom2) 
+                            family = nbinom1) 
 # plot(DHARMa::simulateResiduals(flowers_urbsubs_city1))
 
-## MAIN EFFECTS
+## MAIN EFFECTS- doesn't work with nbinom2, so using nbinom1
 flowers_urbsubs_city1_ME <- glmmTMB(total_flower_count ~
                                           Block +
                                           Year +
@@ -178,9 +178,10 @@ flowers_urbsubs_city1_ME <- glmmTMB(total_flower_count ~
                                           City_dist + Transect_ID, 
                                         data = flowering %>%
                                    dplyr::filter(Transect_ID != "Rural"),
-                            family = nbinom2)
+                            family = nbinom1)
 
-# plot(DHARMa::simulateResiduals(flowers_urbsubs_city1_ME))
+# car::Anova(flowers_urbsubs_city1_ME)
+plot(DHARMa::simulateResiduals(flowers_urbsubs_city1_ME))
 # AIC(flowers_urbsubs_city1, flowers_urbsubs_city1_ME) # ME model better but <2 AIC from full
 ```
 
@@ -288,9 +289,9 @@ flsize_urbsubs_usc1 <- glmmTMB(Overall_mean ~
                            data = flowering %>%
                              dplyr::filter(Transect_ID != "Rural")) 
 
-plot(DHARMa::simulateResiduals(flsize_urbsubs_usc1))
-performance::check_model(flsize_urbsubs_usc1)
-car::Anova(flsize_urbsubs_usc1)
+# plot(DHARMa::simulateResiduals(flsize_urbsubs_usc1))
+# performance::check_model(flsize_urbsubs_usc1)
+# car::Anova(flsize_urbsubs_usc1)
 
 ## MAIN EFFECTS
 flsize_urbsubs_usc1_ME <- glmmTMB(Overall_mean ~
@@ -715,9 +716,9 @@ peduncles_urbsubs_usc1 <- glmmTMB(Peduncles ~
                            dplyr::filter(Transect_ID != "Rural"),
                          family = nbinom2)
 
-plot(DHARMa::simulateResiduals(peduncles_urbsubs_usc1))
-DHARMa::testOutliers(peduncles_urbsubs_usc1) # no outliers
-performance::check_model(peduncles_urbsubs_usc1)
+# plot(DHARMa::simulateResiduals(peduncles_urbsubs_usc1))
+# DHARMa::testOutliers(peduncles_urbsubs_usc1) # no outliers
+# performance::check_model(peduncles_urbsubs_usc1)
 
 
 # MAIN EFFECTS MODEL
@@ -730,11 +731,11 @@ peduncles_urbsubs_usc1_ME <- glmmTMB(Peduncles ~
                            dplyr::filter(Transect_ID != "Rural"),
                          family = nbinom2)
 
-plot(DHARMa::simulateResiduals(peduncles_urbsubs_usc1_ME)) # looks good
-
-performance::check_model(peduncles_urbsubs_usc1_ME)
-
-AIC(peduncles_urbsubs_usc1, peduncles_urbsubs_usc1_ME) #full model best model
+# plot(DHARMa::simulateResiduals(peduncles_urbsubs_usc1_ME)) # looks good
+# 
+# performance::check_model(peduncles_urbsubs_usc1_ME)
+# 
+# AIC(peduncles_urbsubs_usc1, peduncles_urbsubs_usc1_ME) #full model best model
 ```
 
 # Models for use in analysis
@@ -835,8 +836,8 @@ fl_time_urbsubs_city1,   # Qualitatively identical model (<2 AIC away)
 fl_time_urbsubs_city1_ME, # Best model
 
 ## Urbanization score  / urban subtransects
-fl_time_urbsubs_city1, # Qualitatively identical model (<2 AIC away)
-fl_time_urbsubs_city1_ME  # Best model
+fl_time_urbsubs_usc1, # Qualitatively identical model (<2 AIC away)
+fl_time_urbsubs_usc1_ME  # Best model
 
 )
 
@@ -982,15 +983,14 @@ flsucc_mods_alt_u <- flsucc_mods[5]
 flowers_mods_best_c <- flowers_mods[c(1,4)]
 
 ### Urb_score
-flowers_mods_best_u <- flowers_mods[c(2,6)]
+flowers_mods_best_u <- flowers_mods[c(2,5)]
 
 ## Alt
 ### City_dist
 flowers_mods_alt_c <- flowers_mods[3]
 
 ### Urb_score
-flowers_mods_alt_u <- flowers_mods[5]
-
+# NONE
 ```
 
 

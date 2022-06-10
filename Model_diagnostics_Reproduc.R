@@ -149,10 +149,10 @@ flowers_urbsubs_city1 <- glmmTMB(total_flower_count ~
                                           City_dist * Transect_ID, 
                                         data = flowering %>%
                                    dplyr::filter(Transect_ID != "Rural"),
-                            family = nbinom2) 
+                            family = nbinom1) 
 # plot(DHARMa::simulateResiduals(flowers_urbsubs_city1))
 
-## MAIN EFFECTS
+## MAIN EFFECTS- doesn't work with nbinom2, so using nbinom1
 flowers_urbsubs_city1_ME <- glmmTMB(total_flower_count ~
                                           Block +
                                           Year +
@@ -160,9 +160,10 @@ flowers_urbsubs_city1_ME <- glmmTMB(total_flower_count ~
                                           City_dist + Transect_ID, 
                                         data = flowering %>%
                                    dplyr::filter(Transect_ID != "Rural"),
-                            family = nbinom2)
+                            family = nbinom1)
 
-# plot(DHARMa::simulateResiduals(flowers_urbsubs_city1_ME))
+# car::Anova(flowers_urbsubs_city1_ME)
+plot(DHARMa::simulateResiduals(flowers_urbsubs_city1_ME))
 # AIC(flowers_urbsubs_city1, flowers_urbsubs_city1_ME) # ME model better but <2 AIC from full
 
 
@@ -776,8 +777,8 @@ fl_time_urbsubs_city1,   # Qualitatively identical model (<2 AIC away)
 fl_time_urbsubs_city1_ME, # Best model
 
 ## Urbanization score  / urban subtransects
-fl_time_urbsubs_city1, # Qualitatively identical model (<2 AIC away)
-fl_time_urbsubs_city1_ME  # Best model
+fl_time_urbsubs_usc1, # Qualitatively identical model (<2 AIC away)
+fl_time_urbsubs_usc1_ME  # Best model
 
 )
 
