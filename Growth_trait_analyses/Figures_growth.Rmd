@@ -887,7 +887,7 @@ levels(ramets_late_urbsubs_01_pred$group)
 ggpred_Q2.citydist_ramets_l <- 
 ggplot(ramets_late_urbsubs_01_pred) +
   labs(x = "Distance to Urban Center (km)",
-       y = expression("ramets (after flowering) (cm)" ^{1/3}), 
+       y = expression("Ramets (after flowering) (cm)" ^{1/3}), 
        color = "Transect",
        fill = "Transect") +
 #  ylim(NA, 22) +
@@ -1149,7 +1149,7 @@ levels(ramets_late_urbsubs_02_pred$group)
 ggpred_Q2.urbsubs_ramets_l <- 
 ggplot(ramets_late_urbsubs_02_pred) +
   labs(x = "Urbanization Score",
-       y = expression("ramets (after flowering) (cm)" ^{1/3}), 
+       y = expression("Ramets (after flowering) (cm)" ^{1/3}), 
        color = "Transect",
        fill = "Transect") +
   ylim(1.5, 2) +
@@ -1307,8 +1307,6 @@ dev.copy2pdf(file = here::here("./Growth_trait_analyses/Figures/Q2_urbsubs_urbsc
              width = 14.5, height = 8)
 ```
 
-
-
 # Create boxplots
 ## Heights- Late
 ```{r}
@@ -1325,7 +1323,6 @@ ggplot(heights %>%
 # Find estimated marginal means at terminii
 ## Urban Subtransects
 ### City_dist
-
 #### Ramets, after flowering
 
 ```{r}

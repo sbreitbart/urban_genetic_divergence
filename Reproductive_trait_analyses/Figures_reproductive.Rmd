@@ -112,6 +112,7 @@ flsize_urbsubs_01_pred <- ggeffects::ggpredict(flsize_mods_best_c[[2]],
                                    type = "fe") %>%
   as.data.frame()
 
+
 # urb_score
 flsize_mods_best_u[[2]]
 flsize_urbsubs_02_pred <- ggeffects::ggpredict(flsize_mods_best_u[[2]],
@@ -272,7 +273,7 @@ peduncles_urbsubs_02_pred <- ggeffects::ggpredict(peduncles_mods_best_u[[2]] ,
 ```
 
 
-# Create regression plots- UPDATE
+# Create regression plots
 ## Gradient
 ### City_dist
 ```{r}
@@ -358,7 +359,7 @@ ggpred_Q1.citydist_fltime
 
 
 
-# Flowering duration-----
+# Flowering start-----
 ggpred_Q1.citydist_flstart <- 
 ggplot(flstart_gradient_01_pred) +
   rep_geoms +
@@ -572,34 +573,96 @@ ggpred_Q1.urbscore_peduncles
 ## Urban Subtransects
 ### City_dist
 ```{r}
-# LDMC-----
+# Flowering success-----
 
-levels(ldmc_urbsubs_01_pred$group)
+levels(flsucc_urbsubs_01_pred$group)
 
-ggpred_Q2.citydist_ldmc <-
-ggplot(ldmc_urbsubs_01_pred) +
+ggpred_Q2.citydist_succ <-
+ggplot(flsucc_urbsubs_01_pred) +
   labs(x = "Distance to Urban Center (km)",
-       y = "Leaf Dry Matter Content",
+       y = "Flowering success",
        color = "Transect",
        fill = "Transect") +
- # ylim(NA, 0.19) +
+  ylim(NA, 1) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.97,
-                    label = paste0(" Distance: p = ", tidy_anova(ldmc_mods_best_c[[2]]) %>%
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.96,
+                    label = paste0(" Distance: p = ", tidy_anova(flsucc_mods_best_c[[2]]) %>%
 dplyr::filter(Predictor == "Distance to City Center") %>%
 dplyr::select(p))),
 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.88,
-                    label = paste0(" Transect: p = ", tidy_anova(ldmc_mods_best_c[[2]]) %>%
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.89,
+                    label = paste0(" Transect: p = ", tidy_anova(flsucc_mods_best_c[[2]]) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
 size = 4.5)
 
-ggpred_Q2.citydist_ldmc
+ggpred_Q2.citydist_succ
+
+
+# Flower count-----
+
+levels(flowers_urbsubs_01_pred$group)
+
+ggpred_Q2.citydist_flowers <-
+ggplot(flowers_urbsubs_01_pred) +
+  labs(x = "Distance to Urban Center (km)",
+       y = "Flower count",
+       color = "Transect",
+       fill = "Transect") +
+  ylim(20, 50) +
+  xlim(0, NA) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.16,
+                    label = paste0(" Distance: p = ", tidy_anova(flowers_mods_best_c[[2]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.09,
+                    label = paste0(" Transect: p = ", tidy_anova(flowers_mods_best_c[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.citydist_flowers
+
+
+
+# Flower size-----
+
+levels(flsize_urbsubs_01_pred$group)
+
+ggpred_Q2.citydist_flsize <-
+ggplot(flsize_urbsubs_01_pred) +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Flower size (" ~ mm^{3}~")"),
+       color = "Transect",
+       fill = "Transect") +
+#  ylim(20, 50) +
+  xlim(0, NA) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.16,
+                    label = paste0(" Distance: p = ", tidy_anova(flsize_mods_best_c[[2]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.09,
+                    label = paste0(" Transect: p = ", tidy_anova(flsize_mods_best_c[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.citydist_flsize
+
 
 
 
@@ -610,7 +673,7 @@ levels(fltime_urbsubs_01_pred$group)
 ggpred_Q2.citydist_fltime <-
 ggplot(fltime_urbsubs_01_pred) +
   labs(x = "Distance to Urban Center (km)",
-       y = "Flowering Duration (days)",
+       y = "Flowering duration (days)",
        color = "Transect",
        fill = "Transect") +
  # ylim(NA, 0.19) +
@@ -619,12 +682,12 @@ ggplot(fltime_urbsubs_01_pred) +
   rep_geoms2 +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.14,
+           ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.96,
                     label = paste0(" Distance: p = ", tidy_anova(fltime_mods_best_c[[2]]) %>%
 dplyr::filter(Predictor == "Distance to City Center") %>%
 dplyr::select(p))),
 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.07,
+  ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(fltime_mods_best_c[[2]]) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
@@ -635,46 +698,365 @@ ggpred_Q2.citydist_fltime
 # dev.copy2pdf(file = here::here("./Reproductive_trait_analyses/Figures/Q1_grad_citydist_floweringduration.pdf"),
 #              width = 3.5, height = 3.75*1.1)
 
+# Flowering start-----
+
+levels(flstart_urbsubs_01_pred$group)
+
+ggpred_Q2.citydist_flstart <-
+ggplot(flstart_urbsubs_01_pred) +
+  labs(x = "Distance to Urban Center (km)",
+       y = "Julian date of first flower",
+       color = "Transect",
+       fill = "Transect") +
+#  ylim(20, 50) +
+  xlim(0, NA) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.96,
+                    label = paste0(" Distance: p = ", tidy_anova(flstart_mods_best_c[[2]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.89,
+                    label = paste0(" Transect: p = ", tidy_anova(flstart_mods_best_c[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.citydist_flstart
+
+
+# Pods-----
+
+levels(pods_urbsubs_01_pred$group)
+
+ggpred_Q2.citydist_pods <-
+ggplot(pods_urbsubs_01_pred) +
+  labs(x = "Distance to Urban Center (km)",
+       y = "Follicles",
+       color = "Transect",
+       fill = "Transect") +
+#  ylim(20, 50) +
+  xlim(0, NA) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.96,
+                    label = paste0(" Distance: p = ", tidy_anova(pods_mods_best_c[[2]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(pods_mods_best_c[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.citydist_pods
+
+
+
+# Inflorescences (peduncles)-----
+
+levels(peduncles_urbsubs_01_pred$group)
+
+ggpred_Q2.citydist_peduncles <-
+ggplot(peduncles_urbsubs_01_pred) +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Inflorescences" ^2),
+       color = "Transect",
+       fill = "Transect") +
+#  ylim(20, 50) +
+  xlim(0, NA) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.96,
+                    label = paste0(" Distance: p = ", tidy_anova(peduncles_mods_best_c[[2]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(peduncles_mods_best_c[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.citydist_peduncles
+
+
 ```
 
 ### Urb score
 ```{r}
-# LDMC-----
+# Flowering success-----
 
-levels(ldmc_urbsubs_02_pred$group)
+levels(flsucc_urbsubs_02_pred$group)
 
-ggpred_Q2.urbsubs_ldmc <-
-ggplot(ldmc_urbsubs_02_pred) +
+ggpred_Q2.urbsubs_flsucc <-
+ggplot(flsucc_urbsubs_02_pred) +
   labs(x = "Urbanization Score",
-       y = "Leaf Dry Matter Content",
+       y = "Flowering success",
        color = "Transect",
        fill = "Transect") +
-  ylim(NA, 0.24) +
+  ylim(NA, 1) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.97,
-                    label = paste0(" Urb. Score: p = ", tidy_anova(ldmc_mods_best_u[[2]]) %>%
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.96,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(flsucc_mods_best_u[[2]]) %>%
 dplyr::filter(Predictor == "Urbanization Score") %>%
 dplyr::select(p))),
 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.88,
-                    label = paste0(" Transect: p = ", tidy_anova(ldmc_mods_best_u[[2]]) %>%
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.89,
+                    label = paste0(" Transect: p = ", tidy_anova(flsucc_mods_best_u[[2]]) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
 size = 4.5)
 
-ggpred_Q2.urbsubs_ldmc
+ggpred_Q2.urbsubs_flsucc
+
+
+# Flower count-----
+
+levels(flowers_urbsubs_02_pred$group)
+
+ggpred_Q2.urbsubs_flowers <-
+ggplot(flowers_urbsubs_02_pred) +
+  labs(x = "Urbanization Score",
+       y = "Flower count",
+       color = "Transect",
+       fill = "Transect") +
+ # ylim(20, 50) +
+  xlim(4, -2) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.16,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(flowers_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.09,
+                    label = paste0(" Transect: p = ", tidy_anova(flowers_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.urbsubs_flowers
 
 
 
+# Flower size-----
+
+levels(flsize_urbsubs_02_pred$group)
+
+ggpred_Q2.urbsubs_flsize <-
+ggplot(flsize_urbsubs_02_pred) +
+  labs(x = "Urbanization Score",
+       y = expression("Flower size (" ~ mm^{3}~")"),
+       color = "Transect",
+       fill = "Transect") +
+  ylim(20, 60) +
+  xlim(4, -2) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.96,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(flsize_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.87,
+                    label = paste0(" Transect: p = ", tidy_anova(flsize_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.78,
+                    label = paste0(" U x T: p = ", tidy_anova(flsize_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score x Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.urbsubs_flsize
+
+
+
+
+# Flowering duration-----
+
+levels(fltime_urbsubs_02_pred$group)
+
+ggpred_Q2.urbsubs_fltime <-
+ggplot(fltime_urbsubs_02_pred) +
+  labs(x = "Urbanization Score",
+       y = "Flowering duration (days)",
+       color = "Transect",
+       fill = "Transect") +
+ ylim(2, NA) +
+  xlim(4, -2) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.14,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(fltime_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.07,
+                    label = paste0(" Transect: p = ", tidy_anova(fltime_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.urbsubs_fltime
+
+
+# Flowering start-----
+## TRANSECT ONLY
+
+ggpred_Q2.urbsubs_flstart1 <- flowering %>%
+  dplyr::filter(Transect_ID != "Rural") %>%
+  ggplot(aes(y = Julian_oldest_inflor,
+             x = Transect_ID,
+             color = Transect_ID,
+             fill = Transect_ID)) +
+  labs(x = "Transect",
+       y = "Julian date of first flower",
+       color = "Transect",
+       fill = "Transect") +
+  ylim(170, 240) +
+ #xlim(4, -2) +
+  theme_1() +
+  theme(legend.position = "none") +
+  geom_violin(alpha = 0.3) +
+
+# adding stats from ANOVA
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
+                    label = paste0(" Transect: p = ", tidy_anova(flstart_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5) +
+  scale_colour_manual(values = c("#FC8D62",
+                               "#66C2A5")) +
+  scale_fill_manual(values = c("#FC8D62",
+                               "#66C2A5")) +
+  scale_x_discrete(labels=c("North" = "Non-Corridor",
+                            "South" = "Corridor"))
+
+ggpred_Q2.urbsubs_flstart1
+
+
+
+## URB SCORE ONLY-----
+levels(flstart_urbsubs_02_pred_transect$group)
+
+ggpred_Q2.urbsubs_flstart2 <-
+ggplot(flstart_urbsubs_02_pred_urbscore) +
+  labs(x = "Urbanization Score",
+       y = "Julian date of first flower",
+       color = "#66C2A5",
+       fill = "#66C2A5") +
+  ylim(205, NA) +
+  xlim(4, -2) +
+  theme_1() +
+  rep_geoms2 +
+  theme(legend.position = "none") +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.96,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(flstart_mods_best_u[[3]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5) 
+
+ggpred_Q2.urbsubs_flstart2
+
+
+
+# Pods-----
+
+levels(pods_urbsubs_02_pred$group)
+
+ggpred_Q2.urbsubs_pods <-
+ggplot(pods_urbsubs_02_pred) +
+  labs(x = "Urbanization Score",
+       y = "Follicles",
+       color = "Transect",
+       fill = "Transect") +
+#  ylim(20, 50) +
+  xlim(4, -2) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.96,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(pods_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.89,
+                    label = paste0(" Transect: p = ", tidy_anova(pods_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.82,
+                    label = paste0(" U x T: p = ", tidy_anova(pods_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score x Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.urbsubs_pods
+
+
+
+# Inflorescences (peduncles)-----
+
+levels(peduncles_urbsubs_02_pred$group)
+
+ggpred_Q2.urbsubs_peduncles <-
+ggplot(peduncles_urbsubs_02_pred) +
+  labs(x = "Urbanization Score",
+       y = "Inflorescences",
+       color = "Transect",
+       fill = "Transect") +
+  ylim(0, 8) +
+  xlim(4, -2) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.96,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(peduncles_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.89,
+                    label = paste0(" Transect: p = ", tidy_anova(peduncles_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.82,
+                    label = paste0(" U x T: p = ", tidy_anova(peduncles_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score x Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.urbsubs_peduncles
 
 
 ```
 
-## Combine plots into one figure- UPDATE
+## Combine plots into one figure
 ### Gradient / City_dist
 ```{r}
 gradient_citydist_plots <- ggarrange(
@@ -727,14 +1109,13 @@ dev.copy2pdf(file = here::here("./Reproductive_trait_analyses/Figures/Q1_grad_ur
 ### Urb Subtransects / City_dist
 ```{r}
 urbsubs_citydist_plots <- ggarrange(
-  # ggpred_Q2.citydist_ldmc,
-  # ggpred_Q2.citydist_sla,
-  # ggpred_Q2.citydist_height_e,
-  # ggpred_Q2.citydist_height_l,
-  # ggpred_Q2.citydist_rgr,
-  # ggpred_Q2.citydist_ramets_e,
-  # ggpred_Q2.citydist_ramets_l,
-  # ggpred_Q2.citydist_mortality +
+  ggpred_Q2.citydist_succ,
+  ggpred_Q2.citydist_flowers,
+  ggpred_Q2.citydist_flsize,
+  ggpred_Q2.citydist_fltime,
+  ggpred_Q2.citydist_flstart,
+  ggpred_Q2.citydist_pods,
+  ggpred_Q2.citydist_peduncles  +
             font("x.text"),
           ncol = 4,
           nrow = 2,
@@ -753,42 +1134,100 @@ dev.copy2pdf(file = here::here("./Reproductive_trait_analyses/Figures/Q2_urbsubs
 ### Urb Subtransects / Urbanization Score
 ```{r}
 urbsubs_urbscore_plots <- ggarrange(
-  # ggpred_Q2.urbsubs_ldmc,
-  # ggpred_Q2.urbsubs_sla,
-  # ggpred_Q2.urbsubs_height_e,
-  # ggpred_Q2.urbsubs_height_l,
-  # ggpred_Q2.urbsubs_rgr,
-  # ggpred_Q2.urbsubs_ramets_e,
-  # ggpred_Q2.urbsubs_ramets_l,
-  # ggpred_Q2.urbsubs_mortality +
+ggpred_Q2.urbsubs_flsucc,
+ggpred_Q2.urbsubs_flowers,
+ggpred_Q2.urbsubs_flsize,
+ggpred_Q2.urbsubs_fltime,
+ggpred_Q2.urbsubs_flstart1,
+ggpred_Q2.urbsubs_flstart2,
+ggpred_Q2.urbsubs_pods,
+ggpred_Q2.urbsubs_peduncles +
             font("x.text"),
           ncol = 4,
           nrow = 2,
           align = "hv",
           labels = list("A", "B", "C", "D", "E", "F", "G"),
           font.label = (size =16),
-          common.legend = T,
+          common.legend = TRUE,
           legend = "top") %T>%
   plot
+
 
 dev.copy2pdf(file = here::here("./Reproductive_trait_analyses/Figures/Q2_urbsubs_urbscore_Reproduction.pdf"),
              width = 14.5, height = 8)
 ```
 
-
-
 # Find estimated marginal means at terminii- UPDATE
 ## Urban Subtransects
 ### City_dist
-#### Flowering time
+#### Flower count
+```{r}
+Calc_percent_change_urbsubs(flowers_urbsubs_01_pred)
+# "Percent change, from suburban to urban terminus: 91.9%"
+```
+
+#### Flower size
+```{r}
+# PERCENT difference, interaxn:
+Calc_percent_change_urbsubs_intxn(flsize_urbsubs_01_pred)
+# "Percent change from suburban to urban terminus along corridor subtransect: 19.2%"
+# "Percent change from suburban to urban terminus along non-corridor subtransect: -9.9%"
+```
+
+#### Flowering duration
 ```{r}
 # PERCENT difference, transects:
-Calc_percent_change_transects(fltime_urbsubs_01_pred) # Percent change from non-corridor to corridor subtransect: 57.6%
+Calc_percent_change_transects(fltime_urbsubs_01_pred)
+# Percent change from non-corridor to corridor subtransect: 57.6%
+
+# percent change, along gradient:
+Calc_percent_change_urbsubs(fltime_urbsubs_01_pred)
+# "Percent change, from suburban to urban terminus: 171.6%"
+```
+
+#### Date of first flower
+```{r}
+# percent change, along gradient:
+Calc_percent_change_urbsubs(flstart_urbsubs_01_pred)
+# "Percent change, from suburban to urban terminus: -6.8%"
+# BUT URBAN PLANTS FLOWERED ~14 DAYS EARLIER!
+```
+
+#### Follicles
+```{r}
+# percent change, along gradient:
+Calc_percent_change_urbsubs(pods_urbsubs_01_pred)
+# "Percent change, from suburban to urban terminus: 771%"
+
+```
+
+#### Inflorescences
+```{r}
+# percent change, along gradient:
+Calc_percent_change_urbsubs(peduncles_urbsubs_01_pred)
+# "Percent change, from suburban to urban terminus: 645.8%"
+
 ```
 
 ### Urbanization score
-#### SLA
+#### Flower size
 ```{r}
-# PERCENT CHANGE, suburban to urban terminus:
-Calc_percent_change_urbsubs(sla_urbsubs_02_pred) # 3.7%
+# redo once I make a function for urb_score models?
+```
+
+#### Flowering duration
+```{r}
+# PERCENT difference, transects:
+Calc_percent_change_transects(fltime_urbsubs_02_pred)
+# Percent change from non-corridor to corridor subtransect: 44.5%
+```
+
+#### Follicles
+```{r}
+# redo once I make a function for urb_score models?
+```
+
+#### Inflorescences
+```{r}
+# redo once I make a function for urb_score models?
 ```

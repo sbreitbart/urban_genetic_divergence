@@ -507,10 +507,10 @@ fl_start_urbsubs_usc1_m1 <- glmmTMB(Julian_oldest_inflor ~
                                     dplyr::filter(Transect_ID != "Rural"),
                              family = poisson)
 
-plot(DHARMa::simulateResiduals(fl_start_urbsubs_usc1_m1))
-performance::check_model(fl_start_urbsubs_usc1_m1)
-car::Anova(fl_start_urbsubs_usc1_m1)
-summary(fl_start_urbsubs_usc1_m1)
+# plot(DHARMa::simulateResiduals(fl_start_urbsubs_usc1_m1))
+# performance::check_model(fl_start_urbsubs_usc1_m1)
+# car::Anova(fl_start_urbsubs_usc1_m1)
+# summary(fl_start_urbsubs_usc1_m1)
 
 
 # TEST URB_SCORE
@@ -523,13 +523,10 @@ fl_start_urbsubs_usc1_m2 <- glmmTMB(Julian_oldest_inflor ~
                                     dplyr::filter(Transect_ID != "Rural"),
                              family = poisson)
 
-plot(DHARMa::simulateResiduals(fl_start_urbsubs_usc1_m2))
-performance::check_model(fl_start_urbsubs_usc1_m2)
-car::Anova(fl_start_urbsubs_usc1_m2)
-summary(fl_start_urbsubs_usc1_m2)
-
-
-
+# plot(DHARMa::simulateResiduals(fl_start_urbsubs_usc1_m2))
+# performance::check_model(fl_start_urbsubs_usc1_m2)
+# car::Anova(fl_start_urbsubs_usc1_m2)
+# summary(fl_start_urbsubs_usc1_m2)
 
 
 # AIC(fl_start_urbsubs_usc1, fl_start_urbsubs_usc1_ME) # ME best model but <2 AIC from full
@@ -615,9 +612,9 @@ pods_urbsubs_usc1 <- glmmTMB(Pods ~
                            dplyr::filter(Transect_ID != "Rural"),
                          family = poisson)
 
-plot(DHARMa::simulateResiduals(pods_urbsubs_usc1))
-performance::check_model(pods_urbsubs_usc1)
-car::Anova(pods_urbsubs_usc1)
+# plot(DHARMa::simulateResiduals(pods_urbsubs_usc1))
+# performance::check_model(pods_urbsubs_usc1)
+# car::Anova(pods_urbsubs_usc1)
 
 
 # MAIN EFFECTS MODEL
@@ -630,11 +627,11 @@ pods_urbsubs_usc1_ME <- glmmTMB(Pods ~
                            dplyr::filter(Transect_ID != "Rural"),
                          family = poisson)
 
-plot(DHARMa::simulateResiduals(pods_urbsubs_usc1_ME)) # looks fine
-performance::check_model(pods_urbsubs_usc1_ME)
-car::Anova(pods_urbsubs_usc1_ME)
-
-AIC(pods_urbsubs_usc1, pods_urbsubs_usc1_ME) # full model lower AIC but <2 away
+# plot(DHARMa::simulateResiduals(pods_urbsubs_usc1_ME)) # looks fine
+# performance::check_model(pods_urbsubs_usc1_ME)
+# car::Anova(pods_urbsubs_usc1_ME)
+# 
+# AIC(pods_urbsubs_usc1, pods_urbsubs_usc1_ME) # full model lower AIC but <2 away
 ```
 
 ## Peduncles (Inflorescences)
@@ -684,7 +681,7 @@ peduncles_urbsubs_city1 <- glmmTMB(Peduncles^2 ~
                            dplyr::filter(Transect_ID != "Rural"),
                          family = nbinom2)
 
-plot(DHARMa::simulateResiduals(peduncles_urbsubs_city1))
+# plot(DHARMa::simulateResiduals(peduncles_urbsubs_city1))
 
 
 # MAIN EFFECTS MODEL
@@ -697,11 +694,11 @@ peduncles_urbsubs_city1_ME <- glmmTMB(Peduncles^2 ~
                            dplyr::filter(Transect_ID != "Rural"),
                          family = nbinom2)
 
-plot(DHARMa::simulateResiduals(peduncles_urbsubs_city1_ME))
-
-AIC(peduncles_urbsubs_city1, peduncles_urbsubs_city1_ME) # ME model best but <2 AIC from full
-
-car::Anova(peduncles_urbsubs_city1_ME)
+# plot(DHARMa::simulateResiduals(peduncles_urbsubs_city1_ME))
+# 
+# AIC(peduncles_urbsubs_city1, peduncles_urbsubs_city1_ME) # ME model best but <2 AIC from full
+# 
+# car::Anova(peduncles_urbsubs_city1_ME)
 ```
 
 ##### Urb_score
@@ -1003,14 +1000,14 @@ flowers_mods_alt_c <- flowers_mods[3]
 ```{r}
 ## Best
 ### City_dist
-flsize_mods_best_c <- flsize_mods[c(1,4)]
+flsize_mods_best_c <- flsize_mods[c(1,3)]
 
 ### Urb_score
 flsize_mods_best_u <- flsize_mods[c(2,5)]
 
 ## Alt
 ### City_dist
-flsize_mods_alt_c <- flsize_mods[3]
+flsize_mods_alt_c <- flsize_mods[4]
 
 ### Urb_score- NONE
 ```
