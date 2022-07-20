@@ -9,8 +9,8 @@ source("functions.R")
 # SLA & LDMC-----
 sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv")) %>%
   dplyr::select(., -c(1:2)) %>%
-  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year")), as.character) %>%
-    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year")), as.factor) %>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block")), as.factor) %>%
   dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
 
 

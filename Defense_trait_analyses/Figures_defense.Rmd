@@ -316,7 +316,7 @@ weev_q_gradient_02_pred <- ggeffects::ggpredict(weev_quant_mods_best_u[[1]],
 ```{r}
 # city_dist
 weev_quant_mods_best_c[2]  # log-TRANSFORMED
-weev_quant_urbsubs_01_pred <- ggeffects::ggpredict(weev_quant_mods_best_c[[2]],
+weev_quant_urbsubs_01_pred <- ggeffects::ggpredict(weev_urbsubs_dist_m2_quant,
                                    terms = c("City_dist", "Transect_ID"),
                                    type = "fe") %>%
   as.data.frame()
@@ -1331,7 +1331,7 @@ Calc_percent_change_transects(herb_l_quant_urbsubs_01_pred)
 
 #### Weevil damage: Quantitative
 ```{r}
-Calc_percent_change_transects(weev_quant_urbsubs_01_pred) # 6.2%
+Calc_percent_change_transects(weev_quant_urbsubs_01_pred) # "Percent change from non-corridor to corridor subtransect: 20.9%"
 ```
 
 ### Urbanization Score- not done

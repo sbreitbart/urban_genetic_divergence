@@ -1157,7 +1157,7 @@ dev.copy2pdf(file = here::here("./Reproductive_trait_analyses/Figures/Q2_urbsubs
              width = 14.5, height = 8)
 ```
 
-# Find estimated marginal means at terminii- UPDATE
+# Find estimated marginal means at terminii
 ## Urban Subtransects
 ### City_dist
 #### Flower count
