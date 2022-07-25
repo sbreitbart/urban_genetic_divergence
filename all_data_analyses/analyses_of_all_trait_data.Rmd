@@ -1,0 +1,258 @@
+# Load libraries
+```{r}
+source("libraries.R")
+```
+
+# Import data
+## Reproductive traits
+```{r}
+source(knitr::purl("Reproductive_trait_analyses/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
+
+# Best Models (first is Q1, second is Q2)
+## City_dist
+best_repro_mods <- list(
+flsucc_mods_best_c    ,   # flowering success
+flowers_mods_best_c    ,   # total flowers
+flsize_mods_best_c      , # mean flower size
+fltime_mods_best_c    ,   # flowering time
+flstart_mods_best_c    ,   # flowering start
+pods_mods_best_c      , # pods (follicles)
+peduncles_mods_best_c        # peduncles (inflors)
+)
+
+```
+
+## Defense traits
+```{r}
+source(knitr::purl("Defense_trait_analyses/Model_diagnostics_Defense.Rmd", quiet=TRUE))
+
+# Best Models (first is Q1, second is Q2)
+## City_dist
+best_defense_mods <- list(
+latex_mods_best_c, # latex
+herb_e_bin_mods_best_c, # herbivory early (0/1)
+herb_e_quant_mods_best_c, # herbivory early (quantitative)
+herb_l_bin_mods_best_c, # herbivory late (0/1)
+herb_l_quant_mods_best_c, # herbivory late (quantiative)
+weev_bin_mods_best_c, # weevil damage (0/1)
+weev_quant_mods_best_c # weevil damage (quantitative)
+)
+```
+
+## Growth traits
+```{r}
+source(knitr::purl("Growth_trait_analyses/Model_diagnostics_Growth.Rmd", quiet=TRUE))
+# I don't know why but this Rmd usually doesn't fully run with this line of code, so instead, just open the Rmd and run it all manually
+
+# Best Models (first is Q1, second is Q2)
+## City_dist
+best_growth_mods <- list(
+ldmc_mods_best_c,
+sla_mods_best_c,
+heights_early_mods_best_c,
+heights_late_mods_best_c,
+rgr_mods_best_c,
+ramets_early_mods_best_c,
+ramets_late_mods_best_c,
+mortality_mods_best_c
+)
+
+```
+
+## Cardenolides (part of defense, technically)
+```{r}
+# ONLY FOR Q1
+source(knitr::purl("Defense_trait_analyses/Analysis_cardenolides.Rmd", quiet=TRUE))
+
+# Best Models' p-values
+## City_dist
+card1 <- city_dist_list[["X6.6_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
+
+card2 <- city_dist_list[["X15_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
+
+card3 <- city_dist_list[["X17.6_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
+
+card4 <- city_dist_list[["total"]][[2]][["Pr(>F)"]][1] %>% as.character()
+
+card_df <- data_frame(
+  variable = c("cardenolide_6.6", "cardenolide_15", "cardenolide_17.6", "cardenolide_Total"),
+  p = c(card1, card2, card3, card4))
+
+```
+
+# Extract p values where predictor = city_dist, then put into df
+```{r}
+# merge lists
+all_best_mods <- do.call(c, list(best_growth_mods,
+                                 best_defense_mods,
+                                 best_repro_mods))
+
+
+# Question 1-----
+extract_p_Q1 <- function(best_mod_list){
+ response_var <- tidy_anova(best_mod_list[[1]]) %>%
+    dplyr::filter(Predictor == "Distance to City Center") %>%
+    dplyr::select(Response) %>%
+  as.character()
+    
+  pval <- tidy_anova(best_mod_list[[1]]) %>%
+    dplyr::filter(Predictor == "Distance to City Center") %>%
+    dplyr::select(p) %>%
+  as.character()
+  
+  output_vector <- as.vector(c(response_var, pval))
+  
+  return(output_vector)
+  
+}
+
+all_pvalues_Q1 <- sapply(all_best_mods,
+                         extract_p_Q1) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename("variable" = 1,
+                "p" = 2) %>%
+  # add in cardenolide p values
+  full_join(card_df, by = c("variable", "p")) %>%
+  # order df by p-value
+  dplyr::arrange(-desc(p)) %>%
+# remove asterisk from a p-value
+  dplyr::mutate(p = str_replace(
+    p,
+    "\\*",
+    "")) %>%
+  dplyr::mutate(p = as.numeric(p))
+
+
+# Question 2-----
+extract_p_Q2 <- function(best_mod_list){
+ response_var <- tidy_anova(best_mod_list[[2]]) %>%
+    dplyr::filter(Predictor != "Distance to City Center" &
+                  Predictor != "Year" &
+                  Predictor != "Block") %>%
+    dplyr::select(Response) %>%
+  as.character()
+    
+  pval <- tidy_anova(best_mod_list[[2]]) %>%
+    dplyr::filter(Predictor != "Distance to City Center" &
+                  Predictor != "Year" &
+                  Predictor != "Block") %>%
+    dplyr::select(p) %>%
+  as.character()
+  
+  output_vector <- as.vector(c(response_var, pval))
+  
+  return(output_vector)
+  
+}
+
+all_pvalues_Q2 <- sapply(all_best_mods,
+                         extract_p_Q2) %>%
+  t() %>%
+  as.data.frame() %>%
+  dplyr::rename("variable" = 1,
+                "p" = 2) %>%
+  # order df by p-value
+  dplyr::arrange(-desc(p))
+
+# 3 models had interactions btwn subtransect & dist or year, so I'll manually add those p-values
+
+# this p-value is for dist x subtr interaxn though dist and subtr are also marg sig (0.065 and 0.064, respectively)
+# tidy_anova(all_best_mods[[10]][[2]])
+all_pvalues_Q2[20,1] = "Herbivory_mean_early_binary"
+all_pvalues_Q2[20,2] = "0.068"
+
+
+# this p-value is for dist x subtr interaxn
+# tidy_anova(all_best_mods[[11]][[2]])
+all_pvalues_Q2[22,1] = "log(Herbivory_mean_early)"
+all_pvalues_Q2[22,2] = "0.145"
+
+# this p-value is for dist x subtr interaxn
+# tidy_anova(all_best_mods[[18]][[2]])
+all_pvalues_Q2[21,1] = "Overall_mean"
+all_pvalues_Q2[21,2] = "0.141"
+
+# order df by p-value again
+all_pvalues_Q2 %<>% 
+  dplyr::arrange(-desc(p)) %>%
+# remove asterisk from a p-value
+  dplyr::mutate(p = str_replace(
+    p,
+    "\\*",
+    "")) %>%
+  dplyr::mutate(p = as.numeric(p))
+```
+  
+# Control the false discovery rate with Benjamini–Hochberg procedure
+The methods Holm, Hochberg, Hommel, and Bonferroni control the family-wise error rate.  These methods attempt to limit the probability of even one false discovery (a type I error, incorrectly rejecting the null hypothesis when there is no real effect), and so are all relatively strong (conservative).
+
+The methods BH (Benjamini–Hochberg, which is the same as FDR in R) and BY control the false discovery rate.  These methods attempt to control the expected proportion of false discoveries.
+
+(From this site: https://rcompanion.org/rcompanion/f_01.html)
+
+## Q1
+```{r}
+all_pvalues_Q1 %<>%
+
+# Perform p-value adjustment and add to df-----
+
+# Adjustment procedures that give strong control of the family-wise error rate are the Bonferroni, Holm, Hochberg, and Hommel procedures.
+
+# Adjustments that control for the false discovery rate, which is the expected proportion of false discoveries among the rejected hypotheses, are the Benjamini and Hochberg, and Benjamini, Hochberg, and Yekutieli procedures.
+  dplyr::mutate(
+    Bonferroni = p.adjust(
+      p,
+      method = "bonferroni"), # usually too conservative
+    BH = p.adjust(
+      p,
+      method = "BH"), # Benjamini-Hochberg procedure- what I want (tests for FDR)
+    Holm = p.adjust(
+      p,
+      method = "holm"),
+    Hochberg = p.adjust(
+      p,
+      method = "hochberg"),
+    Hommel = p.adjust(
+      p,
+      method = "hommel"),
+    BY = p.adjust(
+      p,
+      method = "BY")  # stands for Benjamini, Hochberg, and Yekutieli procedure- what I want (tests for FDR)
+    )
+
+# All the tests suggest I can't reject any null hypothesis!
+```
+
+
+## Q2
+```{r}
+all_pvalues_Q2 %<>%
+# Perform p-value adjustment and add to df-----
+
+# Adjustment procedures that give strong control of the family-wise error rate are the Bonferroni, Holm, Hochberg, and Hommel procedures.
+
+# Adjustments that control for the false discovery rate, which is the expected proportion of false discoveries among the rejected hypotheses, are the Benjamini and Hochberg, and Benjamini, Hochberg, and Yekutieli procedures.
+  dplyr::mutate(
+    Bonferroni = p.adjust(
+      p,
+      method = "bonferroni"), # usually too conservative
+    BH = p.adjust(
+      p,
+      method = "BH"), # Benjamini-Hochberg procedure- what I want (tests for FDR)
+    Holm = p.adjust(
+      p,
+      method = "holm"),
+    Hochberg = p.adjust(
+      p,
+      method = "hochberg"),
+    Hommel = p.adjust(
+      p,
+      method = "hommel"),
+    BY = p.adjust(
+      p,
+      method = "BY")  # stands for Benjamini, Hochberg, and Yekutieli procedure- what I want (tests for FDR)
+    )
+
+# All the tests suggest I can't reject any null hypothesis!
+```
