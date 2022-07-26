@@ -218,7 +218,11 @@ all_pvalues_Q1 %<>%
       method = "hommel"),
     BY = p.adjust(
       p,
+<<<<<<< HEAD
       method = "BY")  # stands for Benjamini, Hochberg, and Yekutieli procedure- what I want (tests for FDR)
+=======
+      method = "BY")  # stands for Benjamini, Hochber, and Yekutieli procedure- what I want (tests for FDR)
+>>>>>>> efb1855698431e1692f306a79d57be2ffdd9fede
     )
 
 # All the tests suggest I can't reject any null hypothesis!
@@ -251,7 +255,11 @@ all_pvalues_Q2 %<>%
       method = "hommel"),
     BY = p.adjust(
       p,
+<<<<<<< HEAD
       method = "BY")  # stands for Benjamini, Hochberg, and Yekutieli procedure- what I want (tests for FDR)
+=======
+      method = "BY")  # stands for Benjamini, Hochber, and Yekutieli procedure- what I want (tests for FDR)
+>>>>>>> efb1855698431e1692f306a79d57be2ffdd9fede
     )
 
 # All the tests suggest I can't reject any null hypothesis!
