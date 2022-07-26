@@ -1,0 +1,331 @@
+# Set up notebook
+## Load libraries & functions
+```{r}
+source("libraries.R")
+source("functions.R")
+library(mvabund)
+library(purrr)
+```
+
+# Q1
+## Import data
+```{r}
+pop_vars <- read.csv(here::here("./Joined_annual_data/weevil.csv")) %>%
+  dplyr::select(-1) %>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor) %>%
+  dplyr::select(1:6, 11:20)
+
+
+source(knitr::purl("Growth_trait_analyses/Model_diagnostics_Growth.Rmd", quiet=TRUE))
+
+source(knitr::purl("Defense_trait_analyses/Model_diagnostics_defense.Rmd", quiet=TRUE))
+
+source(knitr::purl("Reproductive_trait_analyses/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
+
+source(knitr::purl("Defense_trait_analyses/Analysis_cardenolides.Rmd", quiet=TRUE))
+```
+
+## Make function that generates BLUP df from linear mixed model
+```{r}
+create_BLUP <- function(linear_mixed_mod){
+   ranef(
+  linear_mixed_mod
+)$cond$Population %>%
+  tibble::rownames_to_column("Population") %>%
+  dplyr::rename(estimate = 2) %>%
+  left_join(., pop_vars %>% # add city_dist and other variables
+              dplyr::select(c(Population,
+                            Transect_ID,
+                            City_dist,
+                            Urb_score)
+                            ) %>%
+              dplyr::group_by(Population) %>%
+              dplyr::summarise(Population  = first(Population),
+                               Transect_ID = first(Transect_ID),
+                               City_dist   = first(City_dist),
+                               Urb_score   = first(Urb_score)))
+}
+```
+
+## Create BLUP vectors for each trait
+### Defense
+```{r}
+# Create BLUP dfs for each trait
+latex_BLUP <- create_BLUP(latex_mods[[1]]) %>%
+  dplyr::rename(latex = 2)
+
+herb_e_bin_BLUP <- create_BLUP(herb_early_mods_binomial[[1]]) %>%
+  dplyr::rename(herb_e_bin = 2)
+
+herb_e_quant_BLUP <- create_BLUP(herb_early_mods_quant[[1]]) %>%
+  dplyr::rename(herb_e_quant = 2)
+
+herb_l_bin_BLUP <- create_BLUP(herb_late_mods_binomial[[1]]) %>%
+  dplyr::rename(herb_l_bin = 2)
+
+herb_l_quant_BLUP <- create_BLUP(herb_late_mods_quant[[1]]) %>%
+  dplyr::rename(herb_l_quant = 2)
+
+weev_bin_BLUP <- create_BLUP(weev_mods_binomial[[1]]) %>%
+  dplyr::rename(weev_mods_bin = 2)
+
+weev_quant_BLUP <- create_BLUP(weev_mods_quant[[1]]) %>%
+  dplyr::rename(weev_mods_quant = 2)
+
+
+```
+
+### Growth
+```{r}
+# Create BLUP dfs for each trait
+ldmc_BLUP <- create_BLUP(ldmc_mods[[1]]) %>%
+  dplyr::rename(ldmc = 2)
+
+sla_BLUP <- create_BLUP(sla_mods[[1]]) %>%
+  dplyr::rename(sla = 2)
+
+heights_early_BLUP <- create_BLUP(heights_early_mods[[1]]) %>%
+  dplyr::rename(heights_early = 2)
+
+heights_late_BLUP <- create_BLUP(heights_late_mods[[1]]) %>%
+  dplyr::rename(heights_late = 2)
+
+rgr_BLUP <- create_BLUP(rgr_mods[[1]]) %>%
+  dplyr::rename(rgr = 2)
+
+ramets_early_BLUP <- create_BLUP(ramets_early_mods[[1]]) %>%
+  dplyr::rename(ramets_early = 2)
+
+ramets_late_BLUP <- create_BLUP(ramets_late_mods[[1]]) %>%
+  dplyr::rename(ramets_late = 2)
+
+mortality_BLUP <- create_BLUP(mortality_mods[[1]]) %>%
+  dplyr::rename(mortality = 2)
+```
+
+### Reproductive
+```{r}
+# Create BLUP dfs for each trait
+flsucc_BLUP <- create_BLUP(flsucc_mods[[1]]) %>%
+  dplyr::rename(flsucc = 2)
+
+flowers_BLUP <- create_BLUP(flowers_mods[[1]]) %>%
+  dplyr::rename(flowers = 2)
+
+flsize_BLUP <- create_BLUP(flsize_mods[[1]]) %>%
+  dplyr::rename(flsize = 2)
+
+fltime_BLUP <- create_BLUP(fltime_mods[[1]]) %>%
+  dplyr::rename(fltime = 2)
+
+flstart_BLUP <- create_BLUP(flstart_mods[[1]]) %>%
+  dplyr::rename(flstart = 2)
+
+pods_BLUP <- create_BLUP(pods_mods[[1]]) %>%
+  dplyr::rename(pods = 2)
+
+peduncles_BLUP <- create_BLUP(peduncles_mods[[1]]) %>%
+  dplyr::rename(peduncles = 2)
+```
+
+
+### Cardenolides
+```{r}
+# B/c these are general linear models and there are no random effects, I'll add in raw values for each cardenolide peak
+cards_BLUPs <- cards %>%
+  dplyr::select(2,3,5,7,10,15,17,19) %>%
+  dplyr::mutate(Population = as.character(Population))
+```
+
+### Merge into single df
+```{r}
+all_traits <- purrr::reduce(
+  list(
+    # defense traits
+    latex_BLUP        ,
+    herb_e_bin_BLUP   ,
+    herb_e_quant_BLUP ,
+    herb_l_bin_BLUP   ,
+    herb_l_quant_BLUP ,
+    weev_bin_BLUP     ,
+    weev_quant_BLUP   ,
+
+     # growth traits
+    ldmc_BLUP         ,
+    sla_BLUP          ,
+    heights_early_BLUP,
+    heights_late_BLUP ,
+    rgr_BLUP          ,
+    ramets_early_BLUP ,
+    ramets_late_BLUP  ,
+    mortality_BLUP    ,
+    
+    # reproductive traits                  
+     flsucc_BLUP,    
+     flowers_BLUP,   
+     flsize_BLUP,    
+     fltime_BLUP,    
+     flstart_BLUP,   
+     pods_BLUP,      
+     peduncles_BLUP, 
+    
+    # cardenolides
+    cards_BLUPs
+                      ),
+              dplyr::left_join,
+              by = c('Population',
+                     'Transect_ID',
+                     'City_dist',
+                     'Urb_score')) %>%
+
+# add new col converting transect into urb/rural classes
+  dplyr::mutate(Urb_Rur = case_when(
+    Transect_ID == "Rural" ~ "Rural",
+    TRUE ~ "Urban"
+  ))
+```
+
+## Use mvabund with gaussian family
+```{r}
+# Use the just the trait data (in columns 5 to 11) and convert it to an mvabund object format used by the mvabund package.
+mvab_all <- mvabund(all_traits[, c(2, 6:30)]) 
+# Warning message:
+# In mvabund(all_traits[, c(2, 6:30)]) :
+#   There are some negative values in your abundance data, which is not expected if your data are counts - please check.
+#   
+#   SB note: yes, this is true. Might be troublesome later on but I'll keep moving forward.
+
+# look at the spread of our data
+par(mar = c(2, 10, 2, 2)) # adjusts the margins
+boxplot(all_traits[, c(2, 6:30)],
+        horizontal = TRUE,
+        las = 2,
+        main = "Abundance")
+
+# It looks like some traits are much more variable than others. It’s probably a good idea to check our mean-variance relationship then! We can do this using the meanvar.plot function:
+meanvar.plot(mvab_all)
+
+# the species with high means (on the x axis) also have high variances (y axis).
+# We can deal with this relationship by choosing a family of GLMs with an appropriate mean-variance assumption. The default family used by mvabund when fitting multivariate GLMs is negative binomial which assumes a quadratic mean-variance relationship and a log-linear relationship between the response variables and any continuous variables. In [the site's] example, we only have categorical variables so that one’s not too important. If you are unsure of these relationships, don’t worry, we can check our model fit later. [I have quantitative variables too]
+
+# There is a ‘quick and dirty’ built-in plotting function in the mvabund package that allows us to contrast transformed abundances to the predictor variables of our choice. To contrast abundances against urban-rural habitat, we would use:
+
+plot(mvab_all ~ as.factor(all_traits$Urb_Rur),
+     cex.axis = 0.8,
+     cex = 0.8)
+# THIS DOESN'T WORK B/C OF NEGATIVE VALUES
+
+# Let’s now contrast the species composition across urb/rural habitat type to see if the models support our observations.
+# The model syntax below fits our response variable (the mvabund object Herb_spp with the counts of 9 species) to the predictor variable Habitat (urban/rural classification).
+
+mod1 <- manylm(mvab_all ~ Urb_Rur,
+               data = all_traits)
+
+# Before we examine the output, we need to check our model assumptions. We can use the plot function to generate a plot of residuals.
+
+plot(mod1)
+# this doesn't work because floral traits only have data from about 2/3 of populations. Retry this when I get 2022 data
+
+# We can test the multivariate hypothesis of whether species composition varied across the habitats by using the anova function. This gives an analysis of deviance table where we use likelihood ratio tests and resampled p values to look for a significant effect of Habitat on the community data.
+
+anova(mod1)
+
+# Analysis of Variance Table
+# 
+# Model: manylm(formula = mvab_all ~ Urb_Rur, data = all_traits)
+# 
+# Overall test for all response variables
+# Test statistics:
+#             Res.Df Df.diff val(F) Pr(>F)
+# (Intercept)     36                      
+# Urb_Rur         35       1  14.51  0.522
+# Arguments:
+#  Test statistics calculated assuming uncorrelated response (for faster computation) 
+#  P-value calculated using 999 iterations via residual (without replacement) resampling.
+
+# We can see from this table that there is NOT an effect of Urban vs. rural habitat, meaning that the overall phenotype does not differ between the urban/rural classification of population they were sourced from.
+# 
+# To examine this further, and see which traits are more likely to diverge re: habitat type, we can run univariate tests for each species separately.
+# 
+# This is done by using the p.uni="adjusted" argument in the anova function. The “adjusted” part of the argument refers to the resampling method used to compute the p values, taking into account the correlation between the response variables. This correlation is often found in ecological systems where different species will interact with each other, competing with or facilitating each others’ resource use.
+
+anova_blup <- anova(mod1, p.uni = "adjusted") %T>%
+  print()
+
+# Analysis of Variance Table
+# 
+# Model: manylm(formula = mvab_all ~ Urb_Rur, data = all_traits)
+# 
+# Overall test for all response variables
+# Test statistics:
+#             Res.Df Df.diff val(F) Pr(>F)
+# (Intercept)     36                      
+# Urb_Rur         35       1  14.51  0.523
+# 
+# Univariate Tests
+# Test statistics:
+#               latex        herb_e_bin        herb_e_quant       
+#             F value Pr(>F)    F value Pr(>F)      F value Pr(>F)
+# (Intercept)                                                     
+# Urb_Rur       2.382  0.785          0  1.000        0.193  0.994
+#             herb_l_bin        herb_l_quant        weev_mods_bin
+#                F value Pr(>F)      F value Pr(>F)       F value
+# (Intercept)                                                    
+# Urb_Rur              0  1.000            0  1.000             0
+#                    weev_mods_quant           ldmc            sla
+#             Pr(>F)         F value Pr(>F) F value Pr(>F) F value
+# (Intercept)                                                     
+# Urb_Rur      1.000           1.386  0.948       0  1.000       0
+#                    heights_early        heights_late       
+#             Pr(>F)       F value Pr(>F)      F value Pr(>F)
+# (Intercept)                                                
+# Urb_Rur      1.000         0.244  0.994        0.361  0.994
+#                 rgr        ramets_early        ramets_late       
+#             F value Pr(>F)      F value Pr(>F)     F value Pr(>F)
+# (Intercept)                                                      
+# Urb_Rur       0.003  0.994        0.449  0.994       0.608  0.994
+#             mortality         flsucc        flowers         flsize
+#               F value Pr(>F) F value Pr(>F) F value Pr(>F) F value
+# (Intercept)                                                       
+# Urb_Rur             0  1.000   5.273  0.268       0  1.000       0
+#                     fltime        flstart           pods       
+#             Pr(>F) F value Pr(>F) F value Pr(>F) F value Pr(>F)
+# (Intercept)                                                    
+# Urb_Rur      1.000   0.888  0.988       0  1.000    0.31  0.994
+#             peduncles        X6.6_main        X15_main       
+#               F value Pr(>F)   F value Pr(>F)  F value Pr(>F)
+# (Intercept)                                                  
+# Urb_Rur         0.252  0.994     0.317  0.994    0.738  0.993
+#             X17.6_main          total       
+#                F value Pr(>F) F value Pr(>F)
+# (Intercept)                                 
+# Urb_Rur          0.578  0.994   0.528  0.994
+# 
+# Arguments: with 999 resampling iterations using residual (without replacement) resampling and uncorrelated response (for faster computation) 
+
+# after adjusting for multiple testing, there are still no effects of habitat on any specific trait.
+
+
+# use city_dist as habitat descriptor
+anova_blup2 <- manylm(mvab_all ~ City_dist,
+               data = all_traits) %>%
+  anova() %T>%
+  print()
+
+# Analysis of Variance Table
+# 
+# Model: manylm(formula = mvab_all ~ City_dist, data = all_traits)
+# 
+# Overall test for all response variables
+# Test statistics:
+#             Res.Df Df.diff val(F) Pr(>F)
+# (Intercept)     36                      
+# City_dist       35       1  7.973  0.878
+# Arguments:
+#  Test statistics calculated assuming uncorrelated response (for faster computation) 
+#  P-value calculated using 999 iterations via residual (without replacement) resampling.
+
+# Still no effect of urbanization on herbivore abundance.
+```
+
