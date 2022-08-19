@@ -30,13 +30,14 @@ labs(x="Year Recorded", y="") +
           size = 14,
           face = "bold")) +
   scale_fill_brewer(palette = "Greens")
+p
 
 # save it
 png(here::here("./Phenotyping_schedule/Phenotyping_schedule.png"))
 print(p)
 dev.off()
 ggsave(here::here("./Phenotyping_schedule/Phenotyping_schedule.pdf"),
-                  width = 4, height = 4)
+                  width = 7, height = 6)
 ggsave(here::here("./Phenotyping_schedule/Phenotyping_schedule_large.pdf"),
-                  width = 6, height = 6)
+                  width = 7, height = 6)
        

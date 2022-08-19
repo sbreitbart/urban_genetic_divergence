@@ -1,19 +1,19 @@
-﻿Trait,Category,Measured_2019,Measured_2020,Measured_2021
-Herbivory,Defense, X         , X         , X         
-Weevil damage,Defense,           , X         , X         
-Cardenolide concentration   ,Defense,           , X         ,           
-Latex exudation            ,Defense,           , X         ,           
-Specialist herbivore presence (10 species),Defense,, X         ,
-Specialist herbivore presence (3 species),Defense,,, X         
-Height,Growth, X         , X         , X         
-Relative growth rate,Growth, X         , X         , X         
-No. ramets,Growth, X         , X         , X         
-Survival,Growth, X         , X         , X         
-Specific leaf area (SLA),Growth,           , X         ,           
-Leaf dry matter content (LDMC),Growth,           , X         ,           
-Flowering duration,Reproduction,, X         , X         
-No. flowers per inflorescence,Reproduction,, X         , X         
-Mean flower size,Reproduction,, X         , X         
-Pollinaria removed,Reproduction,, X         , X         
-No. follicles,Reproduction,, X         , X         
-No. inflorescences,Reproduction,, X         , X         
+﻿Trait,Category,Measured_2019,Measured_2020,Measured_2021,Measured_2022
+Herbivory,Defense, X         , X         , X         ,
+Weevil damage,Defense,           , X         , X         ,
+Cardenolide concentration   ,Defense,           , X         ,           ,
+Latex exudation            ,Defense,           , X         ,           ,
+Specialist herbivore presence (10 species),Defense,, X         ,,
+Specialist herbivore presence (3 species),Defense,,, X         ,
+Height,Growth, X         , X         , X         ,
+Relative growth rate,Growth, X         , X         , X         ,
+No. ramets,Growth, X         , X         , X         ,
+Survival,Growth, X         , X         , X         ,X
+Specific leaf area (SLA),Growth,           , X         ,           ,
+Leaf dry matter content (LDMC),Growth,           , X         ,           ,
+Flowering duration,Reproduction,, X         , X         , X         
+No. flowers per inflorescence,Reproduction,, X         , X         , X         
+Mean flower size,Reproduction,, X         , X         , X         
+Pollinaria removed,Reproduction,, X         , X         , X         
+No. follicles,Reproduction,, X         , X         , X         
+No. inflorescences,Reproduction,, X         , X         , X         

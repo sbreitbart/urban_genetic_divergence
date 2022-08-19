@@ -218,14 +218,14 @@ all_pvalues_Q1 %<>%
       method = "hommel"),
     BY = p.adjust(
       p,
-<<<<<<< HEAD
       method = "BY")  # stands for Benjamini, Hochberg, and Yekutieli procedure- what I want (tests for FDR)
-=======
-      method = "BY")  # stands for Benjamini, Hochber, and Yekutieli procedure- what I want (tests for FDR)
->>>>>>> efb1855698431e1692f306a79d57be2ffdd9fede
     )
 
 # All the tests suggest I can't reject any null hypothesis!
+
+# Export new p-values
+write.csv(all_pvalues_Q1,
+          here::here("./All_data_analyses/FDR_p_Q1.csv"))
 ```
 
 
@@ -255,12 +255,12 @@ all_pvalues_Q2 %<>%
       method = "hommel"),
     BY = p.adjust(
       p,
-<<<<<<< HEAD
-      method = "BY")  # stands for Benjamini, Hochberg, and Yekutieli procedure- what I want (tests for FDR)
-=======
-      method = "BY")  # stands for Benjamini, Hochber, and Yekutieli procedure- what I want (tests for FDR)
->>>>>>> efb1855698431e1692f306a79d57be2ffdd9fede
-    )
+      method = "BY"))  # stands for Benjamini, Hochberg, and Yekutieli procedure- what I want (tests for FDR)
 
 # All the tests suggest I can't reject any null hypothesis!
+
+
+# Export new p-values
+write.csv(all_pvalues_Q2,
+          here::here("./All_data_analyses/FDR_p_Q2.csv"))
 ```
