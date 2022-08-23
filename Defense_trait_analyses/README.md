@@ -18,7 +18,6 @@ This folder contains tables of ranova results for defense traits.
 
 ### Analysis_ Rmds
 
-- Analysis_cardenolides.Rmd,
 - Analysis_defense.Rmd,
 - Analysis_herbivores_2020.Rmd, and
 - Analysis_herbivores_2021.Rmd
@@ -27,6 +26,8 @@ contain scripts used to analyze models generated in
 
 -Model_diagnostics_Defense.Rmd and
 -Model_diagnostics_herbivores.Rmd.
+
+Analysis_cardenolides.Rmd does not import models from a different Rmd and instead contains that code since it's relatively brief.
 
 ### Figures_ Rmds
 

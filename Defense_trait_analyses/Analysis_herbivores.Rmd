@@ -1,0 +1,666 @@
+---
+title: "KSR 2020 Herbivore Analysis"
+author: "Sophie Breitbart"
+output:
+  html_document:
+    number_sections: true
+    df_print: paged
+    toc: yes
+    toc_depth: 6
+    toc_float:
+      collapsed: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
+editor_options: 
+  chunk_output_type: console
+---
+
+*Background information:*
+
+* Herbivore surveys were done twice: Once in July, once in August.
+* The species observed are in the column names. The only species with two columns was the Monarch butterfly:
+    + one column for Monarchs that had been on the plant in the past ("mean_Monarch_Quantity_Past") and which refers to empty chrysalis, empty eggs, and chrysalis with a dead butterfly inside, and
+    + one column for alive Monarchs present on the plant itself ("mean_Monarch_Quantity_Observed") and which refers to all other Monarch forms (caterpillars, eggs, chrysalises with insects still inside)
+* Monarchs notwithstanding, dead herbivores were not counted in the surveys. After Hellinger transformation, though, the mean_Monarch_Quantity_Past column had been converted to all 0's.
+* Environmental variables are as follows:
+    + To quantify urbanization, both distance from the city center and urbanization score were used, separately.
+    + Transect was also used as a variable when analyzing the urban sites ONLY (i.e. excluding rural sites).
+
+
+**Questions:**
+
+* To what extent is urbanization associated with genetic divergence in phenotypic traits among subpopulations?
+* Is proximity to urban corridors related to the levels of genetic divergence among urban subpopulations?
+
+
+WHEN TOTALLY DONE, type this:
+renv::activate()
+renv::snapshot()
+
+# Set up notebook
+## Load libraries & functions
+```{r}
+source("libraries.R")
+source("functions.R")
+```
+
+## Import data
+```{r}
+herbivores <- read.csv(here::here("./Joined_annual_data/herbivores.csv")) %>%
+  dplyr::select(., -1) %>%
+  dplyr::mutate_at(vars(c("Population",
+                          "Family",
+                          "Replicate",
+                          "Block",
+                          "Transect_ID",
+                          "Sample",
+                          "Patch_ID",
+                          "Urb_Rur",
+                          "Year",
+                          "Surveyor",
+                          "Date")),
+                   as.character) %>%
+    dplyr::mutate_at(vars(c("Population",
+                            "Family",
+                            "Replicate",
+                            "Block",
+                            "Transect_ID",
+                            "Sample",
+                            "Patch_ID",
+                            "Urb_Rur",
+                            "Year",
+                            "Surveyor",
+                          "Date")),
+                     as.factor)
+
+str(herbivores)  
+
+
+herbivores %<>%
+  dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
+```
+
+## Import final models
+```{r}
+source(knitr::purl("Defense_trait_analyses/Model_diagnostics_herbivores.Rmd", quiet=TRUE))
+
+all_models <- list(
+monarch_mods          , 
+asclepiadis_mods           , 
+clivicollis_mods)
+
+names(all_models) <- c(
+"monarch_mods"          ,
+"asclepiadis_mods"           ,
+"clivicollis_mods"         )
+```
+
+### Create separate lists of best vs. alt models for city_dist vs urb_score
+#### Monarchs
+```{r}
+## Best
+### City_dist
+monarch_mods_best_c <- monarch_mods[c(1,4)]
+
+### Urb_score
+monarch_mods_best_u <- monarch_mods[c(2,6)]
+
+## Alt
+### City_dist
+monarch_mods_alt_c <- monarch_mods[3]
+
+### Urb_score
+monarch_mods_alt_u <- monarch_mods[5]
+```
+
+#### L. asclepiadis
+```{r}
+## Best
+### City_dist
+asclepiadis_mods_best_c <- asclepiadis_mods[c(1,4)]
+
+### Urb_score
+asclepiadis_mods_best_u <- asclepiadis_mods[c(2,6)]
+
+## Alt
+### City_dist
+asclepiadis_mods_alt_c <- asclepiadis_mods[3]
+
+### Urb_score
+asclepiadis_mods_alt_u <- asclepiadis_mods[5]
+```
+
+
+#### L. clivicollis
+```{r}
+## Best
+### City_dist
+clivicollis_mods_best_c <- clivicollis_mods[c(1,3)]
+
+### Urb_score
+clivicollis_mods_best_u <- clivicollis_mods[c(2,6)]
+
+## Alt
+### City_dist
+clivicollis_mods_alt_c <- clivicollis_mods[4]
+
+### Urb_score
+clivicollis_mods_alt_u <- clivicollis_mods[5]
+
+```
+
+# Ranova
+## Gradient / City_dist
+### Generalized LMM use bootstrapping with pbmodcomp()
+#### Monarchs
+```{r}
+# NOT PERFECT b/c can't nest family within pop
+# Ben Bolker says it should work too: https://stackoverflow.com/questions/69842066/testing-for-the-significance-of-a-random-effect-in-a-mixed-model
+# https://github.com/glmmTMB/glmmTMB/issues/456
+
+# test city_dist
+# this doesn't work with negative binomial as distribution OR poisson OR with any other fixed effects still in the model.
+full <- lmer(Monarch_Quantity_Observed ~
+                           #     Block +
+                                (1|Population/Family) +
+                            #    Year +
+                           #     Sample +
+                                City_dist,
+              data = herbivores,
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  # ,control=glmerControl(optimizer="bobyqa",
+  #                           optCtrl=list(maxfun=2e5))
+  )
+
+reduced <- update(full, .~. - City_dist)
+
+monarch_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 1000,
+          cl = makeCluster(rep("localhost", 6)))
+tidy(monarch_ranova) # singular... Pop: p = 0.43
+
+
+
+
+# take out fam
+full <- lmer(Monarch_Quantity_Observed ~
+                # Block +
+                #  Year + 
+                (1|Population) +
+               # Sample +
+                City_dist,
+              data = herbivores,
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  )
+
+reduced <- update(full, .~. - City_dist)
+
+monarch_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 1000,
+          cl = makeCluster(6))
+tidy(monarch_ranova.fam) # Singular. Fam: p ~ 0.45
+
+
+
+# merge Pop and Fam ranovas
+monarch_ranova1 <- CreateRanovaOutput_bootstrap(monarch_ranova.fam, monarch_ranova.pop, "Monarch butterfly") %T>%
+  flextable::save_as_html(path = here::here("./Defense_trait_analyses/Tables/Ranova/Monarch.html"))
+```
+
+
+#### L. asclepiadis
+```{r}
+# test city_dist
+# this doesn't work with negative binomial as distribution OR poisson OR with any other fixed effects still in the model.
+full <- lmer(Liriomyza_asclepiadis ~
+                                Block +
+                                (1|Population/Family) +
+                                 Year +
+                                Sample +
+                                City_dist,
+              data = herbivores,
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  # ,control=glmerControl(optimizer="bobyqa",
+  #                           optCtrl=list(maxfun=2e5))
+  )
+
+reduced <- update(full, .~. - City_dist)
+
+asclepiadis_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 1000,
+          cl = makeCluster(6))
+tidy(asclepiadis_ranova.pop) #  p ~ 1
+
+
+
+# take out fam
+full <- lmer(Liriomyza_asclepiadis ~
+                # Block +
+                # Year +
+                (1|Population) +
+                # Sample +
+                City_dist,
+              data = herbivores,
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  ) 
+
+reduced <- update(full, .~. - City_dist)
+
+asclepiadis_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 10,
+          cl = makeCluster(6))
+tidy(asclepiadis_ranova.fam) # Fam: p ~ 1
+
+
+
+# merge Pop and Fam ranovas
+asclepiadis_ranova1 <- CreateRanovaOutput_bootstrap(asclepiadis_ranova.fam, asclepiadis_ranova.pop, "Liriomyza asclepiadis") %T>%
+  flextable::save_as_html(path = here::here("./Defense_trait_analyses/Tables/Ranova/asclepiadis.html"))
+```
+
+
+#### L. clivicollis
+```{r}
+# test city_dist
+# this doesn't work with negative binomial as distribution.
+full <- glmer(Labidomera_clivicollis ~
+                              #  Block +
+                                (1|Population/Family) +
+                              #  Year +
+                                Sample +
+                                City_dist,
+              data = herbivores %>%
+                dplyr::filter(Labidomera_clivicollis < 9),
+              family = poisson,
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  # ,control=glmerControl(optimizer="bobyqa",
+  #                           optCtrl=list(maxfun=2e5))
+  )
+
+reduced <- update(full, .~. - City_dist)
+
+clivicollis_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 1000,
+          cl = makeCluster(7))
+tidy(clivicollis_ranova.pop) #  p ~ 0.59
+
+
+
+# take out fam
+full <- glmer(Labidomera_clivicollis ~
+              #  Block +
+               # Year +
+                (1|Population) +
+                Sample +
+                City_dist,
+              data = herbivores %>%
+                dplyr::filter(Labidomera_clivicollis < 9),
+              family = poisson,
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  ) 
+
+reduced <- update(full, .~. - City_dist)
+
+clivicollis_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 1000,
+          cl = makeCluster(6))
+tidy(clivicollis_ranova.fam) # Fam: p ~ 0.561
+
+
+
+# merge Pop and Fam ranovas
+clivicollis_ranova1 <- CreateRanovaOutput_bootstrap(clivicollis_ranova.fam, clivicollis_ranova.pop, "Labidomera clivicollis") %T>%
+  flextable::save_as_html(path = here::here("./Defense_trait_analyses/Tables/Ranova/clivicollis.html"))
+```
+
+
+## Urban Subtransects / City_dist
+### Generalized LMM use bootstrapping with pbmodcomp()
+#### Monarchs
+```{r}
+## test city_dist-----
+### take out fam
+full <- glmer(Monarch_Quantity_Observed ~
+                Block +
+                Year +
+                (1|Population) +
+                City_dist,
+                              data = herbivores %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  # ,control=glmerControl(optimizer="bobyqa",
+  #                           optCtrl=list(maxfun=2e5))
+  )
+
+reduced <- update(full, .~. - City_dist)
+
+monarch_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 1000,
+          cl = makeCluster(6))
+
+tidy(monarch_ranova.pop) # Pop: p ~ 0.047
+
+
+### take out pop
+full <- glmer(Monarch_Quantity_Observed ~
+                Block +
+                Year + 
+                (1|Fam_uniq) +
+                City_dist,
+              data = herbivores %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  # ,control=glmerControl(optimizer="bobyqa",
+  #                           optCtrl=list(maxfun=2e5))
+  )
+
+reduced <- update(full, .~. - City_dist)
+
+
+monarch_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 1000,
+          cl = makeCluster(6))
+
+tidy(monarch_ranova.fam) # Family: p ~ 0.019
+
+
+
+## test transect-----
+test_tr <- glmer(Monarch_Quantity_Observed ~
+                # Block + Year + Sample +
+                (1|Population/Family) + Transect_ID,
+                              data = herbivores %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = nbinom2,
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  # ,control=glmerControl(optimizer="bobyqa",
+  #                           optCtrl=list(maxfun=2e5))
+  )
+
+
+# merge Pop and Fam ranovas-----
+## test city_dist
+monarch_ranova1 <- CreateRanovaOutput_bootstrap(monarch_ranova.fam, monarch_ranova.pop, "Monarch butterfly (Distance)")
+
+## test transect
+monarch_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Monarch butterfly (Transect)")
+
+flextable::save_as_html(monarch_ranova1,
+                        monarch_ranova2,
+                        path = here::here("./Defense_trait_analyses/Tables/Ranova/monarch_transects.html"))
+```
+
+#### L. asclepiadis
+```{r}
+## test city_dist-----
+### take out fam
+full <- glmer(Liriomyza_asclepiadis ~
+                Block + Year + Sample +
+                (1|Population) + City_dist,
+                              data = herbivores %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  ) 
+
+reduced <- update(full, .~. - City_dist)
+
+asclepiadis_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 1000,
+          cl = makeCluster(7))
+
+tidy(asclepiadis_ranova.pop) # Pop: p ~ 0.848
+
+
+### take out pop
+full <- glmer(Liriomyza_asclepiadis ~
+              #   Block + Year + Sample +
+                (1|Fam_uniq) + City_dist,
+                              data = herbivores %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+             na.action = na.exclude,# THIS LINE IS IMPORTANT
+              control=glmerControl(optimizer="bobyqa",                          optCtrl=list(maxfun=2e5)) 
+  )
+
+reduced <- update(full, .~., -City_dist)
+
+asclepiadis_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 1000,
+          cl = makeCluster(6))
+
+tidy(asclepiadis_ranova.fam) # Family: p ~ 1
+
+
+
+## test transect-----
+test_tr <- glmer(Liriomyza_asclepiadis ~
+                # Block + Year + Sample +
+                (1|Population/Family) + Transect_ID,
+                              data = herbivores %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = nbinom2,
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  )
+
+
+# merge Pop and Fam ranovas-----
+## test city_dist
+asclepiadis_ranova1 <- CreateRanovaOutput_bootstrap(asclepiadis_ranova.fam, asclepiadis_ranova.pop, "Liriomyza asclepiadis (Distance)")
+
+## test transect
+asclepiadis_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Liriomyza asclepiadis (Transect)")
+
+flextable::save_as_html(asclepiadis_ranova1,
+                        asclepiadis_ranova2,
+                        path = here::here("./Defense_trait_analyses/Tables/Ranova/asclepiadis_transects.html"))
+```
+#### L. clivicollis
+```{r}
+## test city_dist-----
+### take out fam
+full <- glmer(Labidomera_clivicollis ~
+                Block +  Year + Sample +
+                (1|Population) + City_dist,
+                              data = herbivores %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  )
+
+reduced <- update(full, .~. - City_dist)
+
+clivicollis_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 1000,
+          cl = makeCluster(6))
+
+tidy(clivicollis_ranova.pop) # Pop: p ~ 0.007
+
+
+### take out pop
+full <- glmer(Labidomera_clivicollis ~
+               # Block + Year + Sample +
+                (1|Fam_uniq) + City_dist,
+                              data = herbivores %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+             na.action = na.exclude) # THIS LINE IS IMPORTANT
+
+reduced <- update(full, .~., -City_dist)
+
+clivicollis_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 1000,
+          cl = makeCluster(6))
+
+tidy(clivicollis_ranova.fam) # Family: p ~ 1
+
+
+
+## test transect-----
+test_tr <- glmer(Labidomera_clivicollis ~
+              #  Block + Year + Sample +
+                (1|Population/Family) + Transect_ID,
+                              data = herbivores %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = nbinom2,
+             na.action = na.exclude # THIS LINE IS IMPORTANT
+  )
+
+
+# merge Pop and Fam ranovas-----
+## test city_dist
+clivicollis_ranova1 <- CreateRanovaOutput_bootstrap(clivicollis_ranova.fam, clivicollis_ranova.pop, "Labidomera clivicollis (Distance)")
+
+## test transect
+clivicollis_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Labidomera clivicollis (Transect)")
+
+flextable::save_as_html(clivicollis_ranova1,
+                        clivicollis_ranova2,
+                        path = here::here("./Defense_trait_analyses/Tables/Ranova/clivicollis_transects.html"))
+```
+
+# ANOVA
+## Monarchs
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(monarch_mods_best_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/Best_models/monarch_citydist.png"))
+
+lapply(monarch_mods_best_c, MuMIn::r.squaredGLMM)
+# lapply(monarch_mods_best_c, r2glmm::r2beta, method = 'sgv',
+#                                            data = herbivores)
+# can't handle glmmtmb objects... if want partial R2, will have to recreate models manually w/glmer
+
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(monarch_mods_best_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/Best_models/monarch_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(monarch_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/Alt_models/monarch_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(monarch_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/Alt_models/monarch_urbscore_alt.png"))
+```
+## L. asclepiadis
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(asclepiadis_mods_best_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/Best_models/asclepiadis_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(asclepiadis_mods_best_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/Best_models/asclepiadis_urbscore.png"))
+```
+
+### Alt Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(asclepiadis_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/Alt_models/asclepiadis_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(asclepiadis_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/Alt_models/asclepiadis_urbscore_alt.png"))
+```
+
+## L. clivicollis
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(clivicollis_mods_best_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/Best_models/clivicollis_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(clivicollis_mods_best_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/Best_models/clivicollis_urbscore.png"))
+```
+
+### Alt Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(clivicollis_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/Alt_models/clivicollis_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(clivicollis_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/Alt_models/clivicollis_urbscore_alt.png"))
+```
+
+# R-sq values
+```{r}
+all_rsq <- lapply(all_models, lapply, r.squaredGLMM) %>%
+  unlist(recursive = FALSE)
+
+```
+
+# Calculate heritability & Qst
+Just looking at gradient models- all pops included. 
+h2 represents the average heritability across populations after removing the genetic effects due to population differences.
+```{r}
+# Monarchs-----
+VarCorr(
+  update(
+    monarch_mods_best_c[[1]], REML = T))
+
+# residual variance:
+resid_var <- update(
+    monarch_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+Calc_h2_qst(0.146429,
+            0.069211,
+            resid_var)
+
+
+# L. asclepiadis-----
+VarCorr(
+  update(
+    asclepiadis_mods_best_c[[1]], REML = T))
+
+# residual variance:
+resid_var <- update(
+    asclepiadis_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+Calc_h2_qst(0.31796 ,
+            0.14935 ,
+            resid_var)
+
+# L. clivicollis-----
+VarCorr(
+  update(
+    clivicollis_mods_best_c[[1]], REML = T))
+
+# residual variance:
+resid_var <- update(
+    clivicollis_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+Calc_h2_qst(0.00011488,
+            0.30719353,
+            resid_var)
+
+```
