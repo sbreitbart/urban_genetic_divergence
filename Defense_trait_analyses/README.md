@@ -1,9 +1,33 @@
-# Subdirectory: ______
+# Subdirectory: Defense_trait_analyses
 
 ## Folder description
 
-### ___
+### Figures
 
-This rmd contains ...
+This folder contains figures of regressions and ANOVA tables for defense traits.
 
-### ___
+### images
+
+This folder contains 3 herbivore images used in regressions of herbivore abundance predicted by urbanization.
+
+### Tables
+
+This folder contains tables of ranova results for defense traits.
+
+## File description
+
+### Analysis_ Rmds
+
+- Analysis_cardenolides.Rmd,
+- Analysis_defense.Rmd,
+- Analysis_herbivores_2020.Rmd, and
+- Analysis_herbivores_2021.Rmd
+
+contain scripts used to analyze models generated in
+
+-Model_diagnostics_Defense.Rmd and
+-Model_diagnostics_herbivores.Rmd.
+
+### Figures_ Rmds
+
+Similarly, files beginning with Figures_ contain scripts used to create figures from similarly-named Rmds.

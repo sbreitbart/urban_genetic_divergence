@@ -1,9 +1,7 @@
-# Subdirectory: ______
+# Subdirectory: correlations
 
 ## Folder description
 
-### ___
+### correlations.rmd
 
-This rmd contains ...
-
-### ___
+This rmd contains a script used to generate correlations among traits, then display them with various figures (the remaining files in this folder).
