@@ -28,8 +28,14 @@ contain scripts used to analyze models generated in
 
 Analysis_cardenolides.Rmd and Analysis_herbivores_2020.Rmd do not import models from different Rmds and instead contain that code.
 
-
-
 ### Figures_ Rmds
 
 Similarly, files beginning with Figures_ contain scripts used to create figures from similarly-named Rmds.
+
+### Model_diagnostics_ Rmds
+
+Similarly, files beginning with Model_diagnostics_ contain scripts used to fit models with defense trait data.
+
+### mvabund_herbivore.Rmd
+
+This rmd contains a script used to test whether the overall herbivore community changes with urbanization using `mvabund`.
