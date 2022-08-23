@@ -1,9 +1,5 @@
-# Subdirectory: ______
+# Subdirectory: Joined_annual_data
 
 ## Folder description
 
-### ___
-
-This rmd contains ...
-
-### ___
+This folder contains csvs, each with all years' data for different traits measured.
