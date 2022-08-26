@@ -356,6 +356,11 @@ all_pvalues_Q1 %<>%
 # Export new p-values
 write.csv(all_pvalues_Q1,
           here::here("./All_data_analyses/FDR_p_Q1.csv"))
+
+## just experimenting with gt's new ability to export to word tables. Great!
+# gt(all_pvalues_Q1) %>%
+#   gtsave("tab_1.docx")
+
 ```
 
 

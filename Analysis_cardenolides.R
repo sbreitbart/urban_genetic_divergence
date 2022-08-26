@@ -34,9 +34,9 @@ names(city_dist_list2) <- cards_vars
 
 
 ## -----------------------------------------------------------------
-DoLinearReg("X17.6_main", "City_dist", cards)
-DoLinearReg("log(X17.6_main)", "City_dist", cards)
-car::Anova(lm(log(X17.6_main) ~ City_dist, cards)) # still isn't near p = 0.05 so maybe not worth worrying about
+# DoLinearReg("X17.6_main", "City_dist", cards)
+# DoLinearReg("log(X17.6_main)", "City_dist", cards)
+# car::Anova(lm(log(X17.6_main) ~ City_dist, cards)) # still isn't near p = 0.05 so maybe not worth worrying about
 
 
 ## -----------------------------------------------------------------
@@ -49,63 +49,63 @@ names(urb_score_list) <- cards_vars
 
 
 ## -----------------------------------------------------------------
-DoLinearReg("X17.6_main", "Urb_score", cards)
-DoLinearReg("log(X17.6_main)", "Urb_score", cards) # looks better
-car::Anova(lm(log(X17.6_main) ~ Urb_score, cards))
+# DoLinearReg("X17.6_main", "Urb_score", cards)
+# DoLinearReg("log(X17.6_main)", "Urb_score", cards) # looks better
+# car::Anova(lm(log(X17.6_main) ~ Urb_score, cards))
 
 urb_score_list[[3]] <- DoLinearReg("log(X17.6_main)", "Urb_score", cards)
 
 
 ## -----------------------------------------------------------------
-# 6.6
-city_dist_list[[1]][[1]] %>%
-  performance::model_performance() %>%
-  as.data.frame() %>%
-  dplyr::select(c(3:4))
-
-# 15
-city_dist_list[[2]][[1]] %>%
-  performance::model_performance() %>%
-  as.data.frame() %>%
-  dplyr::select(c(3:4))
-
-# 17.6
-city_dist_list[[3]][[1]] %>%
-  performance::model_performance() %>%
-  as.data.frame() %>%
-  dplyr::select(c(3:4))
-
-# total
-city_dist_list[[4]][[1]] %>%
-  performance::model_performance() %>%
-  as.data.frame() %>%
-  dplyr::select(c(3:4))
+# # 6.6
+# city_dist_list[[1]][[1]] %>%
+#   performance::model_performance() %>%
+#   as.data.frame() %>%
+#   dplyr::select(c(3:4))
+# 
+# # 15
+# city_dist_list[[2]][[1]] %>%
+#   performance::model_performance() %>%
+#   as.data.frame() %>%
+#   dplyr::select(c(3:4))
+# 
+# # 17.6
+# city_dist_list[[3]][[1]] %>%
+#   performance::model_performance() %>%
+#   as.data.frame() %>%
+#   dplyr::select(c(3:4))
+# 
+# # total
+# city_dist_list[[4]][[1]] %>%
+#   performance::model_performance() %>%
+#   as.data.frame() %>%
+#   dplyr::select(c(3:4))
 
 
 ## -----------------------------------------------------------------
-# 6.6
-urb_score_list[[1]][[1]] %>%
-  performance::model_performance() %>%
-  as.data.frame() %>%
-  dplyr::select(c(3:4))
-
-# 15
-urb_score_list[[2]][[1]] %>%
-  performance::model_performance() %>%
-  as.data.frame() %>%
-  dplyr::select(c(3:4))
-
-# 17.6
-urb_score_list[[3]][[1]] %>%
-  performance::model_performance() %>%
-  as.data.frame() %>%
-  dplyr::select(c(3:4))
-
-# total
-urb_score_list[[4]][[1]] %>%
-  performance::model_performance() %>%
-  as.data.frame() %>%
-  dplyr::select(c(3:4))
+# # 6.6
+# urb_score_list[[1]][[1]] %>%
+#   performance::model_performance() %>%
+#   as.data.frame() %>%
+#   dplyr::select(c(3:4))
+# 
+# # 15
+# urb_score_list[[2]][[1]] %>%
+#   performance::model_performance() %>%
+#   as.data.frame() %>%
+#   dplyr::select(c(3:4))
+# 
+# # 17.6
+# urb_score_list[[3]][[1]] %>%
+#   performance::model_performance() %>%
+#   as.data.frame() %>%
+#   dplyr::select(c(3:4))
+# 
+# # total
+# urb_score_list[[4]][[1]] %>%
+#   performance::model_performance() %>%
+#   as.data.frame() %>%
+#   dplyr::select(c(3:4))
 
 
 ## -----------------------------------------------------------------
