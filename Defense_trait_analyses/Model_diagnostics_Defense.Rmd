@@ -68,16 +68,38 @@ ltx_gr_city_m1 <- glmmTMB(Latex_weight_mg^(1/3) ~
 # car::Anova(ltx_gr_city_m1)
 
 
-# # test for gxe intxns- won't converge with Block*Fam or Block*Pop, even when I take out other vars
-# gxe_test_latex1 <- glmmTMB(Latex_weight_mg ~
-#                             Block*Fam_uniq ,
-#                         data = latex,
-#                         REML = F)
+# test for gxe intxns
+# test for block * family interaction
+gxe_test_latex1 <- lm(Latex_weight_mg^(1/3) ~
+                        Block*Fam_uniq,
+                        data = latex )
+
+par(mfrow = c(2, 2))
+plot(gxe_test_latex1)
+car::Anova(gxe_test_latex1) # p >> 0.1
+
+
+# test for block * pop interaction
+gxe_test_latex2 <- lm(Latex_weight_mg^(1/3) ~
+                        Block*Population,
+                        data = latex )
+
+par(mfrow = c(2, 2))
+plot(gxe_test_latex2)
+car::Anova(gxe_test_latex2) # p >> 0.1
+
+
+# # doesn't converge
+# gxe_test_latex3 <- glmmTMB(Latex_weight_mg^(1/3) ~
+#                         Block*Fam_uniq +
+#                         (1|Population),
+#                         data = latex )
 # 
-# 
-# performance::check_model(gxe_test_latex1)
-# plot(DHARMa::simulateResiduals(gxe_test_latex1))
-# car::Anova(gxe_test_latex1)
+# # doesn't converge
+# gxe_test_latex4 <- glmmTMB(Latex_weight_mg^(1/3) ~
+#                         Block*Population +
+#                         (1|Fam_uniq),
+#                         data = latex )
 
 ```
 
@@ -265,17 +287,27 @@ herbiv_e_gr_dist_m1_quant <- glmmTMB(log(Herbivory_mean_early) ~
 
 
 # # test for gxe intxns- won't converge with Block*Fam or Block*Pop, even when I take out other vars
-# gxe_test_herb_quant_e <- glmmTMB(log(Herbivory_mean_early) ~
-#                             Block*Population ,
-#                         data = herbivory %>%
-#                         dplyr::filter(
-#                           Herbivory_mean_early_binary == 1),
-#                         REML = F)
-# 
-# 
-# performance::check_model(gxe_test_herb_quant_e)
-# plot(DHARMa::simulateResiduals(gxe_test_herb_quant_e))
-# car::Anova(gxe_test_herb_quant_e)
+gxe_test_herb_quant_e1 <- lm(log(Herbivory_mean_early) ~
+                            Block*Population ,
+                        data = herbivory %>%
+                        dplyr::filter(
+                          Herbivory_mean_early_binary == 1))
+
+
+plot(gxe_test_herb_quant_e1)
+car::Anova(gxe_test_herb_quant_e1) # p >> 0.1
+
+
+# # test for gxe intxns- won't converge with Block*Fam or Block*Pop, even when I take out other vars
+gxe_test_herb_quant_e2 <- lm(log(Herbivory_mean_early) ~
+                            Block*Fam_uniq ,
+                        data = herbivory %>%
+                        dplyr::filter(
+                          Herbivory_mean_early_binary == 1))
+
+
+plot(gxe_test_herb_quant_e2)
+car::Anova(gxe_test_herb_quant_e2) # p >> 0.1
 ```
 
 

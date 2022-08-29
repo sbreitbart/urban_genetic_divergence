@@ -61,6 +61,28 @@ ldmc_gr_city_m1 <- glmmTMB(sqrt(LDMC) ~
 # DHARMa::simulateResiduals(ldmc_gr_city_m1) %>%
 #   plot
 # performance::check_model(ldmc_gr_city_m1)
+
+
+
+# test for gxe intxns
+gxe_test_LDMC1 <- lm(log(LDMC) ~
+                             Block*Population ,
+                        data = sla_ldmc %>%
+                             dplyr::filter(LDMC < 1))
+
+
+plot(gxe_test_LDMC1)
+car::Anova(gxe_test_LDMC1) # p >> 0.1
+
+
+gxe_test_LDMC2 <- lm(log(LDMC) ~
+                             Block*Fam_uniq ,
+                        data = sla_ldmc %>%
+                             dplyr::filter(LDMC < 1))
+
+
+plot(gxe_test_LDMC2)
+car::Anova(gxe_test_LDMC2) # p >> 0.1
 ```
 
 #### Urb_score
