@@ -634,6 +634,17 @@ Calc_h2_qst(0.146429,
             0.069211,
             resid_var)
 
+monarch_mean <- herbivores %>%
+  dplyr::summarize(Mean = mean(Monarch_Quantity_Observed,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_monarch <- calc_quantgenvars(0.146429,
+                                0.069211,
+                                resid_var,
+                                monarch_mean,
+                                "D. plexippus")
+
 
 # L. asclepiadis-----
 VarCorr(
@@ -649,6 +660,18 @@ Calc_h2_qst(0.31796 ,
             0.14935 ,
             resid_var)
 
+lascelp_mean <- herbivores %>%
+  dplyr::summarize(Mean = mean(Liriomyza_asclepiadis ,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_lasclep <- calc_quantgenvars(0.31796 ,
+            0.14935 ,
+            resid_var,
+            lascelp_mean,
+            "L. asclepiadis")
+
+
 # L. clivicollis-----
 VarCorr(
   update(
@@ -662,5 +685,30 @@ resid_var <- update(
 Calc_h2_qst(0.00011488,
             0.30719353,
             resid_var)
+
+
+clivicoll_mean <- herbivores %>% dplyr::filter(Labidomera_clivicollis < 9) %>% # as in model
+  dplyr::summarize(Mean = mean(Labidomera_clivicollis  ,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_clivicoll <- calc_quantgenvars(0.00011488,
+            0.30719353,
+            resid_var,
+            clivicoll_mean,
+            "L. clivicollis")
+```
+
+
+## Combine values into one table and export
+```{r}
+qg_joined <- list(qg_monarch,
+                  qg_lasclep,
+                  qg_clivicoll
+                  ) %>% 
+  bind_rows() %>%
+  dplyr::mutate_at(2:4, round, 3) %>%
+  write.csv(file = "./Defense_trait_analyses/Tables/quant_gen_herbivores_2021.csv",
+          row.names=FALSE)
 
 ```
