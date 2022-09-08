@@ -940,6 +940,65 @@ flextable::save_as_html(weev_bin_ranova1,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/Urb_score/weevil_binary_transects.html"))
 ```
 
+## Create figure showing % variance explained per component
+Note: Can only do this for gaussian models for Q1. For models with transect as an effect, I can calculate PVE for models testing effect of distance only- not transect. But since I'm not as interested in that, I won't generate those plots now.
+```{r}
+# this isn't working
+# library(XML)
+# rawHTML <- XML::readHTMLTable("Defense_trait_analyses/Tables/Ranova/latex.html",
+#            # header = c("Variable",
+#            #            "Group",
+#            #            "Variance",
+#            #            "PVE",
+#            #            "p")) %>%
+#              header = T) %>%
+#   as.data.frame() %T>%
+#   print()
+
+# can't figure out how to convert these ranova html tables with PVE into df or tibble or anything else with code.
+# So I'll just create an excel file combining the data from traits for which I could calculate PVE ("PVE_defense_Q1.xlsx"), including these traits:
+# -latex ("latex.html")
+# -weevil damage, quantitative ("weevil_quant.html")
+# -Herbivory, after flowering: Quantitative ("herbivory_late_quant.html")
+# -Herbivory, before flowering: Quantitative ("herbivory_early_quant.html")
+# -SLA ("sla.html")
+# -LDMC ("ldmc.html")
+
+
+pve <- read.csv(here::here("./Defense_trait_analyses/Tables/Ranova/pve_defense_Q1.csv")) %>%
+  dplyr::rename(Variable = 1) %>%
+  # make alphabetical order for plot
+   mutate(Variable = fct_reorder(Variable,
+                                 desc(Variable)))
+
+library("ggsci")
+
+pve_def <- ggplot(pve,
+       aes(
+         fill=Group,
+         y=PVE,
+         x=Variable)
+       ) + 
+  geom_bar(position="stack",
+           stat="identity") +
+  scale_fill_discrete(labels = c("Family",
+                                 "Population",
+                                 "Residual")) +
+  scale_fill_tron(alpha = 0.7) +
+  theme_pubr() +
+  xlab("") +
+  ylab("% Variance Explained") +
+  coord_flip()
+pve_def
+
+ggsave(filename = "pve_def_Q1.png",
+         plot = pve_def,
+         path = here::here("./Defense_trait_analyses/Figures/PVE/"),
+         width = 20,
+         height = 6,
+         units = "cm")
+```
+
 # Anova
 ## Latex
 ### Best Models

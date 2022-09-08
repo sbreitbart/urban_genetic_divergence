@@ -624,6 +624,54 @@ flextable::save_as_html(# ramets_l_ranova1,
 
 ```
 
+## Create figure showing % variance explained per component
+Note: Can only do this for gaussian models for Q1. For models with transect as an effect, I can calculate PVE for models testing effect of distance only- not transect. But since I'm not as interested in that, I won't generate those plots now.
+```{r}
+
+# can't figure out how to convert these ranova html tables with PVE into df or tibble or anything else with code.
+# So I'll just create an excel file combining the data from traits for which I could calculate PVE ("PVE_growth_Q1.xlsx"), including these traits:
+# -relative growth rate ("rgr.html")
+# -LDMC ("ldmc.html")
+# -SLA ("sla.html")
+# -Height (before flowering) ("heights_early.html")
+# -Height (after flowering) ("heights_late.html")
+
+
+
+pve <- read.csv(here::here("./Growth_trait_analyses/Tables/Ranova/pve_growth_Q1.csv")) %>%
+  dplyr::rename(Variable = 1) %>%
+  # make alphabetical order for plot
+   mutate(Variable = fct_reorder(Variable,
+                                 desc(Variable)))
+
+library("ggsci")
+
+pve_growth <- ggplot(pve,
+       aes(
+         fill=Group,
+         y=PVE,
+         x=Variable)
+       ) + 
+  geom_bar(position="stack",
+           stat="identity") +
+  scale_fill_discrete(labels = c("Family",
+                                 "Population",
+                                 "Residual")) +
+  scale_fill_tron(alpha = 0.7) +
+  theme_pubr() +
+  xlab("") +
+  ylab("% Variance Explained") +
+  coord_flip()
+pve_growth
+
+ggsave(filename = "pve_growth_Q1.png",
+         plot = pve_growth,
+         path = here::here("./Growth_trait_analyses/Figures/PVE/"),
+         width = 20,
+         height = 8,
+         units = "cm")
+```
+
 # Anova
 ## LDMC
 
