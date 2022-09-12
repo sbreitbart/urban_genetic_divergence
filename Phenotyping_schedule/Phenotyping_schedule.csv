@@ -3,8 +3,8 @@ Herbivory,Defense, X         , X         , X         ,
 Weevil damage,Defense,           , X         , X         ,
 Cardenolide concentration   ,Defense,           , X         ,           ,
 Latex exudation            ,Defense,           , X         ,           ,
-Specialist herbivore presence (10 species),Defense,, X         ,,
-Specialist herbivore presence (3 species),Defense,,, X         ,
+Specialist herbivore abundance (10 species),Defense,, X         ,,
+Specialist herbivore abundance (3 species),Defense,,, X         ,
 Height,Growth, X         , X         , X         ,
 Relative growth rate,Growth, X         , X         , X         ,
 No. ramets,Growth, X         , X         , X         ,
@@ -17,3 +17,5 @@ Mean flower size,Reproduction,, X         , X         , X
 Pollinaria removed,Reproduction,, X         , X         , X         
 No. follicles,Reproduction,, X         , X         , X         
 No. inflorescences,Reproduction,, X         , X         , X         
+Date of first flower,,, X         , X         , X         
+"Date of first 2"" follicle",,, X         , X         , X         
