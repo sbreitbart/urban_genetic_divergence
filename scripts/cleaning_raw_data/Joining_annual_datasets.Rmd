@@ -125,6 +125,27 @@ survival_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_da
 ```
 
 
+## 2022
+```{r}
+
+# REPRODUCTIVE
+reproductive_2022 <- read.csv(here::here("./CommonGardenExperiment_2022Data/clean_data/2022_reproductive_clean.csv")) %>%
+  dplyr::select(., -c(1, 16)) %>%
+  anti_join(., repeats)
+
+flowering_2022 <- read.csv(here::here("./CommonGardenExperiment_2022Data/clean_data/2022_floweringplants_clean.csv")) %>%
+  dplyr::select(-1) %>%
+  anti_join(., repeats)
+
+
+# GROWTH
+survival_2022 <- read.csv(here::here("./CommonGardenExperiment_2022Data/clean_data/2022_survival_clean.csv")) %>%
+  dplyr::select(., -c(1, 17)) %>%
+  anti_join(., repeats)
+```
+
+
+
 # Join datasets
 ## Herbivory
 ```{r}
@@ -219,7 +240,14 @@ reproductive_2021 %<>%
   dplyr::select(-c(9:13)) %>%
   dplyr::mutate(Year = "2021")
 
-reprod_20_21 <- rbind.fill(reproductive_2020, reproductive_2021)
+reproductive_2022 %<>%
+  dplyr::rename(., Flowered = Flowered2022) %>%
+  dplyr::select(-c(9:13)) %>%
+  dplyr::mutate(Year = "2022")
+
+reprod_20_21_22 <- rbind.fill(reproductive_2020,
+                              reproductive_2021,
+                              reproductive_2022)
 
 ```
 
@@ -237,7 +265,14 @@ flowering_2021 %<>%
   dplyr::select(-"X")%>%
   dplyr::mutate(Year = "2021")
 
-flowering_20_21 <- rbind.fill(flowering_2020, flowering_2021)
+flowering_2022 %<>%
+  dplyr::rename(., Flowered = Flowered2022) %>%
+  dplyr::select(-"X")%>%
+  dplyr::mutate(Year = "2022")
+
+flowering_20_21_22 <- rbind.fill(flowering_2020,
+                                 flowering_2021,
+                                 flowering_2022)
 ```
 
 ## Height
@@ -321,8 +356,21 @@ surv_2021 <- survival_2021 %>%
   dplyr::mutate_at(vars(Population, Family, Replicate, Year), as.factor) %>%
   dplyr::select(-"Alive")
 
+# copy of 2022 data w/consistent colnames
+surv_2022 <- survival_2022 %>%
+  dplyr::select(., -c(8:11, 13:15)) %>%
+  dplyr::mutate(Year = "2022",
+                Dead = recode(Survival_LateAugust,
+                              "1" = "0",
+                              "0" = "1")) %>%
+  dplyr::mutate_at(vars(Population, Family, Replicate, Year), as.factor) %>%
+  dplyr::select(-8)
+
 # combine yearly dfs
-survival_19_20_21 <- rbind.fill(surv_2019, surv_2020, surv_2021) %>%
+survival_19_20_21_22 <- rbind.fill(surv_2019,
+                                   surv_2020,
+                                   surv_2021,
+                                   surv_2022) %>%
   dplyr::select(-c(7, 17:18))
 ```
 
@@ -337,15 +385,15 @@ write.csv(weevil_20_21,
 write.csv(herbivores_20_21,
           here::here("./Joined_annual_data/herbivores.csv"))
 
-write.csv(reprod_20_21,
+write.csv(reprod_20_21_22,
           here::here("./Joined_annual_data/reproductive.csv"))
 
-write.csv(flowering_20_21,
+write.csv(flowering_20_21_22,
           here::here("./Joined_annual_data/flowering.csv"))
 
 write.csv(heights_19_20_21,
           here::here("./Joined_annual_data/heights.csv"))
 
-write.csv(survival_19_20_21,
+write.csv(survival_19_20_21_22,
           here::here("./Joined_annual_data/survival.csv"))
 ```
