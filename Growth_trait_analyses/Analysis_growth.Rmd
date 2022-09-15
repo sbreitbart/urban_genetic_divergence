@@ -33,7 +33,6 @@ NOTES:
 +---------------------------------+-----------+-----------+-----------+
 
 # Set up notebook
-
 ## Load libraries and add functions
 
 ```{r}
@@ -42,9 +41,7 @@ source("functions.R")
 ```
 
 ## Import final models
-
 ### Create full list
-
 ```{r}
 source(knitr::purl("Growth_trait_analyses/Model_diagnostics_Growth.Rmd", quiet=TRUE))
 ```
@@ -439,6 +436,60 @@ tidy(ramets_l_ranova.fam) # Family: p ~ 0.
 # merge Pop and Fam ranovas
 herbiv_l_bin_ranova1 <- CreateRanovaOutput_bootstrap(ramets_l_ranova.fam, ramets_l_ranova.pop, "Ramets, after flowering") %T>%
   flextable::save_as_html(path = here::here("./Growth_trait_analyses/Tables/Ranova/ramets_late.html"))
+# Mortality-------
+
+# take out fam
+full <- glmer(Dead ~
+                 Block +
+                Year +
+                (1|Population) +
+                City_dist,
+              data = survival ,
+              family = binomial,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    # ,control=glmerControl(optimizer="bobyqa",
+    #                         optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+surv_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 1000,
+          cl = makeCluster(rep("localhost", 8)))
+
+tidy(surv_ranova.pop) # p = 0.786
+
+
+
+# take out pop
+full <- glmer(Dead ~
+             #    Block +
+                Year +
+                (1|Fam_uniq) +
+                City_dist,
+              data = survival ,
+              family = binomial,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    # ,control=glmerControl(optimizer="bobyqa",
+    #                         optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+surv_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 1000,
+          cl = makeCluster(rep("localhost", 8)))
+
+tidy(surv_ranova.fam) # Family: p ~ 0.883
+
+
+# merge Pop and Fam ranovas
+surv_ranova1 <- CreateRanovaOutput_bootstrap(
+  surv_ranova.fam, 
+  surv_ranova.pop,
+  "Mortality") %T>%
+  flextable::save_as_html(path = here::here("./Growth_trait_analyses/Tables/Ranova/mortality.html"))
+
 ```
 
 ### Urb subs
@@ -474,12 +525,13 @@ tidy(ramets_e_ranova.pop) # Pop: p ~ 0.11
 
 # ### take out pop- WON'T CONVERGE
 # full <- glmer(Ramets_early ~
-#           #      Block + Year + 
-#                 (1|Fam_uniq) + City_dist + Transect_ID,
+#           #      Block + Year +
+#                 (1|Fam_uniq) + City_dist,
 #                               data = heights %>%
 #                 dplyr::filter(Transect_ID != "Rural"),                              family = poisson,
 #              na.action = na.exclude # THIS LINE IS IMPORTANT
-#   )
+#     ,control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))  )
 # 
 # reduced <- glmer(Ramets_early ~
 #                 Block + Year + 
@@ -487,7 +539,8 @@ tidy(ramets_e_ranova.pop) # Pop: p ~ 0.11
 #                               data = heights %>%
 #                 dplyr::filter(Transect_ID != "Rural"),                              family = poisson,
 #              na.action = na.exclude # THIS LINE IS IMPORTANT
-#   )
+#     ,control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))  )
 # 
 # ramets_e_ranova.fam <- PBmodcomp(full, reduced,
 #           nsim = 1000,
@@ -549,13 +602,14 @@ flextable::save_as_html(ramets_e_ranova1,
 # ### take out fam- WON'T CONVERGE
 # full <- glmer(Ramets_late ~
 #             #    Block +
-#             #    Year + 
+#             #    Year +
 #                 (1|Population) + City_dist,
 #                               data = heights %>%
 #                 dplyr::filter(Transect_ID != "Rural"),
 #                               family = poisson,
 #              na.action = na.exclude # THIS LINE IS IMPORTANT
-#   )
+#     ,control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))  )
 # 
 # reduced <- glmer(Ramets_late ~
 #               #  Block + Year + 
@@ -564,7 +618,8 @@ flextable::save_as_html(ramets_e_ranova1,
 #                 dplyr::filter(Transect_ID != "Rural"),
 #                               family = poisson,
 #              na.action = na.exclude # THIS LINE IS IMPORTANT
-#   )
+#     ,control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))  )
 # 
 # ramets_l_ranova.pop <- PBmodcomp(full, reduced,
 #           nsim = 1000,
@@ -580,7 +635,8 @@ flextable::save_as_html(ramets_e_ranova1,
 #                               data = heights %>%
 #                 dplyr::filter(Transect_ID != "Rural"),                              family = poisson,
 #              na.action = na.exclude # THIS LINE IS IMPORTANT
-#   )
+#     ,control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))  )
 # 
 # reduced <- glmer(Ramets_late ~
 #                 Block + Year + 
@@ -588,7 +644,8 @@ flextable::save_as_html(ramets_e_ranova1,
 #                               data = heights %>%
 #                 dplyr::filter(Transect_ID != "Rural"),                              family = poisson,
 #              na.action = na.exclude # THIS LINE IS IMPORTANT
-#   )
+#     ,control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))  )
 # 
 # ramets_l_ranova.fam <- PBmodcomp(full, reduced,
 #           nsim = 1000,
@@ -622,6 +679,84 @@ flextable::save_as_html(# ramets_l_ranova1,
                         ramets_l_ranova2,
                         path = here::here("./Growth_trait_analyses/Tables/Ranova/ramets_l_transects.html"))
 
+# Mortality-------
+
+## test city_dist
+### take out fam
+full <- glmer(Dead ~
+                 Block +
+                Year +
+                (1|Population) +
+                City_dist,
+              data = survival %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = binomial,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+surv_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 1000,
+          cl = makeCluster(rep("localhost", 6)))
+
+tidy(surv_ranova.pop) # p = 0.321
+
+
+
+# take out pop
+full <- glmer(Dead ~
+                 Block +
+                Year +
+                (1|Fam_uniq) +
+                City_dist,
+              data = survival %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = binomial,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+surv_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 1000,
+          cl = makeCluster(rep("localhost", 6)))
+
+tidy(surv_ranova.fam) # Family: p ~ 0.
+
+
+## test transect
+test_tr <-  glmer(Dead ~
+                 Block +
+                Year +
+                (1|Population/Family) +
+                Transect_ID,
+              data = survival %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = binomial,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+
+# merge Pop and Fam ranovas
+## test City_dist
+surv_ranova1 <- CreateRanovaOutput_bootstrap(
+  surv_ranova.fam,
+  surv_ranova.pop,
+  "Mortality (Distance)")
+
+## test transect
+surv_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Mortality (Transect)")
+
+flextable::save_as_html(surv_ranova1,
+                        surv_ranova2,
+                        path = here::here("./Growth_trait_analyses/Tables/Ranova/Mortality_transects.html"))
 ```
 
 ## Create figure showing % variance explained per component
