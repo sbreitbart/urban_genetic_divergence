@@ -6,4 +6,4 @@
 "Relative growth rate",0,1,0.003
 "Ramets (before flowering)",0.114,0.051,0.134
 "Ramets (after flowering)",0.068,0.037,0.134
-"Seasons survived",0,0.996,0
+"Mortality",0,1,NA

@@ -1741,7 +1741,7 @@ mortality_mods <- list(
 
 ## City_dist / urban subtransects
 surv_urbsubs_city_m1_all, # Best model
-surv_urbsubs_city_m1_all, # Qualitatively identical model (<2 AIC away)
+surv_urbsubs_city_m2_all, # Qualitatively identical model (<2 AIC away)
 
 ## Urbanization score  / urban subtransects
 surv_urbsubs_usc_m1_all,  # Best model

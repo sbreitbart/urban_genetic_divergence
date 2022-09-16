@@ -152,7 +152,7 @@ sla_ranova1 <- CreateRanovaOutput(sla_ranova_mod2, "SLA") %T>%
                         path = here::here("./Growth_trait_analyses/Tables/Ranova/Urb_score/sla.html"))
 ```
 
-### Urban subtransects- add heights
+### Urban subtransects
 #### City_dist
 ```{r}
 # LDMC-------
@@ -726,7 +726,7 @@ surv_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(rep("localhost", 6)))
 
-tidy(surv_ranova.fam) # Family: p ~ 0.
+tidy(surv_ranova.fam) # Family: p ~ 0.0908
 
 
 ## test transect
@@ -1082,7 +1082,8 @@ make_all_anovas_tidy_altmods(mortality_mods_alt_u) %>%
 
 ```{r}
 all_rsq <- lapply(all_models, lapply, r.squaredGLMM) %>%
-  unlist(recursive = FALSE)
+  unlist(recursive = FALSE) %T>%
+  write.csv(here::here("./Growth_trait_analyses/Tables/Rsquare.csv"))
 ```
 
 # Calculate heritability, Qst, and CVA
@@ -1234,9 +1235,9 @@ update(
     .~. -City_dist, # omitting city_dist
     REML = T) %>% VarCorr()
 
-surv_mean <- survival_seasons %>%
+surv_mean <- survival %>%
   as.data.frame %>%
-  dplyr::summarize(Mean = mean(seasons ,
+  dplyr::summarize(Mean = mean(Dead ,
                                na.rm = T)) %>%
   as.numeric()
 
@@ -1245,11 +1246,11 @@ resid_var <- update(
      mortality_mods_best_c[[1]], REML = T) %>%
     sigma()
 
-qg_survival <- calc_quantgenvars(6.1473e-07,
-                   1.3817e-05,
+qg_survival <- calc_quantgenvars(6.6969e-08,
+                   1.3094e-05,
                    resid_var ,
-                   surv_mean,
-                   "Seasons survived")
+                   NA, # can't calculate this because it involves dividing by zero
+                   "Mortality")
 ```
 
 ## Combine values into one table and export

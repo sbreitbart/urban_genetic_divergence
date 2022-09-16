@@ -353,17 +353,17 @@ ramets_late_urbsubs_02_pred <- ggeffects::ggpredict(ramets_late_mods_best_u[[2]]
 ```
 
 
-## Mortality ??
+## Mortality
 ### Gradient
 ```{r}
 # city_dist
-mortality_gradient_01_pred <- ggeffects::ggpredict(surv_gr_city_m1_seasons,
+mortality_gradient_01_pred <- ggeffects::ggpredict(surv_gr_city_m1_all,
                                    terms = c("City_dist"),
                                    type = "fe") %>%
   as.data.frame() 
 
 # urb_score
-mortality_gradient_02_pred <- ggeffects::ggpredict(surv_gr_usc_m1_seasons,
+mortality_gradient_02_pred <- ggeffects::ggpredict(surv_gr_usc_m1_all,
                                    terms = c("Urb_score"),
                                    type = "fe") %>%
   as.data.frame()
@@ -372,13 +372,13 @@ mortality_gradient_02_pred <- ggeffects::ggpredict(surv_gr_usc_m1_seasons,
 ### Urban subtransects
 ```{r}
 # city_dist
-mortality_urbsubs_01_pred <- ggeffects::ggpredict(surv_urbsubs_city_m2_seasons,
+mortality_urbsubs_01_pred <- ggeffects::ggpredict(surv_urbsubs_city_m1_all,
                                    terms = c("City_dist", "Transect_ID"),
                                    type = "fe") %>%
   as.data.frame()
 
 # urb_score
-mortality_urbsubs_02_pred <- ggeffects::ggpredict(surv_urbsubs_usc_m2_seasons,
+mortality_urbsubs_02_pred <- ggeffects::ggpredict(surv_urbsubs_usc_m1_all,
                                    terms = c("Urb_score", "Transect_ID"),
                                    type = "fe")
 
@@ -393,7 +393,7 @@ ggpred_Q1.citydist_ldmc <-
 ggplot(ldmc_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = "Leaf Dry Matter Content") +
+       y = "Leaf dry matter content (LDMC)") +
   ylim(NA, 0.19) +
   theme_1() +
   
@@ -411,7 +411,7 @@ ggpred_Q1.citydist_ldmc
 ggpred_Q1.citydist_sla <- ggplot(sla_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = expression("Specific Leaf Area "(cm^2/g))) +
+       y = expression("Specific leaf area (SLA) "(cm^2/g))) +
   ylim(NA, 2.76) +
   theme_1() +
 #   # adding stats from ANOVA
@@ -518,8 +518,8 @@ ggpred_Q1.citydist_mortality <-
 ggplot(mortality_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = "Seasons survived") +
- # ylim(NA, 0.19) +
+       y = "Probability of death at\n end of growing season") +
+ ylim(NA, 0.4) +
   theme_1() +
   
 # adding stats from ANOVA
@@ -540,7 +540,7 @@ ggpred_Q1.urbscore_ldmc <-
 ggplot(ldmc_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
-       y = "Leaf Dry Matter Content") +
+       y = "Leaf dry matter content (LDMC)") +
  ylim(0.165, NA) +
     xlim(4, -4) +
   theme_1() +
@@ -559,7 +559,7 @@ ggpred_Q1.urbscore_ldmc
 ggpred_Q1.urbscore_sla <- ggplot(sla_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
-       y = expression("Specific Leaf Area "(cm^2/g))) +
+       y = expression("Specific leaf area (SLA) "(cm^2/g))) +
  # ylim(NA, 2.76) +
     xlim(4, -4) +
 theme_1() +
@@ -672,8 +672,8 @@ ggpred_Q1.urbscore_mortality <-
 ggplot(mortality_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
-       y = "Seasons survived") +
-  ylim(NA, 3.85) +
+       y = "Probability of death at\n end of growing season") +
+  ylim(-0.3, NA) +
     xlim(4, -4) +
 theme_1() +
   
@@ -697,7 +697,7 @@ levels(ldmc_urbsubs_01_pred$group)
 ggpred_Q2.citydist_ldmc <-
 ggplot(ldmc_urbsubs_01_pred) +
   labs(x = "Distance to Urban Center (km)",
-       y = "Leaf Dry Matter Content",
+       y = "Leaf dry matter content (LDMC)",
        color = "Transect",
        fill = "Transect") +
  # ylim(NA, 0.19) +
@@ -728,7 +728,7 @@ levels(sla_urbsubs_01_pred$group)
 ggpred_Q2.citydist_sla <- 
 ggplot(sla_urbsubs_01_pred) +
   labs(x = "Distance to Urban Center (km)",
-       y = expression("Specific Leaf Area "(cm^2/g)),
+       y = expression("Specific leaf area (SLA) "(cm^2/g)),
        color = "Transect",
        fill = "Transect") +
 #  ylim(NA, 22) +
@@ -921,10 +921,10 @@ levels(mortality_urbsubs_01_pred$group)
 ggpred_Q2.citydist_mortality <- 
 ggplot(mortality_urbsubs_01_pred) +
   labs(x = "Distance to Urban Center (km)",
-       y = "Seasons survived",
+       y = "Probability of death at\n end of growing season",
        color = "Transect",
        fill = "Transect") +
-  ylim(NA, 4) +
+  ylim(NA, 1) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -954,7 +954,7 @@ levels(ldmc_urbsubs_02_pred$group)
 ggpred_Q2.urbsubs_ldmc <-
 ggplot(ldmc_urbsubs_02_pred) +
   labs(x = "Urbanization Score",
-       y = "Leaf Dry Matter Content",
+       y = "Leaf dry matter content (LDMC)",
        color = "Transect",
        fill = "Transect") +
   ylim(NA, 0.24) +
@@ -985,7 +985,7 @@ levels(sla_urbsubs_02_pred$group)
 ggpred_Q2.urbsubs_sla <- 
 ggplot(sla_urbsubs_02_pred) +
   labs(x = "Urbanization Score",
-       y = expression("Specific Leaf Area "(cm^2/g)),
+       y = expression("Specific leaf area (SLA) "(cm^2/g)),
        color = "Transect",
        fill = "Transect") +
   ylim(NA, 2.8) +
@@ -1098,11 +1098,6 @@ size = 4.5) +
                     label = paste0(" Transect: p = ", tidy_anova(rgr_mods_best_u[[2]]) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
-size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.79,
-                    label = paste0(" U x S: p = ", tidy_anova(rgr_mods_best_u[[2]]) %>%
-dplyr::filter(Predictor == "Urbanization Score x Subtransect") %>%
-dplyr::select(p))),
 size = 4.5)
 
 ggpred_Q2.urbsubs_rgr
@@ -1180,10 +1175,10 @@ levels(mortality_urbsubs_02_pred$group)
 ggpred_Q2.urbsubs_mortality <- 
 ggplot(mortality_urbsubs_02_pred) +
   labs(x = "Urbanization Score",
-       y = "Seasons survived",
+       y = "Probability of death at\n end of growing season",
        color = "Transect",
        fill = "Transect") +
-  ylim(NA, 4) +
+  ylim(NA, 1) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
@@ -1226,8 +1221,9 @@ ggpred_Q1.citydist_mortality +
           legend = "top") %T>%
   plot
 
+
 dev.copy2pdf(file = here::here("./Growth_trait_analyses/Figures/Q1_grad_citydist_Growth.pdf"),
-             width = 14, height = 7.5)
+             width = 15, height = 7.5)
 ```
 
 
@@ -1253,7 +1249,7 @@ ggpred_Q1.urbscore_mortality +
   plot
 
 dev.copy2pdf(file = here::here("./Growth_trait_analyses/Figures/Q1_grad_urbscore_Growth.pdf"),
-             width = 14, height = 7.5)
+             width = 15, height = 7.5)
 ```
 
 ### Urb Subtransects / City_dist
@@ -1278,7 +1274,7 @@ urbsubs_citydist_plots <- ggarrange(
   plot
 
 dev.copy2pdf(file = here::here("./Growth_trait_analyses/Figures/Q2_urbsubs_citydist_Growth.pdf"),
-             width = 14.5, height = 8)
+             width = 15, height = 8)
 ```
 
 
@@ -1304,7 +1300,7 @@ urbsubs_urbscore_plots <- ggarrange(
   plot
 
 dev.copy2pdf(file = here::here("./Growth_trait_analyses/Figures/Q2_urbsubs_urbscore_Growth.pdf"),
-             width = 14.5, height = 8)
+             width = 15, height = 8)
 ```
 
 # Create boxplots
