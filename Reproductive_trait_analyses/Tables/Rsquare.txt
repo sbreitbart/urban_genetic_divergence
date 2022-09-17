@@ -1,0 +1,210 @@
+$flsucc_mods.City_gr
+                  R2m       R2c
+theoretical 0.2355915 0.3842791
+delta       0.0977851 0.1594997
+
+$flsucc_mods.Usc_gr
+                   R2m       R2c
+theoretical 0.23563470 0.3842845
+delta       0.09780353 0.1595028
+
+$flsucc_mods.City_urbsubs_alt
+                   R2m       R2c
+theoretical 0.21658922 0.3867949
+delta       0.09408294 0.1680176
+
+$flsucc_mods.City_urbsubs_best
+                   R2m       R2c
+theoretical 0.21640809 0.3873472
+delta       0.09405217 0.1683433
+
+$flsucc_mods.Usc_urbsubs_alt
+                   R2m       R2c
+theoretical 0.21855588 0.3883885
+delta       0.09507698 0.1689582
+
+$flsucc_mods.Usc_urbsubs_best
+                   R2m       R2c
+theoretical 0.21573594 0.3869908
+delta       0.09372922 0.1681331
+
+$flowers_mods.City_gr
+                 R2m        R2c
+delta     0.08579976 0.09630301
+lognormal 0.10848123 0.12176104
+trigamma  0.06320557 0.07094293
+
+$flowers_mods.Usc_gr
+                 R2m        R2c
+delta     0.09111690 0.09685858
+lognormal 0.11518846 0.12244699
+trigamma  0.06713038 0.07136057
+
+$flowers_mods.City_urbsubs_alt
+                 R2m        R2c
+delta     0.10762307 0.10762307
+lognormal 0.13322343 0.13322344
+trigamma  0.08183844 0.08183844
+
+$flowers_mods.City_urbsubs_best
+                 R2m        R2c
+delta     0.10751360 0.10751360
+lognormal 0.13312191 0.13312191
+trigamma  0.08172378 0.08172379
+
+$flowers_mods.Usc_urbsubs_alt
+                 R2m        R2c
+delta     0.10462247 0.10462247
+lognormal 0.12968281 0.12968282
+trigamma  0.07942538 0.07942538
+
+$flowers_mods.Usc_urbsubs_best
+                 R2m        R2c
+delta     0.10117518 0.10117518
+lognormal 0.12561008 0.12561009
+trigamma  0.07665632 0.07665632
+
+$flsize_mods.City_gr
+            R2m       R2c
+[1,] 0.02181676 0.2785461
+
+$flsize_mods.Usc_gr
+            R2m       R2c
+[1,] 0.02086444 0.2769219
+
+$flsize_mods.City_urbsubs_alt
+            R2m       R2c
+[1,] 0.05223732 0.2950992
+
+$flsize_mods.City_urbsubs_best
+            R2m      R2c
+[1,] 0.04302558 0.293767
+
+$flsize_mods.Usc_urbsubs_alt
+            R2m       R2c
+[1,] 0.04375785 0.2833005
+
+$flsize_mods.Usc_urbsubs_best
+            R2m       R2c
+[1,] 0.02680591 0.2862163
+
+$fltime_mods.City_gr
+                 R2m        R2c
+delta     0.05438963 0.09601247
+lognormal 0.06689626 0.11809006
+trigamma  0.04184255 0.07386346
+
+$fltime_mods.Usc_gr
+                 R2m        R2c
+delta     0.05427820 0.09588426
+lognormal 0.06676531 0.11794317
+trigamma  0.04175166 0.07375572
+
+$fltime_mods.City_urbsubs_alt
+                 R2m        R2c
+delta     0.10704921 0.10704922
+lognormal 0.13216566 0.13216567
+trigamma  0.08174421 0.08174422
+
+$fltime_mods.City_urbsubs_best
+                 R2m        R2c
+delta     0.10320614 0.10320617
+lognormal 0.12765490 0.12765493
+trigamma  0.07862835 0.07862836
+
+$fltime_mods.Usc_urbsubs_best
+                 R2m        R2c
+delta     0.08720669 0.08720670
+lognormal 0.10854579 0.10854580
+trigamma  0.06594773 0.06594773
+
+$flstart_mods.City_gr
+                R2m       R2c
+delta     0.1278433 0.1278433
+lognormal 0.1281313 0.1281313
+trigamma  0.1275552 0.1275552
+
+$flstart_mods.Usc_gr
+                R2m       R2c
+delta     0.1398496 0.1398496
+lognormal 0.1401603 0.1401603
+trigamma  0.1395388 0.1395388
+
+$flstart_mods.City_urbsubs_best
+                R2m       R2c
+delta     0.1579244 0.1579244
+lognormal 0.1582668 0.1582668
+trigamma  0.1575817 0.1575817
+
+$flstart_mods.Usc_urbsubs_transectonly
+                R2m       R2c
+delta     0.1492556 0.1492556
+lognormal 0.1495825 0.1495825
+trigamma  0.1489284 0.1489284
+
+$flstart_mods.Usc_urbsubs_urbscoreonly
+                R2m       R2c
+delta     0.1451474 0.1451474
+lognormal 0.1454669 0.1454669
+trigamma  0.1448277 0.1448277
+
+$pods_mods.City_gr
+                 R2m       R2c
+delta     0.10124085 0.1090493
+lognormal 0.16764533 0.1805753
+trigamma  0.04471348 0.0481621
+
+$pods_mods.Usc_gr
+                 R2m        R2c
+delta     0.10028821 0.10633369
+lognormal 0.16650320 0.17654018
+trigamma  0.04416096 0.04682303
+
+$pods_mods.City_urbsubs_best
+                 R2m        R2c
+delta     0.16957635 0.19231450
+lognormal 0.25649956 0.29089306
+trigamma  0.08486257 0.09624162
+
+$pods_mods.City_urbsubs_alt
+                 R2m        R2c
+delta     0.16362702 0.19143578
+lognormal 0.24744088 0.28949399
+trigamma  0.08198914 0.09592338
+
+$pods_mods.Usc_urbsubs_best
+                R2m       R2c
+delta     0.2035184 0.2035184
+lognormal 0.3033527 0.3033527
+trigamma  0.1043611 0.1043611
+
+$peduncles_mods.City_gr
+                 R2m       R2c
+delta     0.09475328 0.2544153
+lognormal 0.10852745 0.2913994
+trigamma  0.07991701 0.2145795
+
+$peduncles_mods.Usc_gr
+                 R2m       R2c
+delta     0.09345130 0.2554373
+lognormal 0.10700786 0.2924924
+trigamma  0.07884374 0.2155094
+
+$peduncles_mods.City_urbsubs_alt
+                R2m       R2c
+delta     0.1647515 0.4072817
+lognormal 0.2079330 0.5140304
+trigamma  0.1101960 0.2724151
+
+$peduncles_mods.City_urbsubs_best
+                R2m       R2c
+delta     0.1654642 0.4054950
+lognormal 0.2091309 0.5125067
+trigamma  0.1103814 0.2705061
+
+$peduncles_mods.Usc_urbsubs_best
+                R2m       R2c
+delta     0.1739036 0.2362700
+lognormal 0.2005647 0.2724925
+trigamma  0.1453692 0.1975025
+

@@ -40,16 +40,146 @@ source("functions.R")
 source(knitr::purl("Reproductive_trait_analyses/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
 ```
 
-# Ranova- RETURN HERE
+# Ranova
 The point: to determine if there is much genetic diversity present within populations for natural selection to act on.
 - ranova can't handle GLMMTMB functions so I'll use lmer instead
-- Also using Pop/Fam instead of Pop:Fam or Pop/Fam_uniq like I did when making models earlier
 ## Set seed for random processes (bootstrapping)
 ```{r}
 set.seed(45)
 ```
 
-## Gradient / City_dist
+## gaussian distribution models
+### Gradient
+#### City_dist
+```{r}
+# mean flower size-----
+flsize_ranova_mod1 <- lmer(Overall_mean ~
+                             Block +
+                             Year +
+                             (1|Population/Family) +
+                             City_dist, 
+                           data = flowering,
+                           REML = T)
+
+flsize_ranova1 <- CreateRanovaOutput(flsize_ranova_mod1, "Flower size") %T>%
+  flextable::save_as_html(.,
+                        path = here::here("./Reproductive_trait_analyses/Tables/Ranova/flower_size.html"))
+
+
+```
+
+### Urban subtransects
+#### City_dist
+```{r}
+# mean flower size-----
+## test City_dist
+flsize_ranova_mod1 <- lmer(Overall_mean ~ (1|Population/Family) + Block + City_dist,
+                             data = flowering %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                           REML = T)
+
+## test Transect
+flsize_ranova_mod2 <- lmer(Overall_mean ~ (1|Population/Family) + Block + Transect_ID,
+                             data = flowering %>%
+                          dplyr::filter(Transect_ID != "Rural"),
+                           REML = F)
+
+
+flsize_ranova1 <- CreateRanovaOutput(flsize_ranova_mod1, "Flower size (Distance)")
+flsize_ranova2 <- CreateRanovaOutput_Q2(flsize_ranova_mod2, "Flower size (Transect)")
+
+flextable::save_as_html(flsize_ranova1,
+                        flsize_ranova2,
+                        path = here::here("./Reproductive_trait_analyses/Tables/Ranova/flsize_transects.html"))
+
+
+```
+
+## non-gaussian models- use pbmodcomp()
+### Gradient
+#### City_dist
+```{r}
+# Flowering success-----
+
+# take out fam
+full <- glmer(Flowered ~
+                             Block +
+                             Year +
+                             (1|Population) +
+                             City_dist,
+  data = reproduc,
+  family = binomial(link = "logit"),
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    # ,control=glmerControl(optimizer="bobyqa",
+    #                         optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+flsucc_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 1000,
+          cl = makeCluster(rep("localhost", 8)))
+
+tidy(flsucc_ranova.pop) # p = 0.
+
+
+
+# take out pop
+full <- glmer(Flowered ~
+                             Block +
+                             Year +
+                             (1|Fam_uniq) +
+                             City_dist,
+  data = reproduc,
+  family = binomial(link = "logit"),
+  nAGQ = 0, # model won't converge otherwise. I tested the difference nAGQ = 0 vs the default (>0) makes in the model above and the difference was negligible: the p-value changed by 0.003 so I think it's ok to use here, since the p-values are nowhere near 0.1 or lower.
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+flsize_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 1000,
+          cl = makeCluster(rep("localhost", 8)))
+
+tidy(flsize_ranova.fam) # Family: p ~ 0.
+
+
+# merge Pop and Fam ranovas
+flsize_ranova1 <- CreateRanovaOutput_bootstrap(
+  flsize_ranova.fam, 
+  flsize_ranova.pop,
+  "Flower size") %T>%
+  flextable::save_as_html(path = here::here("./Reproductive_trait_analyses/Tables/Ranova/flower_size.html"))
+
+
+# Flowers/plant-----
+
+
+# Flowering time-----
+
+
+# Flowering start-----
+
+
+# Pods-----
+
+
+# Date of first follicle-----
+
+
+# Peduncles-----
+
+```
+
+### Urb subtransects
+#### City_dist
+```{r}
+
+```
+
 # Anova
 ## Flowering success
 ### Best Models
@@ -246,6 +376,33 @@ make_all_anovas_tidy_altmods(pods_mods_alt_u) %>%
 ```
 
 
+## Date of first mature pod
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(first_pods_mods_best_c) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/first_Pods_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(first_pods_mods_best_u) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Best_models/first_Pods_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(first_pods_mods_alt_c) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/first_Pods_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(first_pods_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/first_Pods_urbscore_alt.png"))
+```
+
 ## Peduncles
 ### Best Models
 #### City_dist
@@ -272,116 +429,19 @@ make_all_anovas_tidy_altmods(peduncles_mods_alt_c) %>%
 # NONE
 ```
 
-# Odds Ratio
-## Flowering success: Compare urb vs rural populations (NS)
-```{r}
-Flowering_pops <- reproduc %>%
-  dplyr::group_by(Population, Year, Urb_Rur) %>%
-  dplyr::summarise(Pop_flowered = sum(Flowered)) %>%
-  dplyr::mutate(Pop_flowered = case_when(Pop_flowered >= 1 ~ 1,
-                                         Pop_flowered == 0 ~ 0)) %T>%
-  print()
-
-Flowering_pops_cumulative <- Flowering_pops %>%
-  dplyr::group_by(Population, Urb_Rur) %>%
-  dplyr::summarise(Pop_flowered = sum(Pop_flowered)) %>%
-  dplyr::mutate(Pop_flowered = case_when(Pop_flowered >= 1 ~ 1,
-                                         Pop_flowered == 0 ~ 0)) %T>%
-  print()
-
-Flowering_pops_urbrur_cumulative <- Flowering_pops_cumulative %>%
-  dplyr::group_by(Urb_Rur) %>%
-  dplyr::summarise(Pops_flowered = sum(Pop_flowered),
-                   Pops_total = n_distinct(Population)
-                   ) %T>%
-  print()
-
-
-Flowered_ttest2 <- matrix(c(
-  as.integer(Flowering_pops_urbrur_cumulative[1,2]),
-  
-  as.integer(Flowering_pops_urbrur_cumulative[2,2]),
-  
-  as.integer(Flowering_pops_urbrur_cumulative[1,3]) - as.integer(Flowering_pops_urbrur_cumulative[1,2]),
-  
-  as.integer(Flowering_pops_urbrur_cumulative[2,3]) - as.integer(Flowering_pops_urbrur_cumulative[2,2])
-  ),
-  
-  nrow = 2,
-  dimnames = list(
-    c("Rural", "Urban"),
-    c("Flowered", "Didn't Flower"))) %T>%
-  print()
-
-fisher.test(Flowered_ttest2, alternative = "two.sided")
-# odds ratio = 2.136676 
-# p = 0.34
-# Small effect size
-
-chisq.test(Flowered_ttest2)
-# X-squared = 0.5472, df = 1, p-value = 0.4595
-
-```
-
-
-## Flowering success: Compare corridor vs non-corridor pops (NS)
-```{r}
-Flowering_pops_urban <- reproduc %>%
-  dplyr::group_by(Population, Year, Transect_ID) %>%
-  dplyr::filter(Transect_ID != "Rural") %>%
-  dplyr::summarise(Pop_flowered = sum(Flowered)) %>%
-  dplyr::mutate(Pop_flowered = case_when(Pop_flowered >= 1 ~ 1,
-                                         Pop_flowered == 0 ~ 0)) %T>%
-  print()
-
-Flowering_pops_urban_cumulative <- Flowering_pops_urban %>%
-  dplyr::group_by(Population, Transect_ID) %>%
-  dplyr::summarise(Pop_flowered = sum(Pop_flowered)) %>%
-  dplyr::mutate(Pop_flowered = case_when(Pop_flowered >= 1 ~ 1,
-                                         Pop_flowered == 0 ~ 0)) %T>%
-  print()
-
-Flowering_pops_transects_cumulative <- Flowering_pops_urban_cumulative %>%
-  dplyr::group_by(Transect_ID) %>%
-  dplyr::summarise(Pops_flowered = sum(Pop_flowered),
-                   Pops_total = n_distinct(Population)
-                   ) %T>%
-  print()
-
-
-Flowered_ttest2 <- matrix(c(
-  as.integer(Flowering_pops_transects_cumulative[1,2]),
-  
-  as.integer(Flowering_pops_transects_cumulative[2,2]),
-  
-  as.integer(Flowering_pops_transects_cumulative[1,3]) - as.integer(Flowering_pops_transects_cumulative[1,2]),
-  
-  as.integer(Flowering_pops_transects_cumulative[2,3]) - as.integer(Flowering_pops_transects_cumulative[2,2])
-  ),
-  
-  nrow = 2,
-  dimnames = list(
-    c("Non-Corridor", "Corridor"),
-    c("Flowered", "Didn't Flower"))) %T>%
-  print()
-
-fisher.test(Flowered_ttest2, alternative = "two.sided")
-# odds ratio = 0.8501017  
-# p = 1
-# Small effect size
-
-chisq.test(Flowered_ttest2)
-# X-squared = 1.3188e-31, df = 1, p-value = 1
-
-```
-
 # R-squared values
 ```{r}
-# took out lists 4 and 5 from all_models- the herbivory ones- because R.squaredGLMM can't intake models with beta family
 all_rsq <- lapply(all_models, lapply, r.squaredGLMM) %>%
   unlist(recursive = FALSE)
+
+sink(here::here("./Reproductive_trait_analyses/Tables/Rsquare.txt"))
+print(all_rsq)
+sink()
+
+# copied/pasted this into an excel file w/same name in same location and used text import wizard to separate data into neat columns
 ```
-# Calculate heritability, Qst, and CVA- UPDATE
+
+# Calculate heritability, Qst, and CVA
 Just looking at gradient models- all pops included. 
 
 h2 represents the average heritability across populations after removing the genetic effects due to population differences.
@@ -389,169 +449,207 @@ h2 represents the average heritability across populations after removing the gen
 "[CVA, or additive genetic coefficient of variation] provides a measure of genetic variation standardized by the mean, allowing to qualitatively comparing genetic variation among different traits"
 ## Calculate values per trait
 ```{r}
-# # Latex-----
-# update(
-#     latex_mods_best_c[[1]], 
-#     .~. -City_dist, # omitting city_dist
-#     REML = T) %>% VarCorr()
-# 
-# latex_mean <- latex %>%
-#   dplyr::summarize(Mean = mean(Latex_weight_mg,
-#                                na.rm = T)) %>%
-#   as.numeric()
-# 
-# qg_latex <- calc_quantgenvars( 0.086644,
-#                    0.079411,
-#                    0.387388,
-#                    latex_mean,
-#                    "Latex")
-# 
-# 
-# # Herbivory, before flowering: Binomial-----
-# 
-# update(
-#     herb_e_bin_mods_best_c[[1]], 
-#     .~. -City_dist, # omitting city_dist
-#     REML = T) %>% VarCorr()
-# 
-# # residual variance:
-# resid_var <- update(
-#     herb_e_bin_mods_best_c[[1]], REML = T) %>%
-#     sigma()
-# 
-# herb_e_bin_mean <- herbivory %>%
-#   dplyr::summarize(Mean = mean(Herbivory_mean_early_binary,
-#                                na.rm = T)) %>%
-#   as.numeric()
-# 
-# qg_herb_e_bin <- calc_quantgenvars(  1.8027e-04,
-#                     2.1094e-05,
-#                    resid_var,
-#                    herb_e_bin_mean,
-#                    "Chance of herbivory (before flowering)")
-# 
-# 
-# # Herbivory, before flowering: quantitative-----
-# 
-# update(
-#     herb_e_quant_mods_best_c[[1]], 
-#     .~. -City_dist, # omitting city_dist
-#     REML = T) %>% VarCorr()
-# 
-# herb_e_quant_mean <- herbivory %>% dplyr::filter(Herbivory_mean_early_binary == 1) %>%
-#   dplyr::summarize(Mean = mean(Herbivory_mean_early,
-#                                na.rm = T)) %>%
-#   as.numeric()
-# 
-# qg_herb_e_quant <- calc_quantgenvars( 0.076138  ,
-#                     0.068185  ,
-#                    1.230037 ,
-#                    herb_e_quant_mean,
-#                    "Herbivory (before flowering)")
-# 
-# # Herbivory, after flowering: Binomial-----
-# 
-# update(
-#     herb_l_bin_mods_best_c[[1]], 
-#     .~. -City_dist, # omitting city_dist
-#     REML = T) %>% VarCorr()
-# 
-# # residual variance:
-# resid_var <- update(
-#     herb_l_bin_mods_best_c[[1]], REML = T) %>%
-#     sigma()
-# 
-# herb_l_bin_mean <- herbivory %>%
-#   dplyr::summarize(Mean = mean(Herbivory_mean_late_binary,
-#                                na.rm = T)) %>%
-#   as.numeric()
-# 
-# qg_herb_l_bin <- calc_quantgenvars(2.3267e-01,
-#                    6.1084e-05,
-#                    resid_var,
-#                    herb_l_bin_mean,
-#                    "Chance of herbivory (after flowering)")
-# 
-# 
-# 
-# # Herbivory, after flowering: quantitative-----
-# 
-# update(
-#     herb_l_quant_mods_best_c[[1]], 
-#     .~. -City_dist, # omitting city_dist
-#     REML = T) %>% VarCorr()
-# 
-# herb_l_quant_mean <- herbivory %>% dplyr::filter(Herbivory_mean_late_binary == 1) %>%
-#   dplyr::summarize(Mean = mean(Herbivory_mean_late,
-#                                na.rm = T)) %>%
-#   as.numeric()
-# 
-# qg_herb_l_quant <- calc_quantgenvars( 1.5181e-01 ,
-#                    8.5992e-05,
-#                   1.2381e+00,
-#                    herb_l_quant_mean,
-#                    "Herbivory (after flowering)")
-# 
-# 
-# # Weevil: Binomial-----
-# 
-# update(
-#     weev_bin_mods_best_c[[1]], 
-#     .~. -City_dist, # omitting city_dist
-#     REML = T) %>% VarCorr()
-# 
-# # residual variance:
-# resid_var <- update(
-#     weev_bin_mods_best_c[[1]], REML = T) %>%
-#     sigma()
-# 
-# weev_bin_mean <- weevil %>%
-#   dplyr::summarize(Mean = mean(Scar_binary ,
-#                                na.rm = T)) %>%
-#   as.numeric()
-# 
-# qg_weev_bin <- calc_quantgenvars(0.54935944  ,
-#                      0.00015261,
-#                    resid_var,
-#                    weev_bin_mean,
-#                    "Chance of weevil damage")
-# 
-# 
-# # Weevil damage: quantitative-----
-# 
-# update(
-#     weev_quant_mods_best_c[[1]], 
-#     .~. -City_dist, # omitting city_dist
-#     REML = T) %>% VarCorr()
-# 
-# weev_quant_mean <- weevil %>%
-#   dplyr::filter(Scar_length_cm > 0) %>%
-#   dplyr::summarize(Mean = mean(Scar_length_cm,
-#                                na.rm = T)) %>%
-#   as.numeric()
-# 
-# qg_weev_quant <- calc_quantgenvars( 0.20088 ,
-#                   0.10085 ,
-#                  1.05936 ,
-#                    weev_quant_mean,
-#                    "Weevil scar length")
+# Flowering success-----
+update(
+    flsucc_mods_best_c[[1]],
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+# residual variance:
+resid_var <- update(
+     flsucc_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+flsucc_mean <- reproduc %>%
+  dplyr::summarize(Mean = mean(Flowered ,
+                               na.rm = T)) %>%
+  as.numeric() # can't calculate this because it's 0s x 1s... will be 0
+
+qg_flsucc <- calc_quantgenvars( 0.70759 ,
+                   0.54422 ,
+                   resid_var,
+                   NA,
+                   "Flowering Success")
+
+
+# Total flowers/plant -----
+update(
+    flowers_mods_best_c[[1]],
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+flowers_mean <- flowering %>%
+  dplyr::summarize(Mean = mean(total_flower_count ,
+                               na.rm = T)) %>%
+  as.numeric()
+
+# residual variance:
+resid_var <- update(
+     flowers_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+qg_flowers <- calc_quantgenvars( 9.2837e-05,
+                   1.3463e-01,
+                   resid_var,
+                   flowers_mean,
+                   "Total flowers/plant")
+
+
+# Mean flower size/inflorescence -----
+update(
+    flsize_mods_best_c[[1]],
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+flsize_mean <- flowering %>%
+  dplyr::summarize(Mean = mean(Overall_mean ,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_flsize <- calc_quantgenvars( 2.1742  ,
+                   1.7583  ,
+                   4.6466  ,
+                   flsize_mean,
+                   "Flower size")
+
+
+# Flowering time -----
+update(
+    fltime_mods_best_c[[1]],
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+fltime_mean <- flowering %>%
+  dplyr::summarize(Mean = mean(flowering_time_num ,
+                               na.rm = T)) %>%
+  as.numeric()
+
+
+# residual variance:
+resid_var <- update(
+     fltime_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+qg_fltime <- calc_quantgenvars( 4.8319e-05,
+                   1.7015e-01,
+                   resid_var,
+                   fltime_mean,
+                   "Flowering Duration")
+
+
+# Flowering start -----
+update(
+    flstart_mods_best_c[[1]],
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+flstart_mean <- flowering %>%
+  dplyr::summarize(Mean = mean(Julian_oldest_inflor ,
+                               na.rm = T)) %>%
+  as.numeric()
+
+
+# residual variance:
+resid_var <- update(
+     flstart_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+qg_flstart <- calc_quantgenvars( 4.0594e-07,
+                   4.8286e-06,
+                   resid_var,
+                   flstart_mean,
+                   "Flowering Start")
+
+
+# Pods -----
+update(
+    pods_mods_best_c[[1]],
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+pods_mean <- flowering %>%
+  dplyr::summarize(Mean = mean(Pods,
+                               na.rm = T)) %>%
+  as.numeric()
+
+
+# residual variance:
+resid_var <- update(
+     pods_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+qg_pods <- calc_quantgenvars( 0.18623 ,
+                   0.13145 ,
+                   resid_var,
+                   pods_mean,
+                   "Follicles")
+
+
+# Date of first mature pod -----
+update(
+    first_pods_mods_best_c[[1]],
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+first_pods_mean <- flowering %>%
+  dplyr::summarize(Mean = mean(Julian_first_follicle,
+                               na.rm = T)) %>%
+  as.numeric()
+
+
+# residual variance:
+resid_var <- update(
+     first_pods_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+qg_first_pods <- calc_quantgenvars( 0.058337,
+                   0.016403,
+                   resid_var,
+                   first_pods_mean,
+                   "Date of first follicle 2 in")
+
+
+# Peduncles -----
+update(
+    peduncles_mods_best_c[[1]],
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+peduncles_mean <- flowering %>%
+  dplyr::summarize(Mean = mean(Peduncles,
+                               na.rm = T)) %>%
+  as.numeric()
+
+
+# residual variance:
+resid_var <- update(
+     peduncles_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+qg_peduncles <- calc_quantgenvars( 0.19237 ,
+                   0.25009 ,
+                   resid_var,
+                   peduncles_mean,
+                   "Peduncles (Inflorescences)")
+
 
 ```
 
 ## Combine values into one table and export
 ```{r}
 qg_joined <- list(
-  # qg_latex,
-  #                 qg_herb_e_bin,
-  #                 qg_herb_e_quant,
-  #                 qg_herb_l_bin,
-  #                 qg_herb_l_quant,
-  #                 qg_weev_bin,
-  #                 qg_weev_quant
+  qg_flsucc,
+  qg_flowers,
+  qg_flsize,
+  qg_fltime,
+  qg_flstart,
+  qg_pods,
+  qg_first_pods,
+  qg_peduncles
                   ) %>% 
   bind_rows() %>%
   dplyr::mutate_at(2:4, round, 3) %>%
-  write.csv(file = "./Reproductive_trait_analyses/Tables/quant_gen_defense.csv",
+  write.csv(file = "./Reproductive_trait_analyses/Tables/quant_gen_reproduc.csv",
           row.names=FALSE)
 
 ```

@@ -69,37 +69,22 @@ ltx_gr_city_m1 <- glmmTMB(Latex_weight_mg^(1/3) ~
 
 
 # test for gxe intxns
-# test for block * family interaction
-gxe_test_latex1 <- lm(Latex_weight_mg^(1/3) ~
-                        Block*Fam_uniq,
-                        data = latex )
-
-par(mfrow = c(2, 2))
-plot(gxe_test_latex1)
-car::Anova(gxe_test_latex1) # p >> 0.1
+gxe_test_latex1 <- glmmTMB(Latex_weight_mg^(1/3) ~
+                             City_dist*Block +
+                             (1|Population/Family),
+                        data = latex,
+                        REML = F)
 
 
-# test for block * pop interaction
-gxe_test_latex2 <- lm(Latex_weight_mg^(1/3) ~
-                        Block*Population,
-                        data = latex )
+gxe_test_latex2 <- glmmTMB(Latex_weight_mg^(1/3) ~
+                             City_dist + Block +
+                             (1|Population/Family),
+                        data = latex,
+                        REML = F )
 
-par(mfrow = c(2, 2))
-plot(gxe_test_latex2)
-car::Anova(gxe_test_latex2) # p >> 0.1
-
-
-# # doesn't converge
-# gxe_test_latex3 <- glmmTMB(Latex_weight_mg^(1/3) ~
-#                         Block*Fam_uniq +
-#                         (1|Population),
-#                         data = latex )
-# 
-# # doesn't converge
-# gxe_test_latex4 <- glmmTMB(Latex_weight_mg^(1/3) ~
-#                         Block*Population +
-#                         (1|Fam_uniq),
-#                         data = latex )
+plot(DHARMa::simulateResiduals(gxe_test_latex1))
+plot(DHARMa::simulateResiduals(gxe_test_latex2))
+AIC(gxe_test_latex1, gxe_test_latex2) # model without GxE best
 
 ```
 

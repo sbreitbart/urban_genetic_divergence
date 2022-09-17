@@ -9,7 +9,9 @@ source("functions.R")
 reproduc <- read.csv(here::here("./Joined_annual_data/reproductive.csv"), na.strings=c("NO PLANT", "none", "NA"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
   dplyr::select(., -1)%>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Pop_ID", "Patch_ID", "Transect_ID", "Urb_Rur")), as.character) %>%
-    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Pop_ID", "Patch_ID", "Transect_ID", "Urb_Rur", "Flowered")), as.factor)
+    dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Pop_ID", "Patch_ID", "Transect_ID", "Urb_Rur", "Flowered")), as.factor) %>%
+  dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
+
 str(reproduc)
 
 flowering <- read.csv(here::here("./Joined_annual_data/flowering.csv"), na.strings=c("NO PLANT", "none", "NA"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
@@ -25,7 +27,8 @@ flowering <- read.csv(here::here("./Joined_annual_data/flowering.csv"), na.strin
   relocate(flowering_time,
            .before = Date_first_follicle_2in) %>%
   dplyr::mutate(Julian_oldest_inflor = as.numeric(format(Date_oldest_inflor_flower, "%j")),
-                Julian_first_follicle = as.numeric(format(Date_first_follicle_2in, "%j")))
+                Julian_first_follicle = as.numeric(format(Date_first_follicle_2in, "%j"))) %>%
+  dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
 
 str(flowering)
 ```
