@@ -82,9 +82,9 @@ gxe_test_latex2 <- glmmTMB(Latex_weight_mg^(1/3) ~
                         data = latex,
                         REML = F )
 
-plot(DHARMa::simulateResiduals(gxe_test_latex1))
-plot(DHARMa::simulateResiduals(gxe_test_latex2))
-AIC(gxe_test_latex1, gxe_test_latex2) # model without GxE best
+# plot(DHARMa::simulateResiduals(gxe_test_latex1))
+# plot(DHARMa::simulateResiduals(gxe_test_latex2))
+# AIC(gxe_test_latex1, gxe_test_latex2) # model without GxE best
 
 ```
 
@@ -96,9 +96,9 @@ ltx_gr_usc_m1 <- glmmTMB(Latex_weight_mg^(1/3) ~ Block +
                         data = latex,
                         REML = F)
 
-performance::check_model(ltx_gr_usc_m1)
-plot(DHARMa::simulateResiduals(ltx_gr_usc_m1))
-car::Anova(ltx_gr_usc_m1)
+# performance::check_model(ltx_gr_usc_m1)
+# plot(DHARMa::simulateResiduals(ltx_gr_usc_m1))
+# car::Anova(ltx_gr_usc_m1)
 
 ```
 
@@ -279,8 +279,8 @@ gxe_test_herb_quant_e1 <- lm(log(Herbivory_mean_early) ~
                           Herbivory_mean_early_binary == 1))
 
 
-plot(gxe_test_herb_quant_e1)
-car::Anova(gxe_test_herb_quant_e1) # p >> 0.1
+# plot(gxe_test_herb_quant_e1)
+# car::Anova(gxe_test_herb_quant_e1) # p >> 0.1
 
 
 # # test for gxe intxns- won't converge with Block*Fam or Block*Pop, even when I take out other vars
@@ -291,8 +291,8 @@ gxe_test_herb_quant_e2 <- lm(log(Herbivory_mean_early) ~
                           Herbivory_mean_early_binary == 1))
 
 
-plot(gxe_test_herb_quant_e2)
-car::Anova(gxe_test_herb_quant_e2) # p >> 0.1
+# plot(gxe_test_herb_quant_e2)
+# car::Anova(gxe_test_herb_quant_e2) # p >> 0.1
 ```
 
 
@@ -408,7 +408,7 @@ herbiv_e_urbsubs_usc_m1_bin <- glmmTMB(Herbivory_mean_early_binary ~
                        family = binomial,
                               REML = F)
 
-plot(DHARMa::simulateResiduals(herbiv_e_urbsubs_usc_m1_bin)) # looks great
+# plot(DHARMa::simulateResiduals(herbiv_e_urbsubs_usc_m1_bin)) # looks great
 
 
 # quantitative model
@@ -422,7 +422,7 @@ herbiv_e_urbsubs_usc_m1_quant <- glmmTMB(log(Herbivory_mean_early) ~
                           Herbivory_mean_early_binary == 1 & Transect_ID != "Rural"),
                               REML = F) # log-transformed after looking at untransformed, sqrt, cube root models
 
-plot(DHARMa::simulateResiduals(herbiv_e_urbsubs_usc_m1_quant)) # looks great
+# plot(DHARMa::simulateResiduals(herbiv_e_urbsubs_usc_m1_quant)) # looks great
 
 
 

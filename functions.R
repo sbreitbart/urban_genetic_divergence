@@ -303,6 +303,17 @@ CreateRanovaOutput_Q2 <- function(lmer_model, var_name){
 }
 
 
+# get percent variance explained for bootstrapped models
+# calculating it as random / random + resid var
+get_pve <- function(model){
+  random_var <- as.numeric(insight::get_variance_random(full))
+  resid_var <- as.numeric(insight::get_variance_residual(full))
+  PVE <- round(
+    (random_var*100 /
+       ( random_var + resid_var)),
+    3)
+  return(PVE)
+}
 
 ############################################################
 ##################### HERITABILITY & QST ###################

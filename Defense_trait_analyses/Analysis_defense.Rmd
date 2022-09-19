@@ -57,7 +57,6 @@ source(knitr::purl("Defense_trait_analyses/Model_diagnostics_Defense.Rmd", quiet
 # Ranova
 The point: to determine if there is much genetic diversity present within populations for natural selection to act on.
 - ranova can't handle GLMMTMB functions so I'll use lmer instead
-- Also using Pop/Fam instead of Pop:Fam or Pop/Fam_uniq like I did when making models earlier
 ## Set seed for random processes (bootstrapping)
 ```{r}
 set.seed(45)
@@ -156,11 +155,11 @@ reduced <- update(full, .~. - City_dist)
 
 herbiv_e_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,          
-          cl = makeCluster(7))
+          cl = makeCluster(6))
 
 tidy(herbiv_e_ranova.pop) # p = 0.047
 
-
+get_pve(full) # can't compute. This model is singular in glmer but NOT in glmmtmb
 
 
 
@@ -177,11 +176,11 @@ reduced <- update(full, .~. - City_dist)
 
 herbiv_e_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
-                    cl = makeCluster(7))
+                    cl = makeCluster(6))
 
 tidy(herbiv_e_ranova.fam) # Family: p ~ 0.046
 
-
+get_pve(full) # can't compute. This model is singular in glmer but NOT in glmmtmb 
 
 
 # merge Pop and Fam ranovas
@@ -205,9 +204,11 @@ reduced <- update(full, .~. - City_dist)
 
 herbiv_l_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,          
-          cl = makeCluster(7))
+          cl = makeCluster(6))
 
 tidy(herbiv_l_ranova.pop) # Pop: p ~ 0.482
+
+get_pve(full) # can't compute. This model is singular in glmer but NOT in glmmtmb 
 
 
 
@@ -224,11 +225,11 @@ reduced <- update(full, .~. - City_dist)
 
 herbiv_l_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
-                    cl = makeCluster(7))
+                    cl = makeCluster(6))
 
-tidy(herbiv_l_ranova.fam) # Family: p ~ 0.502
+tidy(herbiv_l_ranova.fam) # Family: p ~ 0.503
 
-
+get_pve(full) # 2.721
 
 
 # merge Pop and Fam ranovas
@@ -252,11 +253,11 @@ reduced <- update(full, .~. - City_dist)
 
 weev_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,          
-          cl = makeCluster(7))
+          cl = makeCluster(6))
 
 tidy(weev_ranova.pop) # Pop: p ~ 0.500
 
-
+get_pve(full) # 1.39
 
 
 
@@ -275,11 +276,11 @@ reduced <- update(full, .~. - City_dist)
 
 weev_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
-                    cl = makeCluster(7))
+                    cl = makeCluster(6))
 
 tidy(weev_ranova.fam) # Family: p ~ 0.472
 
-
+get_pve(full) # 8.203
 
 
 # merge Pop and Fam ranovas
@@ -537,12 +538,15 @@ flextable::save_as_html(weev_quant_ranova1,
 ## test city_dist
 ### take out fam
 full <- glmer(Herbivory_mean_early_binary ~
-                Block + Year + 
+                 Block + Year + 
                 (1|Population) + City_dist,
                               data = herbivory %>%
                 dplyr::filter(Transect_ID != "Rural"),
                               family = "binomial"(link = "logit"),
+           #   nAGQ = 0,
              na.action = na.exclude # THIS LINE IS IMPORTANT
+  # ,control=glmerControl(optimizer="bobyqa",
+  #                           optCtrl=list(maxfun=2e5))
   )
 
 reduced <- glmer(Herbivory_mean_early_binary ~
@@ -556,9 +560,12 @@ reduced <- glmer(Herbivory_mean_early_binary ~
 
 herb_e_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,
-          cl = makeCluster(7))
+          cl = makeCluster(6))
 
 tidy(herb_e_ranova.pop) # Pop: p ~ 0.474
+
+get_pve(full)  # can't compute. This model is singular in glmer but NOT in glmmtmb
+
 
 
 ### take out pop
@@ -580,10 +587,11 @@ reduced <- glmer(Herbivory_mean_early_binary ~
 
 herb_e_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
-          cl = makeCluster(7))
+          cl = makeCluster(6))
 
 tidy(herb_e_ranova.fam) # Family: p ~ 0.697
 
+get_pve(full)  # can't compute. This model is singular in glmer but NOT in glmmtmb
 
 
 ## test transect
@@ -635,9 +643,12 @@ reduced <- glmer(Herbivory_mean_late_binary ~
 
 herb_l_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,
-          cl = makeCluster(7))
+          cl = makeCluster(6))
 
 tidy(herb_l_ranova.pop) # Pop: p ~ 0.202
+
+get_pve(full)  # can't compute. This model is singular in glmer but NOT in glmmtmb 
+
 
 
 ### take out pop
@@ -659,10 +670,11 @@ reduced <- glmer(Herbivory_mean_late_binary ~
 
 herb_l_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
-          cl = makeCluster(7))
+          cl = makeCluster(6))
 
 tidy(herb_l_ranova.fam) # Family: p ~ 0.390
 
+get_pve(full)  # can't compute. This model is singular in glmer but NOT in glmmtmb
 
 
 ## test transect
@@ -716,9 +728,12 @@ reduced <- glmer(Scar_binary ~
 
 weev_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,
-          cl = makeCluster(7))
+          cl = makeCluster(6))
 
 tidy(weev_ranova.pop) # Pop: p ~ 0.353
+
+get_pve(full) # 1.376
+
 
 
 ### take out pop
@@ -744,9 +759,11 @@ reduced <- glmer(Scar_binary ~
 
 weev_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
-          cl = makeCluster(7))
+          cl = makeCluster(6))
 
 tidy(weev_ranova.fam) # Family: p ~ 0.633
+
+get_pve(full) # 9.856
 
 
 
@@ -891,7 +908,7 @@ reduced <- glmer(Scar_binary ~
 
 weev_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,
-          cl = makeCluster(7))
+          cl = makeCluster(6))
 
 tidy(weev_ranova.pop) # Pop: p ~ 0.709
 
@@ -919,7 +936,7 @@ reduced <- glmer(Scar_binary ~
 
 weev_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
-          cl = makeCluster(7))
+          cl = makeCluster(6))
 
 tidy(weev_ranova.fam) # Family: p ~ 0.707
 

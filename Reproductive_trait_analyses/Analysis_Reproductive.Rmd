@@ -99,7 +99,8 @@ flextable::save_as_html(flsize_ranova1,
 ### Gradient
 #### City_dist
 ```{r}
-# Flowering success-----
+# Flowering success----- 
+## TRYING TO DO ON SERVER
 
 # take out fam
 full <- glmer(Flowered ~
@@ -107,7 +108,7 @@ full <- glmer(Flowered ~
                              Year +
                              (1|Population) +
                              City_dist,
-  data = reproduc,
+  data = flowering,
   family = binomial(link = "logit"),
             na.action = na.exclude # THIS LINE IS IMPORTANT
     # ,control=glmerControl(optimizer="bobyqa",
@@ -156,28 +157,926 @@ flsize_ranova1 <- CreateRanovaOutput_bootstrap(
 
 
 # Flowers/plant-----
+## TRYING TO DO ON SERVER
 
+# take out fam
+# CHANGED FROM NBINOM2 TO POISSON BC GLMER CAN'T HANDLE NEG BINOMIAL
+# ADDED NAGQ = 0 BC DIDN'T CONVERGE OTHERWISE
+full <- glmer(total_flower_count ~
+                             Block +
+                             Year +
+                             (1|Population) +
+                             City_dist,
+  data = flowering,
+  family = poisson,
+  nAGQ = 0,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    # ,control=glmerControl(optimizer="bobyqa",
+    #                         optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+flowers_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 1,
+          cl = makeCluster(rep("localhost", 8)))
+
+tidy(flowers_ranova.pop) # p = 0.732 at nsim = 1
+
+
+
+# take out pop
+full <- glmer(total_flower_count ~
+                             Block +
+                             Year +
+                             (1|Fam_uniq) +
+                             City_dist,
+  data = flowering,
+  family = poisson,
+  nAGQ = 0, # model won't converge otherwise. I tested the difference nAGQ = 0 vs the default (>0) makes in the model above and the difference was negligible: the p-value changed by 0.003 so I think it's ok to use here, since the p-values are nowhere near 0.1 or lower.
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+flowers_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 1,
+          cl = makeCluster(rep("localhost", 8)))
+
+tidy(flowers_ranova.fam) # Family: p ~ 0.277 at nsim = 1
+
+
+# merge Pop and Fam ranovas
+flowers_ranova1 <- CreateRanovaOutput_bootstrap(
+  flowers_ranova.fam, 
+  flowers_ranova.pop,
+  "Flower count") %T>%
+  flextable::save_as_html(path = here::here("./Reproductive_trait_analyses/Tables/Ranova/flower_count.html"))
 
 # Flowering time-----
+## TRYING TO DO ON SERVER
+
+# take out fam
+# CHANGED FROM NBINOM2 TO POISSON BC GLMER CAN'T HANDLE NEG BINOMIAL
+# ADDED NAGQ = 0 BC DIDN'T CONVERGE OTHERWISE
+full <- glmer(as.numeric(flowering_time) ~
+                             Block +
+                             Year +
+                             (1|Population) +
+                             City_dist,
+  data = flowering,
+  family = poisson,
+  # nAGQ = 0,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+fltime_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 1,
+          cl = makeCluster(rep("localhost", 8)))
+
+tidy(fltime_ranova.pop) # p = 0.458 at nsim = 1
+
+
+
+# take out pop
+full <- glmer(as.numeric(flowering_time) ~
+                             Block +
+                             Year +
+                             (1|Fam_uniq) +
+                             City_dist,
+  data = flowering,
+  family = poisson,
+   nAGQ = 0, # model won't converge otherwise. I tested the difference nAGQ = 0 vs the default (>0) makes in the model above and the difference was negligible: the p-value changed by 0.003 so I think it's ok to use here, since the p-values are nowhere near 0.1 or lower.
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+fltime_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 1,
+          cl = makeCluster(rep("localhost", 8)))
+
+tidy(fltime_ranova.fam) # Family: p ~ 0.817 at nsim = 1 with block removed; p = 0.818 with block included and nagQ = 0
+
+
+# merge Pop and Fam ranovas
+fltime_ranova1 <- CreateRanovaOutput_bootstrap(
+  fltime_ranova.fam, 
+  fltime_ranova.pop,
+  "Flower count") %T>%
+  flextable::save_as_html(path = here::here("./Reproductive_trait_analyses/Tables/Ranova/flower_start.html"))
 
 
 # Flowering start-----
+## TRYING TO DO ON SERVER
+
+# take out fam
+# ADDED NAGQ = 0 BC DIDN'T CONVERGE OTHERWISE
+full <- glmer(Julian_oldest_inflor ~
+                         #    Block +
+                  #           Year +
+                             (1|Population) +
+                             City_dist,
+  data = flowering,
+  family = poisson,
+   nAGQ = 0,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+flstart_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 1,
+          cl = makeCluster(rep("localhost", 8)))
+
+tidy(flstart_ranova.pop) # p = 0.989 at nsim = 1
+
+
+
+# take out pop
+full <- glmer(Julian_oldest_inflor ~
+                             Block +
+                             Year +
+                             (1|Fam_uniq) +
+                             City_dist,
+  data = flowering,
+  family = poisson,
+ # nAGQ = 0, # model won't converge otherwise. I tested the difference nAGQ = 0 vs the default (>0) makes in the model above and the difference was negligible: the p-value changed by 0.003 so I think it's ok to use here, since the p-values are nowhere near 0.1 or lower.
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+flstart_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 1,
+          cl = makeCluster(rep("localhost", 8)))
+
+tidy(flstart_ranova.fam) # Family: p ~ 0.706 at sim = 1 
+
+
+# merge Pop and Fam ranovas
+flstart_ranova1 <- CreateRanovaOutput_bootstrap(
+  flstart_ranova.fam, 
+  flstart_ranova.pop,
+  "Flower count") %T>%
+  flextable::save_as_html(path = here::here("./Reproductive_trait_analyses/Tables/Ranova/flower_start.html"))
 
 
 # Pods-----
+## TRYING TO DO ON SERVER
+
+# take out fam
+# CHANGED FROM NBINOM2 TO POISSON BC GLMER CAN'T HANDLE NEG BINOMIAL
+full <- glmer(Pods ~
+                     Block +
+                            Year +
+                             (1|Population) +
+                             City_dist,
+  data = flowering,
+  family = poisson,
+#   nAGQ = 0,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    # ,control=glmerControl(optimizer="bobyqa",
+    #                         optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+pods_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 1,
+          cl = makeCluster(rep("localhost", 8)))
+
+tidy(pods_ranova.pop) # p = 0.590 at nsim = 1
+
+
+
+# take out pop
+full <- glmer(Pods ~
+                             Block +
+                             Year +
+                             (1|Fam_uniq) +
+                             City_dist,
+  data = flowering,
+  family = poisson,
+ # nAGQ = 0, # model won't converge otherwise. I tested the difference nAGQ = 0 vs the default (>0) makes in the model above and the difference was negligible: the p-value changed by 0.003 so I think it's ok to use here, since the p-values are nowhere near 0.1 or lower.
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+pods_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 1,
+          cl = makeCluster(rep("localhost", 8)))
+
+tidy(pods_ranova.fam) # Family: p ~ 0.699 at sim = 1 
+
+
+# merge Pop and Fam ranovas
+pods_ranova1 <- CreateRanovaOutput_bootstrap(
+  pods_ranova.fam, 
+  pods_ranova.pop,
+  "Flower count") %T>%
+  flextable::save_as_html(path = here::here("./Reproductive_trait_analyses/Tables/Ranova/pods.html"))
 
 
 # Date of first follicle-----
+## TRYING TO DO ON SERVER
+
+# take out fam
+full <- glmer(Julian_first_follicle^2 ~
+                     Block +
+                            Year +
+                             (1|Population) +
+                             City_dist,
+  data = flowering,
+  family = poisson,
+   nAGQ = 0,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+first_pods_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 1,
+          cl = makeCluster(rep("localhost", 8)))
+
+tidy(first_pods_ranova.pop) # p = 0.0962 at nsim = 1 with nagQ = 0; same p-value without nagQ = 0 but changed response to squared (which is what's in main model);p = 0.366 when resp var NOT squared and nagq = 0
+
+
+
+# take out pop
+full <- glmer(Julian_first_follicle^2 ~
+                             Block +
+                             Year +
+                             (1|Fam_uniq) +
+                             City_dist,
+  data = flowering,
+  family = poisson,
+  nAGQ = 0, 
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+first_pods_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 1,
+          cl = makeCluster(rep("localhost", 8)))
+
+tidy(first_pods_ranova.fam) # Family: p ~ 0.438 at sim = 1 
+
+
+# merge Pop and Fam ranovas
+first_pods_ranova1 <- CreateRanovaOutput_bootstrap(
+  first_pods_ranova.fam, 
+  first_pods_ranova.pop,
+  "Flower count") %T>%
+  flextable::save_as_html(path = here::here("./Reproductive_trait_analyses/Tables/Ranova/first_pods.html"))
 
 
 # Peduncles-----
+## TRYING TO DO ON SERVER
+
+# take out fam
+# CHANGED FROM NBINOM2 TO POISSON BC GLMER CAN'T HANDLE NEG BINOMIAL
+full <- glmer(Peduncles ~
+                     Block +
+                            Year +
+                             (1|Population) +
+                             City_dist,
+  data = flowering,
+  family = poisson,
+   nAGQ = 0,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+peduncles_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 1,
+          cl = makeCluster(rep("localhost", 8)))
+
+tidy(peduncles_ranova.pop) # p = 0.446 at nsim = 1 and nagQ = 0. p = 0.447 when nagQ = 1 and model doesn't converge
+
+
+
+# take out pop
+full <- glmer(Peduncles ~
+                             Block +
+                             Year +
+                             (1|Fam_uniq) +
+                             City_dist,
+  data = flowering,
+  family = poisson,
+  nAGQ = 0, 
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+peduncles_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 1,
+          cl = makeCluster(rep("localhost", 8)))
+
+tidy(peduncles_ranova.fam) # Family: p ~ 0.550 at sim = 1 with nagQ = 1 and model dones't converge; same with nagQ = 0 but model DOES converge
+
+
+# merge Pop and Fam ranovas
+peduncles_ranova1 <- CreateRanovaOutput_bootstrap(
+  peduncles_ranova.fam, 
+  peduncles_ranova.pop,
+  "Flower count") %T>%
+  flextable::save_as_html(path = here::here("./Reproductive_trait_analyses/Tables/Ranova/peduncles.html"))
 
 ```
 
 ### Urb subtransects
 #### City_dist
 ```{r}
+# Flowering success-----
 
+## test city_dist
+### take out fam
+full <- glmer(Flowered ~
+                 Block +
+                Year +
+                (1|Population) +
+                City_dist,
+              data = reproduc %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = binomial,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+flsucc_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 1,
+          cl = makeCluster(rep("localhost", 6)))
+
+tidy(flsucc_ranova.pop) # p = 0.519 w/nsim = 1
+
+
+
+# take out pop
+full <- glmer(Flowered ~
+                 Block +
+                Year +
+                (1|Fam_uniq) +
+                City_dist,
+              data = reproduc %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = binomial,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+flsucc_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 1,
+          cl = makeCluster(rep("localhost", 6)))
+
+tidy(flsucc_ranova.fam) # Family: p ~ 0.137 w/nsim = 1
+
+
+## test transect
+test_tr <-  glmer(Flowered ~
+                 Block +
+                Year +
+                (1|Population/Family) +
+                Transect_ID,
+              data = reproduc %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = binomial,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+
+# merge Pop and Fam ranovas
+## test City_dist
+flsucc_ranova1 <- CreateRanovaOutput_bootstrap(
+  flsucc_ranova.fam,
+  flsucc_ranova.pop,
+  "Flowering success (Distance)")
+
+## test transect
+flsucc_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Flowering success (Transect)")
+
+flextable::save_as_html(flsucc_ranova1,
+                        flsucc_ranova2,
+                        path = here::here("./Reproductive_trait_analyses/Tables/Ranova/Flowering_success_transects.html"))
+
+
+# Flowers per plant-----
+
+## test city_dist
+### take out fam
+### using poisson b/c glmer can't handle neg binomial
+full <- glmer(total_flower_count ~
+                 Block +
+                Year +
+                (1|Population) +
+                City_dist,
+              data = flowering %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+             # nAGQ = 0,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+flowers_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 10,
+          cl = makeCluster(rep("localhost", 6)))
+
+tidy(flowers_ranova.pop) # p = 0.834 w/nsim = 10
+
+
+
+# take out pop
+full <- glmer(total_flower_count ~
+                 Block +
+                Year +
+                (1|Fam_uniq) +
+                City_dist,
+              data = flowering %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+flowers_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 10,
+          cl = makeCluster(rep("localhost", 6)))
+
+tidy(flowers_ranova.fam) # Family: p ~ 0.705 w/nsim = 10
+
+
+## test transect
+test_tr <-  glmer(total_flower_count ~
+                 Block +
+                Year +
+                (1|Population/Family) +
+                Transect_ID,
+              data = flowering %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+
+# merge Pop and Fam ranovas
+## test City_dist
+flowers_ranova1 <- CreateRanovaOutput_bootstrap(
+  flowers_ranova.fam,
+  flowers_ranova.pop,
+  "Flower count (Distance)")
+
+## test transect
+flowers_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Flower count (Transect)")
+
+flextable::save_as_html(flowers_ranova1,
+                        flowers_ranova2,
+                        path = here::here("./Reproductive_trait_analyses/Tables/Ranova/Flower_count_transects.html"))
+
+
+# Flowering time-----
+
+## test city_dist
+### take out fam
+### using poisson bc glmer can't handle neg binomial
+full <- glmer(as.numeric(flowering_time) ~
+                 Block +
+                Year +
+                (1|Population) +
+                City_dist,
+              data = flowering %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+fltime_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 10,
+          cl = makeCluster(rep("localhost", 6)))
+
+tidy(fltime_ranova.pop) # p = 0.146 w/nsim = 10
+
+
+
+# take out pop
+full <- glmer(as.numeric(flowering_time) ~
+                 Block +
+                Year +
+                (1|Fam_uniq) +
+                City_dist,
+              data = flowering %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+fltime_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 10,
+          cl = makeCluster(rep("localhost", 6)))
+
+tidy(fltime_ranova.fam) # Family: p ~ 0.195 w/nsim = 10
+
+
+## test transect
+test_tr <-  glmer(as.numeric(flowering_time) ~
+                 Block +
+                Year +
+                (1|Population/Family) +
+                Transect_ID,
+              data = flowering %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+
+# merge Pop and Fam ranovas
+## test City_dist
+fltime_ranova1 <- CreateRanovaOutput_bootstrap(
+  fltime_ranova.fam,
+  fltime_ranova.pop,
+  "Flowering time (Distance)")
+
+## test transect
+fltime_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Flowering time (Transect)")
+
+flextable::save_as_html(fltime_ranova1,
+                        fltime_ranova2,
+                        path = here::here("./Reproductive_trait_analyses/Tables/Ranova/Flowering_time_transects.html"))
+
+# Flowering start-----
+
+## test city_dist
+### take out fam
+full <- glmer(Julian_oldest_inflor ~
+                 Block +
+                Year +
+                (1|Population) +
+                City_dist,
+              data = flowering %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+              nAGQ = 0,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+flstart_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 10,
+          cl = makeCluster(rep("localhost", 6)))
+
+tidy(flstart_ranova.pop) # p = 0.133 w/nsim =10
+
+
+
+# take out pop
+full <- glmer(Julian_oldest_inflor ~
+                 Block +
+                Year +
+                (1|Fam_uniq) +
+                City_dist,
+              data = flowering %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+              nAGQ = 0,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+flstart_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 10,
+          cl = makeCluster(rep("localhost", 6)))
+
+tidy(flstart_ranova.fam) # Family: p ~ 0.133 w/nsim = 10
+
+
+## test transect
+test_tr <-  glmer(Julian_oldest_inflor ~
+                 Block +
+                Year +
+                (1|Population/Family) +
+                Transect_ID,
+              data = flowering %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+
+# merge Pop and Fam ranovas
+## test City_dist
+flstart_ranova1 <- CreateRanovaOutput_bootstrap(
+  flstart_ranova.fam,
+  flstart_ranova.pop,
+  "Flowering start (Distance)")
+
+## test transect
+flstart_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Flowering start (Transect)")
+
+flextable::save_as_html(flstart_ranova1,
+                        flstart_ranova2,
+                        path = here::here("./Reproductive_trait_analyses/Tables/Ranova/Flowering_start_transects.html"))
+
+# Pods-----
+
+## test city_dist
+### take out fam
+### using poisson b/c glmer can't handle neg binom
+full <- glmer(Pods ~
+                 Block +
+                Year +
+                (1|Population) +
+                City_dist,
+              data = flowering %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+Pods_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 10,
+          cl = makeCluster(rep("localhost", 6)))
+
+tidy(Pods_ranova.pop) # p = 0.627 w/nsim = 10
+
+
+
+# take out pop
+full <- glmer(Pods ~
+                 Block +
+                Year +
+                (1|Fam_uniq) +
+                City_dist,
+              data = flowering %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+Pods_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 10,
+          cl = makeCluster(rep("localhost", 6)))
+
+tidy(Pods_ranova.fam) # Family: p ~ 0.826 w/nsim = 10
+
+
+## test transect
+test_tr <-  glmer(Pods ~
+                 Block +
+                Year +
+                (1|Population/Family) +
+                Transect_ID,
+              data = flowering %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+
+# merge Pop and Fam ranovas
+## test City_dist
+Pods_ranova1 <- CreateRanovaOutput_bootstrap(
+  Pods_ranova.fam,
+  Pods_ranova.pop,
+  "Pods (Distance)")
+
+## test transect
+Pods_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Pods (Transect)")
+
+flextable::save_as_html(Pods_ranova1,
+                        Pods_ranova2,
+                        path = here::here("./Reproductive_trait_analyses/Tables/Ranova/Pods_transects.html"))
+
+# Date of first follicle-----
+
+## test city_dist
+### take out fam
+full <- glmer(Julian_first_follicle^3 ~
+                 Block +
+                Year +
+                (1|Population) +
+                City_dist,
+              data = flowering %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+              nAGQ = 0,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+Pods_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 10,
+          cl = makeCluster(rep("localhost", 6)))
+
+tidy(Pods_ranova.pop) # p = 0.0269 w/nsim = 10 and nagQ = 0; p = 0.0445 w/nsim = 0 and nagQ = default and no block or year and first mod doesn't converge
+
+
+# take out pop
+full <- glmer(Julian_first_follicle^3 ~
+                 Block +
+                Year +
+                (1|Fam_uniq) +
+                City_dist,
+              data = flowering %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+           #   nAGQ = 0,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+Pods_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 10,
+          cl = makeCluster(rep("localhost", 6)))
+
+tidy(Pods_ranova.fam) # Family: p ~ 0.043 w/nsim = 10 and nagQ = 0; same p-val w/o nagQ but mods dont' converge
+
+
+## test transect
+test_tr <-  glmer(Julian_first_follicle^3 ~
+                 Block +
+                Year +
+                (1|Population/Family) +
+                Transect_ID,
+              data = flowering %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+              nAGQ = 0, # doesn't converge without this unless I remove block or year
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+
+# merge Pop and Fam ranovas
+## test City_dist
+Pods_ranova1 <- CreateRanovaOutput_bootstrap(
+  Pods_ranova.fam,
+  Pods_ranova.pop,
+  "Mortality (Distance)")
+
+## test transect
+Pods_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Mortality (Transect)")
+
+flextable::save_as_html(Pods_ranova1,
+                        Pods_ranova2,
+                        path = here::here("./Reproductive_trait_analyses/Tables/Ranova/Mortality_transects.html"))
+
+# Peduncles-----
+
+## test city_dist
+### take out fam
+### using poisson b/c glmer can't handle neg binom
+full <- glmer(Peduncles ~
+                 Block +
+                Year +
+                (1|Population) +
+                City_dist,
+              data = flowering %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+Peduncles_ranova.pop <- PBmodcomp(full, reduced,
+          nsim = 10,
+          cl = makeCluster(rep("localhost", 6)))
+
+tidy(Peduncles_ranova.pop) # p = 0.176 w/nsim = 10
+
+
+
+# take out pop
+full <- glmer(Peduncles ~
+                 Block +
+                Year +
+                (1|Fam_uniq) +
+                City_dist,
+              data = flowering %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+reduced <- update(full, .~. - City_dist)
+
+Peduncles_ranova.fam <- PBmodcomp(full, reduced,
+          nsim = 10,
+          cl = makeCluster(rep("localhost", 6)))
+
+tidy(Peduncles_ranova.fam) # Family: p ~ 0.176 w/nsim = 10
+
+
+## test transect
+test_tr <-  glmer(Peduncles ~
+                 Block +
+                Year +
+                (1|Population/Family) +
+                Transect_ID,
+              data = flowering %>%
+                dplyr::filter(Transect_ID != "Rural"),
+              family = poisson,
+            na.action = na.exclude # THIS LINE IS IMPORTANT
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+)
+
+
+# merge Pop and Fam ranovas
+## test City_dist
+Peduncles_ranova1 <- CreateRanovaOutput_bootstrap(
+  Peduncles_ranova.fam,
+  Peduncles_ranova.pop,
+  "Mortality (Distance)")
+
+## test transect
+Peduncles_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Mortality (Transect)")
+
+flextable::save_as_html(Peduncles_ranova1,
+                        Peduncles_ranova2,
+                        path = here::here("./Reproductive_trait_analyses/Tables/Ranova/Mortality_transects.html"))
 ```
 
 # Anova
