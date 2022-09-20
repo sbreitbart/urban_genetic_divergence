@@ -369,7 +369,7 @@ get_pve(full) # 5.303
 # take out pop
 full <- glmer(Ramets_early ~
                 Block + Year +
-                (1|Fam_uniq) + City_dist,
+                (1|Population/Family) + City_dist,
                               data = heights,
                               family = poisson,
               nAGQ = 0,
@@ -382,10 +382,10 @@ ramets_e_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
                     cl = makeCluster(6))
 
-tidy(ramets_e_ranova.fam) # Family: p ~ 0.288
+tidy(ramets_e_ranova.fam) # Family: p ~ 0.328
 
 # PVE
-get_pve(full) # 16.432
+get_pve(full) # 16.478
 
 
 # merge Pop and Fam ranovas
@@ -413,7 +413,7 @@ reduced <- update(full, .~. - City_dist)
 
 ramets_l_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,
-          cl = makeCluster(7))
+          cl = makeCluster(6))
 
 tidy(ramets_l_ranova.pop) # p = 0.160
 
@@ -424,7 +424,7 @@ get_pve(full) # 2.08
 # take out pop
 full <- glmer(Ramets_late ~
                 Block + Year +
-                (1|Fam_uniq) + City_dist,
+                (1|Population/Family) + City_dist,
                               data = heights,
                               family = poisson,
               nAGQ = 0,
@@ -437,9 +437,11 @@ ramets_l_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
                     cl = makeCluster(7))
 
-tidy(ramets_l_ranova.fam) # Family: p ~ 0.122
+tidy(ramets_l_ranova.fam) # Family: p ~ 0.137
 
-get_pve(full) # 
+get_pve(full) # 8.065
+
+
 
 # merge Pop and Fam ranovas
 ramets_l_ranova1 <- CreateRanovaOutput_bootstrap(ramets_l_ranova.fam, ramets_l_ranova.pop, "Ramets, after flowering") %T>%
@@ -472,15 +474,15 @@ get_pve(full) # 7.667
 
 # take out pop
 full <- glmer(Dead ~
-             #    Block +
+                 Block +
                 Year +
-                (1|Fam_uniq) +
+                (1|Population/Family) +
                 City_dist,
               data = survival ,
               family = binomial,
             na.action = na.exclude # THIS LINE IS IMPORTANT
-    # ,control=glmerControl(optimizer="bobyqa",
-    #                         optCtrl=list(maxfun=2e5))
+    ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
 )
 
 reduced <- update(full, .~. - City_dist)
@@ -489,9 +491,9 @@ surv_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(rep("localhost", 8)))
 
-tidy(surv_ranova.fam) # Family: p ~ 0.883
+tidy(surv_ranova.fam) # Family: p ~ 0.805
 
-get_pve(full) # 21.344
+get_pve(full) # 21.311
 
 
 # merge Pop and Fam ranovas
@@ -535,7 +537,7 @@ get_pve(full) # 6.993
 ### take out pop
 full <- glmer(Ramets_early ~
                 Block + Year +
-                (1|Fam_uniq) + City_dist,
+                (1|Population/Family) + City_dist,
                               data = heights %>%
                 dplyr::filter(Transect_ID != "Rural"),                              family = poisson,
               nAGQ = 0,
@@ -550,9 +552,9 @@ ramets_e_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(6))
 
-tidy(ramets_e_ranova.fam) # Family: p ~ 0.113
+tidy(ramets_e_ranova.fam) # Family: p ~ 0.137
 
-get_pve(full) # 18.649
+get_pve(full) # 18.643
 
 
 ## test transect
@@ -616,7 +618,7 @@ get_pve(full) # 2.082
 ### take out pop
 full <- glmer(Ramets_late ~
                Block + Year +
-                (1|Fam_uniq) + City_dist + Transect_ID,
+                (1|Population/Family) + City_dist + Transect_ID,
                               data = heights %>%
                 dplyr::filter(Transect_ID != "Rural"),                              family = poisson,
               nAGQ = 0,
@@ -630,9 +632,9 @@ ramets_l_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(6))
 
-tidy(ramets_l_ranova.fam) # Family: p ~ 0.0886
+tidy(ramets_l_ranova.fam) # Family: p ~ 0.0936
 
-get_pve(full) # 8.63
+get_pve(full) # 8.629
 
 
 ## test transect
@@ -691,7 +693,7 @@ get_pve(full) # 7.748
 full <- glmer(Dead ~
                  Block +
                 Year +
-                (1|Fam_uniq) +
+                (1|Population/Family) +
                 City_dist,
               data = survival %>%
                 dplyr::filter(Transect_ID != "Rural"),
@@ -707,9 +709,9 @@ surv_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(rep("localhost", 6)))
 
-tidy(surv_ranova.fam) # Family: p ~ 0.0908
+tidy(surv_ranova.fam) # Family: p ~ 0.149
 
-get_pve(full) # 23.916
+get_pve(full) # 24.011
 
 
 

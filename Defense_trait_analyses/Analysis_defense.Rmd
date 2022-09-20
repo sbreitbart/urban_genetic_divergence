@@ -166,7 +166,7 @@ get_pve(full) # can't compute. This model is singular in glmer but NOT in glmmtm
 # take out pop
 full <- glmer(Herbivory_mean_early_binary ~
                 Block + Year + 
-                (1|Fam_uniq) + City_dist,
+                (1|Population/Family) + City_dist,
                               data = herbivory,
                               family = "binomial"(link = "logit"),
              na.action = na.exclude # THIS LINE IS IMPORTANT
@@ -206,7 +206,7 @@ herbiv_l_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,          
           cl = makeCluster(6))
 
-tidy(herbiv_l_ranova.pop) # Pop: p ~ 0.482
+tidy(herbiv_l_ranova.pop) # Pop: p ~ 0.503
 
 get_pve(full) # can't compute. This model is singular in glmer but NOT in glmmtmb 
 
@@ -215,7 +215,7 @@ get_pve(full) # can't compute. This model is singular in glmer but NOT in glmmtm
 # take out pop
 full <- glmer(Herbivory_mean_late_binary ~
                 Block + Year + 
-                (1|Fam_uniq) + City_dist,
+                (1|Population/Family) + City_dist,
                               data = herbivory,
                               family = "binomial"(link = "logit"),
              na.action = na.exclude # THIS LINE IS IMPORTANT
@@ -227,9 +227,9 @@ herbiv_l_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
                     cl = makeCluster(6))
 
-tidy(herbiv_l_ranova.fam) # Family: p ~ 0.503
+tidy(herbiv_l_ranova.fam) # Family: p ~ 0.500
 
-get_pve(full) # 2.721
+get_pve(full) # can't compute b/c full mod is singular though not w/glmmtmb
 
 
 # merge Pop and Fam ranovas
@@ -264,7 +264,7 @@ get_pve(full) # 1.39
 # take out pop
 full <- glmer(Scar_binary ~
                  Block + Year + 
-                (1|Fam_uniq) + City_dist,
+                (1|Population/Family) + City_dist,
                               data = weevil,
                               family = "binomial"(link = "logit"),
              na.action = na.exclude # THIS LINE IS IMPORTANT
@@ -549,14 +549,8 @@ full <- glmer(Herbivory_mean_early_binary ~
   #                           optCtrl=list(maxfun=2e5))
   )
 
-reduced <- glmer(Herbivory_mean_early_binary ~
-                Block + Year + 
-                (1|Population),
-                              data = herbivory %>%
-                dplyr::filter(Transect_ID != "Rural"),
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  )
+reduced <- update(full, .~. - City_dist)
+
 
 herb_e_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,
@@ -571,25 +565,20 @@ get_pve(full)  # can't compute. This model is singular in glmer but NOT in glmmt
 ### take out pop
 full <- glmer(Herbivory_mean_early_binary ~
                 Block + Year + 
-                (1|Fam_uniq) + City_dist + Transect_ID,
+                (1|Population/Family) + City_dist,
                               data = herbivory %>%
                 dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
              na.action = na.exclude # THIS LINE IS IMPORTANT
   )
 
-reduced <- glmer(Herbivory_mean_early_binary ~
-                Block + Year + 
-                (1|Fam_uniq),
-                              data = herbivory %>%
-                dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  )
+reduced <- update(full, .~. - City_dist)
+
 
 herb_e_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(6))
 
-tidy(herb_e_ranova.fam) # Family: p ~ 0.697
+tidy(herb_e_ranova.fam) # Family: p ~ 0.474
 
 get_pve(full)  # can't compute. This model is singular in glmer but NOT in glmmtmb
 
@@ -632,20 +621,14 @@ full <- glmer(Herbivory_mean_late_binary ~
              na.action = na.exclude # THIS LINE IS IMPORTANT
   )
 
-reduced <- glmer(Herbivory_mean_late_binary ~
-                Block + Year + 
-                (1|Population),
-                              data = herbivory %>%
-                dplyr::filter(Transect_ID != "Rural"),
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  )
+reduced <- update(full, .~. - City_dist)
+
 
 herb_l_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(6))
 
-tidy(herb_l_ranova.pop) # Pop: p ~ 0.202
+tidy(herb_l_ranova.pop) # Pop: p ~ 0.222
 
 get_pve(full)  # can't compute. This model is singular in glmer but NOT in glmmtmb 
 
@@ -654,25 +637,20 @@ get_pve(full)  # can't compute. This model is singular in glmer but NOT in glmmt
 ### take out pop
 full <- glmer(Herbivory_mean_late_binary ~
                 Block + Year + 
-                (1|Fam_uniq) + City_dist + Transect_ID,
+                (1|Population/Family) + City_dist,
                               data = herbivory %>%
                 dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
              na.action = na.exclude # THIS LINE IS IMPORTANT
   )
 
-reduced <- glmer(Herbivory_mean_late_binary ~
-                Block + Year + 
-                (1|Fam_uniq),
-                              data = herbivory %>%
-                dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  )
+reduced <- update(full, .~. - City_dist)
+
 
 herb_l_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(6))
 
-tidy(herb_l_ranova.fam) # Family: p ~ 0.390
+tidy(herb_l_ranova.fam) # Family: p ~ 0.222
 
 get_pve(full)  # can't compute. This model is singular in glmer but NOT in glmmtmb
 
@@ -715,16 +693,8 @@ full <- glmer(Scar_binary ~
   #                           optCtrl=list(maxfun=2e5))
   )
 
-reduced <- glmer(Scar_binary ~
-                Block + Year + 
-                (1|Population),
-                              data = weevil %>%
-                dplyr::filter(Transect_ID != "Rural"),
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  # ,control=glmerControl(optimizer="bobyqa",
-  #                           optCtrl=list(maxfun=2e5))
-  )
+reduced <- update(full, .~. - City_dist)
+
 
 weev_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,
@@ -739,7 +709,7 @@ get_pve(full) # 1.376
 ### take out pop
 full <- glmer(Scar_binary ~
                 Block + Year + 
-                (1|Fam_uniq) + City_dist + Transect_ID,
+                (1|Population/Family) + City_dist,
                               data = weevil %>%
                 dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
              na.action = na.exclude # THIS LINE IS IMPORTANT
@@ -747,21 +717,14 @@ full <- glmer(Scar_binary ~
                             optCtrl=list(maxfun=2e5))
   )
 
-reduced <- glmer(Scar_binary ~
-                 Block + Year + 
-                (1|Fam_uniq),
-                              data = weevil %>%
-                dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
+reduced <- update(full, .~. - City_dist)
+
 
 weev_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(6))
 
-tidy(weev_ranova.fam) # Family: p ~ 0.633
+tidy(weev_ranova.fam) # Family: p ~ 0.325
 
 get_pve(full) # 9.856
 
