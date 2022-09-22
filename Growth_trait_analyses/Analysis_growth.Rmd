@@ -54,106 +54,211 @@ set.seed(45)
 
 ## gaussian distribution models
 ### Gradient
-#### City_dist
 ```{r}
 # LDMC-------
-ldmc_ranova_mod1 <- lmer(LDMC ~
+ldmc_ranova_mod1 <- lmer(sqrt(LDMC) ~
                            (1|Population/Family) +
-                           Block +
-                           City_dist,
+                           Block,
                              data = sla_ldmc %>%
                                dplyr::filter(LDMC < 1),
                            REML = T)
 
-ldmc_ranova1 <- CreateRanovaOutput(ldmc_ranova_mod1, "LDMC") %T>%
-  flextable::save_as_html(.,
-                        path = here::here("./Growth_trait_analyses/Tables/Ranova/ldmc.html"))
+# check diagnostics and transform if necessary
+performance::check_model(ldmc_ranova_mod1)
+
+# export
+ranova_2step(ldmc_ranova_mod1,
+             "LDMC",
+             "./Growth_trait_analyses/Tables/Ranova/ldmc.docx")
 
 
 # SLA-----
-sla_ranova_mod1 <- lmer(SLA ~
+sla_ranova_mod1 <- lmer(SLA^(1/3) ~
                           (1|Population/Family) +
-                          Block +
-                          City_dist,
+                          Block,
                         data = sla_ldmc,
                         REML = T)
 
 
-sla_ranova1 <- CreateRanovaOutput(sla_ranova_mod1, "SLA") %T>%
-  flextable::save_as_html(.,
-                        path = here::here("./Growth_trait_analyses/Tables/Ranova/sla.html"))
+# check diagnostics and transform if necessary
+performance::check_model(sla_ranova_mod1)
+
+# export
+ranova_2step(sla_ranova_mod1,
+             "SLA",
+             "./Growth_trait_analyses/Tables/Ranova/sla.docx")
 
 
 # Rel growth rate-----
+# 2019--------
 rgr_ranova_mod1 <- lmer(rel_growth_rate^(1/3) ~
                           (1|Population/Family) +
-                          Block +
-                          Year +
-                          City_dist,
-                        data = heights,
+                          Block,
+                        data = heights %>%
+                          dplyr::filter(Year == 2019),
                         REML = T)
 
 
-rgr_ranova1 <- CreateRanovaOutput(rgr_ranova_mod1, "Relative growth rate") %T>%
-  flextable::save_as_html(.,
-                        path = here::here("./Growth_trait_analyses/Tables/Ranova/rgr.html"))
+# check diagnostics and transform if necessary
+performance::check_model(rgr_ranova_mod1)
+
+# export
+ranova_2step(rgr_ranova_mod1,
+             "Relative growth rate: 2019",
+             "./Growth_trait_analyses/Tables/Ranova/rgr_2019.docx")
+
+
+# 2020--------
+rgr_ranova_mod2 <- lmer(rel_growth_rate^(1/3) ~
+                          (1|Population/Family) +
+                          Block,
+                        data = heights %>%
+                          dplyr::filter(Year == 2020),
+                        REML = T)
+
+
+# check diagnostics and transform if necessary
+performance::check_model(rgr_ranova_mod2)
+
+# export
+ranova_2step(rgr_ranova_mod2,
+             "Relative growth rate: 2020",
+             "./Growth_trait_analyses/Tables/Ranova/rgr_2020.docx")
+
+
+# 2021--------
+rgr_ranova_mod3 <- lmer(rel_growth_rate^(1/3) ~
+                          (1|Population/Family) +
+                          Block,
+                        data = heights %>%
+                          dplyr::filter(Year == 2021),
+                        REML = T)
+
+
+# check diagnostics and transform if necessary
+performance::check_model(rgr_ranova_mod3)
+
+# export
+ranova_2step(rgr_ranova_mod3,
+             "Relative growth rate: 2021",
+             "./Growth_trait_analyses/Tables/Ranova/rgr_2021.docx")
+
+
 
 # Total_Height_early-----
+# 2019-----
 heights_e_ranova_mod1 <- lmer(Total_Height_early^(1/3) ~
                           (1|Population/Family) +
-                          Block +
-                          Year +
-                          City_dist,
-                        data = heights,
+                          Block,
+                        data = heights %>%
+                          dplyr::filter(Year == 2019),
                         REML = T)
 
 
-heights_e_ranova1 <- CreateRanovaOutput(heights_e_ranova_mod1, "Height (before flowering)") %T>%
-  flextable::save_as_html(.,
-                        path = here::here("./Growth_trait_analyses/Tables/Ranova/heights_early.html"))
+# check diagnostics and transform if necessary
+performance::check_model(heights_e_ranova_mod1)
+
+# export
+ranova_2step(heights_e_ranova_mod1,
+             "Height, before flowering: 2019",
+             "./Growth_trait_analyses/Tables/Ranova/heights_early_2019.docx")
+
+
+# 2020-----
+heights_e_ranova_mod2 <- lmer(Total_Height_early^(1/3) ~
+                          (1|Population/Family) +
+                          Block,
+                        data = heights %>%
+                          dplyr::filter(Year == 2020),
+                        REML = T)
+
+
+# check diagnostics and transform if necessary
+performance::check_model(heights_e_ranova_mod2)
+
+# export
+ranova_2step(heights_e_ranova_mod2,
+             "Height, before flowering: 2020",
+             "./Growth_trait_analyses/Tables/Ranova/heights_early_2020.docx")
+
+
+# 2021-----
+heights_e_ranova_mod3 <- lmer(Total_Height_early^(1/3) ~
+                          (1|Population/Family) +
+                          Block,
+                        data = heights %>%
+                          dplyr::filter(Year == 2021),
+                        REML = T)
+
+
+# check diagnostics and transform if necessary
+performance::check_model(heights_e_ranova_mod3)
+
+# export
+ranova_2step(heights_e_ranova_mod3,
+             "Height, before flowering: 2021",
+             "./Growth_trait_analyses/Tables/Ranova/heights_early_2021.docx")
+
 
 
 # Total_Height_late-----
+# 2019-----
 heights_l_ranova_mod1 <- lmer(Total_Height_late^(1/3) ~
                           (1|Population/Family) +
-                          Block +
-                          Year +
-                          City_dist,
-                        data = heights,
+                          Block,
+                        data = heights %>%
+                          dplyr::filter(Year == 2019),
                         REML = T)
 
 
-heights_l_ranova1 <- CreateRanovaOutput(heights_l_ranova_mod1, "Height (after flowering)") %T>%
-  flextable::save_as_html(.,
-                        path = here::here("./Growth_trait_analyses/Tables/Ranova/heights_late.html"))
-```
+# check diagnostics and transform if necessary
+performance::check_model(heights_l_ranova_mod1)
 
-#### Urb_score- NOT UPDATED SINCE MAY 2022
-```{r}
-# LDMC-------
-ldmc_ranova_mod2 <- lmer(LDMC ~ (1|Population/Family) + (1|Block) + Urb_score,
-                             data = sla_ldmc %>%
-                               dplyr::filter(LDMC < 1),
-                           REML = T)
-
-ldmc_ranova1 <- CreateRanovaOutput(ldmc_ranova_mod2, "LDMC") %T>%
-  flextable::save_as_html(.,
-                        path = here::here("./Growth_trait_analyses/Tables/Ranova/Urb_score/ldmc.html"))
+# export
+ranova_2step(heights_l_ranova_mod1,
+             "Height, after flowering: 2019",
+             "./Growth_trait_analyses/Tables/Ranova/heights_late_2019.docx")
 
 
-# SLA-----
-sla_ranova_mod2 <- lmer(sqrt(SLA) ~ (1|Population/Family) + (1|Block) + Urb_score,
-                        data = sla_ldmc,
+# 2020-----
+heights_l_ranova_mod2 <- lmer(Total_Height_late^(1/3) ~
+                          (1|Population/Family) +
+                          Block,
+                        data = heights %>%
+                          dplyr::filter(Year == 2020),
                         REML = T)
 
 
-sla_ranova1 <- CreateRanovaOutput(sla_ranova_mod2, "SLA") %T>%
-  flextable::save_as_html(.,
-                        path = here::here("./Growth_trait_analyses/Tables/Ranova/Urb_score/sla.html"))
+# check diagnostics and transform if necessary
+performance::check_model(heights_l_ranova_mod2)
+
+# export
+ranova_2step(heights_l_ranova_mod2,
+             "Height, after flowering: 2020",
+             "./Growth_trait_analyses/Tables/Ranova/heights_late_2020.docx")
+
+
+# 2021-----
+heights_l_ranova_mod3 <- lmer(Total_Height_late^(1/3) ~
+                          (1|Population/Family) +
+                          Block,
+                        data = heights %>%
+                          dplyr::filter(Year == 2021),
+                        REML = T)
+
+
+# check diagnostics and transform if necessary
+performance::check_model(heights_l_ranova_mod3)
+
+# export
+ranova_2step(heights_l_ranova_mod3,
+             "Height, after flowering: 2021",
+             "./Growth_trait_analyses/Tables/Ranova/heights_late_2021.docx")
+
+
 ```
 
 ### Urban subtransects
-#### City_dist
 ```{r}
 # LDMC-------
 ## test City_dist
@@ -286,54 +391,6 @@ flextable::save_as_html(heights_l_ranova1,
                         heights_l_ranova2,
                         path = here::here("./Growth_trait_analyses/Tables/Ranova/heights_l_transects.html"))
 ```
-
-#### Urb_score- NOT UPDATED SINCE MAY 2022
-```{r}
-# LDMC-------
-## test Urb_score
-ldmc_ranova_mod1 <- lmer(LDMC ~ (1|Population/Family) + (1|Block) + Urb_score,
-                             data = sla_ldmc %>%
-                          dplyr::filter(Transect_ID != "Rural"),
-                           REML = T)
-
-## test transect
-ldmc_ranova_mod2 <- lmer(LDMC ~ (1|Population/Family) + (1|Block) + Transect_ID,
-                             data = sla_ldmc %>%
-                          dplyr::filter(Transect_ID != "Rural"),
-                           REML = F)
-
-
-ldmc_ranova1 <- CreateRanovaOutput(ldmc_ranova_mod1, "LDMC (Urbanization Score)")
-ldmc_ranova2 <- CreateRanovaOutput_Q2(ldmc_ranova_mod2, "LDMC (Transect)")
-
-flextable::save_as_html(ldmc_ranova1,
-                        ldmc_ranova2,
-                        path = here::here("./Growth_trait_analyses/Tables/Ranova/Urb_score/ldmc_transects.html"))
-
-
-# SLA-----
-## test Urb_score
-sla_ranova_mod1 <- lmer(sqrt(SLA) ~ (1|Population/Family) + (1|Block) + Urb_score,
-                             data = sla_ldmc %>%
-                          dplyr::filter(Transect_ID != "Rural"),
-                           REML = T)
-
-## test transect
-sla_ranova_mod2 <- lmer(sqrt(SLA) ~ (1|Population/Family) + (1|Block) + Transect_ID,
-                             data = sla_ldmc %>%
-                          dplyr::filter(Transect_ID != "Rural"),
-                           REML = F)
-
-
-sla_ranova1 <- CreateRanovaOutput(sla_ranova_mod1, "SLA (Urbanization Score)")
-sla_ranova2 <- CreateRanovaOutput_Q2(sla_ranova_mod2, "SLA (Transect)")
-
-flextable::save_as_html(sla_ranova1,
-                        sla_ranova2,
-                        path = here::here("./Growth_trait_analyses/Tables/Ranova/Urb_score/sla_transects.html"))
-
-```
-
 
 ## poisson models- use pbmodcomp()
 ### Gradient
