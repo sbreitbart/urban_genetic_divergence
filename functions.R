@@ -212,7 +212,7 @@ ranova_1step <- function(lmer_model, var_name){
     dplyr::select(c(1,8,9,7)) %>%
     dplyr::mutate_at(vars(c(2,4)), round, 3) %>%
     dplyr::rename(., p = 4) %>%
-    dplyr::mutate(p = p/2) %>%
+    dplyr::mutate(p = p/2) %>% # divide by 2 b/c 1-sided test
     dplyr::mutate(p = replace(p,
                               p < 0.001,
                               "<0.001")) %>%
@@ -229,7 +229,6 @@ ranova_1step <- function(lmer_model, var_name){
   return(tab1)
   
 }
-
 ranova_2step <- function(lmer_model1, var_name, filepath){
   
   # make table 1
@@ -315,7 +314,79 @@ ranova_2step <- function(lmer_model1, var_name, filepath){
   
 }
 
+ranova_transect <- function(lmer_model_without_urb, var_name, filepath){
+  
+  # make table 1
+  lmer_model2 <- update(lmer_model_without_urb, . ~ . + Transect_ID*City_dist)
+  table2 <- ranova_1step(lmer_model2, var_name)
 
+  
+  # make table 2
+  lmer_model2_anova <- update(lmer_model2, . ~ ., REML = F)
+  table3 <- tidy_anova(lmer_model2_anova) %>%
+    dplyr::rename(Variable = 1) %>%
+    dplyr::mutate(Variable = var_name) %>%
+    dplyr::select(-Sites) %>%
+    flextable() %>%
+    merge_v(j = "Variable") %>% 
+    flextable::compose(i = 1, j = 3, part = "header",
+                       value = as_paragraph("χ", as_sup("2"))) %>%
+    autofit()
+  
+  # make table 3
+  lmer_model3 <- update(lmer_model_without_urb, . ~ . + Transect_ID*Urb_score)
+  table4 <- ranova_1step(lmer_model3, var_name)
+  
+  # make table 4
+  lmer_model3_anova <- update(lmer_model3, . ~ ., REML = F)
+  table5 <- tidy_anova(lmer_model3_anova) %>%
+    dplyr::rename(Variable = 1) %>%
+    dplyr::mutate(Variable = var_name) %>%
+    dplyr::select(-Sites) %>%
+    flextable() %>%
+    merge_v(j = "Variable") %>% 
+    flextable::compose(i = 1, j = 3, part = "header",
+                       value = as_paragraph("χ", as_sup("2"))) %>%
+    autofit()
+  
+  
+  mod_formula2 <- paste(deparse(formula(lmer_model2)), collapse = "") %>%
+    unlist()
+  
+  mod_formula3 <- paste(deparse(formula(lmer_model3)), collapse = "") %>%
+    unlist()
+  
+  
+  # Export
+  word_export <- read_docx()
+  
+  body_add_par(word_export, value = "Table 1: Assess how much variance is explained by transect")
+  body_add_par(word_export, value = "Urbanization = Distance to the City Center")
+  body_add_par(word_export, value = paste("Model:", mod_formula2))
+  body_add_flextable(word_export, table2)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 2: Quantify variance explained by transect")
+  body_add_flextable(word_export, table3)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 3: Assess how much variance is explained by transect")
+  body_add_par(word_export, value = "Urbanization = Urbanization Score")
+  body_add_par(word_export, value = paste("Model:", mod_formula3))
+  body_add_flextable(word_export, table4)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 4: Quantify variance explained by transect")
+  body_add_flextable(word_export, table5)
+  
+  print(word_export, here::here(filepath))
+}
 
 #### for regular g/lmer models:
 #### for boostrapping models:

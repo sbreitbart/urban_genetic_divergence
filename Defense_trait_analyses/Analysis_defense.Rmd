@@ -62,7 +62,7 @@ The point: to determine if there is much genetic diversity present within popula
 set.seed(45)
 ```
 
-## Gradient / City_dist
+## Gradient
 ### Gaussian models use ranova()
 ```{r}
 ############ MEASURED ONLY IN 2020 #############
@@ -360,130 +360,146 @@ weev_bin_ranova1 <- CreateRanovaOutput_bootstrap(weev_ranova.fam, weev_ranova.po
   flextable::save_as_html(path = here::here("./Defense_trait_analyses/Tables/Ranova/weevil_binary.html"))
 ```
 
-## Urban Subtransects / City_dist
+## Urban Subtransects
 ### Gaussian models use ranova()
 ```{r}
 ############ MEASURED ONLY IN 2020 #############
 ################################################
 
-
 # Latex-----
-## test City_dist
-latex_ranova_mod1 <- lmer(Latex_weight_mg^(1/3) ~ (1|Population/Family) + Block + City_dist,
+latex_ranova_mod1 <- lmer(Latex_weight_mg^(1/3) ~
+                            (1|Population/Family) +
+                            Block,
                              data = latex %>%
                           dplyr::filter(Transect_ID != "Rural"),
                            REML = T)
 
-## test transect
-latex_ranova_mod2 <- lmer(Latex_weight_mg^(1/3) ~ (1|Population/Family) + Block + Transect_ID,
-                             data = latex %>%
-                          dplyr::filter(Transect_ID != "Rural"),
-                           REML = F)
+# check diagnostics and transform if necessary
+performance::check_model(latex_ranova_mod1)
 
-
-
-
-latex_ranova1 <- CreateRanovaOutput(latex_ranova_mod1, "Latex (Distance)")
-latex_ranova2 <- CreateRanovaOutput_Q2(latex_ranova_mod2, "Latex (Transect)")
-
-flextable::save_as_html(latex_ranova1,
-                        latex_ranova2,
-                        path = here::here("./Defense_trait_analyses/Tables/Ranova/latex_transects.html"))
-
+ranova_transect(latex_ranova_mod1,
+                "Latex",
+                "./Defense_trait_analyses/Tables/Ranova/latex_transects.docx")
 
 
 ############ MEASURED IN MULTIPLE YEARS ########
 ################################################
 # Herbivory (before flowering)- (quantitative)-------
-## test City_dist
+
+# 2020-----
 herb_e_quant_ranova_mod1 <- lmer(log(Herbivory_mean_early) ~
                                    (1|Population/Family) +
-                                   Year +
-                                   Block +
-                                   City_dist,
+                                   Block,
                              data = herbivory %>%
                       dplyr::filter(
                         Herbivory_mean_early_binary == 1 &
-                          Transect_ID != "Rural"),
+                          Transect_ID != "Rural" &
+                          Year == 2020),
                            REML = T)
 
-## test transect
+# check diagnostics and transform if necessary
+performance::check_model(herb_e_quant_ranova_mod1)
+
+ranova_transect(herb_e_quant_ranova_mod1,
+                "Herbivory before flowering, quantitative: 2020",
+                "./Defense_trait_analyses/Tables/Ranova/herb_e_quant_transects_2020.docx")
+
+# 2021-----
 herb_e_quant_ranova_mod2 <- lmer(log(Herbivory_mean_early) ~
-                                 (1|Population/Family) +
-                                 Block +
-                                 Year +
-                                 Transect_ID,
+                                   (1|Population/Family) +
+                                   Block,
                              data = herbivory %>%
                       dplyr::filter(
                         Herbivory_mean_early_binary == 1 &
-                          Transect_ID != "Rural"),
-                           REML = F)
+                          Transect_ID != "Rural" &
+                          Year == 2021),
+                           REML = T)
 
+# check diagnostics and transform if necessary
+performance::check_model(herb_e_quant_ranova_mod2)
 
-herb_e_quant_ranova1 <- CreateRanovaOutput(herb_e_quant_ranova_mod1, "Herbivory, before flowering: Quantitative (Distance)")
-herb_e_quant_ranova2 <- CreateRanovaOutput_Q2(herb_e_quant_ranova_mod2, "Herbivory, before flowering: Quantitative (Transect)")
-
-flextable::save_as_html(herb_e_quant_ranova1,
-                        herb_e_quant_ranova2,
-                        path = here::here("./Defense_trait_analyses/Tables/Ranova/herb_e_quant_transects.html"))
+ranova_transect(herb_e_quant_ranova_mod2,
+                "Herbivory before flowering, quantitative: 2021",
+                "./Defense_trait_analyses/Tables/Ranova/herb_e_quant_transects_2021.docx")
 
 
 # Herbivory (after flowering) (quantitative)-------
-## test City_dist
+# 2020-----
 herb_l_quant_ranova_mod1 <- lmer(log(Herbivory_mean_late) ~
                                    (1|Population/Family) +
-                                   Year +
-                                   Block +
-                                   City_dist,
+                                   Block,
                              data = herbivory %>%
                       dplyr::filter(
                         Herbivory_mean_late_binary == 1 &
-                          Transect_ID != "Rural"),
+                          Transect_ID != "Rural" &
+                          Year == 2020),
                            REML = T)
 
-## test transect
+# check diagnostics and transform if necessary
+performance::check_model(herb_l_quant_ranova_mod1)
+
+ranova_transect(herb_l_quant_ranova_mod1,
+                "Herbivory after flowering, quantitative: 2020",
+                "./Defense_trait_analyses/Tables/Ranova/herb_l_quant_transects_2020.docx")
+
+# 2021-----
 herb_l_quant_ranova_mod2 <- lmer(log(Herbivory_mean_late) ~
-                                 (1|Population/Family) +
-                                 Block +
-                                 Year +
-                                 Transect_ID,
+                                   (1|Population/Family) +
+                                   Block,
                              data = herbivory %>%
                       dplyr::filter(
                         Herbivory_mean_late_binary == 1 &
-                          Transect_ID != "Rural"),
-                           REML = F)
+                          Transect_ID != "Rural" &
+                          Year == 2021),
+                           REML = T)
 
+# check diagnostics and transform if necessary
+performance::check_model(herb_l_quant_ranova_mod2)
 
-herb_l_quant_ranova1 <- CreateRanovaOutput(herb_l_quant_ranova_mod1, "Herbivory, after flowering: Quantitative (Distance)")
-herb_l_quant_ranova2 <- CreateRanovaOutput_Q2(herb_l_quant_ranova_mod2, "Herbivory, after flowering: Quantitative (Transect)")
-
-flextable::save_as_html(herb_l_quant_ranova1,
-                        herb_l_quant_ranova2,
-                        path = here::here("./Defense_trait_analyses/Tables/Ranova/herb_l_quant_transects.html"))
+ranova_transect(herb_l_quant_ranova_mod2,
+                "Herbivory after flowering, quantitative: 2021",
+                "./Defense_trait_analyses/Tables/Ranova/herb_l_quant_transects_2021.docx")
 
 
 
 # Weevil scar length (quantitative)-----
-
-## test City_dist
-weev_quant_ranova_mod1 <- lmer(log(Scar_length_cm) ~ (1|Population/Family) + Block + City_dist,
+# 2020-----
+weev_quant_ranova_mod1 <- lmer(log(Scar_length_cm) ~
+                                   (1|Population/Family) +
+                                   Block,
                              data = weevil %>%
-                          dplyr::filter(Scar_length_cm > 0 & Transect_ID != "Rural"),
+                      dplyr::filter(
+                        Scar_length_cm > 0 &
+                          Transect_ID != "Rural" &
+                          Year == 2020),
                            REML = T)
 
-## test transect
-weev_quant_ranova_mod2 <- lmer(log(Scar_length_cm) ~ (1|Population/Family) + Block + Transect_ID,
+# check diagnostics and transform if necessary
+performance::check_model(weev_quant_ranova_mod1)
+
+ranova_transect(weev_quant_ranova_mod1,
+                "Weevil damage, quantitative: 2020",
+                "./Defense_trait_analyses/Tables/Ranova/weevil_quant_transects_2020.docx")
+
+# 2021-----
+weev_quant_ranova_mod2 <- lmer(log(Scar_length_cm) ~
+                                   (1|Population/Family) +
+                                   Block,
                              data = weevil %>%
-                          dplyr::filter(Scar_length_cm > 0 & Transect_ID != "Rural"),
-                           REML = F)
+                      dplyr::filter(
+                        Scar_length_cm > 0 &
+                          Transect_ID != "Rural" &
+                          Year == 2021),
+                           REML = T)
+
+# check diagnostics and transform if necessary
+performance::check_model(weev_quant_ranova_mod2)
+
+ranova_transect(weev_quant_ranova_mod2,
+                "Weevil damage, quantitative: 2021",
+                "./Defense_trait_analyses/Tables/Ranova/weevil_quant_transects_2021.docx")
 
 
-weev_quant_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod1, "Weevil Damage: Quantitative (Distance)")
-weev_quant_ranova2 <- CreateRanovaOutput_Q2(weev_quant_ranova_mod2, "Weevil Damage: Quantitative (Transect)")
-
-flextable::save_as_html(weev_quant_ranova1,
-                        weev_quant_ranova2,
-                        path = here::here("./Defense_trait_analyses/Tables/Ranova/weev_quant_transects.html"))
 ```
 
 ### Generalized LMM use bootstrapping with pbmodcomp()
