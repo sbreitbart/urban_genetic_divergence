@@ -161,14 +161,14 @@ clivicollis_mods_alt_u <- clivicollis_mods[5]
 
 # take out fam
 # test city_dist
-full <- glmer(Monarch_Quantity_Observed ~
+full <- glmer.nb(Monarch_Quantity_Observed ~
                                 Block +
                                 (1|Population) +
                               Year +
                                Sample +
                                 City_dist,
               data = herbivores,
-              family = poisson,
+             
               nAGQ = 0,
              na.action = na.exclude # THIS LINE IS IMPORTANT
   # ,control=lmerControl(optimizer="bobyqa",
@@ -181,15 +181,15 @@ monarch_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(rep("localhost", 6)))
 
-tidy(monarch_ranova.pop) # Pop: p = 0.51
+tidy(monarch_ranova.pop) # Pop: p = 0.443
 
 # variance
-get_pve(monarch_ranova.pop) # 2.807
+get_pve(monarch_ranova.pop) # 0.508
 
 
 
 # take out pop
-full <- glmer(Monarch_Quantity_Observed ~
+full <- glmer.nb(Monarch_Quantity_Observed ~
                 Block +
                  Year +
                 (1|Population/Family) +
@@ -197,7 +197,7 @@ full <- glmer(Monarch_Quantity_Observed ~
                 City_dist,
               data = herbivores,
               nAGQ = 0,
-              family = poisson,
+             
              na.action = na.exclude # THIS LINE IS IMPORTANT
   )
 
@@ -207,10 +207,10 @@ monarch_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(6))
 
-tidy(monarch_ranova.fam) # Fam: p ~ 0.441
+tidy(monarch_ranova.fam) # Fam: p ~ 1
 
 # variance
-get_pve(monarch_ranova.fam) # 8.132
+get_pve(monarch_ranova.fam) # NA bc singular
 
 
 
@@ -224,7 +224,7 @@ monarch_ranova1 <- CreateRanovaOutput_bootstrap(monarch_ranova.fam, monarch_rano
 ```{r}
 # test city_dist
 # test pop
-full <- glmer(Liriomyza_asclepiadis ~
+full <- glmer.nb(Liriomyza_asclepiadis ~
                                 Block +
                                 (1|Population) +
                                  Year +
@@ -232,7 +232,7 @@ full <- glmer(Liriomyza_asclepiadis ~
                                 City_dist,
               data = herbivores,
               nAGQ = 0,
-              family = poisson,
+             
              na.action = na.exclude # THIS LINE IS IMPORTANT
   # ,control=glmerControl(optimizer="bobyqa",
   #                           optCtrl=list(maxfun=2e5))
@@ -243,23 +243,23 @@ reduced <- update(full, .~. - City_dist)
 asclepiadis_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(6))
-tidy(asclepiadis_ranova.pop) #  p ~ 0.899
+tidy(asclepiadis_ranova.pop) #  p ~ 0.894
 
 # variance
-get_pve(asclepiadis_ranova.pop) # 31.412
+get_pve(asclepiadis_ranova.pop) # 4.602
 
 
 
 
 # test fam
-full <- glmer(Liriomyza_asclepiadis ~
+full <- glmer.nb(Liriomyza_asclepiadis ~
                  Block +
                  Year +
                 (1|Population/Family) +
                  Sample +
                 City_dist,
               data = herbivores,
-              family = poisson,
+             
               nAGQ = 0,
              na.action = na.exclude # THIS LINE IS IMPORTANT
   ) 
@@ -269,10 +269,10 @@ reduced <- update(full, .~. - City_dist)
 asclepiadis_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(6))
-tidy(asclepiadis_ranova.fam) # Fam: p ~ 0.713
+tidy(asclepiadis_ranova.fam) # Fam: p ~ 0.674
 
 # variance
-get_pve(asclepiadis_ranova.fam) # 53.893
+get_pve(asclepiadis_ranova.fam) # 11.37
 
 
 # merge Pop and Fam ranovas
@@ -285,7 +285,7 @@ asclepiadis_ranova1 <- CreateRanovaOutput_bootstrap(asclepiadis_ranova.fam, ascl
 ```{r}
 # test city_dist
 # test pop
-full <- glmer(Labidomera_clivicollis ~
+full <- glmer.nb(Labidomera_clivicollis ~
                                 Block +
                                 (1|Population) +
                                 Year +
@@ -293,7 +293,7 @@ full <- glmer(Labidomera_clivicollis ~
                                 City_dist,
               data = herbivores %>%
                 dplyr::filter(Labidomera_clivicollis < 9),
-              family = poisson,
+             
               nAGQ = 0,
              na.action = na.exclude # THIS LINE IS IMPORTANT
   # ,control=glmerControl(optimizer="bobyqa",
@@ -306,14 +306,16 @@ clivicollis_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(6))
 
-tidy(clivicollis_ranova.pop) #  p ~ 0.581
+tidy(clivicollis_ranova.pop) #  p ~ 1
 
 # variance
-get_pve(clivicollis_ranova.pop) # 4.857
+get_pve(clivicollis_ranova.pop) # NA bc singular
+
+
 
 
 # test fam
-full <- glmer(Labidomera_clivicollis ~
+full <- glmer.nb(Labidomera_clivicollis ~
                Block +
               Year +
                 (1|Population/Family) +
@@ -321,7 +323,7 @@ full <- glmer(Labidomera_clivicollis ~
                 City_dist,
               data = herbivores %>%
                 dplyr::filter(Labidomera_clivicollis < 9),
-              family = poisson,
+             
               nAGQ = 0,
              na.action = na.exclude # THIS LINE IS IMPORTANT
   ) 
@@ -332,10 +334,10 @@ clivicollis_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(6))
 
-tidy(clivicollis_ranova.fam) # Fam: p ~ 0.611
+tidy(clivicollis_ranova.fam) # Fam: p ~ 0.664
 
 # variance
-get_pve(clivicollis_ranova.fam) # 10.389
+get_pve(clivicollis_ranova.fam) # NA bc singular
 
 
 
@@ -351,14 +353,14 @@ clivicollis_ranova1 <- CreateRanovaOutput_bootstrap(clivicollis_ranova.fam, cliv
 ```{r}
 ## test city_dist-----
 ### take out fam
-full <- glmer(Monarch_Quantity_Observed ~
+full <- glmer.nb(Monarch_Quantity_Observed ~
                 Block +
                 Year +
                 (1|Population) +
                 City_dist,
                               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
+             
              na.action = na.exclude # THIS LINE IS IMPORTANT
   # ,control=glmerControl(optimizer="bobyqa",
   #                           optCtrl=list(maxfun=2e5))
@@ -370,21 +372,23 @@ monarch_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(6))
 
-tidy(monarch_ranova.pop) # Pop: p ~ 0.0376
+tidy(monarch_ranova.pop) # Pop: p ~ 0.0305
 
 # variance
-get_pve(monarch_ranova.pop) # 1.468
+get_pve(monarch_ranova.pop) # NA bc singular
+
+
 
 
 ### test fam
-full <- glmer(Monarch_Quantity_Observed ~
+full <- glmer.nb(Monarch_Quantity_Observed ~
                 Block +
                 Year + 
                 (1|Population/Family) +
                 City_dist,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
+             
              na.action = na.exclude # THIS LINE IS IMPORTANT
   # ,control=glmerControl(optimizer="bobyqa",
   #                           optCtrl=list(maxfun=2e5))
@@ -397,14 +401,14 @@ monarch_ranova.fam <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(6))
 
-tidy(monarch_ranova.fam) # Family: p ~ 0.0168
+tidy(monarch_ranova.fam) # Family: p ~ 0.0305
 
 # variance
 get_pve(monarch_ranova.fam) # singular so can't compute
 
 
 ## test transect-----
-test_tr <- glmer(Monarch_Quantity_Observed ~
+test_tr <- glmer.nb(Monarch_Quantity_Observed ~
                  Block + Year + Sample +
                 (1|Population/Family) + Transect_ID,
                               data = herbivores %>%
@@ -432,12 +436,12 @@ flextable::save_as_html(monarch_ranova1,
 ```{r}
 ## test city_dist-----
 ### take out fam
-full <- glmer(Liriomyza_asclepiadis ~
+full <- glmer.nb(Liriomyza_asclepiadis ~
                 Block + Year + Sample +
                 (1|Population) + City_dist,
                               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
+             
              na.action = na.exclude # THIS LINE IS IMPORTANT
   ) 
 
@@ -447,19 +451,19 @@ asclepiadis_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(6))
 
-tidy(asclepiadis_ranova.pop) # Pop: p ~ 0.846
+tidy(asclepiadis_ranova.pop) # Pop: p ~ 0.858
 
 # variance
-get_pve(asclepiadis_ranova.pop) # 34.65
+get_pve(asclepiadis_ranova.pop) # 5.948
 
 
 ### take out pop
-full <- glmer(Liriomyza_asclepiadis ~
+full <- glmer.nb(Liriomyza_asclepiadis ~
                  Block + Year + Sample +
                 (1|Population/Family) + City_dist,
                               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
+             nAGQ=0,
              na.action = na.exclude,# THIS LINE IS IMPORTANT
               control=glmerControl(optimizer="bobyqa",                          optCtrl=list(maxfun=2e5)) 
   )
@@ -473,12 +477,12 @@ asclepiadis_ranova.fam <- PBmodcomp(full, reduced,
 tidy(asclepiadis_ranova.fam) # Family: p ~ 1
 
 # variance
-get_pve(asclepiadis_ranova.fam) # 54.868
+get_pve(asclepiadis_ranova.fam) # 14.491
 
 
 
 ## test transect-----
-test_tr <- glmer(Liriomyza_asclepiadis ~
+test_tr <- glmer.nb(Liriomyza_asclepiadis ~
                  Block + Year + Sample +
                 (1|Population/Family) + Transect_ID,
                               data = herbivores %>%
@@ -504,12 +508,12 @@ flextable::save_as_html(asclepiadis_ranova1,
 ```{r}
 ## test city_dist-----
 ### take out fam
-full <- glmer(Labidomera_clivicollis ~
+full <- glmer.nb(Labidomera_clivicollis ~
                 Block +  Year + Sample +
                 (1|Population) + City_dist,
                               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
+             
              na.action = na.exclude # THIS LINE IS IMPORTANT
   )
 
@@ -519,19 +523,22 @@ clivicollis_ranova.pop <- PBmodcomp(full, reduced,
           nsim = 1000,
           cl = makeCluster(6))
 
-tidy(clivicollis_ranova.pop) # Pop: p ~ 0.00244
+tidy(clivicollis_ranova.pop) # Pop: p ~ 0.0166
 
 # variance
-get_pve(clivicollis_ranova.pop) # 18.067
+get_pve(clivicollis_ranova.pop) # NA bc singular
 
 
 ### test fam
-full <- glmer(Labidomera_clivicollis ~
-                Block + Year + Sample +
+full <- glmer.nb(Labidomera_clivicollis ~
+                Block + 
+                  Year + 
+               #   Sample +
+               #   if I don't remove a fixed effect, the p-value is 0, which doesn't make sense
                 (1|Population/Family) + City_dist,
                               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
+             nAGQ=0,
              na.action = na.exclude
              ,control=glmerControl(optimizer="bobyqa",                          optCtrl=list(maxfun=2e5))
   )
@@ -549,12 +556,13 @@ get_pve(clivicollis_ranova.fam) # can't compute- is singular
 
 
 ## test transect-----
-test_tr <- glmer(Labidomera_clivicollis ~
+test_tr <- glmer.nb(Labidomera_clivicollis ~
                 Block + Year + Sample +
                 (1|Population/Family) + Transect_ID,
                               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
               family = nbinom2,
+              nAGQ=0,
              na.action = na.exclude # THIS LINE IS IMPORTANT
   )
 

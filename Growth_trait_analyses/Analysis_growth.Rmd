@@ -340,7 +340,7 @@ flextable::save_as_html(sla_ranova1,
 ```{r}
 # Number of ramets (early)-------
 
-# take out fam- NOT CONVERGING with poisson (can't use nbinom2 w/glmer) unless I add nagq = 0
+# take out fam- NOT CONVERGING unless I add nagq = 0
 full <- glmer(Ramets_early ~
                 Block +
                  Year +
@@ -395,7 +395,7 @@ ramets_e_ranova1 <- CreateRanovaOutput_bootstrap(ramets_e_ranova.fam, ramets_e_r
 
 # Number of ramets (LATE)-------
 
-# take out fam- NOT CONVERGING with poisson (can't use nbinom2 w/glmer) unless I add nagq = 0
+# take out fam- NOT CONVERGING unless I add nagq = 0
 full <- glmer(Ramets_late ~
                Block +
               Year +

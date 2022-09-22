@@ -1,0 +1,217 @@
+Example models that compute ANOVA-like tables for random effects
+Sophie Breitbart
+KSR data, 2022
+
+# Question 1: All populations included
+## models with Gaussian distributions (lmer) can use ranova()
+### Latex
+Only measured during 1 year so no fixed effect for Year.
+Response variable is ^(1/3) because this is the final model used in ANOVA except for REML = T
+#### Fit the model
+```{r}
+Latex_model1 <- lmer(Latex_weight_mg^(1/3) ~
+                       Block +
+                       (1|Population/Family) +
+                       City_dist,
+                     data = latex,
+                     REML = T)
+```
+
+#### Test random effects (Population and family)
+```{r}
+ranova(Latex_model1)
+```
+
+#### Find percent variance explained per random effect
+```{r}
+print(lme4::VarCorr(Latex_model1),
+      comp="Variance") %>% # first, extract variance per effect
+  as.data.frame() %>%
+  dplyr::mutate(., # then, divide effect variance over total variance
+                # and round to 3 decimal places
+                PVE = round((vcov*100 / sum(vcov)),3))
+
+```
+
+
+
+## models with non-Gaussian distributions (glmer) can use pbmodcomp()
+Parametric bootstrapping requires fitting 2 models per random effect. Since I'm testing population and family, I fit 4 models:
+
+- One with population and urbanization
+- One with population, no urbanization
+- One with family and urbanization
+- One with family, no urbanization
+
+### Herbivory (before flowering) (Binary)
+#### Test population
+##### Fit full model
+```{r}
+full_model <- glmer(Herbivory_mean_early_binary ~
+                Block +
+                Year + 
+                (1|Population) +
+                City_dist,
+              data = herbivory,
+              family = binomial,
+              na.action = na.exclude)
+```
+
+##### Fit reduced model (full model minus urbanization)
+```{r}
+reduced_model <- update(full_model, .~. - City_dist)
+
+```
+
+##### Parametric bootstrap
+```{r}
+herbiv_e_ranova.pop <- pbkrtest::PBmodcomp(full_model, reduced_model,
+                                 nsim = 1000, # number of simulations         
+                                 cl = makeCluster(6)) # parallelize on 6 cores
+```
+
+##### find p-value
+```{r}
+tidy(herbiv_e_ranova.pop)
+
+```
+
+##### find percent variance explained
+```{r}
+get_pve <- function(model){
+  random_var <- as.numeric(insight::get_variance_random(full))
+  resid_var <- as.numeric(insight::get_variance_residual(full))
+  PVE <- round(
+    (random_var*100 /
+       ( random_var + resid_var)),
+    3)
+  return(PVE)
+}
+
+get_pve(full_model) 
+
+```
+
+#### Test family
+The pipeline to test family is identical except that (1|Population) is replaced with (1|Population/Family).
+
+# Question 2: Only urban populations included
+## models with Gaussian distributions (lmer) can use ranova()
+### Latex
+Only measured during 1 year so no fixed effect for Year.
+Response variable is ^(1/3) because this is the final model used in ANOVA except for REML = T
+#### test if random effects vary with urbanization
+##### Fit the model
+```{r}
+Latex_model2 <- lmer(Latex_weight_mg^(1/3) ~ 
+                       (1|Population/Family) +
+                       Block +
+                       City_dist, # urbanization included but not transect
+                     data = latex %>%
+                       dplyr::filter(Transect_ID != "Rural"),
+                     REML = T) # REML = T
+```
+
+##### Test random effects (Population and family)
+```{r}
+ranova(Latex_model2)
+```
+
+##### Find percent variance explained per random effect
+```{r}
+print(lme4::VarCorr(Latex_model2),
+      comp="Variance") %>% # first, extract variance per effect
+  as.data.frame() %>%
+  dplyr::mutate(., # then, divide effect variance over total variance
+                # and round to 3 decimal places
+                PVE = round((vcov*100 / sum(vcov)),3))
+
+```
+
+#### test if random effects vary with transect
+##### Fit the model
+```{r}
+Latex_model3 <- lmer(Latex_weight_mg^(1/3) ~
+                       (1|Population/Family) +
+                       Block +
+                       Transect_ID, # transect included but not urbanization
+                     data = latex %>%
+                       dplyr::filter(Transect_ID != "Rural"),
+                     REML = F) # REML = F
+```
+
+##### Test random effects (Population and family)
+```{r}
+ranova(Latex_model3)
+```
+
+##### Find percent variance explained per random effect
+```{r}
+print(lme4::VarCorr(Latex_model3),
+      comp="Variance") %>% # first, extract variance per effect
+  as.data.frame() %>%
+  dplyr::mutate(., # then, divide effect variance over total variance
+                # and round to 3 decimal places
+                PVE = round((vcov*100 / sum(vcov)),3))
+
+```
+
+
+
+## models with non-Gaussian distributions (glmer) can use pbmodcomp()
+### Herbivory (before flowering) (Binary)
+#### test if random effects vary with urbanization
+The only difference here is that the datasets used are different. This dataset excludes the rural sites.
+##### Test population
+###### Fit full model
+```{r}
+full_model <- glmer(Herbivory_mean_early_binary ~
+                Block +
+                Year + 
+                (1|Population) +
+                City_dist,
+              data = herbivory,
+              family = binomial,
+              na.action = na.exclude)
+```
+
+###### Fit reduced model (full model minus urbanization)
+```{r}
+reduced_model <- update(full_model, .~. - City_dist)
+
+```
+
+###### Parametric bootstrap
+```{r}
+herbiv_e_ranova.pop <- pbkrtest::PBmodcomp(full_model, reduced_model,
+                                 nsim = 1000, # number of simulations         
+                                 cl = makeCluster(6)) # parallelize on 6 cores
+```
+
+###### find p-value
+```{r}
+tidy(herbiv_e_ranova.pop)
+
+```
+
+###### find percent variance explained
+```{r}
+get_pve <- function(model){
+  random_var <- as.numeric(insight::get_variance_random(full))
+  resid_var <- as.numeric(insight::get_variance_residual(full))
+  PVE <- round(
+    (random_var*100 /
+       ( random_var + resid_var)),
+    3)
+  return(PVE)
+}
+
+get_pve(full_model) 
+
+```
+
+##### Test family
+The pipeline to test family is identical except that (1|Population) is replaced with (1|Population/Family).
+
+#### test if random effects vary with transect
+This is performed identically to the Gaussian models.

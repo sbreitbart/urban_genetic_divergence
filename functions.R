@@ -215,6 +215,7 @@ CreateRanovaOutput <- function(lmer_model, var_name){
     dplyr::select(c(1,8,9,7)) %>%
     dplyr::mutate_at(vars(c(2,4)), round, 3) %>%
     dplyr::rename(., p = 4) %>%
+    dplyr::mutate(p = p/2) %>%
     dplyr::mutate(p = replace(p,
                               p < 0.001,
                               "<0.001")) %>%
@@ -234,7 +235,10 @@ CreateRanovaOutput <- function(lmer_model, var_name){
 #### for boostrapping models:
 CreateRanovaOutput_bootstrap <- function(ranova_fam,
                                          ranova_pop,
-                                         var_name){
+                                         var_name ,
+                                         PVE_pop,
+                                         PVE_fam
+                                         ){
   
   ranova.fam <- tidy(ranova_fam) %>%
     dplyr::filter(type == "LRT") %>%
@@ -256,6 +260,7 @@ CreateRanovaOutput_bootstrap <- function(ranova_fam,
     as.data.frame() %>%
     dplyr::mutate_at(vars(c(p.value)), round, 3) %>%
     dplyr::rename(., p = 2) %>%
+    dplyr::mutate(p = p/2) %>%
     dplyr::mutate(p = replace(p,
                               p < 0.001,
                               "<0.001")) %>%
@@ -265,10 +270,13 @@ CreateRanovaOutput_bootstrap <- function(ranova_fam,
     merge_at(j = 1) %>%
     fix_border_issues() %>%
     bold(i = ~ p <= 0.05, j = 3) %>%
-    autofit()
-  
+    autofit() %>%
+    set_caption(caption = paste0("PVE for population: ",
+                                 PVE_pop,
+                                 ". PVE for family: ",
+                                 PVE_fam))
   return(tab1)
-}
+  }
 
 ### assessing if variation among pops/fams varies by transect
 CreateRanovaOutput_Q2 <- function(lmer_model, var_name){
@@ -282,6 +290,7 @@ CreateRanovaOutput_Q2 <- function(lmer_model, var_name){
                   p = 3,
                   Variable = 1) %>%
     dplyr::filter(grepl('Transect_ID', Variable)) %>%
+    dplyr::mutate(p = p/2) %>%
     dplyr::mutate(p = replace(p,
                               p < 0.001,
                               "<0.001")) %>%
