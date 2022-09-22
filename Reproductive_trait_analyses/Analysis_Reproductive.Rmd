@@ -50,26 +50,61 @@ set.seed(45)
 
 ## gaussian distribution models
 ### Gradient
-#### City_dist
 ```{r}
 # mean flower size-----
+# 2020-----
 flsize_ranova_mod1 <- lmer(Overall_mean ~
                              Block +
-                             Year +
-                             (1|Population/Family) +
-                             City_dist, 
-                           data = flowering,
+                             (1|Population/Family), 
+                           data = flowering %>%
+                             dplyr::filter(Year == 2020),
                            REML = T)
 
-flsize_ranova1 <- CreateRanovaOutput(flsize_ranova_mod1, "Flower size") %T>%
-  flextable::save_as_html(.,
-                        path = here::here("./Reproductive_trait_analyses/Tables/Ranova/flower_size.html"))
+# check diagnostics and transform if necessary
+performance::check_model(flsize_ranova_mod1)
+
+# export
+ranova_2step(flsize_ranova_mod1,
+             "Flower size: 2020",
+             "./Reproductive_trait_analyses/Tables/Ranova/flower_size_2020.docx")
 
 
+# 2021-----
+flsize_ranova_mod2 <- lmer(Overall_mean ~
+                             Block +
+                             (1|Population/Family), 
+                           data = flowering %>%
+                             dplyr::filter(Year == 2021),
+                           REML = T)
+
+# check diagnostics and transform if necessary
+performance::check_model(flsize_ranova_mod2)
+
+# export
+ranova_2step(flsize_ranova_mod2,
+             "Flower size: 2021",
+             "./Reproductive_trait_analyses/Tables/Ranova/flower_size_2021.docx")
+
+
+
+# 2022-----
+flsize_ranova_mod3 <- lmer(Overall_mean ~
+                             Block +
+                             (1|Population/Family), 
+                           data = flowering %>%
+                             dplyr::filter(Year == 2022),
+                           REML = T)
+
+# check diagnostics and transform if necessary
+performance::check_model(flsize_ranova_mod3)
+
+# export
+ranova_2step(flsize_ranova_mod3,
+             "Flower size: 2022",
+             "./Reproductive_trait_analyses/Tables/Ranova/flower_size_2022.docx")
 ```
 
 ### Urban subtransects
-#### City_dist
 ```{r}
 # mean flower size-----
 ## test City_dist
@@ -97,7 +132,6 @@ flextable::save_as_html(flsize_ranova1,
 
 ## non-gaussian models- use pbmodcomp()
 ### Gradient
-#### City_dist
 ```{r}
 # Flowering success----- 
 ## TRYING TO DO ON SERVER
@@ -545,7 +579,6 @@ peduncles_ranova1 <- CreateRanovaOutput_bootstrap(
 ```
 
 ### Urb subtransects
-#### City_dist
 ```{r}
 # Flowering success-----
 
