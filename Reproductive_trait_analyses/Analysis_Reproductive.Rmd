@@ -22,11 +22,11 @@ editor_options:
 
 NOTES:
 
-+-----------------------------+-----------+-----------+-----------+
-| Trait                       | 2019 Data | 2020 Data | 2021 Data |
-+=============================+:=========:+:=========:+:=========:+
-| All reproductive traits     |           | X         | X         |
-+-----------------------------+-----------+-----------+-----------+
++-----------------------------+-----------+-----------+-----------+-----------+
+| Trait                       | 2019 Data | 2020 Data | 2021 Data | 2022 Data |
++=============================+:=========:+:=========:+:=========:+:=========:+
+| All reproductive traits     |           | X         | X         | X         |
++-----------------------------+-----------+-----------+-----------+-----------+
 
 # Set up notebook
 ## Load libraries and add functions
@@ -107,26 +107,59 @@ ranova_2step(flsize_ranova_mod3,
 ### Urban subtransects
 ```{r}
 # mean flower size-----
-## test City_dist
-flsize_ranova_mod1 <- lmer(Overall_mean ~ (1|Population/Family) + Block + City_dist,
+# 2020-----
+flsize_ranova_mod1 <- lmer(Overall_mean ~
+                                   (1|Population/Family) +
+                                   Block,
                              data = flowering %>%
-                          dplyr::filter(Transect_ID != "Rural"),
+                      dplyr::filter(
+                          Transect_ID != "Rural" &
+                          Year == 2020),
                            REML = T)
 
-## test Transect
-flsize_ranova_mod2 <- lmer(Overall_mean ~ (1|Population/Family) + Block + Transect_ID,
+# check diagnostics and transform if necessary
+performance::check_model(flsize_ranova_mod1)
+
+ranova_transect(flsize_ranova_mod1,
+                "Flower size: 2020",
+                "./Reproductive_trait_analyses/Tables/Ranova/flsize_transects_2020.docx")
+
+
+
+# 2021-----
+flsize_ranova_mod2 <- lmer(Overall_mean ~
+                                   (1|Population/Family) +
+                                   Block,
                              data = flowering %>%
-                          dplyr::filter(Transect_ID != "Rural"),
-                           REML = F)
+                      dplyr::filter(
+                          Transect_ID != "Rural" &
+                          Year == 2021),
+                           REML = T)
+
+# check diagnostics and transform if necessary
+performance::check_model(flsize_ranova_mod2)
+
+ranova_transect(flsize_ranova_mod2,
+                "Flower size: 2021",
+                "./Reproductive_trait_analyses/Tables/Ranova/flsize_transects_2021.docx")
 
 
-flsize_ranova1 <- CreateRanovaOutput(flsize_ranova_mod1, "Flower size (Distance)")
-flsize_ranova2 <- CreateRanovaOutput_Q2(flsize_ranova_mod2, "Flower size (Transect)")
+# 2022-----
+flsize_ranova_mod3 <- lmer(Overall_mean ~
+                                   (1|Population/Family) +
+                                   Block,
+                             data = flowering %>%
+                      dplyr::filter(
+                          Transect_ID != "Rural" &
+                          Year == 2022),
+                           REML = T)
 
-flextable::save_as_html(flsize_ranova1,
-                        flsize_ranova2,
-                        path = here::here("./Reproductive_trait_analyses/Tables/Ranova/flsize_transects.html"))
+# check diagnostics and transform if necessary
+performance::check_model(flsize_ranova_mod3)
 
+ranova_transect(flsize_ranova_mod3,
+                "Flower size: 2022",
+                "./Reproductive_trait_analyses/Tables/Ranova/flsize_transects_2022.docx")
 
 ```
 
