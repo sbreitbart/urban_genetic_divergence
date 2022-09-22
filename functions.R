@@ -172,9 +172,153 @@ DoLinearReg <- function(response_var, predictor_var, input_data){
 ############################################################
 
 ## Create tidy ranova table-----
-### assessing if variation among pops/fams varies with
-### distance from city center
+### assessing if variation among pops/fams varies with urbanization
+
+# filepath should look something like this:
+# "./Defense_trait_analyses/Tables/Ranova/latex.html"
+ranova_1step <- function(lmer_model, var_name){
+  
+  m1.ranova <- ranova(lmer_model) %>%
+    as.data.frame() %>%
+    dplyr::mutate(Group = row.names(.)) %>%
+    remove_rownames %>%
+    dplyr::select(c(Group, 1:6)) %>%
+    dplyr::mutate(Group = replace(Group,
+                                  Group == "<none>",
+                                  "Residual")) %>%
+    dplyr::mutate(Group = replace(Group,
+                                  Group == "(1 | Family:Population)",
+                                  "Family:Population")) %>%
+    dplyr::mutate(Group = replace(Group,
+                                  Group == "(1 | Population)",
+                                  "Population")) %>%
+    dplyr::mutate(Group = replace(Group,
+                                  Group == "(1 | Block)",
+                                  "Block")) 
+  
+  
+  variances1 <- print(lme4::VarCorr(lmer_model),
+                      comp="Variance") %>%
+    as.data.frame() %>%
+    dplyr::mutate(., PVE = round((vcov*100 / sum(vcov)),3)) %>%
+    dplyr::select(., c(grp, vcov, PVE)) %>%
+    dplyr::rename(., Group = grp,
+                  Variance = vcov) %>%
+    as.data.frame()
+  
+  tab1 <- full_join(m1.ranova, variances1) %>%
+    as.data.frame() %>%
+    dplyr::arrange(Group) %>%
+    dplyr::select(c(1,8,9,7)) %>%
+    dplyr::mutate_at(vars(c(2,4)), round, 3) %>%
+    dplyr::rename(., p = 4) %>%
+    dplyr::mutate(p = p/2) %>%
+    dplyr::mutate(p = replace(p,
+                              p < 0.001,
+                              "<0.001")) %>%
+    dplyr::mutate(Variable = noquote(var_name)) %>%
+    dplyr::select(c(5, 1:4)) %>%
+    dplyr::filter(Group != "Block") %>%
+    dplyr::filter(Group != "Year") %>%
+    flextable() %>%
+    merge_at(j = 1) %>%
+    fix_border_issues() %>%
+    bold(i = ~ p <= 0.05, j = 5) %>%
+    autofit()
+  
+  return(tab1)
+  
+}
+
+ranova_2step <- function(lmer_model1, var_name, filepath){
+  
+  # make table 1
+  table1 <- ranova_1step(lmer_model1, var_name)
+  
+  # make table 2
+  lmer_model2 <- update(lmer_model1, . ~ . + City_dist)
+  table2 <- ranova_1step(lmer_model2, var_name)
+  
+  # make table 3
+  lmer_model2_anova <- update(lmer_model2, . ~ ., REML = F)
+  table3 <- tidy_anova(lmer_model2_anova) %>%
+    dplyr::rename(Variable = 1) %>%
+    dplyr::mutate(Variable = var_name) %>%
+    dplyr::select(-Sites) %>%
+    flextable() %>%
+    merge_v(j = "Variable") %>% 
+    flextable::compose(i = 1, j = 3, part = "header",
+                       value = as_paragraph("χ", as_sup("2"))) %>%
+    autofit()
+  
+  # make table 4
+  lmer_model3 <- update(lmer_model1, . ~ . + Urb_score)
+  table4 <- ranova_1step(lmer_model3, var_name)
+  
+  # make table 5
+  lmer_model3_anova <- update(lmer_model3, . ~ ., REML = F)
+  table5 <- tidy_anova(lmer_model3_anova) %>%
+    dplyr::rename(Variable = 1) %>%
+    dplyr::mutate(Variable = var_name) %>%
+    dplyr::select(-Sites) %>%
+    flextable() %>%
+    merge_v(j = "Variable") %>% 
+    flextable::compose(i = 1, j = 3, part = "header",
+                       value = as_paragraph("χ", as_sup("2"))) %>%
+    autofit()
+  
+  mod_formula1 <- paste(deparse(formula(lmer_model1)), collapse = "") %>%
+    unlist() 
+  
+  mod_formula2 <- paste(deparse(formula(lmer_model2)), collapse = "") %>%
+    unlist()
+  
+  mod_formula3 <- paste(deparse(formula(lmer_model3)), collapse = "") %>%
+    unlist()
+  
+  # Export
+  word_export <- read_docx()
+  
+  body_add_par(word_export, value = "Table 1: Test for variance among families and populations")
+  body_add_par(word_export, value = paste("Model:", mod_formula1))
+  body_add_flextable(word_export, table1)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 2: Assess how much variance is explained by urbanization")
+  body_add_par(word_export, value = "Urbanization = Distance to the City Center")
+  body_add_par(word_export, value = paste("Model:", mod_formula2))
+  body_add_flextable(word_export, table2)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 3: Quantify variance explained by urbanization")
+  body_add_flextable(word_export, table3)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 4: Assess how much variance is explained by urbanization")
+  body_add_par(word_export, value = "Urbanization = Urbanization Score")
+  body_add_par(word_export, value = paste("Model:", mod_formula3))
+  body_add_flextable(word_export, table4)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 5: Quantify variance explained by urbanization")
+  body_add_flextable(word_export, table5)
+  
+  print(word_export, here::here(filepath))
+  
+}
+
+
+
 #### for regular g/lmer models:
+#### NOT USING THESE AS OF 9/22/22
 CreateRanovaOutput <- function(lmer_model, var_name){
   
   m1 <- ranova(lmer_model)
@@ -279,6 +423,7 @@ CreateRanovaOutput_bootstrap <- function(ranova_fam,
   }
 
 ### assessing if variation among pops/fams varies by transect
+### NOT USING THESE AS OF 9/22/22
 CreateRanovaOutput_Q2 <- function(lmer_model, var_name){
 
   tab1 <- car::Anova(lmer_model) %>%

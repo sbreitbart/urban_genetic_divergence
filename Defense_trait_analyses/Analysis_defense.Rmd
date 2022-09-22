@@ -69,65 +69,137 @@ set.seed(45)
 ################################################
 
 # Latex-----
+# fit original model
 latex_ranova_mod1 <- lmer(Latex_weight_mg^(1/3) ~
                             Block +
-                            (1|Population/Family) +
-                            City_dist,
-                        data = latex,
-                        REML = T)
+                            (1|Population/Family),
+                          data = latex,
+                          REML = T)
 
-latex_ranova1 <- CreateRanovaOutput(latex_ranova_mod1, "Latex Exudation") %T>%
-  flextable::save_as_html(.,
-                        path = here::here("./Defense_trait_analyses/Tables/Ranova/latex.html"))
+# check diagnostics and transform if necessary
+performance::check_model(latex_ranova_mod1)
+
+# export
+ranova_2step(latex_ranova_mod1,
+             "Latex",
+             "./Defense_trait_analyses/Tables/Ranova/latex.docx")
+
 
 ############ MEASURED IN MULTIPLE YEARS ########
 ################################################
 # Herbivory (before flowering) (quantitative)-------
 herbiv_e_quant_ranova_mod1 <- lmer(log(Herbivory_mean_early) ~
-                               Block +
-                               Year + 
-                               (1|Population/Family) +
-                                City_dist,
+                                Block +
+                               (1|Population/Family),
                               data = herbivory %>%
                         dplyr::filter(
-                          Herbivory_mean_early_binary == 1),
+                          Herbivory_mean_early_binary == 1 &
+                            Year == 2020),
                               REML = T)
 
-herbiv_e_quant_ranova1 <- CreateRanovaOutput(herbiv_e_quant_ranova_mod1, "Herbivory, before flowering: Quantitative") %T>%
-  flextable::save_as_html(.,
-                        path = here::here("./Defense_trait_analyses/Tables/Ranova/herbivory_early_quant.html"))
+# check diagnostics and transform if necessary
+performance::check_model(herbiv_e_quant_ranova_mod1)
+
+# export
+ranova_2step(herbiv_e_quant_ranova_mod1,
+             "Herbivory before flowering, quantitative: 2020",
+             "./Defense_trait_analyses/Tables/Ranova/herbivory_early_quant_2020.docx")
+
+
+herbiv_e_quant_ranova_mod2 <- lmer(log(Herbivory_mean_early) ~
+                               Block +
+                               (1|Population/Family),
+                              data = herbivory %>%
+                        dplyr::filter(
+                          Herbivory_mean_early_binary == 1 &
+                            Year == 2021),
+                              REML = T)
+
+# check diagnostics and transform if necessary
+performance::check_model(herbiv_e_quant_ranova_mod2)
+
+# export
+ranova_2step(herbiv_e_quant_ranova_mod1,
+             "Herbivory before flowering, quantitative: 2021",
+             "./Defense_trait_analyses/Tables/Ranova/herbivory_early_quant_2021.docx")
+
 
 # Herbivory (after flowering) (quantitative)-------
 herbiv_l_quant_ranova_mod1 <- lmer(log(Herbivory_mean_late) ~
-                               Block +
-                               Year + 
-                               (1|Population/Family) +
-                                City_dist,
+                                Block +
+                               (1|Population/Family),
                               data = herbivory %>%
                         dplyr::filter(
-                          Herbivory_mean_late_binary == 1),
+                          Herbivory_mean_late_binary == 1 &
+                            Year == 2020),
                               REML = T)
 
-herbiv_l_quant_ranova1 <- CreateRanovaOutput(herbiv_l_quant_ranova_mod1, "Herbivory, after flowering: Quantitative") %T>%
-  flextable::save_as_html(.,
-                        path = here::here("./Defense_trait_analyses/Tables/Ranova/herbivory_late_quant.html"))
+# check diagnostics and transform if necessary
+performance::check_model(herbiv_l_quant_ranova_mod1)
+
+# export
+ranova_2step(herbiv_l_quant_ranova_mod1,
+             "Herbivory after flowering, quantitative: 2020",
+             "./Defense_trait_analyses/Tables/Ranova/herbivory_late_quant_2020.docx")
+
+
+herbiv_l_quant_ranova_mod2 <- lmer(log(Herbivory_mean_late) ~
+                                Block +
+                               (1|Population/Family),
+                              data = herbivory %>%
+                        dplyr::filter(
+                          Herbivory_mean_late_binary == 1 &
+                            Year == 2021),
+                              REML = T)
+
+# check diagnostics and transform if necessary
+performance::check_model(herbiv_l_quant_ranova_mod2)
+
+# export
+ranova_2step(herbiv_l_quant_ranova_mod1,
+             "Herbivory after flowering, quantitative: 2021",
+             "./Defense_trait_analyses/Tables/Ranova/herbivory_late_quant_2021.docx")
+
 
 
 
 # Weevil scar length (quantitative)-----
 weev_quant_ranova_mod1 <- lmer(log(Scar_length_cm) ~
-                                   Block +
-                                   Year +
-                                   (1|Population/Family) +
-                                   City_dist,
+                                    Block +
+                                   (1|Population/Family), 
                               data = weevil %>%
-                                dplyr::filter(Scar_length_cm > 0),
+                                dplyr::filter(Scar_length_cm > 0 &
+                                                Year == 2020),
                               REML = T)
 
 
-weev_q_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod1, "Weevil Damage: Quantitative") %T>%
-  flextable::save_as_html(.,
-                        path = here::here("./Defense_trait_analyses/Tables/Ranova/weevil_quant.html"))
+# check diagnostics and transform if necessary
+performance::check_model(weev_quant_ranova_mod1)
+
+# export
+ranova_2step(weev_quant_ranova_mod1,
+             "Weevil damage, quantitative: 2020",
+             "./Defense_trait_analyses/Tables/Ranova/weevil_quant_2020.docx")
+
+
+weev_quant_ranova_mod2 <- lmer(log(Scar_length_cm) ~
+                                    Block +
+                                   (1|Population/Family), 
+                              data = weevil %>%
+                                dplyr::filter(Scar_length_cm > 0 &
+                                                Year == 2021),
+                              REML = T)
+
+
+# check diagnostics and transform if necessary
+performance::check_model(weev_quant_ranova_mod2)
+
+# export
+ranova_2step(weev_quant_ranova_mod1,
+             "Weevil damage, quantitative: 2021",
+             "./Defense_trait_analyses/Tables/Ranova/weevil_quant_2021.docx")
+
+
 ```
 
 ### Generalized LMM use bootstrapping with pbmodcomp()
@@ -286,124 +358,6 @@ get_pve(full) # 8.203
 # merge Pop and Fam ranovas
 weev_bin_ranova1 <- CreateRanovaOutput_bootstrap(weev_ranova.fam, weev_ranova.pop, "Weevil Damage: Binary") %T>%
   flextable::save_as_html(path = here::here("./Defense_trait_analyses/Tables/Ranova/weevil_binary.html"))
-```
-
-## Gradient / Urb_score- NOT UPDATED AS OF 5/28/22
-### Gaussian models use ranova()
-```{r}
-############ MEASURED ONLY IN 2020 #############
-################################################
-
-# Latex-----
-latex_ranova_mod2 <- lmer(Latex_weight_mg ~ (1|Population/Family) + Block + Urb_score,
-                        data = latex,
-                        REML = T)
-
-latex_ranova1 <- CreateRanovaOutput(latex_ranova_mod2, "Latex Exudation") %T>%
-  flextable::save_as_html(.,
-                        path = here::here("./Defense_trait_analyses/Tables/Ranova/Urb_score/latex.html"))
-
-############ MEASURED IN MULTIPLE YEARS ########
-################################################
-# **Herbivory (before flowering)-------
-
-## Can't use glmmTMB model: Get this error message:
-### Error in ranova(lmer_model) : 'model' should be an lmer-fit: "inherits(model, 'lmerMod')" is not TRUE 
-
-## glmer can't handle beta family. So can't use that model structure either.
-
-
-# **Herbivory (after flowering)-------
-
-## Can't use glmmTMB model: Get this error message:
-### Error in ranova(lmer_model) : 'model' should be an lmer-fit: "inherits(model, 'lmerMod')" is not TRUE 
-
-## glmer can't handle beta family. So can't use that model structure either.
-
-
-# **Weevil scar length (binary)-----
-
-## Using bootstrapping for this one too.
-
-
-
-# Weevil scar length (quantitative)-----
-weev_quant_ranova_mod2 <- lmer(Scar_length_cm^(1/3) ~ Block + Year + (1|Population/Family) + Urb_score,
-                              data = weevil %>%
-                                dplyr::filter(Scar_length_cm > 0),
-                              REML = T)
-
-
-weev_q_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod2, "Weevil Damage: Quantitative") %T>%
-  flextable::save_as_html(.,
-                        path = here::here("./Defense_trait_analyses/Tables/Ranova/Urb_score/weevil_quant.html"))
-```
-
-### Generalized LMM use bootstrapping with pbmodcomp()
-```{r}
-# NOT PERFECT b/c can't nest family within pop
-# Ben Bolker says it should work too: https://stackoverflow.com/questions/69842066/testing-for-the-significance-of-a-random-effect-in-a-mixed-model
-# https://github.com/glmmTMB/glmmTMB/issues/456
-
-
-# Herbivory (before flowering)-------
-## glmer can't handle beta distribution, and 
-## PBmodcomp can't handle GLMMTMB, so will skip this one
- 
-
-# Herbivory (after flowering)-------
-## glmer can't handle beta distribution, and 
-## PBmodcomp can't handle GLMMTMB, so will skip this one
-
-
-# Weevil scar length (binary)-----
-# take out block and year- doesn't converge with both included
-# take out fam
-full <- glmer(Scar_binary ~
-                # Block + Year + 
-                (1|Population) + Urb_score,
-                              data = weevil,
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
-
-reduced <- update(full, .~. - Urb_score)
-
-weev_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1000)
-
-tidy(weev_ranova.pop) # Pop: p ~ 0.679
-
-
-
-
-
-# take out pop
-full <- glmer(Scar_binary ~
-                # Block + Year + 
-                (1|Fam_uniq) + Urb_score,
-                              data = weevil,
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
-
-reduced <- update(full, .~. - Urb_score)
-
-weev_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000)
-
-tidy(weev_ranova.fam) # Family: p ~ 0.661
-
-
-
-
-# merge Pop and Fam ranovas
-weev_bin_ranova1 <- CreateRanovaOutput_bootstrap(weev_ranova.fam, weev_ranova.pop, "Weevil Damage: Binary") %T>%
-  flextable::save_as_html(path = here::here("./Defense_trait_analyses/Tables/Ranova/Urb_score/weevil_binary.html"))
 ```
 
 ## Urban Subtransects / City_dist
@@ -753,171 +707,6 @@ weev_bin_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Weevil Damage: Binary (Trans
 flextable::save_as_html(weev_bin_ranova1,
                         weev_bin_ranova2,
                         path = here::here("./Defense_trait_analyses/Tables/Ranova/weevil_binary_transects.html"))
-```
-
-## Urban Subtransects / Urb_score- NOT UPDATED AS OF 5/28/22
-### Gaussian models use ranova()
-```{r}
-############ MEASURED ONLY IN 2020 #############
-################################################
-
-
-# Latex-----
-## test Urb_score
-latex_ranova_mod1 <- lmer(Latex_weight_mg^(1/2) ~ (1|Population/Family) + Block + Urb_score,
-                             data = latex %>%
-                          dplyr::filter(Transect_ID != "Rural"),
-                           REML = T)
-
-## test transect
-latex_ranova_mod2 <- lmer(Latex_weight_mg^(1/2) ~ (1|Population/Family) + Block + Transect_ID,
-                             data = latex %>%
-                          dplyr::filter(Transect_ID != "Rural"),
-                           REML = F)
-
-
-latex_ranova1 <- CreateRanovaOutput(latex_ranova_mod1, "Latex (Urbanization Score)")
-latex_ranova2 <- CreateRanovaOutput_Q2(latex_ranova_mod2, "Latex (Transect)")
-
-flextable::save_as_html(latex_ranova1,
-                        latex_ranova2,
-                        path = here::here("./Defense_trait_analyses/Tables/Ranova/Urb_score/latex_transects.html"))
-
-
-
-############ MEASURED IN MULTIPLE YEARS ########
-################################################
-# **Herbivory (before flowering)-------
-
-## Can't use glmmTMB model: Get this error message:
-### Error in ranova(lmer_model) : 'model' should be an lmer-fit: "inherits(model, 'lmerMod')" is not TRUE 
-
-## glmer can't handle beta family. So can't use that model structure either.
-
-
-# **Herbivory (after flowering)-------
-
-## Can't use glmmTMB model: Get this error message:
-### Error in ranova(lmer_model) : 'model' should be an lmer-fit: "inherits(model, 'lmerMod')" is not TRUE 
-
-## glmer can't handle beta family. So can't use that model structure either.
-
-
-# **Weevil scar length (binary)-----
-
-## Using boostrapping for this one too.
-
-
-
-# Weevil scar length (quantitative)-----
-
-## test Urb_score
-weev_quant_ranova_mod1 <- lmer(Scar_length_cm^(1/3) ~ (1|Population/Family) + Block + Urb_score,
-                             data = weevil %>%
-                          dplyr::filter(Scar_length_cm > 0 & Transect_ID != "Rural"),
-                           REML = T)
-
-## test transect
-weev_quant_ranova_mod2 <- lmer(Scar_length_cm^(1/3) ~ (1|Population/Family) + Block + Transect_ID,
-                             data = weevil %>%
-                          dplyr::filter(Scar_length_cm > 0 & Transect_ID != "Rural"),
-                           REML = F)
-
-
-weev_quant_ranova1 <- CreateRanovaOutput(weev_quant_ranova_mod1, "Weevil Damage: Quantitative (Urbanization Score)")
-weev_quant_ranova2 <- CreateRanovaOutput_Q2(weev_quant_ranova_mod2, "Weevil Damage: Quantitative (Transect)")
-
-flextable::save_as_html(weev_quant_ranova1,
-                        weev_quant_ranova2,
-                        path = here::here("./Defense_trait_analyses/Tables/Ranova/Urb_score/weev_quant_transects.html"))
-```
-
-### Generalized LMM use bootstrapping with pbmodcomp()
-```{r}
-# Herbivory (before flowering)-------
-## glmer can't handle beta distribution, and 
-## PBmodcomp can't handle GLMMTMB, so will skip this one
- 
-
-# Herbivory (after flowering)-------
-## glmer can't handle beta distribution, and 
-## PBmodcomp can't handle GLMMTMB, so will skip this one
-
-
-# Weevil scar length (binary)-----
-## test Urb_score-----
-### take out fam
-full <- glmer(Scar_binary ~
-                # Block + Year + 
-                (1|Population) + Urb_score,
-                              data = weevil %>%
-                dplyr::filter(Transect_ID != "Rural"),
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
-
-reduced <- glmer(Scar_binary ~
-                # Block + Year + 
-                (1|Population),
-                              data = weevil %>%
-                dplyr::filter(Transect_ID != "Rural"),
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
-
-weev_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
-
-tidy(weev_ranova.pop) # Pop: p ~ 0.709
-
-
-### take out pop
-full <- glmer(Scar_binary ~
-                # Block + Year + 
-                (1|Fam_uniq) + Urb_score,
-                              data = weevil %>%
-                dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
-
-reduced <- glmer(Scar_binary ~
-                # Block + Year + 
-                (1|Fam_uniq),
-                              data = weevil %>%
-                dplyr::filter(Transect_ID != "Rural"),                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
-
-weev_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
-
-tidy(weev_ranova.fam) # Family: p ~ 0.707
-
-
-## test transect-----
-# already done for city_dist above: use this object: test_tr
-
-
-# merge Pop and Fam ranovas
-## test Urb_score
-weev_bin_ranova1 <- CreateRanovaOutput_bootstrap(weev_ranova.fam, weev_ranova.pop, "Weevil Damage: Binary (Distance)")
-
-## test transect
-weev_bin_ranova2 # created in city_dist chunk above
-
-flextable::save_as_html(weev_bin_ranova1,
-                        weev_bin_ranova2,
-                        path = here::here("./Defense_trait_analyses/Tables/Ranova/Urb_score/weevil_binary_transects.html"))
 ```
 
 ## Create figure showing % variance explained per component
