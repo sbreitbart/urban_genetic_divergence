@@ -204,160 +204,113 @@ ranova_2step(weev_quant_ranova_mod1,
 
 ### Generalized LMM use bootstrapping with pbmodcomp()
 ```{r}
-# NOT PERFECT b/c can't nest family within pop
-# Ben Bolker says it should work too: https://stackoverflow.com/questions/69842066/testing-for-the-significance-of-a-random-effect-in-a-mixed-model
-# https://github.com/glmmTMB/glmmTMB/issues/456
-
-
 # Herbivory (before flowering) (Binary)-------
-
-# take out fam
-full <- glmer(Herbivory_mean_early_binary ~
+# 2020-----
+herb_e_bin_ranova1 <- glmer(Herbivory_mean_early_binary ~
                                Block +
-                               Year + 
                                (1|Population) +
-                                City_dist,
-                              data = herbivory,
-                       family = binomial,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-  )
-  
+                               (1|Population:Family),
+                             data = herbivory %>%
+                               dplyr::filter(Year == 2020),
+                            na.action = na.exclude,
+                             family = binomial)
 
-reduced <- update(full, .~. - City_dist)
+# performance::check_model(herb_e_bin_ranova1)
 
-herbiv_e_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1000,          
-          cl = makeCluster(6))
-
-tidy(herbiv_e_ranova.pop) # p = 0.047
-
-get_pve(full) # can't compute. This model is singular in glmer but NOT in glmmtmb
+pb_ranova(herb_e_bin_ranova1,
+          "Herbivory before flowering, binary: 2020",
+          "./Defense_trait_analyses/Tables/Ranova/herb_e_bin_2020.docx")
 
 
 
-# take out pop
-full <- glmer(Herbivory_mean_early_binary ~
-                Block + Year + 
-                (1|Population/Family) + City_dist,
-                              data = herbivory,
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  )
+# 2021-----
+herb_e_bin_ranova2 <- glmer(Herbivory_mean_early_binary ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = herbivory %>%
+                               dplyr::filter(Year == 2021),
+                 na.action = na.exclude,
+                             family = binomial)
 
-reduced <- update(full, .~. - City_dist)
+# performance::check_model(herb_e_bin_ranova2)
 
-herbiv_e_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-                    cl = makeCluster(6))
-
-tidy(herbiv_e_ranova.fam) # Family: p ~ 0.046
-
-get_pve(full) # can't compute. This model is singular in glmer but NOT in glmmtmb 
-
-
-# merge Pop and Fam ranovas
-herbiv_e_bin_ranova1 <- CreateRanovaOutput_bootstrap(herbiv_e_ranova.fam, herbiv_e_ranova.pop, "Herbivory, before flowering: Binary") %T>%
-  flextable::save_as_html(path = here::here("./Defense_trait_analyses/Tables/Ranova/herbivory_early_binary.html"))
-
+pb_ranova(herb_e_bin_ranova2,
+          "Herbivory before flowering, binary: 2021",
+          "./Defense_trait_analyses/Tables/Ranova/herb_e_bin_2021.docx")
 
 
 # Herbivory (after flowering) (Binary)-------
-# take out fam
-full <- glmer(Herbivory_mean_late_binary ~
-                Block + Year + 
-                (1|Population) + City_dist,
-                              data = herbivory,
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  )
-  
+# 2020-----
+herb_l_bin_ranova1 <- glmer(Herbivory_mean_late_binary ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = herbivory %>%
+                               dplyr::filter(Year == 2020),
+                            na.action = na.exclude,
+                             family = binomial)
 
-reduced <- update(full, .~. - City_dist)
+# performance::check_model(herb_l_bin_ranova1)
 
-herbiv_l_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1000,          
-          cl = makeCluster(6))
-
-tidy(herbiv_l_ranova.pop) # Pop: p ~ 0.503
-
-get_pve(full) # can't compute. This model is singular in glmer but NOT in glmmtmb 
+pb_ranova(herb_l_bin_ranova1,
+          "Herbivory after flowering, binary: 2020",
+          "./Defense_trait_analyses/Tables/Ranova/herb_l_bin_2020.docx")
 
 
 
-# take out pop
-full <- glmer(Herbivory_mean_late_binary ~
-                Block + Year + 
-                (1|Population/Family) + City_dist,
-                              data = herbivory,
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  )
+# 2021-----
+herb_l_bin_ranova2 <- glmer(Herbivory_mean_late_binary ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = herbivory %>%
+                               dplyr::filter(Year == 2021),
+                            nAGQ = 0, # won't converge w/o this
+                 na.action = na.exclude,
+                             family = binomial)
 
-reduced <- update(full, .~. - City_dist)
+# performance::check_model(herb_l_bin_ranova2)
 
-herbiv_l_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-                    cl = makeCluster(6))
+pb_ranova(herb_l_bin_ranova2,
+          "Herbivory after flowering, binary: 2021",
+          "./Defense_trait_analyses/Tables/Ranova/herb_l_bin_2021.docx")
 
-tidy(herbiv_l_ranova.fam) # Family: p ~ 0.500
-
-get_pve(full) # can't compute b/c full mod is singular though not w/glmmtmb
-
-
-# merge Pop and Fam ranovas
-herbiv_l_bin_ranova1 <- CreateRanovaOutput_bootstrap(herbiv_l_ranova.fam, herbiv_l_ranova.pop, "Herbivory, after flowering: Binary") %T>%
-  flextable::save_as_html(path = here::here("./Defense_trait_analyses/Tables/Ranova/herbivory_late_binary.html"))
 
 
 # Weevil scar length (binary)-----
-# take out fam
-full <- glmer(Scar_binary ~
-                Block + Year + 
-                (1|Population) + City_dist,
-                              data = weevil,
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
+# 2020-----
+weev_bin_ranova1 <- glmer(Scar_binary ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = weevil %>%
+                               dplyr::filter(Year == 2020),
+                            na.action = na.exclude,
+                             family = binomial)
 
-reduced <- update(full, .~. - City_dist)
+# performance::check_model(weev_bin_ranova1)
 
-weev_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1000,          
-          cl = makeCluster(6))
-
-tidy(weev_ranova.pop) # Pop: p ~ 0.500
-
-get_pve(full) # 1.39
+pb_ranova(weev_bin_ranova1,
+          "Weevil Damage, binary: 2020",
+          "./Defense_trait_analyses/Tables/Ranova/weevil_bin_2020.docx")
 
 
+# 2021-----
+weev_bin_ranova2 <- glmer(Scar_binary ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = weevil %>%
+                               dplyr::filter(Year == 2021),
+                            na.action = na.exclude,
+                             family = binomial)
 
-# take out pop
-full <- glmer(Scar_binary ~
-                 Block + Year + 
-                (1|Population/Family) + City_dist,
-                              data = weevil,
-                              family = "binomial"(link = "logit"),
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
+# performance::check_model(weev_bin_ranova2)
 
-reduced <- update(full, .~. - City_dist)
-
-weev_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-                    cl = makeCluster(6))
-
-tidy(weev_ranova.fam) # Family: p ~ 0.472
-
-get_pve(full) # 8.203
-
-
-# merge Pop and Fam ranovas
-weev_bin_ranova1 <- CreateRanovaOutput_bootstrap(weev_ranova.fam, weev_ranova.pop, "Weevil Damage: Binary") %T>%
-  flextable::save_as_html(path = here::here("./Defense_trait_analyses/Tables/Ranova/weevil_binary.html"))
+pb_ranova(weev_bin_ranova2,
+          "Weevil Damage, binary: 2021",
+          "./Defense_trait_analyses/Tables/Ranova/weevil_bin_2021.docx")
 ```
 
 ## Urban Subtransects
