@@ -167,447 +167,362 @@ ranova_transect(flsize_ranova_mod3,
 ### Gradient
 ```{r}
 # Flowering success----- 
-## TRYING TO DO ON SERVER
+# 2020-----
+flsucc_ranova1 <- glmer(Flowered ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = reproduc %>%
+                               dplyr::filter(Year == 2020),
+                        nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude,
+                             family = binomial)
 
-# take out fam
-full <- glmer(Flowered ~
-                             Block +
-                             Year +
-                             (1|Population) +
-                             City_dist,
-  data = reproduc,
-  family = binomial(link = "logit"),
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    # ,control=glmerControl(optimizer="bobyqa",
-    #                         optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(flsucc_ranova1)
 
-reduced <- update(full, .~. - City_dist)
+pb_ranova(flsucc_ranova1,
+          "Flowering success: 2020",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowering_success_2020.docx")
 
-flsucc_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(rep("localhost", 8)))
+# 2021-----
+flsucc_ranova2 <- glmer(Flowered ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = reproduc %>%
+                               dplyr::filter(Year == 2021),
+                        nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude,
+                             family = binomial)
 
-tidy(flsucc_ranova.pop) # p = 0.966
+# performance::check_model(flsucc_ranova2)
 
-# variance
-get_pve(flsucc_ranova.pop) # 10.218
+pb_ranova(flsucc_ranova2,
+          "Flowering success: 2021",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowering_success_2021.docx")
 
+# 2022-----
+flsucc_ranova3 <- glmer(Flowered ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = reproduc %>%
+                               dplyr::filter(Year == 2022),
+                        nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude,
+                             family = binomial)
 
+# performance::check_model(flsucc_ranova3)
 
-# test fam
-full <- glmer(Flowered ~
-                             Block +
-                             Year +
-                             (1|Population/Family) +
-                             City_dist,
-  data = reproduc,
-  family = binomial(link = "logit"),
-  nAGQ = 0, # model won't converge otherwise. I tested the difference nAGQ = 0 vs the default (>0) makes in the model above and the difference was negligible: the p-value changed by 0.003 so I think it's ok to use here, since the p-values are nowhere near 0.1 or lower.
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
-
-reduced <- update(full, .~. - City_dist)
-
-flsucc_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(rep("localhost", 8)))
-
-tidy(flsucc_ranova.fam) # Family: p ~ 0.769
-
-# variance
-get_pve(flsucc_ranova.fam) # 19.013
-
-
-
-# merge Pop and Fam ranovas
-flsucc_ranova1 <- CreateRanovaOutput_bootstrap(
-  flsucc_ranova.fam, 
-  flsucc_ranova.pop,
-  "Flowering success") %T>%
-  flextable::save_as_html(path = here::here("./Reproductive_trait_analyses/Tables/Ranova/flowering_success.html"))
+pb_ranova(flsucc_ranova3,
+          "Flowering success: 2022",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowering_success_2022.docx")
 
 
 # Flowers/plant-----
-## TRYING TO DO ON SERVER
+# 2020-----
+flowers_ranova1 <- glmer.nb(total_flower_count ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2020),
+                        nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude)
 
-# take out fam
-# ADDED NAGQ = 0 BC DIDN'T CONVERGE OTHERWISE
-full <- glmer.nb(total_flower_count ~
-                             Block +
-                             Year +
-                             (1|Population) +
-                             City_dist,
-  data = flowering,
-  nAGQ = 0,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    # ,control=glmerControl(optimizer="bobyqa",
-    #                         optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(flowers_ranova1)
 
-reduced <- update(full, .~. - City_dist)
+pb_ranova(flowers_ranova1,
+          "Flower count: 2020",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2020.docx")
 
-flowers_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 100,
-          cl = makeCluster(rep("localhost", 8)))
+# 2021-----
+flowers_ranova2 <- glmer.nb(total_flower_count ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2021),
+                        nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude)
 
-tidy(flowers_ranova.pop) # p = 0.212 at nsim = 100
+# performance::check_model(flowers_ranova2)
 
-# variance
-get_pve(flowers_ranova.pop) # can't compute b/c singular
-
-
-
-# test fam
-full <- glmer.nb(total_flower_count ~
-                             Block +
-                             Year +
-                             (1|Population/Family) +
-                             City_dist,
-  data = flowering,
-  nAGQ = 0, # model won't converge otherwise. I tested the difference nAGQ = 0 vs the default (>0) makes in the model above and the difference was negligible: the p-value changed by 0.003 so I think it's ok to use here, since the p-values are nowhere near 0.1 or lower.
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
-
-reduced <- update(full, .~. - City_dist)
-
-flowers_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(rep("localhost", 8)))
-
-tidy(flowers_ranova.fam) # Family: p ~ 0.187 at nsim = 100
-
-# variance
-get_pve(flowers_ranova.fam) # NA since singular
+pb_ranova(flowers_ranova2,
+          "Flower count: 2021",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2021.docx")
 
 
-# merge Pop and Fam ranovas
-flowers_ranova1 <- CreateRanovaOutput_bootstrap(
-  flowers_ranova.fam, 
-  flowers_ranova.pop,
-  "Flower count") %T>%
-  flextable::save_as_html(path = here::here("./Reproductive_trait_analyses/Tables/Ranova/flower_count.html"))
+# 2022-----
+flowers_ranova3 <- glmer.nb(total_flower_count ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2022),
+                        nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude)
+
+# performance::check_model(flowers_ranova3)
+
+pb_ranova(flowers_ranova3,
+          "Flower count: 2022",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2022.docx")
+
 
 # Flowering time-----
-## TRYING TO DO ON SERVER
+# 2020-----
+fltime_ranova1 <- glmer.nb(as.numeric(flowering_time) ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2020),
+                      #  nAGQ = 0,
+                            na.action = na.exclude)
 
-# take out fam
-# ADDED NAGQ = 0 BC DIDN'T CONVERGE OTHERWISE
-full <- glmer.nb(as.numeric(flowering_time) ~
-                             Block +
-                             Year +
-                             (1|Population) +
-                             City_dist,
-  data = flowering,
-   nAGQ = 0,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    # ,control=glmerControl(optimizer="bobyqa",
-    #                         optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(fltime_ranova1)
 
-reduced <- update(full, .~. - City_dist)
-
-fltime_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 100,
-          cl = makeCluster(rep("localhost", 8)))
-
-tidy(fltime_ranova.pop) # p = 0.688 at nsim = 100
-
-# variance
-get_pve(fltime_ranova.pop) # 100- but warning msg says:
-# Warning message:
-# Can't calculate model's distribution-specific variance.
-#   Results are not reliable.
+pb_ranova(fltime_ranova1,
+          "Flowering duration: 2020",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowertime_2020.docx")
 
 
 
-# test fam
-full <- glmer.nb(as.numeric(flowering_time) ~
-                             Block +
-                             Year +
-                             (1|Population/Family) +
-                             City_dist,
-  data = flowering,
-   nAGQ = 0, # model won't converge otherwise. I tested the difference nAGQ = 0 vs the default (>0) makes in the model above and the difference was negligible: the p-value changed by 0.003 so I think it's ok to use here, since the p-values are nowhere near 0.1 or lower.
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+# 2021-----
+fltime_ranova2 <- glmer.nb(as.numeric(flowering_time) ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2021),
+                      #  nAGQ = 0,
+                            na.action = na.exclude)
 
-reduced <- update(full, .~. - City_dist)
+# performance::check_model(fltime_ranova2)
 
-fltime_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(rep("localhost", 8)))
-
-tidy(fltime_ranova.fam) # Family: p ~ 0.682
-
-# variance
-get_pve(fltime_ranova.fam) # can't compute b'c singular
+pb_ranova(fltime_ranova2,
+          "Flowering duration: 2021",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowertime_2021.docx")
 
 
-# merge Pop and Fam ranovas
-fltime_ranova1 <- CreateRanovaOutput_bootstrap(
-  fltime_ranova.fam, 
-  fltime_ranova.pop,
-  "Flower count") %T>%
-  flextable::save_as_html(path = here::here("./Reproductive_trait_analyses/Tables/Ranova/flower_start.html"))
 
+
+# 2022-----
+fltime_ranova3 <- glmer.nb(as.numeric(flowering_time) ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2022),
+                      #  nAGQ = 0,
+                            na.action = na.exclude)
+
+# performance::check_model(fltime_ranova3)
+
+pb_ranova(fltime_ranova3,
+          "Flowering duration: 2022",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowertime_2022.docx")
 
 # Flowering start-----
-## TRYING TO DO ON SERVER
+# 2020-----
+flstart_ranova1 <- glmer(Julian_oldest_inflor ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2020),
+                            na.action = na.exclude,
+                             family = poisson)
 
-# take out fam
-# ADDED NAGQ = 0 BC DIDN'T CONVERGE OTHERWISE
-full <- glmer(Julian_oldest_inflor ~
-                     Block +
-                            Year +
-                             (1|Population) +
-                             City_dist,
-  data = flowering,
-  family = poisson,
-   nAGQ = 0,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(flstart_ranova1)
 
-reduced <- update(full, .~. - City_dist)
+pb_ranova(flstart_ranova1,
+          "Flowering start: 2020",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowering_start_2020.docx")
 
-flstart_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 100,
-          cl = makeCluster(rep("localhost", 8)))
+# 2021-----
+flstart_ranova2 <- glmer(Julian_oldest_inflor ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2021),
+                            na.action = na.exclude,
+                             family = poisson)
 
-tidy(flstart_ranova.pop) # p = 0.706 at nsim = 100
+# performance::check_model(flstart_ranova2)
 
-# variance
-get_pve(flstart_ranova.pop) # NA bc singular
+pb_ranova(flstart_ranova2,
+          "Flowering start: 2021",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowering_start_2021.docx")
 
+# 2022-----
+flstart_ranova3 <- glmer(Julian_oldest_inflor ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2022),
+                            na.action = na.exclude,
+                             family = poisson)
 
+# performance::check_model(flstart_ranova3)
 
-# test fam
-full <- glmer(Julian_oldest_inflor ~
-                             Block +
-                             Year +
-                             (1|Population/Family) +
-                             City_dist,
-  data = flowering,
-  family = poisson,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    # ,control=glmerControl(optimizer="bobyqa",
-    #                         optCtrl=list(maxfun=2e5))
-)
-
-reduced <- update(full, .~. - City_dist)
-
-flstart_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 10,
-          cl = makeCluster(rep("localhost", 8)))
-
-tidy(flstart_ranova.fam) # Family: p ~ 0.706 at sim = 10 
-
-# variance
-get_pve(flstart_ranova.fam) # NA bc singular
-
-
-# merge Pop and Fam ranovas
-flstart_ranova1 <- CreateRanovaOutput_bootstrap(
-  flstart_ranova.fam, 
-  flstart_ranova.pop,
-  "Flower count") %T>%
-  flextable::save_as_html(path = here::here("./Reproductive_trait_analyses/Tables/Ranova/flower_start.html"))
+pb_ranova(flstart_ranova3,
+          "Flowering start: 2022",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowering_start_2022.docx")
 
 
 # Pods-----
-## TRYING TO DO ON SERVER
+# 2020-----
+pods_ranova1 <- glmer.nb(Pods ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2020),
+                  #      nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude)
 
-# take out fam
-full <- glmer.nb(Pods ~
-                     Block +
-                            Year +
-                             (1|Population) +
-                             City_dist,
-  data = flowering,
-#   nAGQ = 0,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    # ,control=glmerControl(optimizer="bobyqa",
-    #                         optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(pods_ranova1)
 
-reduced <- update(full, .~. - City_dist)
-
-pods_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 10,
-          cl = makeCluster(rep("localhost", 8)))
-
-tidy(pods_ranova.pop) # p = 0.920 at nsim = 10
-
-# variance
-get_pve(pods_ranova.pop) # 0.807
+pb_ranova(pods_ranova1,
+          "Follicles: 2020",
+          "./Reproductive_trait_analyses/Tables/Ranova/pods_2020.docx")
 
 
+# 2021-----
+pods_ranova2 <- glmer.nb(Pods ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2021),
+                  #      nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude)
 
-# test fam
-full <- glmer.nb(Pods ~
-                             Block +
-                             Year +
-                             (1|Population/Family) +
-                             City_dist,
-  data = flowering,
-  nAGQ = 0,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(pods_ranova2)
 
-reduced <- update(full, .~. - City_dist)
+pb_ranova(pods_ranova2,
+          "Follicles: 2021",
+          "./Reproductive_trait_analyses/Tables/Ranova/pods_2021.docx")
 
-pods_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 100,
-          cl = makeCluster(rep("localhost", 8)))
+# 2022-----
+pods_ranova3 <- glmer.nb(Pods ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2022),
+                        nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude)
 
-tidy(pods_ranova.fam) # Family: p ~ 1 at sim = 100
+# performance::check_model(pods_ranova3)
 
-# variance
-get_pve(pods_ranova.fam) # NA b/c singular
-
-
-# merge Pop and Fam ranovas
-pods_ranova1 <- CreateRanovaOutput_bootstrap(
-  pods_ranova.fam, 
-  pods_ranova.pop,
-  "Flower count") %T>%
-  flextable::save_as_html(path = here::here("./Reproductive_trait_analyses/Tables/Ranova/pods.html"))
+pb_ranova(pods_ranova3,
+          "Follicles: 2022",
+          "./Reproductive_trait_analyses/Tables/Ranova/pods_2022.docx")
 
 
 # Date of first follicle-----
-## TRYING TO DO ON SERVER
+# 2020-----
+firstpod_ranova1 <- glmer(Julian_first_follicle ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2020),
+                            na.action = na.exclude,
+                             family = poisson)
 
-# take out fam
-full <- glmer(Julian_first_follicle^2 ~
-                     Block +
-                            Year +
-                             (1|Population) +
-                             City_dist,
-  data = flowering,
-  family = poisson,
-   nAGQ = 0,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(firstpod_ranova1)
 
-reduced <- update(full, .~. - City_dist)
-
-first_pods_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 100,
-          cl = makeCluster(rep("localhost", 8)))
-
-tidy(first_pods_ranova.pop) # p = 0.0962 at nsim = 100
-
-# variance
-get_pve(first_pods_ranova.pop) # 98.596
+pb_ranova(firstpod_ranova1,
+          "First follicle: 2020",
+          "./Reproductive_trait_analyses/Tables/Ranova/first_pods_2020.docx")
 
 
+# 2021-----
+firstpod_ranova2 <- glmer(Julian_first_follicle ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2021),
+                           na.action = na.exclude,
+                             family = poisson)
 
-# test fam
-full <- glmer(Julian_first_follicle^2 ~
-                             Block +
-                             Year +
-                             (1|Population/Family) +
-                             City_dist,
-  data = flowering,
-  family = poisson,
-  nAGQ = 0, 
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(firstpod_ranova2)
 
-reduced <- update(full, .~. - City_dist)
+pb_ranova(firstpod_ranova2,
+          "First follicle: 2021",
+          "./Reproductive_trait_analyses/Tables/Ranova/first_pods_2021.docx")
 
-first_pods_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 100,
-          cl = makeCluster(rep("localhost", 8)))
+# 2022-----
+firstpod_ranova3 <- glmer(Julian_first_follicle ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2022),
+                           na.action = na.exclude,
+                             family = poisson)
 
-tidy(first_pods_ranova.fam) # Family: p ~ 0.375 at sim = 100
+# performance::check_model(firstpod_ranova3)
 
-# variance
-get_pve(first_pods_ranova.fam) # 99.419
-
-
-# merge Pop and Fam ranovas
-first_pods_ranova1 <- CreateRanovaOutput_bootstrap(
-  first_pods_ranova.fam, 
-  first_pods_ranova.pop,
-  "Flower count") %T>%
-  flextable::save_as_html(path = here::here("./Reproductive_trait_analyses/Tables/Ranova/first_pods.html"))
-
+pb_ranova(firstpod_ranova3,
+          "First follicle: 2022",
+          "./Reproductive_trait_analyses/Tables/Ranova/first_pods_2022.docx")
 
 # Peduncles-----
-## TRYING TO DO ON SERVER
+# 2020-----
+peduncles_ranova1 <- glmer.nb(Peduncles ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2020),
+                            na.action = na.exclude)
 
-# take out fam
-full <- glmer.nb(Peduncles ~
-                     Block +
-                            Year +
-                             (1|Population) +
-                             City_dist,
-  data = flowering,
-  # nAGQ = 0,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(peduncles_ranova1)
 
-reduced <- update(full, .~. - City_dist)
-
-peduncles_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1,
-          cl = makeCluster(rep("localhost", 8)))
-
-tidy(peduncles_ranova.pop) # p = 0.512 at nsim = 5
-
-# variance
-get_pve(peduncles_ranova.pop) # 15.658
+pb_ranova(peduncles_ranova1,
+          "Inflorescences: 2020",
+          "./Reproductive_trait_analyses/Tables/Ranova/peduncles_2020.docx")
 
 
+# 2021-----
+peduncles_ranova2 <- glmer.nb(Peduncles ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2021),
+                             nAGQ = 0, # doesn't converge w/o this
+                            na.action = na.exclude)
 
-# test fam
-full <- glmer.nb(Peduncles ~
-                             Block +
-                             Year +
-                             (1|Population/Family) +
-                             City_dist,
-  data = flowering,
- # nAGQ = 0, 
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(peduncles_ranova2)
 
-reduced <- update(full, .~. - City_dist)
-
-peduncles_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 10,
-          cl = makeCluster(rep("localhost", 8)))
-
-tidy(peduncles_ranova.fam) # Family: p ~ 0.519 w/nsim = 10
-
-# variance
-get_pve(peduncles_ranova.fam) # 20.343
+pb_ranova(peduncles_ranova2,
+          "Inflorescences: 2021",
+          "./Reproductive_trait_analyses/Tables/Ranova/peduncles_2021.docx")
 
 
-# merge Pop and Fam ranovas
-peduncles_ranova1 <- CreateRanovaOutput_bootstrap(
-  peduncles_ranova.fam, 
-  peduncles_ranova.pop,
-  "Inflorescences") %T>%
-  flextable::save_as_html(path = here::here("./Reproductive_trait_analyses/Tables/Ranova/peduncles.html"))
+# 2022-----
+peduncles_ranova3 <- glmer.nb(Peduncles ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2022),
+                            na.action = na.exclude)
+
+# performance::check_model(peduncles_ranova3)
+
+pb_ranova(peduncles_ranova3,
+          "Inflorescences: 2022",
+          "./Reproductive_trait_analyses/Tables/Ranova/peduncles_2022.docx")
 
 ```
 
