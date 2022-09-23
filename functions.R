@@ -139,8 +139,6 @@ make_all_anovas_tidy_altmods <- function(anova_list){
   )
 }
 
-
-
 ############################################################
 ########## Do linear regression on multiple models #########
 ############# (for cardenolide analysis)####################
@@ -165,15 +163,13 @@ DoLinearReg <- function(response_var, predictor_var, input_data){
   my_list <<- list(my_model, my_anova)
 }
 
-
-
 ############################################################
 ##################### RANOVAS ##############################
 ############################################################
 
 ## Create tidy ranova table-----
 ### assessing if variation among pops/fams varies with urbanization
-
+#### for regular g/lmer models:
 # filepath should look something like this:
 # "./Defense_trait_analyses/Tables/Ranova/latex.html"
 ranova_1step <- function(lmer_model, var_name){
@@ -248,6 +244,7 @@ ranova_2step <- function(lmer_model1, var_name, filepath){
     merge_v(j = "Variable") %>% 
     flextable::compose(i = 1, j = 3, part = "header",
                        value = as_paragraph("χ", as_sup("2"))) %>%
+    bold(i = ~ p <= 0.05, j = 4) %>%
     autofit()
   
   # make table 4
@@ -264,6 +261,7 @@ ranova_2step <- function(lmer_model1, var_name, filepath){
     merge_v(j = "Variable") %>% 
     flextable::compose(i = 1, j = 3, part = "header",
                        value = as_paragraph("χ", as_sup("2"))) %>%
+    bold(i = ~ p <= 0.05, j = 4) %>%
     autofit()
   
   mod_formula1 <- paste(deparse(formula(lmer_model1)), collapse = "") %>%
@@ -313,7 +311,6 @@ ranova_2step <- function(lmer_model1, var_name, filepath){
   print(word_export, here::here(filepath))
   
 }
-
 ranova_transect <- function(lmer_model_without_urb, var_name, filepath){
   
   # make table 1
@@ -331,6 +328,7 @@ ranova_transect <- function(lmer_model_without_urb, var_name, filepath){
     merge_v(j = "Variable") %>% 
     flextable::compose(i = 1, j = 3, part = "header",
                        value = as_paragraph("χ", as_sup("2"))) %>%
+    bold(i = ~ p <= 0.05, j = 4) %>%
     autofit()
   
   # make table 3
@@ -347,6 +345,7 @@ ranova_transect <- function(lmer_model_without_urb, var_name, filepath){
     merge_v(j = "Variable") %>% 
     flextable::compose(i = 1, j = 3, part = "header",
                        value = as_paragraph("χ", as_sup("2"))) %>%
+    bold(i = ~ p <= 0.05, j = 4) %>%
     autofit()
   
   
@@ -388,7 +387,6 @@ ranova_transect <- function(lmer_model_without_urb, var_name, filepath){
   print(word_export, here::here(filepath))
 }
 
-#### for regular g/lmer models:
 #### for boostrapping models:
 CreateRanovaOutput_bootstrap <- function(ranova_fam,
                                          ranova_pop,
@@ -434,40 +432,6 @@ CreateRanovaOutput_bootstrap <- function(ranova_fam,
                                  PVE_fam))
   return(tab1)
   }
-
-### assessing if variation among pops/fams varies by transect
-### NOT USING THESE AS OF 9/22/22
-CreateRanovaOutput_Q2 <- function(lmer_model, var_name){
-
-  tab1 <- car::Anova(lmer_model) %>%
-    tidy() %>%
-    as.data.frame() %>%
-    dplyr::select(-df) %>%
-    dplyr::mutate_at(vars(c(2,3)), round, 3) %>%
-    dplyr::rename(.,
-                  p = 3,
-                  Variable = 1) %>%
-    dplyr::filter(grepl('Transect_ID', Variable)) %>%
-    dplyr::mutate(p = p/2) %>%
-    dplyr::mutate(p = replace(p,
-                              p < 0.001,
-                              "<0.001")) %>%
-    dplyr::mutate(Variable = noquote(var_name)) %>%
-    flextable() %>%
-    flextable::compose(i = 1, j = 2,
-                       part = "header",
-                       value = as_paragraph("χ", as_sup("2"))) %>%
-    bold(i = ~ p <= 0.05, j = 3) %>%
-    align(j = c(2,3),
-          align = "center",
-          part = "header") %>%
-    align(j = c(2,3),
-          align = "center",
-          part = "body") %>%
-    autofit()
-  
-  return(tab1)
-}
 
 
 # get percent variance explained for bootstrapped models
