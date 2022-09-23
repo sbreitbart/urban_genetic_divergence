@@ -447,173 +447,165 @@ ranova_transect(heights_l_ranova_mod3,
 
 ```
 
-## poisson models- use pbmodcomp()
+## non-gaussian models
 ### Gradient
 ```{r}
 # Number of ramets (early)-------
+# 2019-----
+ramets_e_ranova1 <- glmer(Ramets_early ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = heights %>%
+                               dplyr::filter(Year == 2019),
+                            na.action = na.exclude,
+                             family = poisson)
 
-# take out fam- NOT CONVERGING unless I add nagq = 0
-full <- glmer(Ramets_early ~
-                Block +
-                 Year +
-                 (1|Population) +
-                  City_dist,
-                data = heights,
-              family = poisson,
-              nAGQ = 0,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    # ,control=glmerControl(optimizer="bobyqa",
-    #                         optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(ramets_e_ranova1)
 
-reduced <- update(full, .~. - City_dist)
-
-ramets_e_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
-
-tidy(ramets_e_ranova.pop) # p = 0.342 w/nsim = 10, 100, and 1000
-
-# PVE
-get_pve(full) # 5.303
+pb_ranova(ramets_e_ranova1,
+          "Ramets before flowering: 2019",
+          "./Growth_trait_analyses/Tables/Ranova/ramets_early_2019.docx")
 
 
-# take out pop
-full <- glmer(Ramets_early ~
-                Block + Year +
-                (1|Population/Family) + City_dist,
-                              data = heights,
-                              family = poisson,
-              nAGQ = 0,
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  )
+# 2020-----
+ramets_e_ranova2 <- glmer(Ramets_early ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = heights %>%
+                               dplyr::filter(Year == 2020),
+                            na.action = na.exclude,
+                             family = poisson)
 
-reduced <- update(full, .~. - City_dist)
+# performance::check_model(ramets_e_ranova2)
 
-ramets_e_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-                    cl = makeCluster(6))
-
-tidy(ramets_e_ranova.fam) # Family: p ~ 0.328
-
-# PVE
-get_pve(full) # 16.478
+pb_ranova(ramets_e_ranova2,
+          "Ramets before flowering: 2020",
+          "./Growth_trait_analyses/Tables/Ranova/ramets_early_2020.docx")
 
 
-# merge Pop and Fam ranovas
-ramets_e_ranova1 <- CreateRanovaOutput_bootstrap(ramets_e_ranova.fam, ramets_e_ranova.pop, "Ramets, before flowering") %T>%
-  flextable::save_as_html(path = here::here("./Growth_trait_analyses/Tables/Ranova/ramets_early.html"))
+# 2021-----
+ramets_e_ranova3 <- glmer(Ramets_early ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = heights %>%
+                               dplyr::filter(Year == 2021),
+                            na.action = na.exclude,
+                             family = poisson)
+
+# performance::check_model(ramets_e_ranova3)
+
+pb_ranova(ramets_e_ranova3,
+          "Ramets before flowering: 2021",
+          "./Growth_trait_analyses/Tables/Ranova/ramets_early_2021.docx")
 
 
 # Number of ramets (LATE)-------
+# 2019-----
+ramets_l_ranova1 <- glmer(Ramets_late ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = heights %>%
+                               dplyr::filter(Year == 2019),
+                            na.action = na.exclude,
+                             family = poisson)
 
-# take out fam- NOT CONVERGING unless I add nagq = 0
-full <- glmer(Ramets_late ~
-               Block +
-              Year +
-                 (1|Population) +
-                  City_dist,
-                data = heights,
-              family = poisson,
-              nAGQ = 0,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    # ,control=glmerControl(optimizer="bobyqa",
-    #                         optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(ramets_l_ranova1)
 
-reduced <- update(full, .~. - City_dist)
-
-ramets_l_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
-
-tidy(ramets_l_ranova.pop) # p = 0.160
-
-get_pve(full) # 2.08
+pb_ranova(ramets_l_ranova1,
+          "Ramets after flowering: 2019",
+          "./Growth_trait_analyses/Tables/Ranova/ramets_late_2019.docx")
 
 
+# 2020-----
+ramets_l_ranova2 <- glmer(Ramets_late ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = heights %>%
+                               dplyr::filter(Year == 2020),
+                            na.action = na.exclude,
+                             family = poisson)
 
-# take out pop
-full <- glmer(Ramets_late ~
-                Block + Year +
-                (1|Population/Family) + City_dist,
-                              data = heights,
-                              family = poisson,
-              nAGQ = 0,
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  )
+# performance::check_model(ramets_l_ranova2)
 
-reduced <- update(full, .~. - City_dist)
-
-ramets_l_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-                    cl = makeCluster(7))
-
-tidy(ramets_l_ranova.fam) # Family: p ~ 0.137
-
-get_pve(full) # 8.065
+pb_ranova(ramets_l_ranova2,
+          "Ramets after flowering: 2020",
+          "./Growth_trait_analyses/Tables/Ranova/ramets_late_2020.docx")
 
 
+# 2021-----
+ramets_l_ranova3 <- glmer(Ramets_late ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = heights %>%
+                               dplyr::filter(Year == 2021),
+                            na.action = na.exclude,
+                             family = poisson)
 
-# merge Pop and Fam ranovas
-ramets_l_ranova1 <- CreateRanovaOutput_bootstrap(ramets_l_ranova.fam, ramets_l_ranova.pop, "Ramets, after flowering") %T>%
-  flextable::save_as_html(path = here::here("./Growth_trait_analyses/Tables/Ranova/ramets_late.html"))
+# performance::check_model(ramets_l_ranova3)
+
+pb_ranova(ramets_l_ranova3,
+          "Ramets after flowering: 2021",
+          "./Growth_trait_analyses/Tables/Ranova/ramets_late_2021.docx")
+
+
 
 # Mortality-------
+# 2019-----
+mortality_ranova1 <- glmer(Dead ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = survival %>%
+                               dplyr::filter(Year == 2019),
+                            na.action = na.exclude,
+                           nAGQ = 0, # doesn't converge w/o this
+                             family = binomial)
 
-# take out fam
-full <- glmer(Dead ~
-                 Block +
-                Year +
-                (1|Population) +
-                City_dist,
-              data = survival ,
-              family = binomial,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    # ,control=glmerControl(optimizer="bobyqa",
-    #                         optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(mortality_ranova1)
 
-reduced <- update(full, .~. - City_dist)
+pb_ranova(mortality_ranova1,
+          "Mortality: 2019",
+          "./Growth_trait_analyses/Tables/Ranova/mortality_2019.docx")
 
-surv_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(rep("localhost", 8)))
+# 2020-----
+mortality_ranova2 <- glmer(Dead ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = survival %>%
+                               dplyr::filter(Year == 2020),
+                            na.action = na.exclude,
+                           nAGQ = 0, # doesn't converge w/o this
+                             family = binomial)
 
-tidy(surv_ranova.pop) # p = 0.786
-get_pve(full) # 7.667
+# performance::check_model(mortality_ranova2)
 
-
-# take out pop
-full <- glmer(Dead ~
-                 Block +
-                Year +
-                (1|Population/Family) +
-                City_dist,
-              data = survival ,
-              family = binomial,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
-
-reduced <- update(full, .~. - City_dist)
-
-surv_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(rep("localhost", 8)))
-
-tidy(surv_ranova.fam) # Family: p ~ 0.805
-
-get_pve(full) # 21.311
+pb_ranova(mortality_ranova2,
+          "Mortality: 2020",
+          "./Growth_trait_analyses/Tables/Ranova/mortality_2020.docx")
 
 
-# merge Pop and Fam ranovas
-surv_ranova1 <- CreateRanovaOutput_bootstrap(
-  surv_ranova.fam, 
-  surv_ranova.pop,
-  "Mortality") %T>%
-  flextable::save_as_html(path = here::here("./Growth_trait_analyses/Tables/Ranova/mortality.html"))
+# 2021-----
+mortality_ranova3 <- glmer(Dead ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = survival %>%
+                               dplyr::filter(Year == 2021),
+                            na.action = na.exclude,
+                             family = binomial)
+
+# performance::check_model(mortality_ranova3)
+
+pb_ranova(mortality_ranova3,
+          "Mortality: 2021",
+          "./Growth_trait_analyses/Tables/Ranova/mortality_2021.docx")
 
 ```
 

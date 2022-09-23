@@ -163,7 +163,7 @@ ranova_transect(flsize_ranova_mod3,
 
 ```
 
-## non-gaussian models- use pbmodcomp()
+## non-gaussian models
 ### Gradient
 ```{r}
 # Flowering success----- 

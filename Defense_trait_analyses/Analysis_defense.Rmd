@@ -63,7 +63,7 @@ set.seed(45)
 ```
 
 ## Gradient
-### Gaussian models use ranova()
+### Gaussian models
 ```{r}
 ############ MEASURED ONLY IN 2020 #############
 ################################################
@@ -202,7 +202,7 @@ ranova_2step(weev_quant_ranova_mod1,
 
 ```
 
-### Generalized LMM use bootstrapping with pbmodcomp()
+### non-Gaussian models
 ```{r}
 # Herbivory (before flowering) (Binary)-------
 # 2020-----
@@ -314,7 +314,7 @@ pb_ranova(weev_bin_ranova2,
 ```
 
 ## Urban Subtransects
-### Gaussian models use ranova()
+### Gaussian models
 ```{r}
 ############ MEASURED ONLY IN 2020 #############
 ################################################
@@ -455,7 +455,7 @@ ranova_transect(weev_quant_ranova_mod2,
 
 ```
 
-### Generalized LMM use bootstrapping with pbmodcomp()
+### non-Gaussian models
 ```{r}
 # Herbivory (before flowering) (binary)-------
 ## test city_dist
