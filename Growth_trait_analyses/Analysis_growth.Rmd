@@ -463,7 +463,7 @@ ramets_e_ranova1 <- glmer(Ramets_early ~
 
 # performance::check_model(ramets_e_ranova1)
 
-pb_ranova(ramets_e_ranova1,
+pb_ranova_2step(ramets_e_ranova1,
           "Ramets before flowering: 2019",
           "./Growth_trait_analyses/Tables/Ranova/ramets_early_2019.docx")
 
@@ -480,7 +480,7 @@ ramets_e_ranova2 <- glmer(Ramets_early ~
 
 # performance::check_model(ramets_e_ranova2)
 
-pb_ranova(ramets_e_ranova2,
+pb_ranova_2step(ramets_e_ranova2,
           "Ramets before flowering: 2020",
           "./Growth_trait_analyses/Tables/Ranova/ramets_early_2020.docx")
 
@@ -497,7 +497,7 @@ ramets_e_ranova3 <- glmer(Ramets_early ~
 
 # performance::check_model(ramets_e_ranova3)
 
-pb_ranova(ramets_e_ranova3,
+pb_ranova_2step(ramets_e_ranova3,
           "Ramets before flowering: 2021",
           "./Growth_trait_analyses/Tables/Ranova/ramets_early_2021.docx")
 
@@ -515,7 +515,7 @@ ramets_l_ranova1 <- glmer(Ramets_late ~
 
 # performance::check_model(ramets_l_ranova1)
 
-pb_ranova(ramets_l_ranova1,
+pb_ranova_2step(ramets_l_ranova1,
           "Ramets after flowering: 2019",
           "./Growth_trait_analyses/Tables/Ranova/ramets_late_2019.docx")
 
@@ -532,7 +532,7 @@ ramets_l_ranova2 <- glmer(Ramets_late ~
 
 # performance::check_model(ramets_l_ranova2)
 
-pb_ranova(ramets_l_ranova2,
+pb_ranova_2step(ramets_l_ranova2,
           "Ramets after flowering: 2020",
           "./Growth_trait_analyses/Tables/Ranova/ramets_late_2020.docx")
 
@@ -549,7 +549,7 @@ ramets_l_ranova3 <- glmer(Ramets_late ~
 
 # performance::check_model(ramets_l_ranova3)
 
-pb_ranova(ramets_l_ranova3,
+pb_ranova_2step(ramets_l_ranova3,
           "Ramets after flowering: 2021",
           "./Growth_trait_analyses/Tables/Ranova/ramets_late_2021.docx")
 
@@ -564,12 +564,14 @@ mortality_ranova1 <- glmer(Dead ~
                              data = survival %>%
                                dplyr::filter(Year == 2019),
                             na.action = na.exclude,
+                             # ,control=glmerControl(optimizer="bobyqa",
+  #                           optCtrl=list(maxfun=2e5)),
                            nAGQ = 0, # doesn't converge w/o this
                              family = binomial)
 
 # performance::check_model(mortality_ranova1)
 
-pb_ranova(mortality_ranova1,
+pb_ranova_2step(mortality_ranova1,
           "Mortality: 2019",
           "./Growth_trait_analyses/Tables/Ranova/mortality_2019.docx")
 
@@ -581,14 +583,14 @@ mortality_ranova2 <- glmer(Dead ~
                              data = survival %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
-                           nAGQ = 0, # doesn't converge w/o this
-                             family = binomial)
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)),                             family = binomial)
 
 # performance::check_model(mortality_ranova2)
 
-pb_ranova(mortality_ranova2,
+pb_ranova_2step(mortality_ranova2,
           "Mortality: 2020",
-          "./Growth_trait_analyses/Tables/Ranova/mortality_2020.docx")
+          "./Growth_trait_analyses/Tables/Ranova/mortality_2020test.docx")
 
 
 # 2021-----
@@ -598,12 +600,13 @@ mortality_ranova3 <- glmer(Dead ~
                                (1|Population:Family),
                              data = survival %>%
                                dplyr::filter(Year == 2021),
+                           nAGQ = 0, # doesn't converge w/o this
                             na.action = na.exclude,
                              family = binomial)
 
 # performance::check_model(mortality_ranova3)
 
-pb_ranova(mortality_ranova3,
+pb_ranova_2step(mortality_ranova3,
           "Mortality: 2021",
           "./Growth_trait_analyses/Tables/Ranova/mortality_2021.docx")
 
@@ -612,241 +615,201 @@ pb_ranova(mortality_ranova3,
 ### Urb subs
 ```{r}
 # Ramets (before flowering)-------
-## test city_dist
-### take out fam
-full <- glmer(Ramets_early ~
-               Block +
-               Year +
-                (1|Population) + City_dist,
-                              data = heights %>%
-                dplyr::filter(Transect_ID != "Rural"),
-                              family = poisson,
-              nAGQ = 0,
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  )
+# 2019-----
+ramets_e_ranova1_pb <- glmer(Ramets_early ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = heights %>%
+                               dplyr::filter(Transect_ID != "Rural" & 
+                                                Year == 2019),
+                            na.action = na.exclude,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)),                              family = poisson)
 
-reduced <- update(full, .~. - City_dist)
+# performance::check_model(ramets_e_ranova1_pb)
 
-
-ramets_e_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
-
-tidy(ramets_e_ranova.pop) # Pop: p ~ 0.102
-
-get_pve(full) # 6.993
+pb_ranova_transects(ramets_e_ranova1_pb,
+          "Ramets before flowering: 2019",
+          "./Growth_trait_analyses/Tables/Ranova/ramets_early_2019_transects.docx")
 
 
 
-### take out pop
-full <- glmer(Ramets_early ~
-                Block + Year +
-                (1|Population/Family) + City_dist,
-                              data = heights %>%
-                dplyr::filter(Transect_ID != "Rural"),                              family = poisson,
-              nAGQ = 0,
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))  )
+# 2020-----
+ramets_e_ranova2_pb <- glmer(Ramets_early ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = heights %>%
+                               dplyr::filter(Transect_ID != "Rural" & 
+                                                Year == 2020),
+                            na.action = na.exclude,
+  control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)),                              family = poisson)
 
-reduced <- update(full, .~. - City_dist)
+# performance::check_model(ramets_e_ranova2_pb)
 
-
-ramets_e_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
-
-tidy(ramets_e_ranova.fam) # Family: p ~ 0.137
-
-get_pve(full) # 18.643
+pb_ranova_transects(ramets_e_ranova2_pb,
+          "Ramets before flowering: 2020",
+          "./Growth_trait_analyses/Tables/Ranova/ramets_early_2020_transects.docx")
 
 
-## test transect
-test_tr <- glmer(Ramets_early ~
-                Block + Year + 
-                (1|Population/Family) + Transect_ID,
-                              data = heights %>%
-                dplyr::filter(Transect_ID != "Rural"),
-                              family = poisson,
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
+# 2021-----
+ramets_e_ranova3_pb <- glmer(Ramets_early ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = heights %>%
+                               dplyr::filter(Transect_ID != "Rural" & 
+                                                Year == 2021),
+                            na.action = na.exclude,
+                            nAGQ = 0,
+                             family = poisson)
 
+# performance::check_model(ramets_e_ranova3_pb)
 
-# merge Pop and Fam ranovas
-## test city_dist
-ramets_e_ranova1 <- CreateRanovaOutput_bootstrap(
-  ramets_e_ranova.fam,
-  ramets_e_ranova.pop,
-  "Ramets, before flowering (Distance)")
-
-## test transect
-ramets_e_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Ramets, before flowering: (Transect)")
-
-flextable::save_as_html(ramets_e_ranova1,
-                        ramets_e_ranova2,
-                        path = here::here("./Growth_trait_analyses/Tables/Ranova/ramets_e_transects.html"))
-
+pb_ranova_transects(ramets_e_ranova3_pb,
+          "Ramets before flowering: 2021",
+          "./Growth_trait_analyses/Tables/Ranova/ramets_early_2021_transects.docx")
 
 
 # Ramets (after flowering)-------
-## test city_dist
-### take out fam- WON'T CONVERGE unless nagq = 0
-full <- glmer(Ramets_late ~
-               Block +
-               Year +
-                (1|Population) + City_dist,
-                              data = heights %>%
-                dplyr::filter(Transect_ID != "Rural"),
-                              family = poisson,
-              nAGQ = 0,
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-    # ,control=glmerControl(optimizer="bobyqa",
-    #                         optCtrl=list(maxfun=2e5))
-)
+# 2019-----
+ramets_l_ranova1_pb <- glmer(Ramets_late ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = heights %>%
+                               dplyr::filter(Transect_ID != "Rural" & 
+                                                Year == 2019),
+                            na.action = na.exclude,
+                            nAGQ = 0,
+                             family = poisson)
 
-reduced <- update(full, .~. - City_dist)
+# performance::check_model(ramets_l_ranova1_pb)
 
-
-ramets_l_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
-
-tidy(ramets_l_ranova.pop) # Pop: p ~ 0.102
-
-get_pve(full) # 2.082
+pb_ranova_transects(ramets_l_ranova1_pb,
+          "Ramets after flowering: 2019",
+          "./Growth_trait_analyses/Tables/Ranova/ramets_late_2019_transects.docx")
 
 
 
-### take out pop
-full <- glmer(Ramets_late ~
-               Block + Year +
-                (1|Population/Family) + City_dist + Transect_ID,
-                              data = heights %>%
-                dplyr::filter(Transect_ID != "Rural"),                              family = poisson,
-              nAGQ = 0,
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))  )
+# 2020-----
+ramets_l_ranova2_pb <- glmer(Ramets_late ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = heights %>%
+                               dplyr::filter(Transect_ID != "Rural" & 
+                                                Year == 2020),
+                            na.action = na.exclude,
+                            nAGQ = 0,
+                             family = poisson)
 
-reduced <- update(full, .~. - City_dist)
+# performance::check_model(ramets_l_ranova2_pb)
 
-ramets_l_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
-
-tidy(ramets_l_ranova.fam) # Family: p ~ 0.0936
-
-get_pve(full) # 8.629
+pb_ranova_transects(ramets_l_ranova2_pb,
+          "Ramets after flowering: 2020",
+          "./Growth_trait_analyses/Tables/Ranova/ramets_late_2020_transects.docx")
 
 
-## test transect
-test_tr <- glmer(Ramets_late ~
-                Block + Year + 
-                (1|Population/Family) + Transect_ID,
-                              data = heights %>%
-                dplyr::filter(Transect_ID != "Rural"),
-                              family = poisson,
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-  )
+# 2021-----
+ramets_l_ranova3_pb <- glmer(Ramets_late ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = heights %>%
+                               dplyr::filter(Transect_ID != "Rural" & 
+                                                Year == 2021),
+                            na.action = na.exclude,
+                            nAGQ = 0,
+                             family = poisson)
+
+# performance::check_model(ramets_l_ranova3_pb)
+
+pb_ranova_transects(ramets_l_ranova3_pb,
+          "Ramets after flowering: 2021",
+          "./Growth_trait_analyses/Tables/Ranova/ramets_late_2021_transects.docx")
 
 
-# merge Pop and Fam ranovas
-## test city_dist
-ramets_l_ranova1 <- CreateRanovaOutput_bootstrap(ramets_l_ranova.fam, ramets_l_ranova.pop, "Ramets, after flowering: (Distance)")
-
-## test transect
-ramets_l_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Ramets, after flowering: (Transect)")
-
-flextable::save_as_html(ramets_l_ranova1,
-                        ramets_l_ranova2,
-                        path = here::here("./Growth_trait_analyses/Tables/Ranova/ramets_l_transects.html"))
 
 # Mortality-------
+# 2019-----
+surv_ranova1_pb <- glmer(Dead ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = survival %>%
+                               dplyr::filter(Transect_ID != "Rural" & 
+                                                Year == 2019),
+                            na.action = na.exclude,
+                            nAGQ = 0,
+                             family = binomial)
 
-## test city_dist
-### take out fam
-full <- glmer(Dead ~
-                 Block +
-                Year +
-                (1|Population) +
-                City_dist,
-              data = survival %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = binomial,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(surv_ranova1_pb)
 
-reduced <- update(full, .~. - City_dist)
-
-surv_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(rep("localhost", 6)))
-
-tidy(surv_ranova.pop) # p = 0.321
-
-get_pve(full) # 7.748
+pb_ranova_transects(surv_ranova1_pb,
+          "Mortality: 2019",
+          "./Growth_trait_analyses/Tables/Ranova/mortality_2019_transects.docx")
 
 
-# take out pop
-full <- glmer(Dead ~
-                 Block +
-                Year +
-                (1|Population/Family) +
-                City_dist,
-              data = survival %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = binomial,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+# 2020-----
+surv_ranova2_pb <- glmer(Dead ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = survival %>%
+                               dplyr::filter(Transect_ID != "Rural" & 
+                                                Year == 2020),
+                            na.action = na.exclude,
+                            nAGQ = 0,
+                             family = binomial)
 
-reduced <- update(full, .~. - City_dist)
+# performance::check_model(surv_ranova2_pb)
 
-surv_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(rep("localhost", 6)))
-
-tidy(surv_ranova.fam) # Family: p ~ 0.149
-
-get_pve(full) # 24.011
+pb_ranova_transects(surv_ranova2_pb,
+          "Mortality: 2020",
+          "./Growth_trait_analyses/Tables/Ranova/mortality_2020_transects.docx")
 
 
+# 2021-----
+surv_ranova3_pb <- glmer(Dead ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = survival %>%
+                               dplyr::filter(Transect_ID != "Rural" & 
+                                                Year == 2021),
+                            na.action = na.exclude,
+                            nAGQ = 0,
+                             family = binomial)
 
-## test transect
-test_tr <-  glmer(Dead ~
-                 Block +
-                Year +
-                (1|Population/Family) +
-                Transect_ID,
-              data = survival %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = binomial,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(surv_ranova3_pb)
+
+pb_ranova_transects(surv_ranova3_pb,
+          "Mortality: 2021",
+          "./Growth_trait_analyses/Tables/Ranova/mortality_2021_transects.docx")
 
 
-# merge Pop and Fam ranovas
-## test City_dist
-surv_ranova1 <- CreateRanovaOutput_bootstrap(
-  surv_ranova.fam,
-  surv_ranova.pop,
-  "Mortality (Distance)")
+# 2022-----
+surv_ranova4_pb <- glmer(Dead ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = survival %>%
+                               dplyr::filter(Transect_ID != "Rural" & 
+                                                Year == 2022),
+                            na.action = na.exclude,
+                            nAGQ = 0,
+                             family = binomial)
 
-## test transect
-surv_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Mortality (Transect)")
+# performance::check_model(surv_ranova4_pb)
 
-flextable::save_as_html(surv_ranova1,
-                        surv_ranova2,
-                        path = here::here("./Growth_trait_analyses/Tables/Ranova/Mortality_transects.html"))
+pb_ranova_transects(surv_ranova4_pb,
+          "Mortality: 2022",
+          "./Growth_trait_analyses/Tables/Ranova/mortality_2022_transects.docx")
+
+
 ```
 
 ## Create figure showing % variance explained per component

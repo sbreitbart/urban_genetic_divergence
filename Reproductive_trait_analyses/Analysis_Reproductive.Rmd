@@ -180,7 +180,7 @@ flsucc_ranova1 <- glmer(Flowered ~
 
 # performance::check_model(flsucc_ranova1)
 
-pb_ranova(flsucc_ranova1,
+pb_ranova_2step(flsucc_ranova1,
           "Flowering success: 2020",
           "./Reproductive_trait_analyses/Tables/Ranova/flowering_success_2020.docx")
 
@@ -191,30 +191,30 @@ flsucc_ranova2 <- glmer(Flowered ~
                                (1|Population:Family),
                              data = reproduc %>%
                                dplyr::filter(Year == 2021),
-                        nAGQ = 0, # won't converge w/o this
+                       nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude,
                              family = binomial)
 
 # performance::check_model(flsucc_ranova2)
 
-pb_ranova(flsucc_ranova2,
+pb_ranova_2step(flsucc_ranova2,
           "Flowering success: 2021",
           "./Reproductive_trait_analyses/Tables/Ranova/flowering_success_2021.docx")
 
-# 2022-----
+# 2022-----STILL TEST
 flsucc_ranova3 <- glmer(Flowered ~
                                Block +
                                (1|Population) +
                                (1|Population:Family),
                              data = reproduc %>%
                                dplyr::filter(Year == 2022),
-                        nAGQ = 0, # won't converge w/o this
+                     #   nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude,
                              family = binomial)
 
 # performance::check_model(flsucc_ranova3)
 
-pb_ranova(flsucc_ranova3,
+pb_ranova_2step(flsucc_ranova3,
           "Flowering success: 2022",
           "./Reproductive_trait_analyses/Tables/Ranova/flowering_success_2022.docx")
 
@@ -232,10 +232,10 @@ flowers_ranova1 <- glmer.nb(total_flower_count ~
 
 # performance::check_model(flowers_ranova1)
 
-pb_ranova(flowers_ranova1,
+pb_ranova_2step(flowers_ranova1,
           "Flower count: 2020",
           "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2020.docx")
-
+STILL TEST
 # 2021-----
 flowers_ranova2 <- glmer.nb(total_flower_count ~
                                Block +
@@ -248,11 +248,11 @@ flowers_ranova2 <- glmer.nb(total_flower_count ~
 
 # performance::check_model(flowers_ranova2)
 
-pb_ranova(flowers_ranova2,
+pb_ranova_2step(flowers_ranova2,
           "Flower count: 2021",
           "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2021.docx")
 
-
+STILL TEST
 # 2022-----
 flowers_ranova3 <- glmer.nb(total_flower_count ~
                                Block +
@@ -265,11 +265,11 @@ flowers_ranova3 <- glmer.nb(total_flower_count ~
 
 # performance::check_model(flowers_ranova3)
 
-pb_ranova(flowers_ranova3,
+pb_ranova_2step(flowers_ranova3,
           "Flower count: 2022",
           "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2022.docx")
 
-
+STILL TEST
 # Flowering time-----
 # 2020-----
 fltime_ranova1 <- glmer.nb(as.numeric(flowering_time) ~
@@ -283,7 +283,7 @@ fltime_ranova1 <- glmer.nb(as.numeric(flowering_time) ~
 
 # performance::check_model(fltime_ranova1)
 
-pb_ranova(fltime_ranova1,
+pb_ranova_2step(fltime_ranova1,
           "Flowering duration: 2020",
           "./Reproductive_trait_analyses/Tables/Ranova/flowertime_2020.docx")
 
@@ -301,7 +301,7 @@ fltime_ranova2 <- glmer.nb(as.numeric(flowering_time) ~
 
 # performance::check_model(fltime_ranova2)
 
-pb_ranova(fltime_ranova2,
+pb_ranova_2step(fltime_ranova2,
           "Flowering duration: 2021",
           "./Reproductive_trait_analyses/Tables/Ranova/flowertime_2021.docx")
 
@@ -320,7 +320,7 @@ fltime_ranova3 <- glmer.nb(as.numeric(flowering_time) ~
 
 # performance::check_model(fltime_ranova3)
 
-pb_ranova(fltime_ranova3,
+pb_ranova_2step(fltime_ranova3,
           "Flowering duration: 2022",
           "./Reproductive_trait_analyses/Tables/Ranova/flowertime_2022.docx")
 
@@ -337,7 +337,7 @@ flstart_ranova1 <- glmer(Julian_oldest_inflor ~
 
 # performance::check_model(flstart_ranova1)
 
-pb_ranova(flstart_ranova1,
+pb_ranova_2step(flstart_ranova1,
           "Flowering start: 2020",
           "./Reproductive_trait_analyses/Tables/Ranova/flowering_start_2020.docx")
 
@@ -353,7 +353,7 @@ flstart_ranova2 <- glmer(Julian_oldest_inflor ~
 
 # performance::check_model(flstart_ranova2)
 
-pb_ranova(flstart_ranova2,
+pb_ranova_2step(flstart_ranova2,
           "Flowering start: 2021",
           "./Reproductive_trait_analyses/Tables/Ranova/flowering_start_2021.docx")
 
@@ -369,7 +369,7 @@ flstart_ranova3 <- glmer(Julian_oldest_inflor ~
 
 # performance::check_model(flstart_ranova3)
 
-pb_ranova(flstart_ranova3,
+pb_ranova_2step(flstart_ranova3,
           "Flowering start: 2022",
           "./Reproductive_trait_analyses/Tables/Ranova/flowering_start_2022.docx")
 
@@ -382,12 +382,11 @@ pods_ranova1 <- glmer.nb(Pods ~
                                (1|Population:Family),
                              data = flowering %>%
                                dplyr::filter(Year == 2020),
-                  #      nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(pods_ranova1)
 
-pb_ranova(pods_ranova1,
+pb_ranova_2step(pods_ranova1,
           "Follicles: 2020",
           "./Reproductive_trait_analyses/Tables/Ranova/pods_2020.docx")
 
@@ -399,12 +398,11 @@ pods_ranova2 <- glmer.nb(Pods ~
                                (1|Population:Family),
                              data = flowering %>%
                                dplyr::filter(Year == 2021),
-                  #      nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(pods_ranova2)
 
-pb_ranova(pods_ranova2,
+pb_ranova_2step(pods_ranova2,
           "Follicles: 2021",
           "./Reproductive_trait_analyses/Tables/Ranova/pods_2021.docx")
 
@@ -420,7 +418,7 @@ pods_ranova3 <- glmer.nb(Pods ~
 
 # performance::check_model(pods_ranova3)
 
-pb_ranova(pods_ranova3,
+pb_ranova_2step(pods_ranova3,
           "Follicles: 2022",
           "./Reproductive_trait_analyses/Tables/Ranova/pods_2022.docx")
 
@@ -438,7 +436,7 @@ firstpod_ranova1 <- glmer(Julian_first_follicle ~
 
 # performance::check_model(firstpod_ranova1)
 
-pb_ranova(firstpod_ranova1,
+pb_ranova_2step(firstpod_ranova1,
           "First follicle: 2020",
           "./Reproductive_trait_analyses/Tables/Ranova/first_pods_2020.docx")
 
@@ -455,7 +453,7 @@ firstpod_ranova2 <- glmer(Julian_first_follicle ~
 
 # performance::check_model(firstpod_ranova2)
 
-pb_ranova(firstpod_ranova2,
+pb_ranova_2step(firstpod_ranova2,
           "First follicle: 2021",
           "./Reproductive_trait_analyses/Tables/Ranova/first_pods_2021.docx")
 
@@ -471,7 +469,7 @@ firstpod_ranova3 <- glmer(Julian_first_follicle ~
 
 # performance::check_model(firstpod_ranova3)
 
-pb_ranova(firstpod_ranova3,
+pb_ranova_2step(firstpod_ranova3,
           "First follicle: 2022",
           "./Reproductive_trait_analyses/Tables/Ranova/first_pods_2022.docx")
 
@@ -487,7 +485,7 @@ peduncles_ranova1 <- glmer.nb(Peduncles ~
 
 # performance::check_model(peduncles_ranova1)
 
-pb_ranova(peduncles_ranova1,
+pb_ranova_2step(peduncles_ranova1,
           "Inflorescences: 2020",
           "./Reproductive_trait_analyses/Tables/Ranova/peduncles_2020.docx")
 
@@ -504,7 +502,7 @@ peduncles_ranova2 <- glmer.nb(Peduncles ~
 
 # performance::check_model(peduncles_ranova2)
 
-pb_ranova(peduncles_ranova2,
+pb_ranova_2step(peduncles_ranova2,
           "Inflorescences: 2021",
           "./Reproductive_trait_analyses/Tables/Ranova/peduncles_2021.docx")
 
@@ -520,7 +518,7 @@ peduncles_ranova3 <- glmer.nb(Peduncles ~
 
 # performance::check_model(peduncles_ranova3)
 
-pb_ranova(peduncles_ranova3,
+pb_ranova_2step(peduncles_ranova3,
           "Inflorescences: 2022",
           "./Reproductive_trait_analyses/Tables/Ranova/peduncles_2022.docx")
 
@@ -964,7 +962,7 @@ full <- glmer(Julian_first_follicle^3 ~
               data = flowering %>%
                 dplyr::filter(Transect_ID != "Rural"),
               family = poisson,
-              nAGQ = 0,
+           #   nAGQ = 0,
             na.action = na.exclude # THIS LINE IS IMPORTANT
     # ,control=glmerControl(optimizer="bobyqa",
     #                         optCtrl=list(maxfun=2e5))

@@ -388,6 +388,7 @@ ranova_transect <- function(lmer_model_without_urb, var_name, filepath){
 }
 
 #### for boostrapping models:
+##### all 4 of these intermediary functions needed for pb_ranova_2step
 CreateRanovaOutput_bootstrap <- function(ranova_fam,
                                          ranova_pop,
                                          var_name ,
@@ -433,18 +434,17 @@ CreateRanovaOutput_bootstrap <- function(ranova_fam,
   return(tab1)
   }
 
-pb_ranova <- function(full_model, trait_name, filepath){
+pb_ranova_1step <- function(full_model_forstep, trait_name){
   
-  # CREATE TABLE 1
-  test_pop <- update(full_model, .~. - (1|Population))
-  test_fam <- update(full_model, .~. - (1|Population:Family))
+  test_pop <- update(full_model_forstep, .~. - (1|Population))
+  test_fam <- update(full_model_forstep, .~. - (1|Population:Family))
   
-  ranova.pop <- PBmodcomp(full_model,
+  ranova.pop <- PBmodcomp(full_model_forstep,
                           test_pop,
                           nsim = 10, 
                           cl = makeCluster(6)) 
   
-  ranova.fam <- PBmodcomp(full_model,
+  ranova.fam <- PBmodcomp(full_model_forstep,
                           test_fam,
                           nsim = 10, 
                           cl = makeCluster(6)) 
@@ -469,94 +469,68 @@ pb_ranova <- function(full_model, trait_name, filepath){
                                          PVE_pop,
                                          PVE_fam)
   
+  return(table1)
+  
+}
+make_tables3_5 <- function(glmer_mod, trait_name){
+  
+  table3_5 <- tidy_anova(glmer_mod) %>%
+    dplyr::rename(Variable = 1) %>%
+    dplyr::mutate(Variable = trait_name) %>%
+    dplyr::select(-Sites) %>%
+    flextable() %>%
+    merge_v(j = "Variable") %>% 
+    flextable::compose(i = 1, j = 3, part = "header",
+                       value = as_paragraph("χ", as_sup("2"))) %>%
+    bold(i = ~ p <= 0.05, j = 4) %>%
+    autofit()
+  
+  return(table3_5)
+}
+
+####### get percent variance explained for bootstrapped models
+####### calculating it as random / random + resid var
+get_pve <- function(full_model){
+  random_var <- as.numeric(insight::get_variance_random(full_model))
+  resid_var <- as.numeric(insight::get_variance_residual(full_model))
+  PVE <- round(
+    (random_var*100 /
+       ( random_var + resid_var)),
+    3)
+  return(PVE)
+}
+
+##### perform ranova for Q1 (all sites included)
+pb_ranova_2step <- function(full_model, trait_name, filepath){
+  
+  # CREATE TABLE 1
+  table1 <- pb_ranova_1step(full_model, trait_name)
   mod_formula1 <- paste(deparse(formula(full_model)), collapse = "") %>%
     unlist()
-  
   
   
   # CREATE TABLE 2
   glmer_model2 <- update(full_model, . ~ . + City_dist)
   
+  table2 <- pb_ranova_1step(glmer_model2, trait_name)
+  
   mod_formula2 <- paste(deparse(formula(glmer_model2)), collapse = "") %>%
     unlist()
   
-  test_pop2 <- update(glmer_model2, .~. - (1|Population))
-  test_fam2 <- update(glmer_model2, .~. - (1|Population:Family))
-  
-  ranova.pop2 <- PBmodcomp(glmer_model2,
-                           test_pop2,
-                           nsim = 10, 
-                           cl = makeCluster(6)) 
-  
-  ranova.fam2 <- PBmodcomp(glmer_model2,
-                           test_fam2,
-                           nsim = 10, 
-                           cl = makeCluster(6)) 
-  
-  PVE_pop2 <- PVE_testing(test_pop2)
-  PVE_fam2 <- PVE_testing(test_fam2)
-  
-  # merge Pop and Fam ranovas
-  table2 <- CreateRanovaOutput_bootstrap(ranova.fam2,
-                                         ranova.pop2,
-                                         trait_name,
-                                         PVE_pop2,
-                                         PVE_fam2)
-  
-  
   # CREATE TABLE 3
-  table3 <- tidy_anova(glmer_model2) %>%
-    dplyr::rename(Variable = 1) %>%
-    dplyr::mutate(Variable = trait_name) %>%
-    dplyr::select(-Sites) %>%
-    flextable() %>%
-    merge_v(j = "Variable") %>% 
-    flextable::compose(i = 1, j = 3, part = "header",
-                       value = as_paragraph("χ", as_sup("2"))) %>%
-    bold(i = ~ p <= 0.05, j = 4) %>%
-    autofit()
-  
+  table3 <- make_tables3_5(glmer_model2, trait_name)
   
   # CREATE TABLE 4
   glmer_model3 <- update(full_model, . ~ . + Urb_score)
   
+  table4 <- pb_ranova_1step(glmer_model3, trait_name)
+  
   mod_formula3 <- paste(deparse(formula(glmer_model3)), collapse = "") %>%
     unlist()
   
-  test_pop3 <- update(glmer_model3, .~. - (1|Population))
-  test_fam3 <- update(glmer_model3, .~. - (1|Population:Family))
-  
-  ranova.pop3 <- PBmodcomp(glmer_model3,
-                           test_pop3,
-                           nsim = 10, 
-                           cl = makeCluster(6)) 
-  
-  ranova.fam3 <- PBmodcomp(glmer_model3,
-                           test_fam3,
-                           nsim = 10, 
-                           cl = makeCluster(6)) 
-  
-  PVE_pop3 <- PVE_testing(test_pop3)
-  PVE_fam3 <- PVE_testing(test_fam3)
-  
-  # merge Pop and Fam ranovas
-  table4 <- CreateRanovaOutput_bootstrap(ranova.fam3,
-                                         ranova.pop3,
-                                         trait_name,
-                                         PVE_pop3,
-                                         PVE_fam3)
-  
+
   # MAKE TABLE 5
-  table5 <- tidy_anova(glmer_model3) %>%
-    dplyr::rename(Variable = 1) %>%
-    dplyr::mutate(Variable = trait_name) %>%
-    dplyr::select(-Sites) %>%
-    flextable() %>%
-    merge_v(j = "Variable") %>% 
-    flextable::compose(i = 1, j = 3, part = "header",
-                       value = as_paragraph("χ", as_sup("2"))) %>%
-    bold(i = ~ p <= 0.05, j = 4) %>%
-    autofit()
+  table5 <- make_tables3_5(glmer_model3, trait_name)
   
   
   # Export
@@ -597,18 +571,62 @@ pb_ranova <- function(full_model, trait_name, filepath){
   print(word_export, here::here(filepath))
 }
 
-
-# get percent variance explained for bootstrapped models
-# calculating it as random / random + resid var
-get_pve <- function(full_model){
-  random_var <- as.numeric(insight::get_variance_random(full_model))
-  resid_var <- as.numeric(insight::get_variance_residual(full_model))
-  PVE <- round(
-    (random_var*100 /
-       ( random_var + resid_var)),
-    3)
-  return(PVE)
+##### perform ranova for Q2 (only urban sites included)
+pb_ranova_transects <- function(glmer_model_without_urb, trait_name, filepath){
+  
+  # CREATE TABLE 1
+  glmer_model2 <- update(glmer_model_without_urb, . ~ . + Transect_ID*City_dist)
+  table2 <- pb_ranova_1step(glmer_model2, trait_name)
+  
+  mod_formula2 <- paste(deparse(formula(glmer_model2)), collapse = "") %>%
+    unlist()
+  
+  # CREATE TABLE 2
+  table3 <- make_tables3_5(glmer_model2, trait_name)
+  
+  # CREATE TABLE 3
+  glmer_model3 <- update(glmer_model_without_urb, . ~ . + Transect_ID*Urb_score)
+  table4 <- pb_ranova_1step(glmer_model3, trait_name)
+  
+  mod_formula3 <- paste(deparse(formula(glmer_model3)), collapse = "") %>%
+    unlist()
+  
+  
+  # MAKE TABLE 4
+  table5 <- make_tables3_5(glmer_model3, trait_name)
+  
+  
+  # Export
+  word_export <- read_docx()
+  
+  body_add_par(word_export, value = "Table 1: Assess how much variance is explained by transect")
+  body_add_par(word_export, value = "Urbanization = Distance to the City Center")
+  body_add_par(word_export, value = paste("Model:", mod_formula2))
+  body_add_flextable(word_export, table2)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 2: Quantify variance explained by transect")
+  body_add_flextable(word_export, table3)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 3: Assess how much variance is explained by transect")
+  body_add_par(word_export, value = "Urbanization = Urbanization Score")
+  body_add_par(word_export, value = paste("Model:", mod_formula3))
+  body_add_flextable(word_export, table4)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 4: Quantify variance explained by transect")
+  body_add_flextable(word_export, table5)
+  
+  print(word_export, here::here(filepath))
 }
+
 
 ############################################################
 ##################### HERITABILITY & QST ###################
