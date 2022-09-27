@@ -209,7 +209,7 @@ ranova_2step(weev_quant_ranova_mod1,
 herb_e_bin_ranova1 <- glmer(Herbivory_mean_early_binary ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = herbivory %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
@@ -227,7 +227,7 @@ pb_ranova_2step(herb_e_bin_ranova1,
 herb_e_bin_ranova2 <- glmer(Herbivory_mean_early_binary ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = herbivory %>%
                                dplyr::filter(Year == 2021),
                  na.action = na.exclude,
@@ -245,7 +245,7 @@ pb_ranova_2step(herb_e_bin_ranova2,
 herb_l_bin_ranova1 <- glmer(Herbivory_mean_late_binary ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = herbivory %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
@@ -263,7 +263,7 @@ pb_ranova_2step(herb_l_bin_ranova1,
 herb_l_bin_ranova2 <- glmer(Herbivory_mean_late_binary ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = herbivory %>%
                                dplyr::filter(Year == 2021),
                             nAGQ = 0,# won't converge w/o this
@@ -285,7 +285,7 @@ pb_ranova_2step(herb_l_bin_ranova2,
 weev_bin_ranova1 <- glmer(Scar_binary ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = weevil %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
@@ -302,7 +302,7 @@ pb_ranova_2step(weev_bin_ranova1,
 weev_bin_ranova2 <- glmer(Scar_binary ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = weevil %>%
                                dplyr::filter(Year == 2021),
                             na.action = na.exclude,
@@ -464,7 +464,7 @@ ranova_transect(weev_quant_ranova_mod2,
 herb_e_bin_ranova1_pb <- glmer(Herbivory_mean_early_binary ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = herbivory %>%
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2020),
@@ -483,7 +483,7 @@ pb_ranova_transects(herb_e_bin_ranova1_pb,
 herb_e_bin_ranova2_pb <- glmer(Herbivory_mean_early_binary ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = herbivory %>%
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2021),
@@ -503,7 +503,7 @@ pb_ranova_transects(herb_e_bin_ranova2_pb,
 herb_l_bin_ranova1_pb <- glmer(Herbivory_mean_late_binary ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = herbivory %>%
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2020),
@@ -522,7 +522,7 @@ pb_ranova_transects(herb_l_bin_ranova1_pb,
 herb_l_bin_ranova2_pb <- glmer(Herbivory_mean_late_binary ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = herbivory %>%
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2021),
@@ -541,7 +541,7 @@ pb_ranova_transects(herb_l_bin_ranova2_pb,
 weev_bin_ranova1_pb <- glmer(Scar_binary ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = weevil %>%
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2020),
@@ -560,7 +560,7 @@ pb_ranova_transects(weev_bin_ranova1_pb,
 weev_bin_ranova2_pb <- glmer(Scar_binary ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = weevil %>%
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2021),

@@ -455,7 +455,7 @@ ranova_transect(heights_l_ranova_mod3,
 ramets_e_ranova1 <- glmer(Ramets_early ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = heights %>%
                                dplyr::filter(Year == 2019),
                             na.action = na.exclude,
@@ -472,7 +472,7 @@ pb_ranova_2step(ramets_e_ranova1,
 ramets_e_ranova2 <- glmer(Ramets_early ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = heights %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
@@ -489,7 +489,7 @@ pb_ranova_2step(ramets_e_ranova2,
 ramets_e_ranova3 <- glmer(Ramets_early ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = heights %>%
                                dplyr::filter(Year == 2021),
                             na.action = na.exclude,
@@ -507,7 +507,7 @@ pb_ranova_2step(ramets_e_ranova3,
 ramets_l_ranova1 <- glmer(Ramets_late ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = heights %>%
                                dplyr::filter(Year == 2019),
                             na.action = na.exclude,
@@ -524,7 +524,7 @@ pb_ranova_2step(ramets_l_ranova1,
 ramets_l_ranova2 <- glmer(Ramets_late ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = heights %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
@@ -541,7 +541,7 @@ pb_ranova_2step(ramets_l_ranova2,
 ramets_l_ranova3 <- glmer(Ramets_late ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = heights %>%
                                dplyr::filter(Year == 2021),
                             na.action = na.exclude,
@@ -560,7 +560,7 @@ pb_ranova_2step(ramets_l_ranova3,
 mortality_ranova1 <- glmer(Dead ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = survival %>%
                                dplyr::filter(Year == 2019),
                             na.action = na.exclude,
@@ -579,7 +579,7 @@ pb_ranova_2step(mortality_ranova1,
 mortality_ranova2 <- glmer(Dead ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = survival %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
@@ -597,7 +597,7 @@ pb_ranova_2step(mortality_ranova2,
 mortality_ranova3 <- glmer(Dead ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = survival %>%
                                dplyr::filter(Year == 2021),
                            nAGQ = 0, # doesn't converge w/o this
@@ -619,7 +619,7 @@ pb_ranova_2step(mortality_ranova3,
 ramets_e_ranova1_pb <- glmer(Ramets_early ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = heights %>%
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2019),
@@ -639,7 +639,7 @@ pb_ranova_transects(ramets_e_ranova1_pb,
 ramets_e_ranova2_pb <- glmer(Ramets_early ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = heights %>%
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2020),
@@ -658,7 +658,7 @@ pb_ranova_transects(ramets_e_ranova2_pb,
 ramets_e_ranova3_pb <- glmer(Ramets_early ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = heights %>%
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2021),
@@ -678,7 +678,7 @@ pb_ranova_transects(ramets_e_ranova3_pb,
 ramets_l_ranova1_pb <- glmer(Ramets_late ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = heights %>%
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2019),
@@ -698,7 +698,7 @@ pb_ranova_transects(ramets_l_ranova1_pb,
 ramets_l_ranova2_pb <- glmer(Ramets_late ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = heights %>%
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2020),
@@ -717,7 +717,7 @@ pb_ranova_transects(ramets_l_ranova2_pb,
 ramets_l_ranova3_pb <- glmer(Ramets_late ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = heights %>%
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2021),
@@ -738,7 +738,7 @@ pb_ranova_transects(ramets_l_ranova3_pb,
 surv_ranova1_pb <- glmer(Dead ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = survival %>%
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2019),
@@ -757,7 +757,7 @@ pb_ranova_transects(surv_ranova1_pb,
 surv_ranova2_pb <- glmer(Dead ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = survival %>%
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2020),
@@ -776,7 +776,7 @@ pb_ranova_transects(surv_ranova2_pb,
 surv_ranova3_pb <- glmer(Dead ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = survival %>%
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2021),
@@ -795,7 +795,7 @@ pb_ranova_transects(surv_ranova3_pb,
 surv_ranova4_pb <- glmer(Dead ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = survival %>%
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2022),

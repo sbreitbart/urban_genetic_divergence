@@ -437,7 +437,7 @@ CreateRanovaOutput_bootstrap <- function(ranova_fam,
 pb_ranova_1step <- function(full_model_forstep, trait_name){
   
   test_pop <- update(full_model_forstep, .~. - (1|Population))
-  test_fam <- update(full_model_forstep, .~. - (1|Population:Family))
+  test_fam <- update(full_model_forstep, .~. - (1|Population:Fam_uniq))
   
   ranova.pop <- PBmodcomp(full_model_forstep,
                           test_pop,

@@ -166,12 +166,14 @@ ranova_transect(flsize_ranova_mod3,
 ## non-gaussian models
 ### Gradient
 ```{r}
+# I think I should disregard some 2020 results b/c so few plants flowered that year
+############################################
 # Flowering success----- 
 # 2020-----
 flsucc_ranova1 <- glmer(Flowered ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = reproduc %>%
                                dplyr::filter(Year == 2020),
                         nAGQ = 0, # won't converge w/o this
@@ -188,7 +190,7 @@ pb_ranova_2step(flsucc_ranova1,
 flsucc_ranova2 <- glmer(Flowered ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = reproduc %>%
                                dplyr::filter(Year == 2021),
                        nAGQ = 0, # won't converge w/o this
@@ -205,7 +207,7 @@ pb_ranova_2step(flsucc_ranova2,
 flsucc_ranova3 <- glmer(Flowered ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = reproduc %>%
                                dplyr::filter(Year == 2022),
                         nAGQ = 0, # won't converge w/o this
@@ -224,7 +226,7 @@ pb_ranova_2step(flsucc_ranova3,
 flowers_ranova1 <- glmer.nb(total_flower_count ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2020),
                         nAGQ = 0, # won't converge w/o this
@@ -240,7 +242,7 @@ pb_ranova_2step(flowers_ranova1,
 flowers_ranova2 <- glmer.nb(total_flower_count ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2021),
                             nAGQ = 0 , # won't converge w/o this
@@ -256,7 +258,7 @@ pb_ranova_2step(flowers_ranova2,
 flowers_ranova3 <- glmer.nb(total_flower_count ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2022),
                         nAGQ = 0, # won't converge w/o this
@@ -269,11 +271,12 @@ pb_ranova_2step(flowers_ranova3,
           "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2022.docx")
 
 # Flowering time-----
+None of these truly converge, even with nagq = 0
 # 2020-----
 fltime_ranova1 <- glmer.nb(as.numeric(flowering_time) ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2020),
                         nAGQ = 0, # won't converge w/o this
@@ -291,7 +294,7 @@ pb_ranova_2step(fltime_ranova1,
 fltime_ranova2 <- glmer.nb(as.numeric(flowering_time) ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2021),
                         nAGQ = 0, # won't converge w/o this
@@ -310,7 +313,7 @@ pb_ranova_2step(fltime_ranova2,
 fltime_ranova3 <- glmer.nb(as.numeric(flowering_time) ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2022),
                         nAGQ = 0, # won't converge w/o this
@@ -327,7 +330,7 @@ pb_ranova_2step(fltime_ranova3,
 flstart_ranova1 <- glmer(Julian_oldest_inflor ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
@@ -343,7 +346,7 @@ pb_ranova_2step(flstart_ranova1,
 flstart_ranova2 <- glmer(Julian_oldest_inflor ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2021),
                             na.action = na.exclude,
@@ -359,7 +362,7 @@ pb_ranova_2step(flstart_ranova2,
 flstart_ranova3 <- glmer(Julian_oldest_inflor ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2022),
                             na.action = na.exclude,
@@ -377,7 +380,7 @@ pb_ranova_2step(flstart_ranova3,
 pods_ranova1 <- glmer.nb(Pods ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude)
@@ -393,7 +396,7 @@ pb_ranova_2step(pods_ranova1,
 pods_ranova2 <- glmer.nb(Pods ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2021),
                             na.action = na.exclude)
@@ -408,7 +411,7 @@ pb_ranova_2step(pods_ranova2,
 pods_ranova3 <- glmer.nb(Pods ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2022),
                         nAGQ = 0, # won't converge w/o this
@@ -426,7 +429,7 @@ pb_ranova_2step(pods_ranova3,
 firstpod_ranova1 <- glmer(Julian_first_follicle ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
@@ -443,7 +446,7 @@ pb_ranova_2step(firstpod_ranova1,
 firstpod_ranova2 <- glmer(Julian_first_follicle ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2021),
                            na.action = na.exclude,
@@ -459,7 +462,7 @@ pb_ranova_2step(firstpod_ranova2,
 firstpod_ranova3 <- glmer(Julian_first_follicle ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2022),
                            na.action = na.exclude,
@@ -476,7 +479,7 @@ pb_ranova_2step(firstpod_ranova3,
 peduncles_ranova1 <- glmer.nb(Peduncles ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude)
@@ -492,7 +495,7 @@ pb_ranova_2step(peduncles_ranova1,
 peduncles_ranova2 <- glmer.nb(Peduncles ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2021),
                              nAGQ = 0, # doesn't converge w/o this
@@ -509,7 +512,7 @@ pb_ranova_2step(peduncles_ranova2,
 peduncles_ranova3 <- glmer.nb(Peduncles ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2022),
                             na.action = na.exclude)
@@ -530,7 +533,7 @@ pb_ranova_2step(peduncles_ranova3,
 flsucc_ranova1 <- glmer(Flowered ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = reproduc %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2020),
@@ -548,7 +551,7 @@ pb_ranova_transects(flsucc_ranova1,
 flsucc_ranova2 <- glmer(Flowered ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = reproduc %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2021),
@@ -566,7 +569,7 @@ pb_ranova_transects(flsucc_ranova2,
 flsucc_ranova3 <- glmer(Flowered ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = reproduc %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2022),
@@ -586,7 +589,7 @@ pb_ranova_transects(flsucc_ranova3,
 flowers_ranova1 <- glmer.nb(total_flower_count ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2020),
@@ -603,7 +606,7 @@ pb_ranova_transects(flowers_ranova1,
 flowers_ranova2 <- glmer.nb(total_flower_count ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2021),
@@ -620,7 +623,7 @@ pb_ranova_transects(flowers_ranova2,
 flowers_ranova3 <- glmer.nb(total_flower_count ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2022),
@@ -639,7 +642,7 @@ pb_ranova_transects(flowers_ranova3,
 fltime_ranova1 <- glmer.nb(as.numeric(flowering_time) ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2020),
@@ -658,7 +661,7 @@ pb_ranova_transects(fltime_ranova1,
 fltime_ranova2 <- glmer.nb(as.numeric(flowering_time) ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2021),
@@ -676,7 +679,7 @@ pb_ranova_transects(fltime_ranova2,
 fltime_ranova3 <- glmer.nb(as.numeric(flowering_time) ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2022),
@@ -695,7 +698,7 @@ pb_ranova_transects(fltime_ranova3,
 flstart_ranova1 <- glmer(Julian_oldest_inflor ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2020),
@@ -714,7 +717,7 @@ pb_ranova_transects(flstart_ranova1,
 flstart_ranova2 <- glmer(Julian_oldest_inflor ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2021),
@@ -732,7 +735,7 @@ pb_ranova_transects(flstart_ranova2,
 flstart_ranova3 <- glmer(Julian_oldest_inflor ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2022),
@@ -753,7 +756,7 @@ pb_ranova_transects(flstart_ranova3,
 pods_ranova1 <- glmer.nb(Pods ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2020),
@@ -770,7 +773,7 @@ pb_ranova_transects(pods_ranova1,
 pods_ranova2 <- glmer.nb(Pods ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2021),
@@ -787,7 +790,7 @@ pb_ranova_transects(pods_ranova2,
 pods_ranova3 <- glmer.nb(Pods ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2022),
@@ -811,7 +814,7 @@ pb_ranova_transects(pods_ranova3,
 firstpod_ranova2 <- glmer(Julian_first_follicle^3 ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                     dplyr::filter(is.na(Julian_first_follicle) == F &
                                     Transect_ID != "Rural" &
@@ -831,7 +834,7 @@ pb_ranova_transects(firstpod_ranova2,
 firstpod_ranova3 <- glmer(Julian_first_follicle^3 ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                     dplyr::filter(is.na(Julian_first_follicle) == F &
                                                Transect_ID != "Rural" &
@@ -852,7 +855,7 @@ pb_ranova_transects(firstpod_ranova3,
 peduncles_ranova1 <- glmer.nb(Peduncles ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2020),
@@ -865,11 +868,12 @@ pb_ranova_transects(peduncles_ranova1,
           "Peduncles: 2020",
           "./Reproductive_trait_analyses/Tables/Ranova/peduncles_2020_transects.docx")
 
+
 # 2021-----
 peduncles_ranova2 <- glmer.nb(Peduncles ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2021), 
@@ -886,7 +890,7 @@ pb_ranova_transects(peduncles_ranova2,
 peduncles_ranova3 <- glmer.nb(Peduncles ~
                                Block +
                                (1|Population) +
-                               (1|Population:Family),
+                               (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2022),
