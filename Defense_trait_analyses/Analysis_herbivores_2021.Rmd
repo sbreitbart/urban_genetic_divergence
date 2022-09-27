@@ -151,432 +151,243 @@ clivicollis_mods_alt_u <- clivicollis_mods[5]
 ```
 
 # Ranova
+## Set seed
+```{r}
+set.seed(45)
+```
+
 ## Gradient / City_dist
-### Generalized LMM use bootstrapping with pbmodcomp()
+### non-Gaussian models
 #### Monarchs
 ```{r}
-# NOT PERFECT b/c can't nest family within pop
-# Ben Bolker says it should work too: https://stackoverflow.com/questions/69842066/testing-for-the-significance-of-a-random-effect-in-a-mixed-model
-# https://github.com/glmmTMB/glmmTMB/issues/456
+# 2020-----
+monarch_ranova1 <- glmer.nb(Monarch_Quantity_Observed ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                             data = herbivores %>%
+                              dplyr::filter(Year == 2020),
+                              nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude)
 
-# take out fam
-# test city_dist
-full <- glmer.nb(Monarch_Quantity_Observed ~
-                                Block +
-                                (1|Population) +
-                              Year +
-                               Sample +
-                                City_dist,
-              data = herbivores,
-             
-              nAGQ = 0,
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  # ,control=lmerControl(optimizer="bobyqa",
-  #                           optCtrl=list(maxfun=2e5))
-  )
+# performance::check_model(monarch_ranova1)
 
-reduced <- update(full, .~. - City_dist)
+pb_ranova_2step(monarch_ranova1,
+          "Monarch butterfly: 2020",
+          "./Defense_trait_analyses/Tables/Ranova/Monarch_2020.docx")
 
-monarch_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(rep("localhost", 6)))
+# 2021-----
+monarch_ranova2 <- glmer.nb(Monarch_Quantity_Observed ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                             data = herbivores %>%
+                              dplyr::filter(Year == 2021),
+                              nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude)
 
-tidy(monarch_ranova.pop) # Pop: p = 0.443
+# performance::check_model(monarch_ranova2)
 
-# variance
-get_pve(monarch_ranova.pop) # 0.508
-
-
-
-# take out pop
-full <- glmer.nb(Monarch_Quantity_Observed ~
-                Block +
-                 Year +
-                (1|Population/Family) +
-                Sample +
-                City_dist,
-              data = herbivores,
-              nAGQ = 0,
-             
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  )
-
-reduced <- update(full, .~. - City_dist)
-
-monarch_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
-
-tidy(monarch_ranova.fam) # Fam: p ~ 1
-
-# variance
-get_pve(monarch_ranova.fam) # NA bc singular
-
-
-
-# merge Pop and Fam ranovas
-monarch_ranova1 <- CreateRanovaOutput_bootstrap(monarch_ranova.fam, monarch_ranova.pop, "Monarch butterfly") %T>%
-  flextable::save_as_html(path = here::here("./Defense_trait_analyses/Tables/Ranova/Monarch.html"))
+pb_ranova_2step(monarch_ranova2,
+          "Monarch butterfly: 2021",
+          "./Defense_trait_analyses/Tables/Ranova/Monarch_2021.docx")
 ```
 
 
 #### L. asclepiadis
 ```{r}
-# test city_dist
-# test pop
-full <- glmer.nb(Liriomyza_asclepiadis ~
-                                Block +
-                                (1|Population) +
-                                 Year +
-                                Sample +
-                                City_dist,
-              data = herbivores,
-              nAGQ = 0,
-             
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  # ,control=glmerControl(optimizer="bobyqa",
-  #                           optCtrl=list(maxfun=2e5))
-  )
+# 2020-----
+asclepiadis_ranova1 <- glmer.nb(Liriomyza_asclepiadis ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                             data = herbivores %>%
+                              dplyr::filter(Year == 2020),
+                              nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude)
 
-reduced <- update(full, .~. - City_dist)
+# performance::check_model(asclepiadis_ranova1)
 
-asclepiadis_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
-tidy(asclepiadis_ranova.pop) #  p ~ 0.894
-
-# variance
-get_pve(asclepiadis_ranova.pop) # 4.602
+pb_ranova_2step(asclepiadis_ranova1,
+          "Liriomyza asclepiadis: 2020",
+          "./Defense_trait_analyses/Tables/Ranova/asclepiadis_2020.docx")
 
 
+# 2021-----
+asclepiadis_ranova2 <- glmer.nb(Liriomyza_asclepiadis ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                             data = herbivores %>%
+                              dplyr::filter(Year == 2021),
+                              nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude)
 
+# performance::check_model(asclepiadis_ranova2)
 
-# test fam
-full <- glmer.nb(Liriomyza_asclepiadis ~
-                 Block +
-                 Year +
-                (1|Population/Family) +
-                 Sample +
-                City_dist,
-              data = herbivores,
-             
-              nAGQ = 0,
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ) 
-
-reduced <- update(full, .~. - City_dist)
-
-asclepiadis_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
-tidy(asclepiadis_ranova.fam) # Fam: p ~ 0.674
-
-# variance
-get_pve(asclepiadis_ranova.fam) # 11.37
-
-
-# merge Pop and Fam ranovas
-asclepiadis_ranova1 <- CreateRanovaOutput_bootstrap(asclepiadis_ranova.fam, asclepiadis_ranova.pop, "Liriomyza asclepiadis") %T>%
-  flextable::save_as_html(path = here::here("./Defense_trait_analyses/Tables/Ranova/asclepiadis.html"))
+pb_ranova_2step(asclepiadis_ranova2,
+          "Liriomyza asclepiadis: 2021",
+          "./Defense_trait_analyses/Tables/Ranova/asclepiadis_2021.docx")
 ```
 
 
 #### L. clivicollis
 ```{r}
-# test city_dist
-# test pop
-full <- glmer.nb(Labidomera_clivicollis ~
-                                Block +
-                                (1|Population) +
-                                Year +
-                                Sample +
-                                City_dist,
-              data = herbivores %>%
-                dplyr::filter(Labidomera_clivicollis < 9),
-             
-              nAGQ = 0,
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  # ,control=glmerControl(optimizer="bobyqa",
-  #                           optCtrl=list(maxfun=2e5))
-  )
+# 2020-----
+clivicoll_ranova1 <- glmer.nb(Labidomera_clivicollis ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                             data = herbivores %>%
+                dplyr::filter(Labidomera_clivicollis < 9 &
+                                Year == 2020),
+                              nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude)
 
-reduced <- update(full, .~. - City_dist)
+# performance::check_model(clivicoll_ranova1)
 
-clivicollis_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
-
-tidy(clivicollis_ranova.pop) #  p ~ 1
-
-# variance
-get_pve(clivicollis_ranova.pop) # NA bc singular
+pb_ranova_2step(clivicoll_ranova1,
+          "Labidomera clivicollis: 2020",
+          "./Defense_trait_analyses/Tables/Ranova/clivicollis_2020.docx")
 
 
+# 2021-----
+clivicoll_ranova2 <- glmer.nb(Labidomera_clivicollis ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                             data = herbivores %>%
+                dplyr::filter(Year == 2021),
+                              nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude)
 
+# performance::check_model(clivicoll_ranova2)
 
-# test fam
-full <- glmer.nb(Labidomera_clivicollis ~
-               Block +
-              Year +
-                (1|Population/Family) +
-                Sample +
-                City_dist,
-              data = herbivores %>%
-                dplyr::filter(Labidomera_clivicollis < 9),
-             
-              nAGQ = 0,
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ) 
+pb_ranova_2step(clivicoll_ranova2,
+          "Labidomera clivicollis: 2021",
+          "./Defense_trait_analyses/Tables/Ranova/clivicollis_2021.docx")
 
-reduced <- update(full, .~. - City_dist)
-
-clivicollis_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
-
-tidy(clivicollis_ranova.fam) # Fam: p ~ 0.664
-
-# variance
-get_pve(clivicollis_ranova.fam) # NA bc singular
-
-
-
-# merge Pop and Fam ranovas
-clivicollis_ranova1 <- CreateRanovaOutput_bootstrap(clivicollis_ranova.fam, clivicollis_ranova.pop, "Labidomera clivicollis") %T>%
-  flextable::save_as_html(path = here::here("./Defense_trait_analyses/Tables/Ranova/clivicollis.html"))
 ```
 
 
 ## Urban Subtransects / City_dist
-### Generalized LMM use bootstrapping with pbmodcomp()
+### non-Gaussian models
 #### Monarchs
 ```{r}
-## test city_dist-----
-### take out fam
-full <- glmer.nb(Monarch_Quantity_Observed ~
-                Block +
-                Year +
-                (1|Population) +
-                City_dist,
-                              data = herbivores %>%
-                dplyr::filter(Transect_ID != "Rural"),
-             
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  # ,control=glmerControl(optimizer="bobyqa",
-  #                           optCtrl=list(maxfun=2e5))
-  )
+# 2020-----
+monarchs_ranova1_pb <- glmer.nb(Monarch_Quantity_Observed ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                               data = herbivores %>%
+                dplyr::filter(Transect_ID != "Rural" &
+                                Year == 2020),
+                            na.action = na.exclude,
+                            nAGQ = 0) # won't converge w/o this)
 
-reduced <- update(full, .~. - City_dist)
+# performance::check_model(monarchs_ranova1_pb)
 
-monarch_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
-
-tidy(monarch_ranova.pop) # Pop: p ~ 0.0305
-
-# variance
-get_pve(monarch_ranova.pop) # NA bc singular
+pb_ranova_transects(monarchs_ranova1_pb,
+          "Monarch butterfly: 2020",
+          "./Defense_trait_analyses/Tables/Ranova/monarch_2020_transects.docx")
 
 
+# 2021-----
+monarchs_ranova2_pb <- glmer.nb(Monarch_Quantity_Observed ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                               data = herbivores %>%
+                dplyr::filter(Transect_ID != "Rural" &
+                                Year == 2021),
+                            na.action = na.exclude,
+                            nAGQ = 0) # won't converge w/o this)
 
+# performance::check_model(monarchs_ranova2_pb)
 
-### test fam
-full <- glmer.nb(Monarch_Quantity_Observed ~
-                Block +
-                Year + 
-                (1|Population/Family) +
-                City_dist,
-              data = herbivores %>%
-                dplyr::filter(Transect_ID != "Rural"),
-             
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  # ,control=glmerControl(optimizer="bobyqa",
-  #                           optCtrl=list(maxfun=2e5))
-  )
+pb_ranova_transects(monarchs_ranova2_pb,
+          "Monarch butterfly: 2021",
+          "./Defense_trait_analyses/Tables/Ranova/monarch_2021_transects.docx")
 
-reduced <- update(full, .~. - City_dist)
-
-
-monarch_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
-
-tidy(monarch_ranova.fam) # Family: p ~ 0.0305
-
-# variance
-get_pve(monarch_ranova.fam) # singular so can't compute
-
-
-## test transect-----
-test_tr <- glmer.nb(Monarch_Quantity_Observed ~
-                 Block + Year + Sample +
-                (1|Population/Family) + Transect_ID,
-                              data = herbivores %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = nbinom2,
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  # ,control=glmerControl(optimizer="bobyqa",
-  #                           optCtrl=list(maxfun=2e5))
-  )
-
-
-# merge Pop and Fam ranovas-----
-## test city_dist
-monarch_ranova1 <- CreateRanovaOutput_bootstrap(monarch_ranova.fam, monarch_ranova.pop, "Monarch butterfly (Distance)")
-
-## test transect
-monarch_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Monarch butterfly (Transect)")
-
-flextable::save_as_html(monarch_ranova1,
-                        monarch_ranova2,
-                        path = here::here("./Defense_trait_analyses/Tables/Ranova/monarch_transects.html"))
 ```
 
 #### L. asclepiadis
 ```{r}
-## test city_dist-----
-### take out fam
-full <- glmer.nb(Liriomyza_asclepiadis ~
-                Block + Year + Sample +
-                (1|Population) + City_dist,
-                              data = herbivores %>%
-                dplyr::filter(Transect_ID != "Rural"),
-             
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  ) 
+# 2020-----
+asclepiadis_ranova1_pb <- glmer.nb(Liriomyza_asclepiadis ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                               data = herbivores %>%
+                dplyr::filter(Transect_ID != "Rural" &
+                                Year == 2020),
+                            na.action = na.exclude,
+                            nAGQ = 0) # won't converge w/o this)
 
-reduced <- update(full, .~. - City_dist)
+# performance::check_model(asclepiadis_ranova1_pb)
 
-asclepiadis_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
-
-tidy(asclepiadis_ranova.pop) # Pop: p ~ 0.858
-
-# variance
-get_pve(asclepiadis_ranova.pop) # 5.948
+pb_ranova_transects(asclepiadis_ranova1_pb,
+          "Liriomyza asclepiadis: 2020",
+          "./Defense_trait_analyses/Tables/Ranova/asclepiadis_2020_transects.docx")
 
 
-### take out pop
-full <- glmer.nb(Liriomyza_asclepiadis ~
-                 Block + Year + Sample +
-                (1|Population/Family) + City_dist,
-                              data = herbivores %>%
-                dplyr::filter(Transect_ID != "Rural"),
-             nAGQ=0,
-             na.action = na.exclude,# THIS LINE IS IMPORTANT
-              control=glmerControl(optimizer="bobyqa",                          optCtrl=list(maxfun=2e5)) 
-  )
+# 2021-----
+asclepiadis_ranova2_pb <- glmer.nb(Liriomyza_asclepiadis ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                               data = herbivores %>%
+                dplyr::filter(Transect_ID != "Rural" &
+                                Year == 2021),
+                            na.action = na.exclude,
+                            nAGQ = 0) # won't converge w/o this)
 
-reduced <- update(full, .~., -City_dist)
+# performance::check_model(asclepiadis_ranova2_pb)
 
-asclepiadis_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
+pb_ranova_transects(asclepiadis_ranova2_pb,
+          "Liriomyza asclepiadis: 2021",
+          "./Defense_trait_analyses/Tables/Ranova/asclepiadis_2021_transects.docx")
 
-tidy(asclepiadis_ranova.fam) # Family: p ~ 1
-
-# variance
-get_pve(asclepiadis_ranova.fam) # 14.491
-
-
-
-## test transect-----
-test_tr <- glmer.nb(Liriomyza_asclepiadis ~
-                 Block + Year + Sample +
-                (1|Population/Family) + Transect_ID,
-                              data = herbivores %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = nbinom2,
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  )
-
-
-# merge Pop and Fam ranovas-----
-## test city_dist
-asclepiadis_ranova1 <- CreateRanovaOutput_bootstrap(asclepiadis_ranova.fam, asclepiadis_ranova.pop, "Liriomyza asclepiadis (Distance)")
-
-## test transect
-asclepiadis_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Liriomyza asclepiadis (Transect)")
-
-flextable::save_as_html(asclepiadis_ranova1,
-                        asclepiadis_ranova2,
-                        path = here::here("./Defense_trait_analyses/Tables/Ranova/asclepiadis_transects.html"))
 ```
 
 #### L. clivicollis
 ```{r}
-## test city_dist-----
-### take out fam
-full <- glmer.nb(Labidomera_clivicollis ~
-                Block +  Year + Sample +
-                (1|Population) + City_dist,
-                              data = herbivores %>%
-                dplyr::filter(Transect_ID != "Rural"),
-             
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  )
 
-reduced <- update(full, .~. - City_dist)
+# 2020-----
+clivicollis_ranova1_pb <- glmer.nb(Labidomera_clivicollis ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                               data = herbivores %>%
+                dplyr::filter(Transect_ID != "Rural" &
+                                Year == 2020),
+                            na.action = na.exclude,
+                            nAGQ = 0) # won't converge w/o this)
 
-clivicollis_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
+# performance::check_model(clivicollis_ranova1_pb)
 
-tidy(clivicollis_ranova.pop) # Pop: p ~ 0.0166
-
-# variance
-get_pve(clivicollis_ranova.pop) # NA bc singular
+pb_ranova_transects(clivicollis_ranova1_pb,
+          "Labidomera clivicollis: 2020",
+          "./Defense_trait_analyses/Tables/Ranova/clivicollis_2020_transects.docx")
 
 
-### test fam
-full <- glmer.nb(Labidomera_clivicollis ~
-                Block + 
-                  Year + 
-               #   Sample +
-               #   if I don't remove a fixed effect, the p-value is 0, which doesn't make sense
-                (1|Population/Family) + City_dist,
-                              data = herbivores %>%
-                dplyr::filter(Transect_ID != "Rural"),
-             nAGQ=0,
-             na.action = na.exclude
-             ,control=glmerControl(optimizer="bobyqa",                          optCtrl=list(maxfun=2e5))
-  )
+# 2021-----
+clivicollis_ranova2_pb <- glmer.nb(Labidomera_clivicollis ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                               data = herbivores %>%
+                dplyr::filter(Transect_ID != "Rural" &
+                                Year == 2021),
+                            na.action = na.exclude,
+                            nAGQ = 0) # won't converge w/o this)
 
-reduced <- update(full, .~., -City_dist)
+# performance::check_model(clivicollis_ranova2_pb)
 
-clivicollis_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 1000,
-          cl = makeCluster(6))
+pb_ranova_transects(clivicollis_ranova2_pb,
+          "Labidomera clivicollis: 2021",
+          "./Defense_trait_analyses/Tables/Ranova/clivicollis_2021_transects.docx")
 
-tidy(clivicollis_ranova.fam) # Family: p ~ 1
-
-# variance
-get_pve(clivicollis_ranova.fam) # can't compute- is singular
-
-
-## test transect-----
-test_tr <- glmer.nb(Labidomera_clivicollis ~
-                Block + Year + Sample +
-                (1|Population/Family) + Transect_ID,
-                              data = herbivores %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = nbinom2,
-              nAGQ=0,
-             na.action = na.exclude # THIS LINE IS IMPORTANT
-  )
-
-
-# merge Pop and Fam ranovas-----
-## test city_dist
-clivicollis_ranova1 <- CreateRanovaOutput_bootstrap(clivicollis_ranova.fam, clivicollis_ranova.pop, "Labidomera clivicollis (Distance)")
-
-## test transect
-clivicollis_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Labidomera clivicollis (Transect)")
-
-flextable::save_as_html(clivicollis_ranova1,
-                        clivicollis_ranova2,
-                        path = here::here("./Defense_trait_analyses/Tables/Ranova/clivicollis_transects.html"))
 ```
 
 # ANOVA
