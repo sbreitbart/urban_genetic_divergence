@@ -309,22 +309,20 @@ herbiv_e_gr_dist_m1_quant <- glmmTMB(log(Herbivory_mean_early) ~
 #                        family = binomial,
 #                               REML = F)
 # 
-# test_gxe(herbiv_e_gr_dist_m1_quant, gxetest_herbiv_e_bin1) # gxe model better but anova produces qualitatively identical results
-# car::Anova(herbiv_e_gr_dist_m1_quant, type = "III")
-# car::Anova(gxetest_herbiv_e_bin1, type = "III")
+# test_gxe(herbiv_e_gr_dist_m1_bin, gxetest_herbiv_e_bin1) # reg model better 
 
 
 ## quant
 # gxetest_herbiv_e_quant1 <- glmmTMB(log(Herbivory_mean_early) ~
 #                                Block*City_dist +
-#                             #   Year + 
-#                                (1|Population/Family) 
+#                          #      Year +
+#                                (1|Population/Family)
 #                                 ,
 #                               data = herbivory %>%
 #                         dplyr::filter(
 #                           Herbivory_mean_early_binary == 1),
-#                               REML = F) 
-# test_gxe(herbiv_e_gr_dist_m1_bin, gxetest_herbiv_e_quant1) # gxe mod won't converge, so I took out year from that mod and regular quant mod and see that reg mod better than gxe mod
+#                                REML = F) 
+#  test_gxe(herbiv_e_gr_dist_m1_quant, gxetest_herbiv_e_quant1) # gxe mod won't converge, so I took out year from that mod and regular quant mod and see that reg mod better than gxe mod
 
 ```
 
@@ -359,6 +357,33 @@ herbiv_e_gr_usc_m1_quant <- glmmTMB(log(Herbivory_mean_early) ~
 # plot(DHARMa::simulateResiduals(herbiv_e_gr_usc_m1_quant)) # looks great
 # performance::check_model(herbiv_e_gr_usc_m1_quant) # looks great
 # car::Anova(herbiv_e_gr_usc_m1_quant)
+
+
+# test for gxe intxns
+## binary
+# gxetest_herbiv_e_bin2 <- glmmTMB(Herbivory_mean_early_binary ~
+#                                Block*Urb_score +
+#                                Year +
+#                                (1|Population/Family),
+#                               data = herbivory,
+#                        family = binomial,
+#                               REML = F)
+# 
+# test_gxe(herbiv_e_gr_usc_m1_bin, gxetest_herbiv_e_bin2) # reg mod best 
+
+
+## quant
+# gxetest_herbiv_e_quant2 <- glmmTMB(log(Herbivory_mean_early) ~
+#                                Block*Urb_score +
+#                                Year +
+#                                (1|Population/Family)
+#                                 ,
+#                               data = herbivory %>%
+#                         dplyr::filter(
+#                           Herbivory_mean_early_binary == 1),
+#                               REML = F)
+# 
+# test_gxe(herbiv_e_gr_usc_m1_quant, gxetest_herbiv_e_quant2) # reg mod best
 ```
 
 ### Urban Subtransects
@@ -426,6 +451,35 @@ herbiv_e_urbsubs_dist_m2_quant <- glmmTMB(log(Herbivory_mean_early) ~
 # plot(DHARMa::simulateResiduals(herbiv_e_urbsubs_dist_m2_quant)) # looks great
 # 
 # AIC(herbiv_e_urbsubs_dist_m1_quant, herbiv_e_urbsubs_dist_m2_quant) # m1 better but <2 AIC apart
+
+
+
+# test for gxe intxns
+## binary
+# gxetest_herbiv_e_bin3 <- glmmTMB(Herbivory_mean_early_binary ~
+#                                Block*City_dist +
+#                                Year +
+#                                (1|Population/Family) +
+#                                City_dist * Transect_ID,
+#                               data = herbivory %>%
+#                               dplyr::filter(Transect_ID != "Rural"),
+#                        family = binomial,
+#                               REML = F)
+# 
+# test_gxe(herbiv_e_urbsubs_dist_m1_bin, gxetest_herbiv_e_bin3) # reg model better
+
+
+## quant
+# gxetest_herbiv_e_quant3 <- glmmTMB(log(Herbivory_mean_early) ~
+#                                Block*City_dist +
+#                                Year +
+#                                (1|Population/Family) +
+#                                City_dist * Transect_ID,
+#                               data = herbivory %>%
+#                         dplyr::filter(
+#                           Herbivory_mean_early_binary == 1 & Transect_ID != "Rural"),
+#                                REML = F)
+# test_gxe(herbiv_e_urbsubs_dist_m1_quant, gxetest_herbiv_e_quant3) # reg mod best
 ```
 
 #### Urb_score
@@ -490,6 +544,35 @@ herbiv_e_urbsubs_usc_m2_quant <- glmmTMB(log(Herbivory_mean_early) ~
 
 # plot(DHARMa::simulateResiduals(herbiv_e_urbsubs_usc_m2_quant)) # looks great
 # AIC(herbiv_e_urbsubs_usc_m1_quant, herbiv_e_urbsubs_usc_m2_quant) # m1 better but <2 AIC apart
+
+
+
+# test for gxe intxns
+## binary
+# gxetest_herbiv_e_bin4 <- glmmTMB(Herbivory_mean_early_binary ~
+#                                Block*Urb_score +
+#                                Year +
+#                                (1|Population/Family) +
+#                                Urb_score * Transect_ID,
+#                               data = herbivory %>%
+#                               dplyr::filter(Transect_ID != "Rural"),
+#                        family = binomial,
+#                               REML = F)
+# 
+# test_gxe(herbiv_e_urbsubs_usc_m1_bin, gxetest_herbiv_e_bin4) # reg model best
+
+
+## quant
+# gxetest_herbiv_e_quant4 <- glmmTMB(log(Herbivory_mean_early) ~
+#                                Block*Urb_score +
+#                                Year +
+#                                (1|Population/Family) +
+#                                City_dist * Transect_ID,
+#                               data = herbivory %>%
+#                         dplyr::filter(
+#                           Herbivory_mean_early_binary == 1 & Transect_ID != "Rural"),
+#                                REML = F)
+# test_gxe(herbiv_e_urbsubs_usc_m1_quant, gxetest_herbiv_e_quant4) # reg mod best
 ```
 
 ## Herbivory: After flowering

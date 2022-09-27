@@ -546,8 +546,10 @@ weev_bin_ranova1_pb <- glmer(Scar_binary ~
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2020),
                             na.action = na.exclude,
-                             family = binomial ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5)))
+                             family = binomial,
+                      control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5))
+                      )
 
 # performance::check_model(weev_bin_ranova1_pb)
 
