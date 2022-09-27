@@ -939,6 +939,32 @@ weev_gr_dist_m1_quant <- glmmTMB(log(Scar_length_cm) ~
 # performance::check_model(weev_gr_dist_m1_quant)
 # plot(DHARMa::simulateResiduals(weev_gr_dist_m1_quant)) # looks great
 # weev_gr_dist_m1_quant %>% car::Anova()
+
+
+# test for gxe intxns
+## binary
+# gxetest_weev_bin1 <- glmmTMB(Scar_binary ~
+#                                Block*City_dist +
+#                                Year +
+#                                (1|Population/Family),
+#                               data = weevil,
+#                               family = "binomial"(link = "logit"),
+#                               REML = F)
+# 
+# test_gxe(weev_gr_dist_m1_bin, gxetest_weev_bin1) # reg model better
+# 
+# 
+# ## quant
+# gxetest_weev_quant1 <- glmmTMB(log(Scar_length_cm) ~
+#                                Block*City_dist +
+#                                Year +
+#                                (1|Population/Family)
+#                                 ,
+#                               data = weevil %>%
+#                                 dplyr::filter(Scar_length_cm > 0),
+#                                REML = F)
+# test_gxe(weev_gr_dist_m1_quant, gxetest_weev_quant1) # reg mod best
+
 ```
 
 #### Urb_score
@@ -970,6 +996,30 @@ weev_gr_usc_m1_quant <- glmmTMB(log(Scar_length_cm) ~
 # plot(DHARMa::simulateResiduals(weev_gr_usc_m1_quant))
 # weev_gr_usc_m1_quant %>% car::Anova()
 
+
+# test for gxe intxns
+## binary
+# gxetest_weev_bin2 <- glmmTMB(Scar_binary ~
+#                                Block*Urb_score +
+#                                Year +
+#                                (1|Population/Family),
+#                               data = weevil,
+#                               family = "binomial"(link = "logit"),
+#                               REML = F)
+# 
+# test_gxe(weev_gr_usc_m1_bin, gxetest_weev_bin2) # reg model better
+# 
+# 
+# ## quant
+# gxetest_weev_quant2 <- glmmTMB(log(Scar_length_cm) ~
+#                                Block*Urb_score +
+#                                Year +
+#                                (1|Population/Family)
+#                                 ,
+#                               data = weevil %>%
+#                                 dplyr::filter(Scar_length_cm > 0),
+#                                REML = F)
+# test_gxe(weev_gr_usc_m1_quant, gxetest_weev_quant2) # reg mod best
 ```
 
 ### Urban Subtransects
@@ -1035,6 +1085,34 @@ weev_urbsubs_dist_m2_quant <- glmmTMB(log(Scar_length_cm) ~
 # performance::check_model(weev_urbsubs_dist_m2_quant)
 # plot(DHARMa::simulateResiduals(weev_urbsubs_dist_m2_quant)) 
 # AIC(weev_urbsubs_dist_m1_quant, weev_urbsubs_dist_m2_quant) # m2 best but <2 AIC away
+
+
+# test for gxe intxns
+## binary
+# gxetest_weev_bin3 <- glmmTMB(Scar_binary ~
+#                                Block*City_dist +
+#                                Year +
+#                                (1|Population/Family) +
+#                                City_dist * Transect_ID,
+#                               data = weevil %>%
+#                               dplyr::filter(Transect_ID != "Rural"),
+#                        family = binomial,
+#                               REML = F)
+# 
+# test_gxe(weev_urbsubs_dist_m1_bin, gxetest_weev_bin3) # reg model better
+# 
+# 
+# ## quant
+# gxetest_weev_quant3 <- glmmTMB(log(Scar_length_cm) ~
+#                                Block*City_dist +
+#                                Year +
+#                                (1|Population/Family) +
+#                                City_dist * Transect_ID,
+#                               data = weevil %>%
+#                         dplyr::filter(
+#                           Scar_length_cm > 0 & Transect_ID != "Rural"),
+#                                REML = F)
+# test_gxe(weev_urbsubs_dist_m1_quant, gxetest_weev_quant3) # reg mod best
 ```
 
 #### Urb_score
@@ -1099,6 +1177,35 @@ weev_urbsubs_usc_m2_quant <- glmmTMB(log(Scar_length_cm) ~
 # plot(DHARMa::simulateResiduals(weev_urbsubs_usc_m2_quant))
 # AIC(weev_urbsubs_usc_m1_quant, weev_urbsubs_usc_m2_quant) # m2 best but <2 AIC away
 
+
+# test for gxe intxns
+## binary
+# gxetest_weev_bin4 <- glmmTMB(Scar_binary ~
+#                                Block*Urb_score +
+#                                Year +
+#                                (1|Population/Family) +
+#                                Urb_score * Transect_ID,
+#                               data = weevil %>%
+#                               dplyr::filter(Transect_ID != "Rural"),
+#                        family = binomial,
+#                               REML = F)
+# 
+# test_gxe(weev_urbsubs_usc_m1_bin, gxetest_weev_bin4) # reg model better
+# 
+# 
+# ## quant
+# gxetest_weev_quant4 <- glmmTMB(log(Scar_length_cm) ~
+#                                Block*Urb_score +
+#                                Year +
+#                                (1|Population/Family) +
+#                                Urb_score * Transect_ID,
+#                               data = weevil %>%
+#                         dplyr::filter(
+#                           Scar_length_cm > 0 & Transect_ID != "Rural"),
+#                                REML = F)
+# test_gxe(weev_urbsubs_usc_m1_quant, gxetest_weev_quant4) # statistically equivalent
+# car::Anova(weev_urbsubs_usc_m1_quant, type = "III")
+# car::Anova(gxetest_weev_quant4, type = "III") # this has marg sig effect of block:urb_score at p = 0.0554; otherwise identical
 ```
 
 # Models for use in analysis
