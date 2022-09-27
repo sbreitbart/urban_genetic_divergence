@@ -48,6 +48,17 @@ flsucc_gr_city1 <- glmmTMB(Flowered ~
 
 
 # plot(DHARMa::simulateResiduals(flsucc_gr_city1))
+
+
+# # test for gxe intxns
+# gxe_test_flsucc1 <- glmmTMB(Flowered ~
+#                              Year +
+#                              (1|Population/Family) +
+#                              City_dist*Block,
+#   data = reproduc,
+#   family = binomial(link = "logit"))
+# 
+# test_gxe(flsucc_gr_city1, gxe_test_flsucc1) # reg mod best
 ```
 
 #### Urb_score
@@ -62,6 +73,17 @@ flsucc_gr_usc1 <- glmmTMB(Flowered ~
 
 
 # plot(DHARMa::simulateResiduals(flsucc_gr_usc1))
+
+
+# # test for gxe intxns
+# gxe_test_flsucc2 <- glmmTMB(Flowered ~
+#                              Year +
+#                              (1|Population/Family) +
+#                              Urb_score*Block,
+#   data = reproduc,
+#   family = binomial(link = "logit"))
+# 
+# test_gxe(flsucc_gr_usc1, gxe_test_flsucc2) # reg mod best
 ```
 
 ### Urban subtransects
@@ -92,6 +114,18 @@ flsucc_urbsubs_city1_ME <- glmmTMB(Flowered ~
 
 # plot(DHARMa::simulateResiduals(flsucc_urbsubs_city1_ME))
 # AIC(flsucc_urbsubs_city1, flsucc_urbsubs_city1_ME) # ME model best but <2 from full
+
+# # test for gxe
+# gxe_test_flsucc3 <- glmmTMB(Flowered ~
+#                              Year +
+#                              City_dist*Transect_ID +
+#                              (1|Population/Family) +
+#                              City_dist*Block,
+#   data = reproduc %>%
+#     dplyr::filter(Transect_ID != "Rural"),
+#   family = binomial(link = "logit"))
+# 
+# test_gxe(flsucc_urbsubs_city1, gxe_test_flsucc3) # reg mod best
 ```
 
 #### Urb_score
@@ -121,6 +155,19 @@ flsucc_urbsubs_usc1_ME <- glmmTMB(Flowered ~
 
 # plot(DHARMa::simulateResiduals(flsucc_urbsubs_usc1_ME))
 # AIC(flsucc_urbsubs_usc1, flsucc_urbsubs_usc1_ME) # ME model best but <2 from full
+
+
+# # test for gxe
+# gxe_test_flsucc4 <- glmmTMB(Flowered ~
+#                              Year +
+#                              Urb_score*Transect_ID +
+#                              (1|Population/Family) +
+#                              Urb_score*Block,
+#   data = reproduc %>%
+#     dplyr::filter(Transect_ID != "Rural"),
+#   family = binomial(link = "logit"))
+# 
+# test_gxe(flsucc_urbsubs_usc1, gxe_test_flsucc4) # reg mod best
 ```
 
 
@@ -146,6 +193,15 @@ flowers_gr_city1 <- glmmTMB(total_flower_count ~
 
 # plot(DHARMa::simulateResiduals(flowers_gr_city1)) 
 
+# # test for gxe
+# gxe_test_flowers <- glmmTMB(total_flower_count ~
+#                                           Block*City_dist +
+#                                           Year +
+#                               (1|Population/Family), 
+#                                         data = flowering,
+#                             family = nbinom2)
+# 
+# test_gxe(flowers_gr_city1, gxe_test_flowers) # reg mod best
 ```
 
 #### Urb_score
@@ -160,6 +216,15 @@ flowers_gr_usc1 <- glmmTMB(total_flower_count ~
 
 # plot(DHARMa::simulateResiduals(flowers_gr_usc1))
 
+# # test for gxe
+# gxe_test_flowers2 <- glmmTMB(total_flower_count ~
+#                                           Block*Urb_score +
+#                                           Year +
+#                               (1|Population/Family),
+#                                         data = flowering,
+#                             family = nbinom2)
+# 
+# test_gxe(flowers_gr_usc1, gxe_test_flowers2) # reg mod best
 ```
 
 
@@ -189,6 +254,21 @@ flowers_urbsubs_city1_ME <- glmmTMB(total_flower_count ~
 # car::Anova(flowers_urbsubs_city1_ME)
 # plot(DHARMa::simulateResiduals(flowers_urbsubs_city1_ME))
 # AIC(flowers_urbsubs_city1, flowers_urbsubs_city1_ME) # ME model better but <2 AIC from full
+
+
+# # test for gxe
+# gxe_test_flowers3 <- glmmTMB(total_flower_count ~
+#                                           Block*City_dist +
+#                                           Year +
+#                                City_dist*Transect_ID +
+#                               (1|Population/Family),
+#                              data = flowering %>%
+#                                    dplyr::filter(Transect_ID != "Rural"),
+#                             family = nbinom2)                 
+# 
+# test_gxe(flowers_urbsubs_city1, gxe_test_flowers3) # stat equiv
+# car::Anova(gxe_test_flowers3, type = "III") # qualitatively identical (block*city_dist not sig)
+# car::Anova(flowers_urbsubs_city1, type = "III")
 ```
 
 #### Urb_score
@@ -217,6 +297,21 @@ flowers_urbsubs_usc1_ME <- glmmTMB(total_flower_count ~
 
 # plot(DHARMa::simulateResiduals(flowers_urbsubs_usc1_ME))
 # AIC(flowers_urbsubs_usc1, flowers_urbsubs_usc1_ME) # ME model better but <2 AIC from full
+
+
+# # test for gxe
+# gxe_test_flowers4 <- glmmTMB(total_flower_count ~
+#                                           Block*Urb_score +
+#                                           Year +
+#                                Urb_score*Transect_ID +
+#                               (1|Population/Family),
+#                              data = flowering %>%
+#                                    dplyr::filter(Transect_ID != "Rural"),
+#                             family = nbinom2)
+# 
+# test_gxe(flowers_urbsubs_usc1 , gxe_test_flowers4) # stat equiv
+# car::Anova(gxe_test_flowers4, type = "III") # block*urb_score marg sig (p = 0.0625) and block is only marg sig (it's sig in reg model, which also has transect as marg sig)
+# car::Anova(flowers_urbsubs_usc1 , type = "III")
 ```
 
 ## Mean flower size/inflorescence
@@ -239,6 +334,15 @@ flsize_gr_city1 <- glmmTMB(Overall_mean ~
 
 # plot(DHARMa::simulateResiduals(flsize_gr_city1))
 # performance::check_model(flsize_gr_city1)
+
+# # test for gxe
+# gxe_test_flsize <-  glmmTMB(Overall_mean ~
+#                              Block*City_dist +
+#                              Year +
+#                              (1|Population/Family), 
+#                            data = flowering)
+# 
+# test_gxe(flsize_gr_city1, gxe_test_flsize) # reg mod best
 ```
 
 #### Urb_score
@@ -253,6 +357,15 @@ flsize_gr_usc1 <- glmmTMB(Overall_mean ~
 
 # plot(DHARMa::simulateResiduals(flsize_gr_usc1))
 # performance::check_model(flsize_gr_usc1)
+
+# # test for gxe
+# gxe_test_flsize2 <-  glmmTMB(Overall_mean ~
+#                              Block*Urb_score +
+#                              Year +
+#                              (1|Population/Family),
+#                            data = flowering)
+# 
+# test_gxe(flsize_gr_usc1, gxe_test_flsize2) # reg mod best
 ```
 
 ### Urban Subtransects
@@ -282,6 +395,20 @@ flsize_urbsubs_city1_ME <- glmmTMB(Overall_mean ~
 # plot(DHARMa::simulateResiduals(flsize_urbsubs_city1_ME))
 # performance::check_model(flsize_urbsubs_city1_ME)
 # AIC(flsize_urbsubs_city1, flsize_urbsubs_city1_ME) # ME model best but <2 AIC from ME
+
+
+# # test for gxe
+# gxe_test_flsize3 <-  glmmTMB(Overall_mean ~
+#                              Block*City_dist +
+#                                Transect_ID*City_dist +
+#                              Year +
+#                              (1|Population/Family),
+#                             data = flowering %>%
+#                              dplyr::filter(Transect_ID != "Rural")) 
+# 
+# test_gxe(flsize_urbsubs_city1, gxe_test_flsize3) # gxe mod best
+# car::Anova(flsize_urbsubs_city1, type = "III")
+# car::Anova(gxe_test_flsize3, type = "III") # block*urb sig: p = 0.0312, otherwise identical
 ```
 
 #### Urb_score
@@ -309,6 +436,19 @@ flsize_urbsubs_usc1_ME <- glmmTMB(Overall_mean ~
 # plot(DHARMa::simulateResiduals(flsize_urbsubs_usc1_ME))
 # performance::check_model(flsize_urbsubs_usc1_ME)
 # AIC(flsize_urbsubs_usc1, flsize_urbsubs_usc1_ME) # ME model best but <2 AIC from full
+
+# # test for gxe
+# gxe_test_flsize4 <-  glmmTMB(Overall_mean ~
+#                              Block*Urb_score +
+#                                Transect_ID*Urb_score +
+#                              Year +
+#                              (1|Population/Family),
+#                             data = flowering %>%
+#                              dplyr::filter(Transect_ID != "Rural"))
+# 
+# test_gxe(flsize_urbsubs_usc1, gxe_test_flsize4) # mods stat equiv
+# car::Anova(flsize_urbsubs_usc1, type = "III")
+# car::Anova(gxe_test_flsize4, type = "III") # qualitatively identical
 ```
 
 ## Flowering time
@@ -328,6 +468,17 @@ fl_time_gr_city1 <- glmmTMB(flowering_time_num ~
 # plot(DHARMa::simulateResiduals(fl_time_gr_city1))
 # performance::check_model(fl_time_gr_city1)
 # car::Anova(fl_time_gr_city1)
+
+
+# # test for gxe
+# gxe_test_fltime <- glmmTMB(flowering_time_num ~
+#                                           Block*City_dist +
+#                                           Year +
+#                               (1|Population/Family),
+#                                         data = flowering,
+#                             family = nbinom2)
+# 
+# test_gxe(fl_time_gr_city1, gxe_test_fltime) # reg mod best
 ```
 
 #### Urb_score
@@ -343,6 +494,17 @@ fl_time_gr_usc1 <- glmmTMB(flowering_time_num ~
 # plot(DHARMa::simulateResiduals(fl_time_gr_usc1))
 # performance::check_model(fl_time_gr_usc1)
 # car::Anova(fl_time_gr_usc1)
+
+
+# # test for gxe
+# gxe_test_fltime2 <- glmmTMB(flowering_time_num ~
+#                                           Block*Urb_score +
+#                                           Year +
+#                               (1|Population/Family),
+#                                         data = flowering,
+#                             family = nbinom2)
+# 
+# test_gxe(fl_time_gr_usc1, gxe_test_fltime2) # reg mod best
 ```
 
 ### Urban Subtransects
@@ -377,6 +539,19 @@ fl_time_urbsubs_city1_ME <- glmmTMB(flowering_time_num ~
 # performance::check_model(fl_time_urbsubs_city1_ME)
 # car::Anova(fl_time_urbsubs_city1_ME)
 # AIC(fl_time_urbsubs_city1, fl_time_urbsubs_city1_ME) # ME model best but <2 AIC from full
+
+
+# test for gxe
+gxe_test_fltime3 <- glmmTMB(flowering_time_num ~
+                                          Block*City_dist +
+                                          Transect_ID*City_dist +
+                                          Year +
+                              (1|Population/Family),
+                                         data = flowering %>%
+                               dplyr::filter(Transect_ID != "Rural"),
+                            family = nbinom2)
+
+test_gxe(fl_time_urbsubs_city1, gxe_test_fltime3) # reg mod best
 ```
 
 #### Urb_score
@@ -410,6 +585,19 @@ fl_time_urbsubs_usc1_ME <- glmmTMB(flowering_time_num ~
 # performance::check_model(fl_time_urbsubs_usc1_ME)
 # car::Anova(fl_time_urbsubs_usc1_ME)
 # AIC(fl_time_urbsubs_usc1, fl_time_urbsubs_usc1_ME) # full model best
+
+
+# # test for gxe
+# gxe_test_fltime4 <- glmmTMB(flowering_time_num ~
+#                                           Block*Urb_score +
+#                                           Transect_ID*Urb_score +
+#                                           Year +
+#                               (1|Population/Family),
+#                                          data = flowering %>%
+#                                dplyr::filter(Transect_ID != "Rural"),
+#                             family = nbinom2)
+# 
+# test_gxe(fl_time_urbsubs_usc1, gxe_test_fltime4) # reg mod best
 ```
 
 ## Flowering start
@@ -435,6 +623,17 @@ fl_start_gr_city1 <- glmmTMB(Julian_oldest_inflor ~
 # plot(DHARMa::simulateResiduals(fl_start_gr_city1))
 # performance::check_model(fl_start_gr_city1)
 # car::Anova(fl_start_gr_city1)
+
+
+# # test for gxe
+# gxe_test_flstart <- glmmTMB(Julian_oldest_inflor ~
+#                                Year +
+#                                (1|Population/Family) +
+#                                City_dist*Block, 
+#                              data = flowering,
+#                              family = poisson)
+# 
+# test_gxe(fl_start_gr_city1, gxe_test_flstart) # reg mod best even though it doesn't include block (doesn't converge)
 ```
 
 #### Urb_score
@@ -451,6 +650,17 @@ fl_start_gr_usc1 <- glmmTMB(Julian_oldest_inflor ~
 # plot(DHARMa::simulateResiduals(fl_start_gr_usc1))
 # performance::check_model(fl_start_gr_usc1)
 # car::Anova(fl_start_gr_usc1)
+
+
+# # test for gxe
+# gxe_test_flstart2 <- glmmTMB(Julian_oldest_inflor ~
+#                                Year +
+#                                (1|Population/Family) +
+#                                Urb_score*Block,
+#                              data = flowering,
+#                              family = poisson)
+# 
+# test_gxe(fl_start_gr_usc1, gxe_test_flstart2) # reg mod best 
 ```
 
 ### Urban subtransects
@@ -486,6 +696,21 @@ fl_start_urbsubs_city1_ME <- glmmTMB(Julian_oldest_inflor ~
 # summary(fl_start_urbsubs_city1_ME)
 
 AIC(fl_start_urbsubs_city1, fl_start_urbsubs_city1_ME) # ME best model
+
+
+# # test for gxe
+# gxe_test_flstart3 <- glmmTMB(Julian_oldest_inflor ~
+#                                Block*City_dist +
+#                                Year +
+#                                (1|Population/Family),# +
+#                            #    Transect_ID, 
+#                              data = flowering %>%
+#                                dplyr::filter(Transect_ID != "Rural"),
+#                              family = poisson)
+# 
+# test_gxe(fl_start_urbsubs_city1_ME, gxe_test_flstart3) # stat equiv when I take out transect from both, otherwise gxe mod won't converge
+# car::Anova(gxe_test_flstart3, type = "III") # qual identical
+# car::Anova(fl_start_urbsubs_city1_ME, type = "III")
 ```
 
 #### Urb_score
@@ -540,6 +765,19 @@ fl_start_urbsubs_usc1_m2 <- glmmTMB(Julian_oldest_inflor ~
 # performance::check_model(fl_start_urbsubs_usc1_m2)
 # car::Anova(fl_start_urbsubs_usc1_m2)
 # summary(fl_start_urbsubs_usc1_m2)
+
+
+# # test for gxe
+# gxe_test_flstart4 <- glmmTMB(Julian_oldest_inflor ~
+#                                Block*Urb_score +
+#                                Year +
+#                                (1|Population/Family) +    Transect_ID*Urb_score, 
+#                              data = flowering %>%
+#                                dplyr::filter(Transect_ID != "Rural"),
+#                              family = poisson)
+# 
+# test_gxe(fl_start_urbsubs_usc1_m1, gxe_test_flstart4) # reg mod best
+# test_gxe(fl_start_urbsubs_usc1_m2, gxe_test_flstart4) # reg mod best
 ```
 
 ## Pods
@@ -558,6 +796,15 @@ pods_gr_city1 <- glmmTMB(Pods ~
 # performance::check_model(pods_gr_city1)
 # car::Anova(pods_gr_city1)
 
+# # test for gxe
+# gxe_test_pods <- glmmTMB(Pods ~
+#                            Block*City_dist +
+#                            Year +
+#                            (1|Population/Family),
+#                          data = flowering,
+#                          family = nbinom2)
+# 
+# test_gxe(pods_gr_city1, gxe_test_pods) # reg mod best
 ```
 
 ##### Urb_score
@@ -574,6 +821,15 @@ pods_gr_usc1 <- glmmTMB(Pods ~
 # performance::check_model(pods_gr_usc1)
 # car::Anova(pods_gr_usc1)
 
+# # test for gxe
+# gxe_test_pods2 <- glmmTMB(Pods ~
+#                            Block*Urb_score +
+#                            Year +
+#                            (1|Population/Family),
+#                          data = flowering,
+#                          family = nbinom2)
+# 
+# test_gxe(pods_gr_city1, gxe_test_pods2) # reg mod best
 ```
 
 #### Urban Subtransects
@@ -609,6 +865,20 @@ pods_urbsubs_city1_ME <- glmmTMB(Pods ~
 
 AIC(pods_urbsubs_city1, pods_urbsubs_city1_ME) # ME model lower AIC but <2 away
 
+
+# # test for gxe
+# gxe_test_pods3 <- glmmTMB(Pods ~
+#                            Block*City_dist +
+#                            Year +
+#                             Transect_ID*City_dist +
+#                            (1|Population/Family),
+#                           data = flowering %>%
+#                            dplyr::filter(Transect_ID != "Rural"),
+#                           family = nbinom2)
+# 
+# test_gxe(pods_urbsubs_city1, gxe_test_pods3) # stat equiv
+# car::Anova(pods_urbsubs_city1, type = "III") # block isn't sig in gxe mod, otherwise qual identical
+# car::Anova(gxe_test_pods3, type = "III")
 ```
 
 ##### Urb_score
@@ -642,6 +912,21 @@ pods_urbsubs_usc1_ME <- glmmTMB(Pods ~
 # car::Anova(pods_urbsubs_usc1_ME)
 # 
 # AIC(pods_urbsubs_usc1, pods_urbsubs_usc1_ME) # full model lower AIC
+
+
+# # test for gxe
+# gxe_test_pods4 <- glmmTMB(Pods ~
+#                            Block*Urb_score +
+#                            Year +
+#                             Transect_ID*Urb_score +
+#                            (1|Population/Family),
+#                           data = flowering %>%
+#                            dplyr::filter(Transect_ID != "Rural"),
+#                           family = nbinom2)
+# 
+# test_gxe(pods_urbsubs_usc1 , gxe_test_pods4) # stat equiv
+# car::Anova(pods_urbsubs_usc1 , type = "III") # block*urb_score marg sig in gxe mod, otherwise qual identical
+# car::Anova(gxe_test_pods4, type = "III")
 ```
 
 ## Date of first follicle
@@ -665,6 +950,20 @@ pod_start_gr_city1 <- glmmTMB(Julian_first_follicle^2 ~
 
 # plot(DHARMa::simulateResiduals(pod_start_gr_city1))
 # car::Anova(pod_start_gr_city1)
+
+
+
+# # test for gxe
+# gxe_test_firstpods <- glmmTMB(Julian_first_follicle^2 ~
+#                                City_dist*Block + 
+#                                 as.factor(Year) +
+#                                 (1|Population/Family),
+#                               data = flowering,
+#                               family = poisson)
+# 
+# test_gxe(pod_start_gr_city1, gxe_test_firstpods) # gxe mod best
+# car::Anova(pod_start_gr_city1, type = "III") # block*city highly sig (p < 0.001)
+# car::Anova(gxe_test_firstpods, type = "III")
 ```
 
 #### Urb_score
@@ -679,8 +978,19 @@ pod_start_gr_usc1 <- glmmTMB(Julian_first_follicle^2 ~
 
 # plot(DHARMa::simulateResiduals(pod_start_gr_usc1))
 # car::Anova(pod_start_gr_usc1)
-```
 
+# # test for gxe
+# gxe_test_firstpods2 <- glmmTMB(Julian_first_follicle^2 ~
+#                                Urb_score*Block +
+#                                 (Year) +
+#                                 (1|Population/Family),
+#                               data = flowering,
+#                               family = poisson)
+# 
+# test_gxe(pod_start_gr_usc1, gxe_test_firstpods2) # gxe mod best
+# car::Anova(pod_start_gr_usc1, type = "III") # block*city highly sig (p < 0.001)
+# car::Anova(gxe_test_firstpods2, type = "III")
+```
 
 ### Urban Subtransects
 #### City_dist
@@ -713,6 +1023,21 @@ pod_start_urbsubs_city1_ME <- glmmTMB(Julian_first_follicle^3 ~
 # car::Anova(pod_start_urbsubs_city1_ME)
 
 # AIC(pod_start_urbsubs_city1, pod_start_urbsubs_city1_ME) # ME model better but <2 AIC from full
+
+
+# # test for gxe
+# gxe_test_firstpods3 <- glmmTMB(Julian_first_follicle^3 ~
+#                                Block*City_dist +
+#                                Year +
+#                                (1|Population/Family) +
+#                                City_dist*Transect_ID, 
+#                              data = flowering  %>%
+#                            dplyr::filter(Transect_ID != "Rural"),
+#                              family = poisson)
+# 
+# test_gxe(pod_start_urbsubs_city1, gxe_test_firstpods3) # gxe mod best
+# car::Anova(pod_start_urbsubs_city1, type = "III") # block*city highly sig (p < 0.001)
+# car::Anova(gxe_test_firstpods3, type = "III")
 ```
 
 #### Urb_score
@@ -745,13 +1070,28 @@ pod_start_urbsubs_usc1_ME <- glmmTMB(Julian_first_follicle^3 ~
 # car::Anova(pod_start_urbsubs_usc1_ME)
 
 # AIC(pod_start_urbsubs_usc1, pod_start_urbsubs_usc1_ME) # full model better but <2 AIC from ME
+
+
+# # test for gxe
+# gxe_test_firstpods4 <- glmmTMB(Julian_first_follicle^3 ~
+#                                Block*Urb_score +
+#                                Year +
+#                                (1|Population/Family) +
+#                                Urb_score*Transect_ID, 
+#                              data = flowering  %>%
+#                            dplyr::filter(Transect_ID != "Rural"),
+#                              family = poisson)
+# 
+# test_gxe(pod_start_urbsubs_usc1, gxe_test_firstpods4) # gxe mod best
+# car::Anova(pod_start_urbsubs_usc1, type = "III") # block*city highly sig (p < 0.001)
+# car::Anova(gxe_test_firstpods4, type = "III")
 ```
 
 ## Peduncles (Inflorescences)
 #### Gradient
 ##### City_dist
 ```{r}
-hist(flowering$Peduncles) # very right-skewed. Looks like there might be a few outliers
+# hist(flowering$Peduncles) # very right-skewed. Looks like there might be a few outliers
 
 peduncles_gr_city1 <- glmmTMB(Peduncles ~
                            Block +
@@ -765,6 +1105,16 @@ peduncles_gr_city1 <- glmmTMB(Peduncles ~
 # performance::check_model(peduncles_gr_city1)
 # performance::check_outliers(peduncles_gr_city1) # no outliers
 # car::Anova(peduncles_gr_city1)
+
+# # test for gxe
+# gxe_test_peds <- glmmTMB(Peduncles ~
+#                            Year +
+#                            (1|Population/Family) +
+#                            City_dist*Block,
+#                          data = flowering,
+#                          family = nbinom2)
+# 
+# test_gxe(peduncles_gr_city1, gxe_test_peds) # reg mod best
 ```
 
 ##### Urb_score
@@ -780,6 +1130,18 @@ peduncles_gr_usc1 <- glmmTMB(Peduncles ~
 # plot(DHARMa::simulateResiduals(peduncles_gr_usc1)) 
 # performance::check_model(peduncles_gr_usc1)
 # car::Anova(peduncles_gr_usc1)
+
+# # test for gxe
+# gxe_test_peds2 <- glmmTMB(Peduncles ~
+#                            Year +
+#                            (1|Population/Family) +
+#                            Urb_score*Block,
+#                          data = flowering,
+#                          family = nbinom2)
+# 
+# test_gxe(peduncles_gr_usc1, gxe_test_peds2) # stat equivalent
+# car::Anova(peduncles_gr_usc1, type = "III") # qualitatively identical (no block*city intxn)
+# car::Anova(gxe_test_peds2, type = "III")
 ```
 
 #### Urban Subtransects
@@ -812,6 +1174,21 @@ peduncles_urbsubs_city1_ME <- glmmTMB(Peduncles^2 ~
 # AIC(peduncles_urbsubs_city1, peduncles_urbsubs_city1_ME) # ME model best but <2 AIC from full
 # 
 # car::Anova(peduncles_urbsubs_city1_ME)
+
+
+# # test for gxe
+# gxe_test_peds3 <- glmmTMB(Peduncles^2 ~
+#                            Year +
+#                            (1|Population/Family) +
+#                            City_dist*Block +
+#                             City_dist*Transect_ID,
+#                          data = flowering %>%
+#                            dplyr::filter(Transect_ID != "Rural"),
+#                          family = nbinom2)
+# 
+# test_gxe(peduncles_urbsubs_city1, gxe_test_peds3) # gxe mod best
+# car::Anova(peduncles_urbsubs_city1, type = "III") # block*city sig (p = 0.0112)
+# car::Anova(gxe_test_peds3, type = "III")
 ```
 
 ##### Urb_score
@@ -844,6 +1221,21 @@ peduncles_urbsubs_usc1_ME <- glmmTMB(Peduncles ~
 # performance::check_model(peduncles_urbsubs_usc1_ME)
 # 
 # AIC(peduncles_urbsubs_usc1, peduncles_urbsubs_usc1_ME) #full model best model
+
+
+# # test for gxe
+# gxe_test_peds4 <- glmmTMB(Peduncles ~
+#                            Year +
+#                            (1|Population/Family) +
+#                            Urb_score*Block +
+#                             Urb_score*Transect_ID,
+#                          data = flowering %>%
+#                            dplyr::filter(Transect_ID != "Rural"),
+#                          family = nbinom2)
+# 
+# test_gxe(peduncles_urbsubs_usc1, gxe_test_peds4) # stat equivalent
+# car::Anova(peduncles_urbsubs_usc1, type = "III") # block*city sig (p = 0.0411)
+# car::Anova(gxe_test_peds4, type = "III")
 ```
 
 # Models for use in analysis
@@ -1090,6 +1482,7 @@ flsize_mods      , # mean flower size
 fltime_mods      , # flowering time
 flstart_mods     , # flowering start
 pods_mods        , # pods (follicles)
+first_pods_mods  , # first pods (follicles)
 peduncles_mods   ) # peduncles (inflorescences)
 
 names(all_models) <- c(
@@ -1099,6 +1492,7 @@ names(all_models) <- c(
 "fltime_mods",
 "flstart_mods",
 "pods_mods"            ,
+"first_pods_mods",
 "peduncles_mods")
 ```
 

@@ -75,10 +75,7 @@ ltx_gr_city_m1 <- glmmTMB(Latex_weight_mg^(1/3) ~
 #                         data = latex,
 #                         REML = F)
 # 
-# # plot(DHARMa::simulateResiduals(gxe_test_latex1))
-# # AIC(gxe_test_latex1, ltx_gr_city_m1) # model without GxE best
-# 
-# # test_gxe(ltx_gr_city_m1, gxe_test_latex1)
+# test_gxe(ltx_gr_city_m1, gxe_test_latex1) # reg mod best
 ```
 
 #### Urb_score

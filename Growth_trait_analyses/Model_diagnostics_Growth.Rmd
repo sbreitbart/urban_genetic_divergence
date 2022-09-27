@@ -827,7 +827,7 @@ ramets_e_gr_city_m1 <- glmmTMB(Ramets_early ~
 
 
 # test for gxe intxns
-# gxe_test_ramets_e <- glmmTMB(Ramets_early ~ 
+# gxe_test_ramets_e <- glmmTMB(Ramets_early ~
 #                                  Year +
 #                                  (1|Population/Family) +
 #                                  City_dist*Block,
