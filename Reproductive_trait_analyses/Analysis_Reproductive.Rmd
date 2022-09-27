@@ -201,14 +201,14 @@ pb_ranova_2step(flsucc_ranova2,
           "Flowering success: 2021",
           "./Reproductive_trait_analyses/Tables/Ranova/flowering_success_2021.docx")
 
-# 2022-----STILL TEST
+# 2022-----
 flsucc_ranova3 <- glmer(Flowered ~
                                Block +
                                (1|Population) +
                                (1|Population:Family),
                              data = reproduc %>%
                                dplyr::filter(Year == 2022),
-                     #   nAGQ = 0, # won't converge w/o this
+                        nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude,
                              family = binomial)
 
@@ -235,7 +235,7 @@ flowers_ranova1 <- glmer.nb(total_flower_count ~
 pb_ranova_2step(flowers_ranova1,
           "Flower count: 2020",
           "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2020.docx")
-STILL TEST
+
 # 2021-----
 flowers_ranova2 <- glmer.nb(total_flower_count ~
                                Block +
@@ -243,7 +243,7 @@ flowers_ranova2 <- glmer.nb(total_flower_count ~
                                (1|Population:Family),
                              data = flowering %>%
                                dplyr::filter(Year == 2021),
-                        nAGQ = 0, # won't converge w/o this
+                            nAGQ = 0 , # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(flowers_ranova2)
@@ -252,7 +252,6 @@ pb_ranova_2step(flowers_ranova2,
           "Flower count: 2021",
           "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2021.docx")
 
-STILL TEST
 # 2022-----
 flowers_ranova3 <- glmer.nb(total_flower_count ~
                                Block +
@@ -269,7 +268,6 @@ pb_ranova_2step(flowers_ranova3,
           "Flower count: 2022",
           "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2022.docx")
 
-STILL TEST
 # Flowering time-----
 # 2020-----
 fltime_ranova1 <- glmer.nb(as.numeric(flowering_time) ~
@@ -278,7 +276,7 @@ fltime_ranova1 <- glmer.nb(as.numeric(flowering_time) ~
                                (1|Population:Family),
                              data = flowering %>%
                                dplyr::filter(Year == 2020),
-                      #  nAGQ = 0,
+                        nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(fltime_ranova1)
@@ -296,7 +294,7 @@ fltime_ranova2 <- glmer.nb(as.numeric(flowering_time) ~
                                (1|Population:Family),
                              data = flowering %>%
                                dplyr::filter(Year == 2021),
-                      #  nAGQ = 0,
+                        nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(fltime_ranova2)
@@ -315,7 +313,7 @@ fltime_ranova3 <- glmer.nb(as.numeric(flowering_time) ~
                                (1|Population:Family),
                              data = flowering %>%
                                dplyr::filter(Year == 2022),
-                      #  nAGQ = 0,
+                        nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(fltime_ranova3)
@@ -528,596 +526,379 @@ pb_ranova_2step(peduncles_ranova3,
 ```{r}
 # Flowering success-----
 
-## test city_dist
-### take out fam
-full <- glmer(Flowered ~
-                 Block +
-                Year +
-                (1|Population) +
-                City_dist,
-              data = reproduc %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = binomial,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+# 2020-----
+flsucc_ranova1 <- glmer(Flowered ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = reproduc %>%
+                               dplyr::filter(Transect_ID != "Rural" &
+                                               Year == 2020),
+                        nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude,
+                             family = binomial)
 
-reduced <- update(full, .~. - City_dist)
+# performance::check_model(flsucc_ranova1)
 
-flsucc_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 1,
-          cl = makeCluster(rep("localhost", 6)))
+pb_ranova_transects(flsucc_ranova1,
+          "Flowering success: 2020",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowering_success_2020_transects.docx")
 
-tidy(flsucc_ranova.pop) # p = 0.519 w/nsim = 1
+# 2021-----
+flsucc_ranova2 <- glmer(Flowered ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = reproduc %>%
+                               dplyr::filter(Transect_ID != "Rural" &
+                                               Year == 2021),
+                       nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude,
+                             family = binomial)
 
-# variance
-get_pve(flsucc_ranova.pop) # 10.173
+# performance::check_model(flsucc_ranova2)
 
+pb_ranova_transects(flsucc_ranova2,
+          "Flowering success: 2021",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowering_success_2021_transects.docx")
 
+# 2022-----
+flsucc_ranova3 <- glmer(Flowered ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = reproduc %>%
+                               dplyr::filter(Transect_ID != "Rural" &
+                                               Year == 2022),
+                        nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude,
+                             family = binomial)
 
-# test fam
-full <- glmer(Flowered ~
-                 Block +
-                Year +
-                (1|Population/Family) +
-                City_dist,
-              nAGQ = 0,
-              data = reproduc %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = binomial,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    # ,control=glmerControl(optimizer="bobyqa",
-    #                         optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(flsucc_ranova3)
 
-reduced <- update(full, .~. - City_dist)
-
-flsucc_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 100,
-          cl = makeCluster(rep("localhost", 6)))
-
-tidy(flsucc_ranova.fam) # Family: p ~ 0.278 w/nsim = 100
-
-# variance
-get_pve(flsucc_ranova.fam) # 21.784
-
-
-## test transect
-test_tr <-  glmer(Flowered ~
-                 Block +
-                Year +
-                (1|Population/Family) +
-                Transect_ID,
-              data = reproduc %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = binomial,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+pb_ranova_transects(flsucc_ranova3,
+          "Flowering success: 2022",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowering_success_2022_transects.docx")
 
 
-# merge Pop and Fam ranovas
-## test City_dist
-flsucc_ranova1 <- CreateRanovaOutput_bootstrap(
-  flsucc_ranova.fam,
-  flsucc_ranova.pop,
-  "Flowering success (Distance)")
+# Flowers/plant-----
+# 2020-----
+flowers_ranova1 <- glmer.nb(total_flower_count ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Transect_ID != "Rural" &
+                                               Year == 2020),
+                        nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude)
 
-## test transect
-flsucc_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Flowering success (Transect)")
+# performance::check_model(flowers_ranova1)
 
-flextable::save_as_html(flsucc_ranova1,
-                        flsucc_ranova2,
-                        path = here::here("./Reproductive_trait_analyses/Tables/Ranova/Flowering_success_transects.html"))
+pb_ranova_transects(flowers_ranova1,
+          "Flower count: 2020",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2020_transects.docx")
 
+# 2021-----
+flowers_ranova2 <- glmer.nb(total_flower_count ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Transect_ID != "Rural" &
+                                               Year == 2021),
+                            nAGQ = 0 , # won't converge w/o this
+                            na.action = na.exclude)
 
-# Flowers per plant-----
+# performance::check_model(flowers_ranova2)
 
-## test city_dist
-### take out fam
-full <- glmer.nb(total_flower_count ~
-                 Block +
-                Year +
-                (1|Population) +
-                City_dist,
-              data = flowering %>%
-                dplyr::filter(Transect_ID != "Rural"),
-             # nAGQ = 0,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    # ,control=glmerControl(optimizer="bobyqa",
-    #                         optCtrl=list(maxfun=2e5))
-)
+pb_ranova_transects(flowers_ranova2,
+          "Flower count: 2021",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2021_transects.docx")
 
-reduced <- update(full, .~. - City_dist)
+# 2022-----
+flowers_ranova3 <- glmer.nb(total_flower_count ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Transect_ID != "Rural" &
+                                               Year == 2022),
+                        nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude)
 
-flowers_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 10,
-          cl = makeCluster(rep("localhost", 6)))
+# performance::check_model(flowers_ranova3)
 
-tidy(flowers_ranova.pop) # p = 0.136 w/nsim = 10
-
-# variance
-get_pve(flowers_ranova.pop) # NA b/c singular
-
-
-
-# test fam
-full <- glmer.nb(total_flower_count ~
-                 Block +
-                Year +
-                (1|Population/Family) +
-                City_dist,
-              data = flowering %>%
-                dplyr::filter(Transect_ID != "Rural"),
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-#     ,control=glmerControl(optimizer="bobyqa",
-#                             optCtrl=list(maxfun=2e5))
-)
-
-reduced <- update(full, .~. - City_dist)
-
-flowers_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 10,
-          cl = makeCluster(rep("localhost", 6)))
-
-tidy(flowers_ranova.fam) # Family: p ~ 0.136 w/nsim = 10
-
-# variance
-get_pve(flowers_ranova.fam) # NA b/c singular
-
-
-## test transect
-test_tr <-  glmer.nb(total_flower_count ~
-                 Block +
-                Year +
-                (1|Population/Family) +
-                Transect_ID,
-              data = flowering %>%
-                dplyr::filter(Transect_ID != "Rural"),
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
-
-
-# merge Pop and Fam ranovas
-## test City_dist
-flowers_ranova1 <- CreateRanovaOutput_bootstrap(
-  flowers_ranova.fam,
-  flowers_ranova.pop,
-  "Flower count (Distance)")
-
-## test transect
-flowers_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Flower count (Transect)")
-
-flextable::save_as_html(flowers_ranova1,
-                        flowers_ranova2,
-                        path = here::here("./Reproductive_trait_analyses/Tables/Ranova/Flower_count_transects.html"))
+pb_ranova_transects(flowers_ranova3,
+          "Flower count: 2022",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2022_transects.docx")
 
 
 # Flowering time-----
+# 2020-----
+fltime_ranova1 <- glmer.nb(as.numeric(flowering_time) ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Transect_ID != "Rural" &
+                                               Year == 2020),
+                            na.action = na.exclude  ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
 
-## test city_dist
-### take out fam
-full <- glmer.nb(as.numeric(flowering_time) ~
-                 Block +
-                Year +
-                (1|Population) +
-                City_dist,
-              data = flowering %>%
-                dplyr::filter(Transect_ID != "Rural"),
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(fltime_ranova1)
 
-reduced <- update(full, .~. - City_dist)
-
-fltime_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 10,
-          cl = makeCluster(rep("localhost", 6)))
-
-tidy(fltime_ranova.pop) # p = 0.121 w/nsim = 10
-
-# variance
-get_pve(fltime_ranova.pop) # Warning message:
-# Can't calculate model's distribution-specific variance.
-#   Results are not reliable.
+pb_ranova_transects(fltime_ranova1,
+          "Flowering duration: 2020",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowertime_2020_transects.docx")
 
 
 
-# test fam
-full <- glmer.nb(as.numeric(flowering_time) ~
-                 Block +
-                Year +
-                (1|Population/Family) +
-                City_dist,
-              data = flowering %>%
-                dplyr::filter(Transect_ID != "Rural"),
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+# 2021-----
+fltime_ranova2 <- glmer.nb(as.numeric(flowering_time) ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Transect_ID != "Rural" &
+                                               Year == 2021),
+                           nAGQ = 0, # won't converge w/o this
+                           na.action = na.exclude)
 
-reduced <- update(full, .~. - City_dist)
+# performance::check_model(fltime_ranova2)
 
-fltime_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 10,
-          cl = makeCluster(rep("localhost", 6)))
-
-tidy(fltime_ranova.fam) # Family: p ~ 0.121 w/nsim = 10
-
-# variance
-get_pve(fltime_ranova.fam) # NA bc singular
+pb_ranova_transects(fltime_ranova2,
+          "Flowering duration: 2021",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowertime_2021_transects.docx")
 
 
-## test transect
-test_tr <-  glmer.nb(as.numeric(flowering_time) ~
-                 Block +
-                Year +
-                (1|Population/Family) +
-                Transect_ID,
-              data = flowering %>%
-                dplyr::filter(Transect_ID != "Rural"),
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+# 2022-----
+fltime_ranova3 <- glmer.nb(as.numeric(flowering_time) ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Transect_ID != "Rural" &
+                                               Year == 2022),
+                            na.action = na.exclude  ,control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
 
+# performance::check_model(fltime_ranova3)
 
-# merge Pop and Fam ranovas
-## test City_dist
-fltime_ranova1 <- CreateRanovaOutput_bootstrap(
-  fltime_ranova.fam,
-  fltime_ranova.pop,
-  "Flowering time (Distance)")
+pb_ranova_transects(fltime_ranova3,
+          "Flowering duration: 2022",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowertime_2022_transects.docx")
 
-## test transect
-fltime_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Flowering time (Transect)")
-
-flextable::save_as_html(fltime_ranova1,
-                        fltime_ranova2,
-                        path = here::here("./Reproductive_trait_analyses/Tables/Ranova/Flowering_time_transects.html"))
 
 # Flowering start-----
+# 2020-----
+flstart_ranova1 <- glmer(Julian_oldest_inflor ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Transect_ID != "Rural" &
+                                               Year == 2020),
+                         nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude,
+                             family = poisson)
 
-## test city_dist
-### take out fam
-full <- glmer(Julian_oldest_inflor ~
-                 Block +
-                Year +
-                (1|Population) +
-                City_dist,
-              data = flowering %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
-     #         nAGQ = 0,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    # ,control=glmerControl(optimizer="bobyqa",
-    #                         optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(flstart_ranova1)
 
-reduced <- update(full, .~. - City_dist)
-
-flstart_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 10,
-          cl = makeCluster(rep("localhost", 6)))
-
-tidy(flstart_ranova.pop) # p = 0.133 w/nsim =10
-
-# variance
-get_pve(flstart_ranova.pop) # NA b/c singular
+pb_ranova_transects(flstart_ranova1,
+          "Flowering start: 2020",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowering_start_2020_transects.docx")
 
 
+# 2021-----
+flstart_ranova2 <- glmer(Julian_oldest_inflor ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Transect_ID != "Rural" &
+                                               Year == 2021),
+                       nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude,
+                             family = poisson)
 
-# test fam
-full <- glmer(Julian_oldest_inflor ~
-                 Block +
-                Year +
-                (1|Population/Family) +
-                City_dist,
-              data = flowering %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
-   #           nAGQ = 0,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    # ,control=glmerControl(optimizer="bobyqa",
-    #                         optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(flstart_ranova2)
 
-reduced <- update(full, .~. - City_dist)
+pb_ranova_transects(flstart_ranova2,
+          "Flowering start: 2021",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowering_start_2021_transects.docx")
 
-flstart_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 10,
-          cl = makeCluster(rep("localhost", 6)))
+# 2022-----
+flstart_ranova3 <- glmer(Julian_oldest_inflor ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Transect_ID != "Rural" &
+                                               Year == 2022),
+                        nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude,
+                             family = poisson)
 
-tidy(flstart_ranova.fam) # Family: p ~ 0.133 w/nsim = 10
+# performance::check_model(flstart_ranova3)
 
-# variance
-get_pve(flstart_ranova.fam) # NA bc singular
-
-
-## test transect
-test_tr <-  glmer(Julian_oldest_inflor ~
-                 Block +
-                Year +
-                (1|Population/Family) +
-                Transect_ID,
-              data = flowering %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+pb_ranova_transects(flstart_ranova3,
+          "Flowering start: 2022",
+          "./Reproductive_trait_analyses/Tables/Ranova/flowering_start_2022_transects.docx")
 
 
-# merge Pop and Fam ranovas
-## test City_dist
-flstart_ranova1 <- CreateRanovaOutput_bootstrap(
-  flstart_ranova.fam,
-  flstart_ranova.pop,
-  "Flowering start (Distance)")
-
-## test transect
-flstart_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Flowering start (Transect)")
-
-flextable::save_as_html(flstart_ranova1,
-                        flstart_ranova2,
-                        path = here::here("./Reproductive_trait_analyses/Tables/Ranova/Flowering_start_transects.html"))
 
 # Pods-----
+# 2020-----
+pods_ranova1 <- glmer.nb(Pods ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Transect_ID != "Rural" &
+                                               Year == 2020),
+                        nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude)
 
-## test city_dist
-### take out fam
-full <- glmer.nb(Pods ~
-                 Block +
-                Year +
-                (1|Population) +
-                City_dist,
-              data = flowering %>%
-                dplyr::filter(Transect_ID != "Rural"),
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(pods_ranova1)
 
-reduced <- update(full, .~. - City_dist)
+pb_ranova_transects(pods_ranova1,
+          "Pods: 2020",
+          "./Reproductive_trait_analyses/Tables/Ranova/pods_2020_transects.docx")
 
-Pods_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 10,
-          cl = makeCluster(rep("localhost", 6)))
+# 2021-----
+pods_ranova2 <- glmer.nb(Pods ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Transect_ID != "Rural" &
+                                               Year == 2021),
+                            nAGQ = 0 , # won't converge w/o this
+                            na.action = na.exclude)
 
-tidy(Pods_ranova.pop) # p = 0.139 w/nsim = 10
+# performance::check_model(pods_ranova2)
 
-# variance
-get_pve(Pods_ranova.pop) # 5.031
+pb_ranova_transects(pods_ranova2,
+          "Pods: 2021",
+          "./Reproductive_trait_analyses/Tables/Ranova/pods_2021_transects.docx")
 
+# 2022-----
+pods_ranova3 <- glmer.nb(Pods ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Transect_ID != "Rural" &
+                                               Year == 2022),
+                        nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude)
 
+# performance::check_model(pods_ranova3)
 
-# test fam
-full <- glmer.nb(Pods ~
-                 Block +
-                Year +
-                (1|Population/Family) +
-                City_dist,
-              data = flowering %>%
-                dplyr::filter(Transect_ID != "Rural"),
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+pb_ranova_transects(pods_ranova3,
+          "Pods: 2022",
+          "./Reproductive_trait_analyses/Tables/Ranova/pods_2022_transects.docx")
 
-reduced <- update(full, .~. - City_dist)
-
-Pods_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 10,
-          cl = makeCluster(rep("localhost", 6)))
-
-tidy(Pods_ranova.fam) # Family: p ~ 0.139 w/nsim = 10
-
-# variance
-get_pve(Pods_ranova.fam) # NA bc singular
-
-
-## test transect
-test_tr <-  glmer.nb(Pods ~
-                 Block +
-                Year +
-                (1|Population/Family) +
-                Transect_ID,
-              data = flowering %>%
-                dplyr::filter(Transect_ID != "Rural"),
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
-
-
-# merge Pop and Fam ranovas
-## test City_dist
-Pods_ranova1 <- CreateRanovaOutput_bootstrap(
-  Pods_ranova.fam,
-  Pods_ranova.pop,
-  "Pods (Distance)")
-
-## test transect
-Pods_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Pods (Transect)")
-
-flextable::save_as_html(Pods_ranova1,
-                        Pods_ranova2,
-                        path = here::here("./Reproductive_trait_analyses/Tables/Ranova/Pods_transects.html"))
 
 # Date of first follicle-----
+# 2020 (only 20 rows- not doing)-----
 
-## test city_dist
-### take out fam
-full <- glmer(Julian_first_follicle^3 ~
-                 Block +
-                Year +
-                (1|Population) +
-                City_dist,
-              data = flowering %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
-           #   nAGQ = 0,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    # ,control=glmerControl(optimizer="bobyqa",
-    #                         optCtrl=list(maxfun=2e5))
-)
-
-reduced <- update(full, .~. - City_dist)
-
-first_pods_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 100,
-          cl = makeCluster(rep("localhost", 6)))
-
-tidy(first_pods_ranova.pop) # p = 0.0269 w/nsim = 100
-
-# variance
-get_pve(first_pods_ranova.pop) # 99.996
+# only 20 entries for urban sites- not enough for parametric test
 
 
-# test fam
-full <- glmer(Julian_first_follicle^3 ~
-                 Block +
-                Year +
-                (1|Population/Family) +
-                City_dist,
-              data = flowering %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
-              nAGQ = 0,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    # ,control=glmerControl(optimizer="bobyqa",
-    #                         optCtrl=list(maxfun=2e5))
-)
+# 2021-----
+firstpod_ranova2 <- glmer(Julian_first_follicle^3 ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                    dplyr::filter(is.na(Julian_first_follicle) == F &
+                                    Transect_ID != "Rural" &
+                                    Year == 2021),
+                       nAGQ = 0, # won't converge w/o this
+                    na.action = na.exclude,
+                             family = poisson)
 
-reduced <- update(full, .~. - City_dist)
-
-first_pods_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 100,
-          cl = makeCluster(rep("localhost", 6)))
-
-tidy(first_pods_ranova.fam) # Family: p ~ 0.0458
-
-# variance
-get_pve(first_pods_ranova.fam) # NA bc singular
+# performance::check_model(firstpod_ranova2)
 
 
+pb_ranova_transects(firstpod_ranova2,
+          "Date of first follicle: 2021",
+          "./Reproductive_trait_analyses/Tables/Ranova/Date_first_follicle_2021_transects.docx")
 
-## test transect
-test_tr <-  glmer(Julian_first_follicle^3 ~
-                 Block +
-                Year +
-                (1|Population/Family) +
-                Transect_ID,
-              data = flowering %>%
-                dplyr::filter(Transect_ID != "Rural"),
-              family = poisson,
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+# 2022-----
+firstpod_ranova3 <- glmer(Julian_first_follicle^3 ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                    dplyr::filter(is.na(Julian_first_follicle) == F &
+                                               Transect_ID != "Rural" &
+                                               Year == 2022),
+                        nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude,
+                             family = poisson)
 
+# performance::check_model(firstpod_ranova3)
 
-# merge Pop and Fam ranovas
-## test City_dist
-first_pods_ranova1 <- CreateRanovaOutput_bootstrap(
-  first_pods_ranova.fam,
-  first_pods_ranova.pop,
-  "Date of first follicle (Distance)")
+pb_ranova_transects(firstpod_ranova3,
+          "Date of first follicle: 2022",
+          "./Reproductive_trait_analyses/Tables/Ranova/Date_first_follicle_2022_transects.docx")
 
-## test transect
-first_pods_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Date of first follicle (Transect)")
-
-flextable::save_as_html(first_pods_ranova1,
-                        first_pods_ranova2,
-                        path = here::here("./Reproductive_trait_analyses/Tables/Ranova/Date_first_follicle_transects.html"))
 
 # Peduncles-----
+# 2020-----
+peduncles_ranova1 <- glmer.nb(Peduncles ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Transect_ID != "Rural" &
+                                               Year == 2020),
+                             nAGQ = 0,
+                             na.action = na.exclude)
 
-## test city_dist
-### take out fam
-full <- glmer.nb(Peduncles ~
-                 Block +
-                Year +
-                (1|Population) +
-                City_dist,
-              data = flowering %>%
-                dplyr::filter(Transect_ID != "Rural"),
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+# performance::check_model(peduncles_ranova1)
 
-reduced <- update(full, .~. - City_dist)
+pb_ranova_transects(peduncles_ranova1,
+          "Peduncles: 2020",
+          "./Reproductive_trait_analyses/Tables/Ranova/peduncles_2020_transects.docx")
 
-Peduncles_ranova.pop <- PBmodcomp(full, reduced,
-          nsim = 10,
-          cl = makeCluster(rep("localhost", 6)))
+# 2021-----
+peduncles_ranova2 <- glmer.nb(Peduncles ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Transect_ID != "Rural" &
+                                               Year == 2021), 
+                             nAGQ = 0 , # won't converge w/o this
+                            na.action = na.exclude)
 
-tidy(Peduncles_ranova.pop) # p = 0.127 w/nsim = 10
+# performance::check_model(peduncles_ranova2)
 
-# variance
-get_pve(Peduncles_ranova.pop) #  12.776
+pb_ranova_transects(peduncles_ranova2,
+          "Peduncles: 2021",
+          "./Reproductive_trait_analyses/Tables/Ranova/peduncles_2021_transects.docx")
 
+# 2022-----
+peduncles_ranova3 <- glmer.nb(Peduncles ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Family),
+                             data = flowering %>%
+                               dplyr::filter(Transect_ID != "Rural" &
+                                               Year == 2022),
+                             nAGQ = 0, # won't converge w/o this
+                            na.action = na.exclude)
 
+# performance::check_model(peduncles_ranova3)
 
-# test fam
-full <- glmer.nb(Peduncles ~
-                 Block +
-                Year +
-                (1|Population/Family) +
-                City_dist,
-              data = flowering %>%
-                dplyr::filter(Transect_ID != "Rural"),
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
+pb_ranova_transects(peduncles_ranova3,
+          "Peduncles: 2022",
+          "./Reproductive_trait_analyses/Tables/Ranova/peduncles_2022_transects.docx")
 
-reduced <- update(full, .~. - City_dist)
-
-Peduncles_ranova.fam <- PBmodcomp(full, reduced,
-          nsim = 10,
-          cl = makeCluster(rep("localhost", 6)))
-
-tidy(Peduncles_ranova.fam) # Family: p ~ 0.134 w/nsim = 10
-
-# variance
-get_pve(Peduncles_ranova.fam) # 15.581
-
-
-## test transect
-test_tr <-  glmer.nb(Peduncles ~
-                 Block +
-                Year +
-                (1|Population/Family) +
-                Transect_ID,
-              data = flowering %>%
-                dplyr::filter(Transect_ID != "Rural"),
-            na.action = na.exclude # THIS LINE IS IMPORTANT
-    ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
-)
-
-
-# merge Pop and Fam ranovas
-## test City_dist
-Peduncles_ranova1 <- CreateRanovaOutput_bootstrap(
-  Peduncles_ranova.fam,
-  Peduncles_ranova.pop,
-  "Mortality (Distance)")
-
-## test transect
-Peduncles_ranova2 <- CreateRanovaOutput_Q2(test_tr, "Mortality (Transect)")
-
-flextable::save_as_html(Peduncles_ranova1,
-                        Peduncles_ranova2,
-                        path = here::here("./Reproductive_trait_analyses/Tables/Ranova/Mortality_transects.html"))
 ```
 
 # Anova

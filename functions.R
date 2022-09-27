@@ -441,12 +441,12 @@ pb_ranova_1step <- function(full_model_forstep, trait_name){
   
   ranova.pop <- PBmodcomp(full_model_forstep,
                           test_pop,
-                          nsim = 10, 
+                          nsim = 1000, 
                           cl = makeCluster(6)) 
   
   ranova.fam <- PBmodcomp(full_model_forstep,
                           test_fam,
-                          nsim = 10, 
+                          nsim = 1000, 
                           cl = makeCluster(6)) 
   
   
