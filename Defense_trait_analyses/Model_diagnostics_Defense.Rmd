@@ -620,6 +620,35 @@ herbiv_l_gr_dist_m1_quant <- glmmTMB(log(Herbivory_mean_late) ~
 # performance::check_model(herbiv_l_gr_dist_m1_quant) # looks great
 # car::Anova(herbiv_l_gr_dist_m1_quant)
 
+
+
+# test for gxe intxns
+## binary
+# gxetest_herbiv_l_bin1 <- glmmTMB(Herbivory_mean_late_binary ~
+#                                Block*City_dist +
+#                                Year +
+#                                (1|Population/Family),
+#                               data = herbivory,
+#                        family = binomial,
+#                               REML = F)
+# 
+# test_gxe(herbiv_l_gr_dist_m1_bin, gxetest_herbiv_l_bin1) # reg model stat equivalent
+# car::Anova(herbiv_l_gr_dist_m1_bin, type = "III") # this model shows block being very sig; otherwise, identical results to gxe mod (block*city_dist not sig for either)
+# car::Anova(gxetest_herbiv_l_bin1, type = "III")
+
+
+## quant
+# gxetest_herbiv_l_quant1 <- glmmTMB(log(Herbivory_mean_late) ~
+#                                Block*City_dist +
+#                                Year +
+#                                (1|Population/Family)
+#                                 ,
+#                               data = herbivory %>%
+#                         dplyr::filter(
+#                           Herbivory_mean_late_binary == 1),
+#                                REML = F)
+#  test_gxe(herbiv_l_gr_dist_m1_quant, gxetest_herbiv_l_quant1) # reg mod best
+
 ```
 
 #### Urbanization Score
@@ -652,6 +681,34 @@ herbiv_l_gr_usc_m1_quant <- glmmTMB(log(Herbivory_mean_late) ~
 # plot(DHARMa::simulateResiduals(herbiv_l_gr_usc_m1_quant))
 # performance::check_model(herbiv_l_gr_usc_m1_quant) # looks great
 # car::Anova(herbiv_l_gr_usc_m1_quant)
+
+
+# test for gxe intxns
+## binary
+# gxetest_herbiv_l_bin2 <- glmmTMB(Herbivory_mean_late_binary ~
+#                                Block*Urb_score +
+#                                Year +
+#                                (1|Population/Family),
+#                               data = herbivory,
+#                        family = binomial,
+#                               REML = F)
+# 
+# test_gxe(herbiv_l_gr_usc_m1_bin, gxetest_herbiv_l_bin2) # reg model stat equivalent
+# car::Anova(herbiv_l_gr_usc_m1_bin, type = "III") # this model shows block being very sig; otherwise, identical results to gxe mod (block*Urb_score not sig for either)
+# car::Anova(gxetest_herbiv_l_bin2, type = "III")
+
+
+## quant
+# gxetest_herbiv_l_quant1 <- glmmTMB(log(Herbivory_mean_late) ~
+#                                Block*Urb_score +
+#                                Year +
+#                                (1|Population/Family)
+#                                 ,
+#                               data = herbivory %>%
+#                         dplyr::filter(
+#                           Herbivory_mean_late_binary == 1),
+#                                REML = F)
+#  test_gxe(herbiv_l_gr_usc_m1_quant, gxetest_herbiv_l_quant1) # reg mod best
 ```
 
 ### Urban Subtransects
@@ -719,6 +776,34 @@ herbiv_l_urbsubs_dist_m2_quant <- glmmTMB(log(Herbivory_mean_late) ~
 # 
 # AIC(herbiv_l_urbsubs_dist_m1_quant, herbiv_l_urbsubs_dist_m2_quant) # m2 better but <2 AIC apart
 
+
+
+# test for gxe intxns
+## binary
+# gxetest_herbiv_l_bin3 <- glmmTMB(Herbivory_mean_late_binary ~
+#                                Block*City_dist +
+#                                Year +
+#                                (1|Population/Family) +
+#                                City_dist * Transect_ID,
+#                               data = herbivory %>%
+#                               dplyr::filter(Transect_ID != "Rural"),
+#                        family = binomial,
+#                               REML = F)
+# 
+# test_gxe(herbiv_l_urbsubs_dist_m1_bin, gxetest_herbiv_l_bin3) # reg model better
+
+
+## quant
+# gxetest_herbiv_l_quant3 <- glmmTMB(log(Herbivory_mean_late) ~
+#                                Block*City_dist +
+#                                Year +
+#                                (1|Population/Family) +
+#                                City_dist * Transect_ID,
+#                               data = herbivory %>%
+#                         dplyr::filter(
+#                           Herbivory_mean_late_binary == 1 & Transect_ID != "Rural"),
+#                                REML = F)
+# test_gxe(herbiv_l_urbsubs_dist_m1_quant, gxetest_herbiv_l_quant3) # reg mod best
 ```
 
 #### Urbanization Score
@@ -786,6 +871,35 @@ herbiv_l_urbsubs_usc_m2_quant <- glmmTMB(log(Herbivory_mean_late) ~
 
 # plot(DHARMa::simulateResiduals(herbiv_l_urbsubs_usc_m2_quant))
 # AIC(herbiv_l_urbsubs_usc_m1_quant, herbiv_l_urbsubs_usc_m2_quant) # m2 better but <2 AIC apart
+
+
+
+# test for gxe intxns
+## binary
+# gxetest_herbiv_l_bin4 <- glmmTMB(Herbivory_mean_late_binary ~
+#                                Block*Urb_score +
+#                                Year +
+#                                (1|Population/Family) +
+#                                Urb_score * Transect_ID,
+#                               data = herbivory %>%
+#                               dplyr::filter(Transect_ID != "Rural"),
+#                        family = binomial,
+#                               REML = F)
+# 
+# test_gxe(herbiv_l_urbsubs_usc_m1_bin, gxetest_herbiv_l_bin4) # reg model best
+
+
+## quant
+# gxetest_herbiv_l_quant4 <- glmmTMB(log(Herbivory_mean_late) ~
+#                                Block*Urb_score +
+#                                Year +
+#                                (1|Population/Family) +
+#                                City_dist * Transect_ID,
+#                               data = herbivory %>%
+#                         dplyr::filter(
+#                           Herbivory_mean_late_binary == 1 & Transect_ID != "Rural"),
+#                                REML = F)
+# test_gxe(herbiv_l_urbsubs_usc_m1_quant, gxetest_herbiv_l_quant4) # reg mod best
 ```
 
 ## Weevil scar length- 2020 and 2021 ONLY
