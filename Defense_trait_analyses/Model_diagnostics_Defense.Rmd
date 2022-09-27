@@ -75,17 +75,10 @@ gxe_test_latex1 <- glmmTMB(Latex_weight_mg^(1/3) ~
                         data = latex,
                         REML = F)
 
-
-gxe_test_latex2 <- glmmTMB(Latex_weight_mg^(1/3) ~
-                             City_dist + Block +
-                             (1|Population/Family),
-                        data = latex,
-                        REML = F )
-
 # plot(DHARMa::simulateResiduals(gxe_test_latex1))
-# plot(DHARMa::simulateResiduals(gxe_test_latex2))
-# AIC(gxe_test_latex1, gxe_test_latex2) # model without GxE best
+# AIC(gxe_test_latex1, ltx_gr_city_m1) # model without GxE best
 
+# test_gxe(ltx_gr_city_m1, gxe_test_latex1)
 ```
 
 #### Urb_score
@@ -100,6 +93,16 @@ ltx_gr_usc_m1 <- glmmTMB(Latex_weight_mg^(1/3) ~ Block +
 # plot(DHARMa::simulateResiduals(ltx_gr_usc_m1))
 # car::Anova(ltx_gr_usc_m1)
 
+
+
+# # test for gxe intxns
+# gxe_test_latex2 <- glmmTMB(Latex_weight_mg^(1/3) ~
+#                              Urb_score*Block +
+#                              (1|Population/Family),
+#                         data = latex,
+#                         REML = F)
+# 
+# test_gxe(ltx_gr_usc_m1, gxe_test_latex2) # model without GxE best
 ```
 
 ### Urban Subtransects
@@ -133,6 +136,19 @@ ltx_urbsubs_city_m2 <- glmmTMB(Latex_weight_mg^(1/3) ~
 # car::Anova(ltx_urbsubs_city_m2)
 
 AIC(ltx_urbsubs_city_m1, ltx_urbsubs_city_m2) # m2 best but <2 AIC away
+
+
+# # test for gxe intxns
+# gxe_test_latex3 <- glmmTMB(Latex_weight_mg^(1/3) ~
+#                              City_dist*Block +
+#                              (1|Population/Family) +
+#                         Transect_ID,
+#                         data = latex %>%
+#                           dplyr::filter(Transect_ID != "Rural"),
+#                         REML = F)
+# 
+# 
+# test_gxe(ltx_urbsubs_city_m1, gxe_test_latex3) # model without GxE best though < 2 AIC from GxE mod
 ```
 
 #### Urb_score
@@ -165,8 +181,20 @@ ltx_urbsubs_usc_m2 <- glmmTMB(Latex_weight_mg^(1/3) ~
 # car::Anova(ltx_urbsubs_usc_m2)
 
 AIC(ltx_urbsubs_usc_m1, ltx_urbsubs_usc_m2) # m1 best
-```
 
+
+# # test for gxe intxns
+# gxe_test_latex4 <- glmmTMB(Latex_weight_mg^(1/3) ~
+#                              Urb_score*Block +
+#                              (1|Population/Family) +
+#                         Transect_ID,
+#                         data = latex %>%
+#                           dplyr::filter(Transect_ID != "Rural"),
+#                         REML = F)
+# 
+# 
+# test_gxe(ltx_urbsubs_usc_m1, gxe_test_latex4) # model without GxE best
+```
 
 # Diagnostics: Traits measured in 2019, 2020, and 2021
 ## Herbivory: Before flowering
@@ -271,28 +299,33 @@ herbiv_e_gr_dist_m1_quant <- glmmTMB(log(Herbivory_mean_early) ~
 
 
 
-# # test for gxe intxns- won't converge with Block*Fam or Block*Pop, even when I take out other vars
-gxe_test_herb_quant_e1 <- lm(log(Herbivory_mean_early) ~
-                            Block*Population ,
-                        data = herbivory %>%
-                        dplyr::filter(
-                          Herbivory_mean_early_binary == 1))
+# test for gxe intxns
+## binary
+# gxetest_herbiv_e_bin1 <- glmmTMB(Herbivory_mean_early_binary ~
+#                                Block*City_dist +
+#                                Year + 
+#                                (1|Population/Family),
+#                               data = herbivory,
+#                        family = binomial,
+#                               REML = F)
+# 
+# test_gxe(herbiv_e_gr_dist_m1_quant, gxetest_herbiv_e_bin1) # gxe model better but anova produces qualitatively identical results
+# car::Anova(herbiv_e_gr_dist_m1_quant, type = "III")
+# car::Anova(gxetest_herbiv_e_bin1, type = "III")
 
 
-# plot(gxe_test_herb_quant_e1)
-# car::Anova(gxe_test_herb_quant_e1) # p >> 0.1
+## quant
+# gxetest_herbiv_e_quant1 <- glmmTMB(log(Herbivory_mean_early) ~
+#                                Block*City_dist +
+#                             #   Year + 
+#                                (1|Population/Family) 
+#                                 ,
+#                               data = herbivory %>%
+#                         dplyr::filter(
+#                           Herbivory_mean_early_binary == 1),
+#                               REML = F) 
+# test_gxe(herbiv_e_gr_dist_m1_bin, gxetest_herbiv_e_quant1) # gxe mod won't converge, so I took out year from that mod and regular quant mod and see that reg mod better than gxe mod
 
-
-# # test for gxe intxns- won't converge with Block*Fam or Block*Pop, even when I take out other vars
-gxe_test_herb_quant_e2 <- lm(log(Herbivory_mean_early) ~
-                            Block*Fam_uniq ,
-                        data = herbivory %>%
-                        dplyr::filter(
-                          Herbivory_mean_early_binary == 1))
-
-
-# plot(gxe_test_herb_quant_e2)
-# car::Anova(gxe_test_herb_quant_e2) # p >> 0.1
 ```
 
 

@@ -1,5 +1,15 @@
 # Functions
 
+# test for genotype x environment interactions
+test_gxe <- function(regular_mod, gxe_mod){
+  
+  plot(DHARMa::simulateResiduals(gxe_mod))
+  AIC(regular_mod, gxe_mod)
+  
+}
+
+
+
 ############################################################
 ######################## ANOVA #############################
 ############################################################
@@ -441,12 +451,12 @@ pb_ranova_1step <- function(full_model_forstep, trait_name){
   
   ranova.pop <- PBmodcomp(full_model_forstep,
                           test_pop,
-                          nsim = 1000, 
+                          nsim = 10, 
                           cl = makeCluster(6)) 
   
   ranova.fam <- PBmodcomp(full_model_forstep,
                           test_fam,
-                          nsim = 1000, 
+                          nsim = 10, 
                           cl = makeCluster(6)) 
   
   
