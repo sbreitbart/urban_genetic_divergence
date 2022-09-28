@@ -595,7 +595,7 @@ mortality_ranova2 <- glmer(Dead ~
 
 pb_ranova_2step(mortality_ranova2,
           "Mortality: 2020",
-          "./Growth_trait_analyses/Tables/Ranova/mortality_2020test.docx")
+          "./Growth_trait_analyses/Tables/Ranova/mortality_2020.docx")
 
 
 # 2021-----
