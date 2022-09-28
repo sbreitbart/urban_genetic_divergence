@@ -58,24 +58,14 @@ ldmc_gr_city_m1 <- glmmTMB(sqrt(LDMC) ~
 
 
 # test for gxe intxns
-gxe_test_LDMC1 <- lm(log(LDMC) ~
-                             Block*Population ,
-                        data = sla_ldmc %>%
-                             dplyr::filter(LDMC < 1))
-
-
-plot(gxe_test_LDMC1)
-car::Anova(gxe_test_LDMC1) # p >> 0.1
-
-
-gxe_test_LDMC2 <- lm(log(LDMC) ~
-                             Block*Fam_uniq ,
-                        data = sla_ldmc %>%
-                             dplyr::filter(LDMC < 1))
-
-
-plot(gxe_test_LDMC2)
-car::Anova(gxe_test_LDMC2) # p >> 0.1
+# gxe_test_ldmc <- glmmTMB(sqrt(LDMC) ~
+#                              City_dist*Block +
+#                              (1|Population/Family),
+#                          data = sla_ldmc %>%
+#                              dplyr::filter(LDMC < 1),
+#                         REML = F)
+# 
+# test_gxe(ldmc_gr_city_m1, gxe_test_ldmc) # reg mod best
 
 
 ## ------------------------------------------------------------
@@ -92,10 +82,21 @@ ldmc_gr_usc_m1 <- glmmTMB(sqrt(LDMC) ~
 # performance::check_model(ldmc_gr_usc_m1)
 
 
+# test for gxe intxns
+# gxe_test_ldmc2 <- glmmTMB(sqrt(LDMC) ~
+#                              Urb_score*Block +
+#                              (1|Population/Family),
+#                          data = sla_ldmc %>%
+#                              dplyr::filter(LDMC < 1),
+#                         REML = F)
+# 
+# test_gxe(ldmc_gr_usc_m1, gxe_test_ldmc2) # reg mod best
+
+
 ## ------------------------------------------------------------
 # doesn't converge unless I remove block
 ldmc_urbsubs_city_m1 <- glmmTMB(log(LDMC) ~
-                             # Block +
+                              Block +
                              (1|Population/Family) +
                              City_dist * Transect_ID,
                         data = sla_ldmc %>%
@@ -111,7 +112,7 @@ ldmc_urbsubs_city_m1 <- glmmTMB(log(LDMC) ~
 
 # MAIN EFFECTS MODEL
 ldmc_urbsubs_city_m2 <- glmmTMB(log(LDMC) ~
-                             # Block +
+                           #   Block +
                              (1|Population/Family) +
                              City_dist + Transect_ID,
                         data = sla_ldmc %>%
@@ -126,6 +127,20 @@ ldmc_urbsubs_city_m2 <- glmmTMB(log(LDMC) ~
 # 
 # # COMPARE AIC
 # AIC(ldmc_urbsubs_city_m1, ldmc_urbsubs_city_m2) # m2 lower but not by more than 2 AIC
+
+
+# test for gxe intxns
+# gxe_test_ldmc3 <- glmmTMB(log(LDMC) ~
+#                              City_dist*Block +
+#                              (1|Population/Family) +
+#                         City_dist*Transect_ID,
+#                         sla_ldmc %>%
+#                              dplyr::filter(LDMC < 1 &
+#                                              Transect_ID != "Rural"), 
+#                         REML = F)
+# 
+# 
+# test_gxe(ldmc_urbsubs_city_m1, gxe_test_ldmc3) # reg model best (I added block back to it)
 
 
 ## ------------------------------------------------------------
@@ -158,11 +173,25 @@ ldmc_urbsubs_usc_m2 <- glmmTMB(log(LDMC) ~
 # AIC(ldmc_urbsubs_usc_m1, ldmc_urbsubs_usc_m2) # m2 lower but not by more than 2 AIC
 
 
+# test for gxe intxns
+# gxe_test_ldmc4 <- glmmTMB(log(LDMC) ~
+#                              Urb_score*Block +
+#                              (1|Population/Family) +
+#                         Urb_score*Transect_ID,
+#                         sla_ldmc %>%
+#                              dplyr::filter(LDMC < 1 &
+#                                              Transect_ID != "Rural"),
+#                         REML = F)
+# 
+# 
+# test_gxe(ldmc_urbsubs_usc_m1, gxe_test_ldmc4) # reg model best (I added block back to it)
+
+
 ## ------------------------------------------------------------
 # Basic data exploration
-plot(SLA ~ City_dist, data = sla_ldmc) 
-
-boxplot(SLA ~ Block, data = sla_ldmc)
+# plot(SLA ~ City_dist, data = sla_ldmc) 
+# 
+# boxplot(SLA ~ Block, data = sla_ldmc)
 
 # doesn't converge if I transform SLA to the extent that diagnostics look spotless (only if I remove block). I can also remove most outliers, but then sometimes it doesn't converge either. But if I remove some outliers (only use SLA < 40), anova results still qualitatitvley identical to other situations noted above. So I'll remove Block and transform SLA so I can compare with Urb_score model.
 sla_gr_city_m1 <- glmmTMB(SLA^(1/3) ~
@@ -177,9 +206,19 @@ sla_gr_city_m1 <- glmmTMB(SLA^(1/3) ~
 # car::Anova(sla_gr_city_m1)
 
 
+# test for gxe intxns
+# gxe_test_sla <- glmmTMB(SLA^(1/3) ~
+#                              City_dist*Block +
+#                              (1|Population/Family),
+#                          data = sla_ldmc ,
+#                         REML = F)
+# 
+# test_gxe(sla_gr_city_m1, gxe_test_sla) # reg mod best (added back block to reg mod)
+
+
 ## ------------------------------------------------------------
 sla_gr_usc_m1 <- glmmTMB(SLA^(1/3) ~
-                           # Block +
+                    #        Block +
                             (1|Population/Family) +
                             Urb_score,
                         data = sla_ldmc,
@@ -188,6 +227,16 @@ sla_gr_usc_m1 <- glmmTMB(SLA^(1/3) ~
 # performance::check_model(sla_gr_usc_m1)
 # plot(DHARMa::simulateResiduals(sla_gr_usc_m1))
 # car::Anova(sla_gr_usc_m1)
+
+
+# test for gxe intxns
+# gxe_test_sla2 <- glmmTMB(SLA^(1/3) ~
+#                              Urb_score*Block +
+#                              (1|Population/Family),
+#                          data = sla_ldmc ,
+#                         REML = F)
+# 
+# test_gxe(sla_gr_usc_m1, gxe_test_sla2) # reg mod best (added back block to reg mod)
 
 
 ## ------------------------------------------------------------
@@ -219,6 +268,19 @@ sla_urbsubs_city_m2 <- glmmTMB(SLA^(1/3) ~
 # AIC(sla_urbsubs_city_m1, sla_urbsubs_city_m2) # qualitatively identical but m2 best model
 
 
+# test for gxe intxns
+# gxe_test_sla3 <- glmmTMB(SLA^(1/3) ~
+#                              City_dist*Block +
+#                              (1|Population/Family) +
+#                         City_dist*Transect_ID,
+#                         sla_ldmc %>%
+#                              dplyr::filter(Transect_ID != "Rural"),
+#                         REML = F)
+# 
+# 
+# test_gxe(sla_urbsubs_city_m1, gxe_test_sla3) # reg model best (I added block back to it)
+
+
 ## ------------------------------------------------------------
 sla_urbsubs_usc_m1 <- glmmTMB(SLA^(1/3) ~
                                  Block +
@@ -248,6 +310,19 @@ sla_urbsubs_usc_m2 <- glmmTMB(SLA^(1/3) ~
 # AIC(sla_urbsubs_usc_m1, sla_urbsubs_usc_m2) # qualitatively identical but m2 best model
 
 
+# test for gxe intxns
+# gxe_test_sla4 <- glmmTMB(SLA^(1/3) ~
+#                              Urb_score*Block +
+#                              (1|Population/Family) +
+#                         Urb_score*Transect_ID,
+#                         sla_ldmc %>%
+#                              dplyr::filter(Transect_ID != "Rural"),
+#                         REML = F)
+# 
+# 
+# test_gxe(sla_urbsubs_usc_m1, gxe_test_sla4) # reg model best (I added block back to it)
+
+
 ## ------------------------------------------------------------
 # hist(heights$Total_Height_early, breaks = 80) # zero-inflated?
 # 
@@ -268,6 +343,20 @@ height_e_gr_city_m1 <- glmmTMB(Total_Height_early^(1/3) ~
 # car::Anova(height_e_gr_city_m1)
 
 
+# test for gxe intxns
+# gxe_test_height_l <- glmmTMB(Total_Height_early^(1/3) ~ 
+#                                  City_dist*Block +
+#                                  Year +
+#                                  (1|Population/Family) 
+#                                  ,
+#                         data = heights,
+#                         REML = F)
+# 
+# test_gxe(height_e_gr_city_m1, gxe_test_height_e) # modes stat equivalent
+# car::Anova(height_e_gr_city_m1, type = "III") # gxe mod below doesn't have sig gxe intxn but city_dist is marg sig at 0.0560, not sig in reg model
+# car::Anova(gxe_test_height_e, type = "III")
+
+
 ## ------------------------------------------------------------
 height_e_gr_usc_m1 <- glmmTMB(Total_Height_early^(1/3) ~ 
                                  Block +
@@ -281,6 +370,20 @@ height_e_gr_usc_m1 <- glmmTMB(Total_Height_early^(1/3) ~
 # plot(DHARMa::simulateResiduals(height_e_gr_usc_m1))
 # performance::check_model(height_e_gr_usc_m1)
 # car::Anova(height_e_gr_usc_m1)
+
+
+# test for gxe intxns
+# gxe_test_height_e2 <- glmmTMB(Total_Height_early^(1/3) ~
+#                                  Urb_score*Block +
+#                                  Year +
+#                                  (1|Population/Family)
+#                                  ,
+#                         data = heights,
+#                         REML = F)
+# 
+# test_gxe(height_e_gr_usc_m1, gxe_test_height_e2) # mods stat equivalent
+# car::Anova(height_e_gr_usc_m1, type = "III") # qualitatively identical results
+# car::Anova(gxe_test_height_e2, type = "III")
 
 
 ## ------------------------------------------------------------
@@ -315,6 +418,20 @@ height_e_urbsubs_city_m2 <- glmmTMB(Total_Height_early^(1/3) ~
 # AIC(height_e_urbsubs_city_m1, height_e_urbsubs_city_m2) # m2 better but <2 AIC from full
 
 
+# test for gxe intxns
+# gxe_test_height_e3 <- glmmTMB(Total_Height_early^(1/3) ~
+#                                  City_dist*Block +
+#                                  Year +
+#                                  (1|Population/Family)
+#                                  +
+#                                  City_dist * Transect_ID,
+#                               data = heights %>%
+#                           dplyr::filter(Transect_ID != "Rural"),
+#                           REML = F)
+# 
+# test_gxe(height_e_urbsubs_city_m1, gxe_test_height_e3) # reg mod best
+
+
 ## ------------------------------------------------------------
 height_e_urbsubs_usc_m1 <- glmmTMB(Total_Height_early^(1/3) ~ 
                                  Block +
@@ -346,6 +463,22 @@ height_e_urbsubs_usc_m2 <- glmmTMB(Total_Height_early^(1/3) ~
 # AIC(height_e_urbsubs_usc_m1, height_e_urbsubs_usc_m2) # m2 better but <2 AIC from full
 
 
+# test for gxe intxns
+# gxe_test_height_e4 <- glmmTMB(Total_Height_early^(1/3) ~
+#                                  Urb_score*Block +
+#                                  Year +
+#                                  (1|Population/Family)
+#                                  +
+#                                  Urb_score * Transect_ID,
+#                               data = heights %>%
+#                           dplyr::filter(Transect_ID != "Rural"),
+#                           REML = F)
+# 
+# test_gxe(height_e_urbsubs_usc_m1, gxe_test_height_e4) # mods stat equivalent
+# car::Anova(gxe_test_height_e4, type = "III") # mods qual identical
+# car::Anova(height_e_urbsubs_usc_m1, type = "III")
+
+
 ## ------------------------------------------------------------
 height_l_gr_city_m1 <- glmmTMB(Total_Height_late^(1/3) ~ 
                                  Block +
@@ -360,6 +493,18 @@ height_l_gr_city_m1 <- glmmTMB(Total_Height_late^(1/3) ~
 # car::Anova(height_l_gr_city_m1)
 
 
+# test for gxe intxns
+# gxe_test_height_l <- glmmTMB(Total_Height_late^(1/3) ~
+#                                  City_dist*Block +
+#                                  Year +
+#                                  (1|Population/Family)
+#                                  ,
+#                         data = heights,
+#                         REML = F)
+# 
+# test_gxe(height_l_gr_city_m1, gxe_test_height_l) # reg mod best
+
+
 ## ------------------------------------------------------------
 height_l_gr_usc_m1 <- glmmTMB(Total_Height_late^(1/3) ~ 
                                  Block +
@@ -372,6 +517,17 @@ height_l_gr_usc_m1 <- glmmTMB(Total_Height_late^(1/3) ~
 # plot(DHARMa::simulateResiduals(height_l_gr_usc_m1)) 
 # performance::check_model(height_l_gr_usc_m1)
 
+
+# test for gxe intxns
+# gxe_test_height_l2 <- glmmTMB(Total_Height_late^(1/3) ~
+#                                  Urb_score*Block +
+#                                  Year +
+#                                  (1|Population/Family)
+#                                  ,
+#                         data = heights,
+#                         REML = F)
+# 
+# test_gxe(height_l_gr_usc_m1, gxe_test_height_l2) # reg mod best
 
 
 ## ------------------------------------------------------------
@@ -405,6 +561,20 @@ height_l_urbsubs_city_m2 <- glmmTMB(Total_Height_late^(1/3) ~
 # AIC(height_l_urbsubs_city_m1, height_l_urbsubs_city_m2) # m2 better but <2 AIC from full
 
 
+# test for gxe intxns
+# gxe_test_height_l3 <- glmmTMB(Total_Height_late^(1/3) ~
+#                                  City_dist*Block +
+#                                  Year +
+#                                  (1|Population/Family)
+#                                  +
+#                                  City_dist * Transect_ID,
+#                               data = heights %>%
+#                           dplyr::filter(Transect_ID != "Rural"),
+#                           REML = F)
+# 
+# test_gxe(height_l_urbsubs_city_m1, gxe_test_height_l3) # reg mod best
+
+
 ## ------------------------------------------------------------
 height_l_urbsubs_usc_m1 <- glmmTMB(Total_Height_late^(1/3) ~ 
                                  Block +
@@ -435,6 +605,20 @@ height_l_urbsubs_usc_m2 <- glmmTMB(Total_Height_late^(1/3) ~
 # AIC(height_l_urbsubs_usc_m1, height_l_urbsubs_usc_m2) # m2 better but <2 AIC from full
 
 
+# test for gxe intxns
+# gxe_test_height_l4 <- glmmTMB(Total_Height_late^(1/3) ~
+#                                  Urb_score*Block +
+#                                  Year +
+#                                  (1|Population/Family)
+#                                  +
+#                                  Urb_score * Transect_ID,
+#                               data = heights %>%
+#                           dplyr::filter(Transect_ID != "Rural"),
+#                           REML = F)
+# 
+# test_gxe(height_l_urbsubs_usc_m1, gxe_test_height_l4) # reg mod best
+
+
 ## ------------------------------------------------------------
 # hist(heights$rel_growth_rate, breaks = 80) 
 # boxplot(rel_growth_rate ~ Year, data = heights)
@@ -453,6 +637,18 @@ rgr_gr_city_m1 <- glmmTMB(rel_growth_rate^(1/3) ~
 # car::Anova(rgr_gr_city_m1)
 
 
+# test for gxe intxns
+# gxe_test_rgr <- glmmTMB(rel_growth_rate^(1/3) ~
+#                              City_dist*Block +
+#                              (1|Population/Family),
+#                          data = heights ,
+#                         REML = F)
+# 
+# test_gxe(rgr_gr_city_m1, gxe_test_rgr) # stat equiv
+# car::Anova(gxe_test_rgr, type = "III") # block sig here and not in reg model; otherwise identical (block*city_dist not sig)
+# car::Anova(rgr_gr_city_m1, type = "III")
+
+
 ## ------------------------------------------------------------
 rgr_gr_usc_m1 <- glmmTMB(rel_growth_rate^(1/3) ~ 
                                  Block +
@@ -466,6 +662,18 @@ rgr_gr_usc_m1 <- glmmTMB(rel_growth_rate^(1/3) ~
 # plot(DHARMa::simulateResiduals(rgr_gr_usc_m1)) 
 # performance::check_model(rgr_gr_usc_m1)
 # car::Anova(rgr_gr_usc_m1)
+
+
+# test for gxe intxns
+# gxe_test_rgr2 <- glmmTMB(rel_growth_rate^(1/3) ~
+#                              Urb_score*Block +
+#                              (1|Population/Family),
+#                          data = heights ,
+#                         REML = F)
+# 
+# test_gxe(rgr_gr_usc_m1, gxe_test_rgr2) # stat equiv
+# car::Anova(gxe_test_rgr2, type = "III") # qual identical results
+# car::Anova(rgr_gr_usc_m1, type = "III")
 
 
 ## ------------------------------------------------------------
@@ -500,6 +708,18 @@ rgr_urbsubs_city_m2 <- glmmTMB(rel_growth_rate^(1/3) ~
 # AIC(rgr_urbsubs_city_m1, rgr_urbsubs_city_m2) #m2 best but <2 AIC from full
 
 
+# test for gxe intxns
+# gxe_test_rgr3 <- glmmTMB(rel_growth_rate ~
+#                              City_dist*Block +
+#                              (1|Population/Family) +
+#                              City_dist*Transect_ID,
+#                          data = heights %>%
+#                           dplyr::filter(Transect_ID != "Rural"),
+#                          REML = F)
+# 
+# test_gxe(rgr_urbsubs_city_m1, gxe_test_rgr3) # reg mod best,but the gxe mod wouldn't converge unless I changed the response from ^(1/3) to untransformed
+
+
 ## ------------------------------------------------------------
 rgr_urbsubs_usc_m1 <- glmmTMB(rel_growth_rate^(1/3) ~ 
                                  Block +
@@ -532,6 +752,20 @@ rgr_urbsubs_usc_m2 <- glmmTMB(rel_growth_rate^(1/3) ~
 # AIC(rgr_urbsubs_usc_m1, rgr_urbsubs_usc_m2) # m2 best but <2 AIC from m2
 
 
+# test for gxe intxns
+# gxe_test_rgr4 <- glmmTMB(rel_growth_rate^(1/3) ~
+#                              Urb_score*Block +
+#                              (1|Population/Family) +
+#                              Urb_score*Transect_ID,
+#                          data = heights %>%
+#                           dplyr::filter(Transect_ID != "Rural"),
+#                          REML = F)
+# 
+# test_gxe(rgr_urbsubs_usc_m1, gxe_test_rgr4) # gxe mod best
+# car::Anova(rgr_urbsubs_usc_m1, type = "III") # shows urb_score*block intxn is sig (p = 0.035)
+# car::Anova(gxe_test_rgr4, type = "III")
+
+
 ## ------------------------------------------------------------
 ramets_e_gr_city_m1 <- glmmTMB(Ramets_early ~ 
                                  Block +
@@ -548,6 +782,20 @@ ramets_e_gr_city_m1 <- glmmTMB(Ramets_early ~
 # car::Anova(ramets_e_gr_city_m1)
 
 
+# test for gxe intxns
+# gxe_test_ramets_e <- glmmTMB(Ramets_early ~
+#                                  Year +
+#                                  (1|Population/Family) +
+#                                  City_dist*Block,
+#                         data = heights,
+#                         family = poisson,
+#                         REML = F)
+# 
+# test_gxe(ramets_e_gr_city_m1, gxe_test_ramets_e) # gxe mod better
+# car::Anova(gxe_test_ramets_e, type = "III") # block*city_dist  sig at p = 0.0412
+# car::Anova(ramets_e_gr_city_m1, type = "III")
+
+
 ## ------------------------------------------------------------
 ramets_e_gr_usc_m1 <- glmmTMB(Ramets_early ~ 
                                  Block +
@@ -562,6 +810,18 @@ ramets_e_gr_usc_m1 <- glmmTMB(Ramets_early ~
 # plot(DHARMa::simulateResiduals(ramets_e_gr_usc_m1)) 
 # performance::check_model(ramets_e_gr_usc_m1)
 # car::Anova(ramets_e_gr_usc_m1)
+
+
+# test for gxe intxns
+# gxe_test_ramets_e2 <- glmmTMB(Ramets_early ~
+#                                  Year +
+#                                  (1|Population/Family) +
+#                                  Urb_score*Block,
+#                         data = heights,
+#                         family = poisson,
+#                         REML = F)
+# 
+# test_gxe(ramets_e_gr_usc_m1, gxe_test_ramets_e2) # reg mod best
 
 
 ## ------------------------------------------------------------
@@ -594,6 +854,19 @@ ramets_e_urbsubs_city_m2 <- glmmTMB(Ramets_early ~
 # plot(DHARMa::simulateResiduals(ramets_e_urbsubs_city_m2)) 
 # performance::check_model(ramets_e_urbsubs_city_m2)
 # AIC(ramets_e_urbsubs_city_m1, ramets_e_urbsubs_city_m2) # m2 best but <2 AIC from full
+
+
+# # test for gxe intxns
+# gxe_test_ramets_e3 <- glmmTMB(Ramets_early ~ 
+#                                  City_dist*Block +
+#                              (1|Population/Family) +
+#                              City_dist*Transect_ID,
+#                         data = heights %>%
+#                           dplyr::filter(Transect_ID != "Rural"),
+#                         family = poisson,
+#                         REML = F)
+# 
+# test_gxe(ramets_e_urbsubs_city_m1, gxe_test_ramets_e3) # reg mod best
 
 
 ## ------------------------------------------------------------
@@ -629,6 +902,19 @@ ramets_e_urbsubs_usc_m2 <- glmmTMB(Ramets_early ~
 # AIC(ramets_e_urbsubs_usc_m1, ramets_e_urbsubs_usc_m2) # m2 best but <2 AIC from full
 
 
+# # test for gxe intxns
+# gxe_test_ramets_e4 <- glmmTMB(Ramets_early ~
+#                                  Urb_score*Block +
+#                              (1|Population/Family) +
+#                              Urb_score*Transect_ID,
+#                         data = heights %>%
+#                           dplyr::filter(Transect_ID != "Rural"),
+#                         family = poisson,
+#                         REML = F)
+# 
+# test_gxe(ramets_e_urbsubs_usc_m1, gxe_test_ramets_e4) # reg mod best
+
+
 ## ------------------------------------------------------------
 ramets_l_gr_city_m1 <- glmmTMB(Ramets_late ~ 
                                  Block +
@@ -643,6 +929,18 @@ ramets_l_gr_city_m1 <- glmmTMB(Ramets_late ~
 # plot(DHARMa::simulateResiduals(ramets_l_gr_city_m1)) 
 # performance::check_model(ramets_l_gr_city_m1)
 
+# test for gxe intxns
+# gxe_test_ramets_l <- glmmTMB(Ramets_late ~
+#                                  Year +
+#                                  (1|Population/Family) +
+#                                  City_dist*Block,
+#                         data = heights,
+#                         family = poisson,
+#                         REML = F)
+# 
+# test_gxe(ramets_l_gr_city_m1, gxe_test_ramets_l) # mods stat equiv
+# car::Anova(gxe_test_ramets_l, type = "III") # block*city_dist  not sig, but city_dist is marg sig here but not in reg mod
+# car::Anova(ramets_l_gr_city_m1, type = "III")
 
 
 ## ------------------------------------------------------------
@@ -658,6 +956,18 @@ ramets_l_gr_usc_m1 <- glmmTMB(Ramets_late ~
 
 # plot(DHARMa::simulateResiduals(ramets_l_gr_usc_m1)) 
 # performance::check_model(ramets_l_gr_usc_m1)
+
+
+# test for gxe intxns
+# gxe_test_ramets_l2 <- glmmTMB(Ramets_late ~
+#                                  Year +
+#                                  (1|Population/Family) +
+#                                  Urb_score*Block,
+#                         data = heights,
+#                         family = poisson,
+#                         REML = F)
+# 
+# test_gxe(ramets_l_gr_usc_m1, gxe_test_ramets_l2) # reg mod best
 
 
 
@@ -694,6 +1004,19 @@ ramets_l_urbsubs_city_m2 <- glmmTMB(Ramets_late ~
 # AIC(ramets_l_urbsubs_city_m1, ramets_l_urbsubs_city_m2) # m2 best but <2 AIC from full
 
 
+# # test for gxe intxns
+# gxe_test_ramets_l3 <- glmmTMB(Ramets_late ~
+#                                  City_dist*Block +
+#                              (1|Population/Family) +
+#                              City_dist*Transect_ID,
+#                         data = heights %>%
+#                           dplyr::filter(Transect_ID != "Rural"),
+#                         family = poisson,
+#                         REML = F)
+# 
+# test_gxe(ramets_l_urbsubs_city_m1, gxe_test_ramets_l3) # reg mod best
+
+
 ## ------------------------------------------------------------
 ramets_l_urbsubs_usc_m1 <- glmmTMB(Ramets_late ~ 
                                  Block +
@@ -725,6 +1048,19 @@ ramets_l_urbsubs_usc_m2 <- glmmTMB(Ramets_late ~
 # plot(DHARMa::simulateResiduals(ramets_l_urbsubs_usc_m2)) 
 # performance::check_model(ramets_l_urbsubs_usc_m2)
 # AIC(ramets_l_urbsubs_usc_m1, ramets_l_urbsubs_usc_m2) # m2 best but <2 AIC from full
+
+
+# # test for gxe intxns
+# gxe_test_ramets_l4 <- glmmTMB(Ramets_late ~
+#                                  Urb_score*Block +
+#                              (1|Population/Family) +
+#                              Urb_score*Transect_ID,
+#                         data = heights %>%
+#                           dplyr::filter(Transect_ID != "Rural"),
+#                         family = poisson,
+#                         REML = F)
+# 
+# test_gxe(ramets_l_urbsubs_usc_m1, gxe_test_ramets_l4) # reg mod best
 
 
 ## ------------------------------------------------------------
@@ -840,6 +1176,17 @@ surv_gr_city_m1_all <- glmmTMB(Dead ~
 # car::Anova(surv_gr_city_m1_all)
 
 
+# # test for gxe intxns
+# gxe_test_mort <- glmmTMB(Dead ~ 
+#                            Year +
+#                                  (1|Population/Family) +
+#                                  City_dist*Block,
+#                         data = survival ,
+#                         family = binomial,
+#                         REML = F)
+# 
+# test_gxe(surv_gr_city_m1_all, gxe_test_mort) # reg mod best
+
 
 ## ------------------------------------------------------------
 # Response: number of seasons alive (1-5)- NOT IN ANALYSIS-----
@@ -941,6 +1288,17 @@ surv_gr_usc_m1_all <- glmmTMB(Dead ~
 # performance::check_model(surv_gr_usc_m1_all)
 # car::Anova(surv_gr_usc_m1_all)
 
+
+# # test for gxe intxns
+# gxe_test_mort2 <- glmmTMB(Dead ~
+#                            Year +
+#                                  (1|Population/Family) +
+#                                  Urb_score*Block,
+#                         data = survival ,
+#                         family = binomial,
+#                         REML = F)
+# 
+# test_gxe(surv_gr_usc_m1_all, gxe_test_mort2) # reg mod best
 
 
 ## ------------------------------------------------------------
@@ -1146,12 +1504,24 @@ surv_urbsubs_city_m2_all <- glmmTMB(Dead ~
 # AIC(surv_urbsubs_city_m1_all, surv_urbsubs_city_m2_all) # m1 best but <2 AIC from m2
 
 
+# test for gxe intxns
+# gxe_test_mort3 <- glmmTMB(Dead ~
+#                            Year +
+#                                  (1|Population/Family) +
+#                                  City_dist*Block +
+#                             City_dist*Transect_ID,
+# 
+#                           data = survival %>%
+#                           dplyr::filter( Transect_ID != "Rural"),
+#                           family = binomial,
+#                         REML = F)
+# 
+# test_gxe(surv_urbsubs_city_m1_all, gxe_test_mort3) # reg mod best
 
 
 ## ------------------------------------------------------------
 # Response: number of seasons alive (1-5)- NOT IN ANALYSIS-----
 # seasons survived until death
-# are diagnostics ok?
 ## full model
 surv_urbsubs_usc_m1_seasons <- glmmTMB(seasons ~ 
                                  Block +
@@ -1352,6 +1722,23 @@ surv_urbsubs_usc_m2_all <- glmmTMB(Dead ~
 # plot(DHARMa::simulateResiduals(surv_urbsubs_usc_m2_all))
 # car::Anova(surv_urbsubs_usc_m2_all)
 # AIC(surv_urbsubs_usc_m1_all, surv_urbsubs_usc_m2_all) # m1 best but <2 AIC from m2
+
+
+# # test for gxe intxns
+gxe_test_mort4 <- glmmTMB(Dead ~
+                           Year +
+                                 (1|Population/Family) +
+                                 Urb_score*Block +
+                            Urb_score*Transect_ID,
+
+                          data = survival %>%
+                          dplyr::filter( Transect_ID != "Rural"),
+                          family = binomial,
+                        REML = F)
+
+test_gxe(surv_urbsubs_usc_m1_all, gxe_test_mort4) # stat equiv
+car::Anova(gxe_test_mort4, type = "III") # city*block marg sig
+car::Anova(surv_urbsubs_usc_m1_all, type = "III")
 
 
 ## ------------------------------------------------------------

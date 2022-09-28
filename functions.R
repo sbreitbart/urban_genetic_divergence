@@ -403,7 +403,9 @@ CreateRanovaOutput_bootstrap <- function(ranova_fam,
                                          ranova_pop,
                                          var_name ,
                                          PVE_pop,
-                                         PVE_fam
+                                         PVE_fam,
+                                         variance_pop,
+                                         variance_fam
                                          ){
   
   ranova.fam <- tidy(ranova_fam) %>%
@@ -430,19 +432,39 @@ CreateRanovaOutput_bootstrap <- function(ranova_fam,
     dplyr::mutate(p = replace(p,
                               p < 0.001,
                               "<0.001")) %>%
-    dplyr::mutate(Variable = noquote(var_name)) %>%
-    dplyr::select(c(3,1,2)) %>%
+    dplyr::mutate(Variable = noquote(var_name)) %>% 
+    dplyr::mutate(Variance = c(variance_fam,
+                               variance_pop)) %>%
+    dplyr::mutate(PVE = c(PVE_fam, PVE_pop)) %>%
+    dplyr::select(c(3,1,4,5,2)) %>%
     flextable() %>%
     merge_at(j = 1) %>%
     fix_border_issues() %>%
-    bold(i = ~ p <= 0.05, j = 3) %>%
-    autofit() %>%
-    set_caption(caption = paste0("PVE for population: ",
-                                 PVE_pop,
-                                 ". PVE for family: ",
-                                 PVE_fam))
+    bold(i = ~ p <= 0.05, j = 5) %>%
+    autofit()
+  
   return(tab1)
   }
+
+PVE_testing <- function(ranova_obj){
+  if (isTRUE(performance::check_singularity(ranova_obj)) |
+      isTRUE(as.numeric(length(get_pve(ranova_obj))) == 0)) {
+    return("NA")
+  }
+  else {
+    return((get_pve(ranova_obj)))}
+}
+
+get_variance <- function(ranova_obj){
+  if (isTRUE(performance::check_singularity(ranova_obj)) |
+      isTRUE(as.numeric(length(get_pve(ranova_obj))) == 0)) {
+    return("NA")
+  }
+  else {
+    return(as.numeric(insight::get_variance_random(ranova_obj)) %>%
+              round(digits = 3))
+           }
+}
 
 pb_ranova_1step <- function(full_model_forstep, trait_name){
   
@@ -460,24 +482,20 @@ pb_ranova_1step <- function(full_model_forstep, trait_name){
                           cl = makeCluster(6)) 
   
   
-  PVE_testing <- function(ranova_obj){
-    if (isTRUE(performance::check_singularity(ranova_obj)) |
-        isTRUE(as.numeric(length(get_pve(ranova_obj))) == 0)) {
-      return("NA")
-    }
-    else {
-      return((get_pve(ranova_obj)))}
-  }
-  
   PVE_pop <- PVE_testing(test_pop)
   PVE_fam <- PVE_testing(test_fam)
+  
+  variance_pop <- get_variance(test_pop)
+  variance_fam <- get_variance(test_fam)
   
   # merge Pop and Fam ranovas
   table1 <- CreateRanovaOutput_bootstrap(ranova.fam,
                                          ranova.pop,
                                          trait_name,
                                          PVE_pop,
-                                         PVE_fam)
+                                         PVE_fam,
+                                         variance_pop,
+                                         variance_fam)
   
   return(table1)
   
