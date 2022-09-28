@@ -215,22 +215,26 @@ ranova_1step <- function(lmer_model, var_name){
   tab1 <- full_join(m1.ranova, variances1) %>%
     as.data.frame() %>%
     dplyr::arrange(Group) %>%
-    dplyr::select(c(1,8,9,7)) %>%
-    dplyr::mutate_at(vars(c(2,4)), round, 3) %>%
-    dplyr::rename(., p = 4) %>%
+    dplyr::select(c(1,5,8,9,7)) %>%
+    dplyr::mutate_at(vars(c(2,3,5)), round, 3) %>%
+    dplyr::rename(., p = 5) %>%
     dplyr::mutate(p = p/2) %>% # divide by 2 b/c 1-sided test
     dplyr::mutate(p = replace(p,
                               p < 0.001,
                               "<0.001")) %>%
     dplyr::mutate(Variable = noquote(var_name)) %>%
-    dplyr::select(c(5, 1:4)) %>%
+    dplyr::select(c(6, 1:5)) %>%
     dplyr::filter(Group != "Block") %>%
     dplyr::filter(Group != "Year") %>%
     flextable() %>%
     merge_at(j = 1) %>%
     fix_border_issues() %>%
-    bold(i = ~ p <= 0.05, j = 5) %>%
+    bold(i = ~ p <= 0.05, j = 6) %>%
+    flextable::compose(i = 1, j = 3, part = "header",
+                       value = as_paragraph("χ", as_sup("2"))) %>%
+    
     autofit()
+  
   
   return(tab1)
   
@@ -413,21 +417,20 @@ CreateRanovaOutput_bootstrap <- function(ranova_fam,
     dplyr::rename(Group = type) %>%
     dplyr::mutate(Group = replace(Group,
                                   Group == "LRT",
-                                  "Family")) %>%
-    dplyr::select(-c(2:3))
+                                  "Family")) 
   
   ranova.pop <- tidy(ranova_pop) %>%
     dplyr::filter(type == "LRT") %>%
     dplyr::rename(Group = type) %>%
     dplyr::mutate(Group = replace(Group,
                                   Group == "LRT",
-                                  "Population")) %>%
-    dplyr::select(-c(2:3))
+                                  "Population")) 
   
   tab1 <- full_join(ranova.fam, ranova.pop) %>%
     as.data.frame() %>%
-    dplyr::mutate_at(vars(c(p.value)), round, 3) %>%
-    dplyr::rename(., p = 2) %>%
+    dplyr::mutate_at(vars(c(2,4)), round, 3) %>%
+    dplyr::rename(.,
+                  p = 4) %>%
     dplyr::mutate(p = p/2) %>%
     dplyr::mutate(p = replace(p,
                               p < 0.001,
@@ -436,11 +439,13 @@ CreateRanovaOutput_bootstrap <- function(ranova_fam,
     dplyr::mutate(Variance = c(variance_fam,
                                variance_pop)) %>%
     dplyr::mutate(PVE = c(PVE_fam, PVE_pop)) %>%
-    dplyr::select(c(3,1,4,5,2)) %>%
+    dplyr::select(c(5,1,6,7,2,3,4)) %>%
     flextable() %>%
     merge_at(j = 1) %>%
     fix_border_issues() %>%
-    bold(i = ~ p <= 0.05, j = 5) %>%
+    bold(i = ~ p <= 0.05, j = 7) %>%
+    flextable::compose(i = 1, j = 5, part = "header",
+                       value = as_paragraph("χ", as_sup("2"))) %>%
     autofit()
   
   return(tab1)
@@ -473,12 +478,12 @@ pb_ranova_1step <- function(full_model_forstep, trait_name){
   
   ranova.pop <- PBmodcomp(full_model_forstep,
                           test_pop,
-                          nsim = 1000, 
+                          nsim = 10, 
                           cl = makeCluster(6)) 
   
   ranova.fam <- PBmodcomp(full_model_forstep,
                           test_fam,
-                          nsim = 1000, 
+                          nsim = 10, 
                           cl = makeCluster(6)) 
   
   

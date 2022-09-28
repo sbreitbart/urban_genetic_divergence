@@ -213,6 +213,7 @@ herb_e_bin_ranova1 <- glmer(Herbivory_mean_early_binary ~
                              data = herbivory %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
+                            nAGQ = 0, # doesn't converge w/o this
                              family = binomial)
 
 # performance::check_model(herb_e_bin_ranova1)
@@ -231,6 +232,8 @@ herb_e_bin_ranova2 <- glmer(Herbivory_mean_early_binary ~
                              data = herbivory %>%
                                dplyr::filter(Year == 2021),
                  na.action = na.exclude,
+                 nAGQ = 0, # doesn't converge w/o this
+
                              family = binomial)
 
 # performance::check_model(herb_e_bin_ranova2)
@@ -249,6 +252,8 @@ herb_l_bin_ranova1 <- glmer(Herbivory_mean_late_binary ~
                              data = herbivory %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
+                            nAGQ = 0, # doesn't converge w/o this
+
                              family = binomial)
 
 # performance::check_model(herb_l_bin_ranova1)
@@ -289,7 +294,8 @@ weev_bin_ranova1 <- glmer(Scar_binary ~
                              data = weevil %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
-                             family = binomial)
+                          nAGQ = 0, # doesn't converge w/o this
+                          family = binomial)
 
 # performance::check_model(weev_bin_ranova1)
 
@@ -305,7 +311,8 @@ weev_bin_ranova2 <- glmer(Scar_binary ~
                                (1|Population:Fam_uniq),
                              data = weevil %>%
                                dplyr::filter(Year == 2021),
-                            na.action = na.exclude,
+                          nAGQ = 0, # doesn't converge w/o this
+                          na.action = na.exclude,
                              family = binomial)
 
 # performance::check_model(weev_bin_ranova2)
