@@ -459,13 +459,14 @@ ramets_e_ranova1 <- glmer(Ramets_early ~
                              data = heights %>%
                                dplyr::filter(Year == 2019),
                             na.action = na.exclude,
+                          nAGQ = 0, # doesn't converge w/o this
                              family = poisson)
 
 # performance::check_model(ramets_e_ranova1)
 
 pb_ranova_2step(ramets_e_ranova1,
           "Ramets before flowering: 2019",
-          "./Growth_trait_analyses/Tables/Ranova/ramets_early_2019.docx")
+           "./Growth_trait_analyses/Tables/Ranova/ramets_early_2019.docx")
 
 
 # 2020-----
@@ -476,6 +477,7 @@ ramets_e_ranova2 <- glmer(Ramets_early ~
                              data = heights %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
+                          nAGQ = 0, # doesn't converge w/o this
                              family = poisson)
 
 # performance::check_model(ramets_e_ranova2)
@@ -493,6 +495,7 @@ ramets_e_ranova3 <- glmer(Ramets_early ~
                              data = heights %>%
                                dplyr::filter(Year == 2021),
                             na.action = na.exclude,
+                           nAGQ = 0, # doesn't converge w/o this
                              family = poisson)
 
 # performance::check_model(ramets_e_ranova3)
@@ -528,6 +531,7 @@ ramets_l_ranova2 <- glmer(Ramets_late ~
                              data = heights %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
+                          nAGQ = 0,
                              family = poisson)
 
 # performance::check_model(ramets_l_ranova2)
@@ -545,6 +549,7 @@ ramets_l_ranova3 <- glmer(Ramets_late ~
                              data = heights %>%
                                dplyr::filter(Year == 2021),
                             na.action = na.exclude,
+                          nAGQ = 0,
                              family = poisson)
 
 # performance::check_model(ramets_l_ranova3)
