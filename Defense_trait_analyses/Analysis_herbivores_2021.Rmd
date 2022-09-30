@@ -167,7 +167,6 @@ monarch_ranova1 <- glmer.nb(Monarch_Quantity_Observed ~
                                (1|Population:Fam_uniq),
                              data = herbivores %>%
                               dplyr::filter(Year == 2020),
-                              nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(monarch_ranova1)
@@ -183,7 +182,6 @@ monarch_ranova2 <- glmer.nb(Monarch_Quantity_Observed ~
                                (1|Population:Fam_uniq),
                              data = herbivores %>%
                               dplyr::filter(Year == 2021),
-                              nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(monarch_ranova2)
@@ -203,7 +201,6 @@ asclepiadis_ranova1 <- glmer.nb(Liriomyza_asclepiadis ~
                                (1|Population:Fam_uniq),
                              data = herbivores %>%
                               dplyr::filter(Year == 2020),
-                              nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(asclepiadis_ranova1)
@@ -220,7 +217,6 @@ asclepiadis_ranova2 <- glmer.nb(Liriomyza_asclepiadis ~
                                (1|Population:Fam_uniq),
                              data = herbivores %>%
                               dplyr::filter(Year == 2021),
-                              nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(asclepiadis_ranova2)
@@ -241,7 +237,6 @@ clivicoll_ranova1 <- glmer.nb(Labidomera_clivicollis ~
                              data = herbivores %>%
                 dplyr::filter(Labidomera_clivicollis < 9 &
                                 Year == 2020),
-                              nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(clivicoll_ranova1)
@@ -258,7 +253,6 @@ clivicoll_ranova2 <- glmer.nb(Labidomera_clivicollis ~
                                (1|Population:Fam_uniq),
                              data = herbivores %>%
                 dplyr::filter(Year == 2021),
-                              nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(clivicoll_ranova2)

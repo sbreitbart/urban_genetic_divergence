@@ -459,7 +459,7 @@ ramets_e_ranova1 <- glmer(Ramets_early ~
                              data = heights %>%
                                dplyr::filter(Year == 2019),
                             na.action = na.exclude,
-                          nAGQ = 0, # doesn't converge w/o this
+                     #     nAGQ = 0, # doesn't converge w/o this
                              family = poisson)
 
 # performance::check_model(ramets_e_ranova1)
@@ -477,7 +477,7 @@ ramets_e_ranova2 <- glmer(Ramets_early ~
                              data = heights %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
-                          nAGQ = 0, # doesn't converge w/o this
+                        #  nAGQ = 0, # doesn't converge w/o this
                              family = poisson)
 
 # performance::check_model(ramets_e_ranova2)
@@ -495,7 +495,7 @@ ramets_e_ranova3 <- glmer(Ramets_early ~
                              data = heights %>%
                                dplyr::filter(Year == 2021),
                             na.action = na.exclude,
-                           nAGQ = 0, # doesn't converge w/o this
+                       #    nAGQ = 0, # doesn't converge w/o this
                              family = poisson)
 
 # performance::check_model(ramets_e_ranova3)
@@ -531,7 +531,7 @@ ramets_l_ranova2 <- glmer(Ramets_late ~
                              data = heights %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
-                          nAGQ = 0,
+                       #   nAGQ = 0,
                              family = poisson)
 
 # performance::check_model(ramets_l_ranova2)
@@ -549,7 +549,7 @@ ramets_l_ranova3 <- glmer(Ramets_late ~
                              data = heights %>%
                                dplyr::filter(Year == 2021),
                             na.action = na.exclude,
-                          nAGQ = 0,
+                      #    nAGQ = 0,
                              family = poisson)
 
 # performance::check_model(ramets_l_ranova3)
@@ -571,7 +571,7 @@ mortality_ranova1 <- glmer(Dead ~
                             na.action = na.exclude,
                              # ,control=glmerControl(optimizer="bobyqa",
   #                           optCtrl=list(maxfun=2e5)),
-                           nAGQ = 0, # doesn't converge w/o this
+                      #     nAGQ = 0, # doesn't converge w/o this
                              family = binomial)
 
 # performance::check_model(mortality_ranova1)
@@ -605,7 +605,7 @@ mortality_ranova3 <- glmer(Dead ~
                                (1|Population:Fam_uniq),
                              data = survival %>%
                                dplyr::filter(Year == 2021),
-                           nAGQ = 0, # doesn't converge w/o this
+                 #          nAGQ = 0, # doesn't converge w/o this
                             na.action = na.exclude,
                              family = binomial)
 
@@ -614,6 +614,24 @@ mortality_ranova3 <- glmer(Dead ~
 pb_ranova_2step(mortality_ranova3,
           "Mortality: 2021",
           "./Growth_trait_analyses/Tables/Ranova/mortality_2021.docx")
+
+# 2022-----
+mortality_ranova4 <- glmer(Dead ~
+                               Block +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                             data = survival %>%
+                               dplyr::filter(Year == 2022),
+                           # nAGQ = 0, # doesn't converge w/o this
+                            na.action = na.exclude,
+                             family = binomial)
+
+# performance::check_model(mortality_ranova4)
+
+pb_ranova_2step(mortality_ranova4,
+          "Mortality: 2022",
+          "./Growth_trait_analyses/Tables/Ranova/mortality_2022.docx")
+
 
 ```
 
@@ -668,7 +686,7 @@ ramets_e_ranova3_pb <- glmer(Ramets_early ~
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2021),
                             na.action = na.exclude,
-                            nAGQ = 0,
+               #             nAGQ = 0,
                              family = poisson)
 
 # performance::check_model(ramets_e_ranova3_pb)
@@ -688,7 +706,7 @@ ramets_l_ranova1_pb <- glmer(Ramets_late ~
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2019),
                             na.action = na.exclude,
-                            nAGQ = 0,
+                  #          nAGQ = 0,
                              family = poisson)
 
 # performance::check_model(ramets_l_ranova1_pb)
@@ -708,7 +726,7 @@ ramets_l_ranova2_pb <- glmer(Ramets_late ~
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2020),
                             na.action = na.exclude,
-                            nAGQ = 0,
+                   #         nAGQ = 0,
                              family = poisson)
 
 # performance::check_model(ramets_l_ranova2_pb)
@@ -727,7 +745,7 @@ ramets_l_ranova3_pb <- glmer(Ramets_late ~
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2021),
                             na.action = na.exclude,
-                            nAGQ = 0,
+                 #           nAGQ = 0,
                              family = poisson)
 
 # performance::check_model(ramets_l_ranova3_pb)
@@ -748,7 +766,7 @@ surv_ranova1_pb <- glmer(Dead ~
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2019),
                             na.action = na.exclude,
-                            nAGQ = 0,
+                 #           nAGQ = 0,
                              family = binomial)
 
 # performance::check_model(surv_ranova1_pb)
@@ -767,7 +785,7 @@ surv_ranova2_pb <- glmer(Dead ~
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2020),
                             na.action = na.exclude,
-                            nAGQ = 0,
+                  #          nAGQ = 0,
                              family = binomial)
 
 # performance::check_model(surv_ranova2_pb)
@@ -786,7 +804,7 @@ surv_ranova3_pb <- glmer(Dead ~
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2021),
                             na.action = na.exclude,
-                            nAGQ = 0,
+                #            nAGQ = 0,
                              family = binomial)
 
 # performance::check_model(surv_ranova3_pb)
@@ -805,7 +823,7 @@ surv_ranova4_pb <- glmer(Dead ~
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2022),
                             na.action = na.exclude,
-                            nAGQ = 0,
+                 #           nAGQ = 0,
                              family = binomial)
 
 # performance::check_model(surv_ranova4_pb)

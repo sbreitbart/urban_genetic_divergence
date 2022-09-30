@@ -171,19 +171,19 @@ flsucc_urbsubs_usc1_ME <- glmmTMB(Flowered ~
 ```
 
 
-## Flower count/plant (per 3 inflors)
+## Mean flower count/inflor
 ### Gradient
 #### City_dist
 ```{r}
 ## Basic data exploration
-# plot(total_flower_count ~ City_dist, data = flowering)
+# plot(mean_flower_count ~ City_dist, data = flowering)
 # 
-# boxplot(total_flower_count ~ Block, data = flowering)
+# boxplot(mean_flower_count ~ Block, data = flowering)
 # 
-# boxplot(total_flower_count ~ Year, data = flowering)
+# boxplot(mean_flower_count ~ Year, data = flowering)
 
 
-flowers_gr_city1 <- glmmTMB(total_flower_count ~
+flowers_gr_city1 <- glmmTMB(mean_flower_count ~
                                           Block +
                                           Year +
                                           (1|Population/Family) +
@@ -194,10 +194,10 @@ flowers_gr_city1 <- glmmTMB(total_flower_count ~
 # plot(DHARMa::simulateResiduals(flowers_gr_city1)) 
 
 # # test for gxe
-# gxe_test_flowers <- glmmTMB(total_flower_count ~
+# gxe_test_flowers <- glmmTMB(mean_flower_count ~
 #                                           Block*City_dist +
 #                                           Year +
-#                               (1|Population/Family), 
+#                               (1|Population/Family),
 #                                         data = flowering,
 #                             family = nbinom2)
 # 
@@ -206,7 +206,7 @@ flowers_gr_city1 <- glmmTMB(total_flower_count ~
 
 #### Urb_score
 ```{r}
-flowers_gr_usc1 <- glmmTMB(total_flower_count ~
+flowers_gr_usc1 <- glmmTMB(mean_flower_count ~
                                           Block +
                                           Year +
                                           (1|Population/Family) +
@@ -217,7 +217,7 @@ flowers_gr_usc1 <- glmmTMB(total_flower_count ~
 # plot(DHARMa::simulateResiduals(flowers_gr_usc1))
 
 # # test for gxe
-# gxe_test_flowers2 <- glmmTMB(total_flower_count ~
+# gxe_test_flowers2 <- glmmTMB(mean_flower_count ~
 #                                           Block*Urb_score +
 #                                           Year +
 #                               (1|Population/Family),
@@ -231,7 +231,7 @@ flowers_gr_usc1 <- glmmTMB(total_flower_count ~
 ### Urban Subtransects
 #### City_dist
 ```{r}
-flowers_urbsubs_city1 <- glmmTMB(total_flower_count ~
+flowers_urbsubs_city1 <- glmmTMB(mean_flower_count ~
                                          Block +
                                           Year +
                                           (1|Population/Family) +
@@ -242,7 +242,7 @@ flowers_urbsubs_city1 <- glmmTMB(total_flower_count ~
 # plot(DHARMa::simulateResiduals(flowers_urbsubs_city1))
 
 ## MAIN EFFECTS
-flowers_urbsubs_city1_ME <- glmmTMB(total_flower_count ~
+flowers_urbsubs_city1_ME <- glmmTMB(mean_flower_count ~
                                           Block +
                                           Year +
                                           (1|Population/Family) +
@@ -257,23 +257,21 @@ flowers_urbsubs_city1_ME <- glmmTMB(total_flower_count ~
 
 
 # # test for gxe
-# gxe_test_flowers3 <- glmmTMB(total_flower_count ~
+# gxe_test_flowers3 <- glmmTMB(mean_flower_count ~
 #                                           Block*City_dist +
 #                                           Year +
 #                                City_dist*Transect_ID +
 #                               (1|Population/Family),
 #                              data = flowering %>%
 #                                    dplyr::filter(Transect_ID != "Rural"),
-#                             family = nbinom2)                 
+#                             family = nbinom2)
 # 
-# test_gxe(flowers_urbsubs_city1, gxe_test_flowers3) # stat equiv
-# car::Anova(gxe_test_flowers3, type = "III") # qualitatively identical (block*city_dist not sig)
-# car::Anova(flowers_urbsubs_city1, type = "III")
+# test_gxe(flowers_urbsubs_city1, gxe_test_flowers3) # reg mod best
 ```
 
 #### Urb_score
 ```{r}
-flowers_urbsubs_usc1 <- glmmTMB(total_flower_count ~
+flowers_urbsubs_usc1 <- glmmTMB(mean_flower_count ~
                                           Block +
                                           Year +
                                           (1|Population/Family) +
@@ -286,7 +284,7 @@ flowers_urbsubs_usc1 <- glmmTMB(total_flower_count ~
 
 
 ## MAIN EFFECTS
-flowers_urbsubs_usc1_ME <- glmmTMB(total_flower_count ~
+flowers_urbsubs_usc1_ME <- glmmTMB(mean_flower_count ~
                                           Block +
                                           Year +
                                           (1|Population/Family) +
@@ -296,11 +294,11 @@ flowers_urbsubs_usc1_ME <- glmmTMB(total_flower_count ~
                             family = nbinom2) 
 
 # plot(DHARMa::simulateResiduals(flowers_urbsubs_usc1_ME))
-# AIC(flowers_urbsubs_usc1, flowers_urbsubs_usc1_ME) # ME model better but <2 AIC from full
+# AIC(flowers_urbsubs_usc1, flowers_urbsubs_usc1_ME) # full model better but <2 AIC from ME
 
 
 # # test for gxe
-# gxe_test_flowers4 <- glmmTMB(total_flower_count ~
+# gxe_test_flowers4 <- glmmTMB(mean_flower_count ~
 #                                           Block*Urb_score +
 #                                           Year +
 #                                Urb_score*Transect_ID +
@@ -310,7 +308,7 @@ flowers_urbsubs_usc1_ME <- glmmTMB(total_flower_count ~
 #                             family = nbinom2)
 # 
 # test_gxe(flowers_urbsubs_usc1 , gxe_test_flowers4) # stat equiv
-# car::Anova(gxe_test_flowers4, type = "III") # block*urb_score marg sig (p = 0.0625) and block is only marg sig (it's sig in reg model, which also has transect as marg sig)
+# car::Anova(gxe_test_flowers4, type = "III") # block*urb_score sig (p = 0.0469) and block is only marg sig (it's sig in reg model, which also has transect as marg sig). Urbscore*transect sig in gxe mod, marg sig in reg mod
 # car::Anova(flowers_urbsubs_usc1 , type = "III")
 ```
 
@@ -1269,7 +1267,7 @@ names(flsucc_mods) <- c("City_gr",
 )
 ```
 
-## Flowers total
+## Mean flower count
 ```{r}
 flowers_mods <- list(
 
@@ -1284,8 +1282,8 @@ flowers_urbsubs_city1, # Qualitatively identical model (<2 AIC away)
 flowers_urbsubs_city1_ME, # Best model
 
 ## Urbanization score  / urban subtransects
-flowers_urbsubs_usc1, # Qualitatively identical model (<2 AIC away)
-flowers_urbsubs_usc1_ME # Best model
+flowers_urbsubs_usc1, # Best model
+flowers_urbsubs_usc1_ME # Qualitatively identical model (<2 AIC away)
 
 )
 
@@ -1294,8 +1292,8 @@ names(flowers_mods) <- c("City_gr",
                      "Usc_gr",
                      "City_urbsubs_alt",
                      "City_urbsubs_best",
-                     "Usc_urbsubs_alt",
-                     "Usc_urbsubs_best")
+                     "Usc_urbsubs_best",
+                     "Usc_urbsubs_alt")
 ```
 
 ## Flower size
@@ -1477,7 +1475,7 @@ names(peduncles_mods) <- c("City_gr",
 ```{r}
 all_models <- list(
 flsucc_mods      , # flowering success
-flowers_mods     , # total flowers/plant
+flowers_mods     , # mean flowers/inflor
 flsize_mods      , # mean flower size
 fltime_mods      , # flowering time
 flstart_mods     , # flowering start
@@ -1514,21 +1512,21 @@ flsucc_mods_alt_c <- flsucc_mods[3]
 flsucc_mods_alt_u <- flsucc_mods[5]
 ```
 
-### total flowers/plant
+### mean flowers/inflor
 ```{r}
 ## Best
 ### City_dist
 flowers_mods_best_c <- flowers_mods[c(1,4)]
 
 ### Urb_score
-flowers_mods_best_u <- flowers_mods[c(2,6)]
+flowers_mods_best_u <- flowers_mods[c(2,5)]
 
 ## Alt
 ### City_dist
 flowers_mods_alt_c <- flowers_mods[3]
 
 ### Urb_score
-flowers_mods_alt_u <- flowers_mods[5]
+flowers_mods_alt_u <- flowers_mods[6]
 ```
 
 

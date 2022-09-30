@@ -29,40 +29,40 @@ theoretical 0.21573594 0.3869908
 delta       0.09372922 0.1681331
 
 $flowers_mods.City_gr
-                 R2m        R2c
-delta     0.08579976 0.09630301
-lognormal 0.10848123 0.12176104
-trigamma  0.06320557 0.07094293
+                R2m       R2c
+delta     0.1191724 0.1613507
+lognormal 0.1372050 0.1857655
+trigamma  0.1004844 0.1360485
 
 $flowers_mods.Usc_gr
-                 R2m        R2c
-delta     0.09111690 0.09685858
-lognormal 0.11518846 0.12244699
-trigamma  0.06713038 0.07136057
+                R2m       R2c
+delta     0.1278804 0.1649441
+lognormal 0.1470889 0.1897197
+trigamma  0.1079482 0.1392349
 
 $flowers_mods.City_urbsubs_alt
-                 R2m        R2c
-delta     0.10762307 0.10762307
-lognormal 0.13322343 0.13322344
-trigamma  0.08183844 0.08183844
+                R2m       R2c
+delta     0.1402343 0.1642253
+lognormal 0.1592867 0.1865371
+trigamma  0.1204980 0.1411124
 
 $flowers_mods.City_urbsubs_best
-                 R2m        R2c
-delta     0.10751360 0.10751360
-lognormal 0.13312191 0.13312191
-trigamma  0.08172378 0.08172379
-
-$flowers_mods.Usc_urbsubs_alt
-                 R2m        R2c
-delta     0.10462247 0.10462247
-lognormal 0.12968281 0.12968282
-trigamma  0.07942538 0.07942538
+                R2m       R2c
+delta     0.1395844 0.1587228
+lognormal 0.1588364 0.1806145
+trigamma  0.1196753 0.1360840
 
 $flowers_mods.Usc_urbsubs_best
-                 R2m        R2c
-delta     0.10117518 0.10117518
-lognormal 0.12561008 0.12561009
-trigamma  0.07665632 0.07665632
+                R2m       R2c
+delta     0.1586430 0.1586430
+lognormal 0.1805437 0.1805437
+trigamma  0.1359953 0.1359953
+
+$flowers_mods.Usc_urbsubs_alt
+                R2m       R2c
+delta     0.1452126 0.1617733
+lognormal 0.1650908 0.1839185
+trigamma  0.1246361 0.1388503
 
 $flsize_mods.City_gr
             R2m       R2c
@@ -177,6 +177,42 @@ $pods_mods.Usc_urbsubs_best
 delta     0.2035184 0.2035184
 lognormal 0.3033527 0.3033527
 trigamma  0.1043611 0.1043611
+
+$first_pods_mods.City_gr
+                R2m       R2c
+delta     0.3772657 0.9963869
+lognormal 0.3772658 0.9963869
+trigamma  0.3772657 0.9963868
+
+$first_pods_mods.Usc_gr
+             R2m       R2c
+delta     0.3768 0.9964039
+lognormal 0.3768 0.9964039
+trigamma  0.3768 0.9964038
+
+$first_pods_mods.City_urbsubs_alt
+                R2m      R2c
+delta     0.4736647 0.999993
+lognormal 0.4736647 0.999993
+trigamma  0.4736647 0.999993
+
+$first_pods_mods.City_urbsubs_best
+               R2m       R2c
+delta     0.465944 0.9999929
+lognormal 0.465944 0.9999929
+trigamma  0.465944 0.9999929
+
+$first_pods_mods.Usc_urbsubs_best
+                R2m      R2c
+delta     0.4624337 0.999993
+lognormal 0.4624337 0.999993
+trigamma  0.4624337 0.999993
+
+$first_pods_mods.Usc_urbsubs_alt
+                R2m      R2c
+delta     0.4386638 0.999993
+lognormal 0.4386638 0.999993
+trigamma  0.4386638 0.999993
 
 $peduncles_mods.City_gr
                  R2m       R2c

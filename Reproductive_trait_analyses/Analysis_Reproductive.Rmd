@@ -176,7 +176,7 @@ flsucc_ranova1 <- glmer(Flowered ~
                                (1|Population:Fam_uniq),
                              data = reproduc %>%
                                dplyr::filter(Year == 2020),
-                        nAGQ = 0, # won't converge w/o this
+                  #      nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude,
                              family = binomial)
 
@@ -193,7 +193,7 @@ flsucc_ranova2 <- glmer(Flowered ~
                                (1|Population:Fam_uniq),
                              data = reproduc %>%
                                dplyr::filter(Year == 2021),
-                       nAGQ = 0, # won't converge w/o this
+               #        nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude,
                              family = binomial)
 
@@ -210,7 +210,7 @@ flsucc_ranova3 <- glmer(Flowered ~
                                (1|Population:Fam_uniq),
                              data = reproduc %>%
                                dplyr::filter(Year == 2022),
-                        nAGQ = 0, # won't converge w/o this
+                #        nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude,
                              family = binomial)
 
@@ -221,57 +221,56 @@ pb_ranova_2step(flsucc_ranova3,
           "./Reproductive_trait_analyses/Tables/Ranova/flowering_success_2022.docx")
 
 
-# Flowers/plant-----
+# Flowers/inflor-----
 # 2020-----
-flowers_ranova1 <- glmer.nb(total_flower_count ~
+flowers_ranova1 <- glmer.nb(mean_flower_count ~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2020),
-                        nAGQ = 0, # won't converge w/o this
+                    #    nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(flowers_ranova1)
 
 pb_ranova_2step(flowers_ranova1,
-          "Flower count: 2020",
+          "Mean flower count: 2020",
           "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2020.docx")
 
 # 2021-----
-flowers_ranova2 <- glmer.nb(total_flower_count ~
+flowers_ranova2 <- glmer.nb(mean_flower_count ~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2021),
-                            nAGQ = 0 , # won't converge w/o this
+                        #    nAGQ = 0 , # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(flowers_ranova2)
 
 pb_ranova_2step(flowers_ranova2,
-          "Flower count: 2021",
+          "Mean flower count: 2021",
           "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2021.docx")
 
 # 2022-----
-flowers_ranova3 <- glmer.nb(total_flower_count ~
+flowers_ranova3 <- glmer.nb(mean_flower_count ~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2022),
-                        nAGQ = 0, # won't converge w/o this
+                    #    nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(flowers_ranova3)
 
 pb_ranova_2step(flowers_ranova3,
-          "Flower count: 2022",
+          "Mean flower count: 2022",
           "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2022.docx")
 
 # Flowering time-----
-None of these truly converge, even with nagq = 0
 # 2020-----
 fltime_ranova1 <- glmer.nb(as.numeric(flowering_time) ~
                                Block +
@@ -279,7 +278,7 @@ fltime_ranova1 <- glmer.nb(as.numeric(flowering_time) ~
                                (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2020),
-                        nAGQ = 0, # won't converge w/o this
+                   #     nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(fltime_ranova1)
@@ -297,7 +296,7 @@ fltime_ranova2 <- glmer.nb(as.numeric(flowering_time) ~
                                (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2021),
-                        nAGQ = 0, # won't converge w/o this
+                    #    nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(fltime_ranova2)
@@ -316,7 +315,7 @@ fltime_ranova3 <- glmer.nb(as.numeric(flowering_time) ~
                                (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2022),
-                        nAGQ = 0, # won't converge w/o this
+                   #     nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(fltime_ranova3)
@@ -414,7 +413,7 @@ pods_ranova3 <- glmer.nb(Pods ~
                                (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2022),
-                        nAGQ = 0, # won't converge w/o this
+                  #      nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(pods_ranova3)
@@ -498,7 +497,7 @@ peduncles_ranova2 <- glmer.nb(Peduncles ~
                                (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Year == 2021),
-                             nAGQ = 0, # doesn't converge w/o this
+                 #            nAGQ = 0, # doesn't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(peduncles_ranova2)
@@ -537,7 +536,7 @@ flsucc_ranova1 <- glmer(Flowered ~
                              data = reproduc %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2020),
-                        nAGQ = 0, # won't converge w/o this
+                #        nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude,
                              family = binomial)
 
@@ -555,7 +554,7 @@ flsucc_ranova2 <- glmer(Flowered ~
                              data = reproduc %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2021),
-                       nAGQ = 0, # won't converge w/o this
+                 #      nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude,
                              family = binomial)
 
@@ -573,7 +572,7 @@ flsucc_ranova3 <- glmer(Flowered ~
                              data = reproduc %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2022),
-                        nAGQ = 0, # won't converge w/o this
+                #        nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude,
                              family = binomial)
 
@@ -584,56 +583,56 @@ pb_ranova_transects(flsucc_ranova3,
           "./Reproductive_trait_analyses/Tables/Ranova/flowering_success_2022_transects.docx")
 
 
-# Flowers/plant-----
+# Flowers/inflor-----
 # 2020-----
-flowers_ranova1 <- glmer.nb(total_flower_count ~
+flowers_ranova1 <- glmer.nb(mean_flower_count ~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2020),
-                        nAGQ = 0, # won't converge w/o this
+                #        nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(flowers_ranova1)
 
 pb_ranova_transects(flowers_ranova1,
-          "Flower count: 2020",
+          "Mean flower count: 2020",
           "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2020_transects.docx")
 
 # 2021-----
-flowers_ranova2 <- glmer.nb(total_flower_count ~
+flowers_ranova2 <- glmer.nb(mean_flower_count ~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2021),
-                            nAGQ = 0 , # won't converge w/o this
+                  #          nAGQ = 0 , # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(flowers_ranova2)
 
 pb_ranova_transects(flowers_ranova2,
-          "Flower count: 2021",
+          "Mean flower count: 2021",
           "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2021_transects.docx")
 
 # 2022-----
-flowers_ranova3 <- glmer.nb(total_flower_count ~
+flowers_ranova3 <- glmer.nb(mean_flower_count ~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2022),
-                        nAGQ = 0, # won't converge w/o this
+                #        nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(flowers_ranova3)
 
 pb_ranova_transects(flowers_ranova3,
-          "Flower count: 2022",
+          "Mean flower count: 2022",
           "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2022_transects.docx")
 
 
@@ -665,7 +664,7 @@ fltime_ranova2 <- glmer.nb(as.numeric(flowering_time) ~
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2021),
-                           nAGQ = 0, # won't converge w/o this
+                 #          nAGQ = 0, # won't converge w/o this
                            na.action = na.exclude)
 
 # performance::check_model(fltime_ranova2)
@@ -702,7 +701,7 @@ flstart_ranova1 <- glmer(Julian_oldest_inflor ~
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2020),
-                         nAGQ = 0, # won't converge w/o this
+               #          nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude,
                              family = poisson)
 
@@ -721,7 +720,7 @@ flstart_ranova2 <- glmer(Julian_oldest_inflor ~
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2021),
-                       nAGQ = 0, # won't converge w/o this
+               #        nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude,
                              family = poisson)
 
@@ -739,7 +738,7 @@ flstart_ranova3 <- glmer(Julian_oldest_inflor ~
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2022),
-                        nAGQ = 0, # won't converge w/o this
+              #          nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude,
                              family = poisson)
 
@@ -760,7 +759,7 @@ pods_ranova1 <- glmer.nb(Pods ~
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2020),
-                        nAGQ = 0, # won't converge w/o this
+                #        nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(pods_ranova1)
@@ -777,7 +776,7 @@ pods_ranova2 <- glmer.nb(Pods ~
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2021),
-                            nAGQ = 0 , # won't converge w/o this
+               #             nAGQ = 0 , # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(pods_ranova2)
@@ -794,7 +793,7 @@ pods_ranova3 <- glmer.nb(Pods ~
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2022),
-                        nAGQ = 0, # won't converge w/o this
+              #          nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(pods_ranova3)
@@ -819,7 +818,7 @@ firstpod_ranova2 <- glmer(Julian_first_follicle^3 ~
                     dplyr::filter(is.na(Julian_first_follicle) == F &
                                     Transect_ID != "Rural" &
                                     Year == 2021),
-                       nAGQ = 0, # won't converge w/o this
+              #         nAGQ = 0, # won't converge w/o this
                     na.action = na.exclude,
                              family = poisson)
 
@@ -839,7 +838,7 @@ firstpod_ranova3 <- glmer(Julian_first_follicle^3 ~
                     dplyr::filter(is.na(Julian_first_follicle) == F &
                                                Transect_ID != "Rural" &
                                                Year == 2022),
-                        nAGQ = 0, # won't converge w/o this
+                #        nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude,
                              family = poisson)
 
@@ -859,7 +858,7 @@ peduncles_ranova1 <- glmer.nb(Peduncles ~
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2020),
-                             nAGQ = 0,
+             #                nAGQ = 0,
                              na.action = na.exclude)
 
 # performance::check_model(peduncles_ranova1)
@@ -877,7 +876,7 @@ peduncles_ranova2 <- glmer.nb(Peduncles ~
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2021), 
-                             nAGQ = 0 , # won't converge w/o this
+               #              nAGQ = 0 , # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(peduncles_ranova2)
@@ -894,7 +893,7 @@ peduncles_ranova3 <- glmer.nb(Peduncles ~
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2022),
-                             nAGQ = 0, # won't converge w/o this
+                #             nAGQ = 0, # won't converge w/o this
                             na.action = na.exclude)
 
 # performance::check_model(peduncles_ranova3)
@@ -933,7 +932,7 @@ make_all_anovas_tidy_altmods(flsucc_mods_alt_u) %>%
   save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/FloweringSuccess_urbscore_alt.png"))
 ```
 
-## Total flowers/plant
+## Mean Flowers/inflor
 ### Best Models
 #### City_dist
 ```{r}
@@ -1197,14 +1196,14 @@ qg_flsucc <- calc_quantgenvars( 0.70759 ,
                    "Flowering Success")
 
 
-# Total flowers/plant -----
+# Mean flowers/inflor -----
 update(
     flowers_mods_best_c[[1]],
     .~. -City_dist, # omitting city_dist
     REML = T) %>% VarCorr()
 
 flowers_mean <- flowering %>%
-  dplyr::summarize(Mean = mean(total_flower_count ,
+  dplyr::summarize(Mean = mean(mean_flower_count ,
                                na.rm = T)) %>%
   as.numeric()
 
@@ -1213,11 +1212,11 @@ resid_var <- update(
      flowers_mods_best_c[[1]], REML = T) %>%
     sigma()
 
-qg_flowers <- calc_quantgenvars( 9.2837e-05,
-                   1.3463e-01,
+qg_flowers <- calc_quantgenvars(0.085598,
+                   0.129033,
                    resid_var,
                    flowers_mean,
-                   "Total flowers/plant")
+                   "Mean flowers/inflor")
 
 
 # Mean flower size/inflorescence -----
@@ -1378,4 +1377,3 @@ qg_joined <- list(
           row.names=FALSE)
 
 ```
-
