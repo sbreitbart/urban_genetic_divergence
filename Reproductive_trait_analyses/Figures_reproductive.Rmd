@@ -47,7 +47,7 @@ flsucc_urbsubs_02_pred <- ggeffects::ggpredict(flsucc_mods_best_u[[2]],
                                    type = "fe")
 ```
 
-## Flower count/plant
+## Mean flower count/inflor
 ### Gradient
 ```{r}
 
@@ -236,6 +236,47 @@ pods_urbsubs_02_pred <- ggeffects::ggpredict(pods_mods_best_u[[2]] ,
 ```
 
 
+## Date of first pod
+### Gradient
+```{r}
+
+# city_dist
+first_pods_mods_best_c[1]  # squared
+firstpods_gradient_01_pred <- ggeffects::ggpredict(first_pods_mods_best_c[[1]] ,
+                                   terms = c("City_dist"),
+                                   type = "fe") %>%
+  as.data.frame() %>%
+  dplyr::mutate(predicted = sqrt(predicted)) # back-transforming to Julian dates so figure axis makes sense
+
+# urb_score
+first_pods_mods_best_u[1] 
+firstpods_gradient_02_pred <- ggeffects::ggpredict(first_pods_mods_best_u[[1]],
+                                   terms = c("Urb_score"),
+                                   type = "fe") %>%
+  as.data.frame()%>%
+  dplyr::mutate(predicted = sqrt(predicted)) # back-transforming to Julian dates so figure axis makes sense
+```
+
+### Urban Subtransects
+```{r}
+
+# city_dist
+first_pods_mods_best_c[2] 
+firstpods_urbsubs_01_pred <- ggeffects::ggpredict(first_pods_mods_best_c[[2]] ,
+                                   terms = c("City_dist", "Transect_ID"),
+                                   type = "fe") %>%
+  as.data.frame()%>%
+  dplyr::mutate(predicted = (predicted)^(1/3)) # back-transforming to Julian dates so figure axis makes sense
+
+# urb_score
+first_pods_mods_best_u[2] 
+firstpods_urbsubs_02_pred <- ggeffects::ggpredict(first_pods_mods_best_u[[2]] ,
+                                   terms = c("Urb_score", "Transect_ID"),
+                                   type = "fe")%>%
+  dplyr::mutate(predicted = (predicted)^(1/3)) # back-transforming to Julian dates so figure axis makes sense
+```
+
+
 ## Peduncles (Inflorescences)
 ### Gradient
 ```{r}
@@ -297,12 +338,12 @@ ggpred_Q1.citydist_flsucc
 
 
 
-# Flower count-----
+# Mean flowers/infloresence-----
 ggpred_Q1.citydist_flowers <- 
 ggplot(flowers_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = "Flower count") +
+       y = "Mean flowers/infloresence") +
 #  ylim(NA, 1) +
   theme_1() +
   
@@ -398,13 +439,34 @@ ggpred_Q1.citydist_pods
 
 
 
+# First pods-----
+ggpred_Q1.citydist_firstpods <- 
+ggplot(firstpods_gradient_01_pred) +
+  rep_geoms +
+  labs(x = "Distance to Urban Center (km)",
+       y = "Julian date of first follicle") +
+#  ylim(NA, 1) +
+  theme_1() +
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 1,
+                    label = paste0(" Distance: p = ", tidy_anova(pods_mods_best_c[[1]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.citydist_firstpods
+
+
+
+
 # Inflorescences (peduncles)-----
 ggpred_Q1.citydist_peduncles <- 
 ggplot(peduncles_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
        y = expression("Inflorescences" ^3)) +
-  ylim(0, 60) +
+ # ylim(0, 60) +
   theme_1() +
   
 # adding stats from ANOVA
@@ -441,12 +503,12 @@ ggpred_Q1.urbscore_flsucc
 
 
 
-# Flower count-----
+# Mean flowers/infloresence-----
 ggpred_Q1.urbscore_flowers <- 
 ggplot(flowers_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
-       y = "Flower count") +
+       y = "Mean flowers/infloresence") +
 # ylim(NA, 1) +
     xlim(4, -4) +
   theme_1() +
@@ -549,6 +611,26 @@ ggpred_Q1.urbscore_pods
 
 
 
+# First pods-----
+ggpred_Q1.urbscore_firstpods <- 
+ggplot(firstpods_gradient_02_pred) +
+  rep_geoms +
+  labs(x = "Urbanization Score",
+       y = "Julian date of first follicle") +
+# ylim(NA, 1) +
+    xlim(4, -4) +
+  theme_1() +
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 1,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(pods_mods_best_u[[1]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.urbscore_firstpods
+
+
 # Inflorescences (peduncles)-----
 ggpred_Q1.urbscore_peduncles <- 
 ggplot(peduncles_gradient_02_pred) +
@@ -603,17 +685,17 @@ size = 4.5)
 ggpred_Q2.citydist_succ
 
 
-# Flower count-----
+# Mean flowers/infloresence-----
 
 levels(flowers_urbsubs_01_pred$group)
 
 ggpred_Q2.citydist_flowers <-
 ggplot(flowers_urbsubs_01_pred) +
   labs(x = "Distance to Urban Center (km)",
-       y = "Flower count",
+       y = "Mean flowers/infloresence",
        color = "Transect",
        fill = "Transect") +
-  ylim(20, 50) +
+  # ylim(20, 50) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -759,6 +841,37 @@ ggpred_Q2.citydist_pods
 
 
 
+# First pods-----
+
+levels(firstpods_urbsubs_01_pred$group)
+
+ggpred_Q2.citydist_firstpods <-
+ggplot(firstpods_urbsubs_01_pred) +
+  labs(x = "Distance to Urban Center (km)",
+       y = "Julian date of first follicle",
+       color = "Transect",
+       fill = "Transect") +
+#  ylim(20, 50) +
+  xlim(0, NA) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.96,
+                    label = paste0(" Distance: p = ", tidy_anova(first_pods_mods_best_c[[2]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(first_pods_mods_best_c[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.citydist_firstpods
+
+
+
 # Inflorescences (peduncles)-----
 
 levels(peduncles_urbsubs_01_pred$group)
@@ -823,14 +936,14 @@ size = 4.5)
 ggpred_Q2.urbsubs_flsucc
 
 
-# Flower count-----
+# Mean flowers/infloresence-----
 
 levels(flowers_urbsubs_02_pred$group)
 
 ggpred_Q2.urbsubs_flowers <-
 ggplot(flowers_urbsubs_02_pred) +
   labs(x = "Urbanization Score",
-       y = "Flower count",
+       y = "Mean flowers/infloresence",
        color = "Transect",
        fill = "Transect") +
  # ylim(20, 50) +
@@ -1019,6 +1132,41 @@ ggpred_Q2.urbsubs_pods
 
 
 
+# First pods-----
+
+levels(firstpods_urbsubs_02_pred$group)
+
+ggpred_Q2.urbscore_firstpods <-
+ggplot(firstpods_urbsubs_02_pred) +
+  labs(x = "Urbanization Score",
+       y = "Julian date of first follicle",
+       color = "Transect",
+       fill = "Transect") +
+#  ylim(20, 50) +
+  xlim(4, -2) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 1, npcy = 1,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(first_pods_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.92,
+                    label = paste0(" Transect: p = ", tidy_anova(first_pods_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.86,
+                    label = paste0(" U x T: p = ", tidy_anova(first_pods_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score x Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.urbscore_firstpods
+
+
 # Inflorescences (peduncles)-----
 
 levels(peduncles_urbsubs_02_pred$group)
@@ -1066,12 +1214,13 @@ ggpred_Q1.citydist_flsize,
 ggpred_Q1.citydist_fltime,
 ggpred_Q1.citydist_flstart,
 ggpred_Q1.citydist_pods,
+ggpred_Q1.citydist_firstpods,
 ggpred_Q1.citydist_peduncles +
             font("x.text"),
           ncol = 4,
           nrow = 2,
           align = "hv",
-          labels = list("A", "B", "C", "D", "E", "F", "G"),
+          labels = list("A", "B", "C", "D", "E", "F", "G", "H"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%
@@ -1091,12 +1240,13 @@ ggpred_Q1.urbscore_flsize,
 ggpred_Q1.urbscore_fltime,
 ggpred_Q1.urbscore_flstart,
 ggpred_Q1.urbscore_pods,
+ggpred_Q1.urbscore_firstpods,
 ggpred_Q1.urbscore_peduncles  +
             font("x.text"),
           ncol = 4,
           nrow = 2,
           align = "hv",
-          labels = list("A", "B", "C", "D", "E", "F", "G"),
+          labels = list("A", "B", "C", "D", "E", "F", "G", "H"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%
@@ -1115,12 +1265,13 @@ urbsubs_citydist_plots <- ggarrange(
   ggpred_Q2.citydist_fltime,
   ggpred_Q2.citydist_flstart,
   ggpred_Q2.citydist_pods,
+  ggpred_Q2.citydist_firstpods,
   ggpred_Q2.citydist_peduncles  +
             font("x.text"),
           ncol = 4,
           nrow = 2,
           align = "hv",
-          labels = list("A", "B", "C", "D", "E", "F", "G"),
+          labels = list("A", "B", "C", "D", "E", "F", "G", "H"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%
@@ -1141,12 +1292,13 @@ ggpred_Q2.urbsubs_fltime,
 ggpred_Q2.urbsubs_flstart1,
 ggpred_Q2.urbsubs_flstart2,
 ggpred_Q2.urbsubs_pods,
+ggpred_Q2.urbscore_firstpods,
 ggpred_Q2.urbsubs_peduncles +
             font("x.text"),
-          ncol = 4,
+          ncol = 5,
           nrow = 2,
           align = "hv",
-          labels = list("A", "B", "C", "D", "E", "F", "G"),
+          labels = list("A", "B", "C", "D", "E", "F", "G", "H", "I"),
           font.label = (size =16),
           common.legend = TRUE,
           legend = "top") %T>%
