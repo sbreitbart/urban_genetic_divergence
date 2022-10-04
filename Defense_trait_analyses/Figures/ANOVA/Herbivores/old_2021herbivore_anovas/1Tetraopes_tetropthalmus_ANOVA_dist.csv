@@ -1,0 +1,138 @@
+"x"
+"1","Gradient: Full model ANOVA:  ~"
+"2","Gradient: Full model ANOVA:  Tetraopes_tetropthalmus"
+"3","Gradient: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + City_dist"
+"Chisq","Df","Pr..Chisq."
+"City_dist",0.983476248668646,1,0.321342080681062
+"x"
+"1","Gradient: Full model R-squared: "
+"R2m","R2c"
+"delta",0.000956459090394572,0.17233512699706
+"lognormal",0.00306651102096801,0.552525007649196
+"trigamma",6.60165565393554e-05,0.011894885802617
+"x"
+"1","Urban Subtransects: Full model ANOVA:  ~"
+"2","Urban Subtransects: Full model ANOVA:  Tetraopes_tetropthalmus"
+"3","Urban Subtransects: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + City_dist * Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"City_dist",0.164292899310272,1,0.685234512913313
+"Transect_ID",1.98895040170081,1,0.158450667355786
+"City_dist:Transect_ID",0.290072770002305,1,0.590173901327023
+"x"
+"1","Urban Subtransects: Full model R-squared: "
+"R2m","R2c"
+"delta",0.00363764659362497,0.0853914733476894
+"lognormal",0.017554812611793,0.412088220964256
+"trigamma",0.000163043133095113,0.00382733533780178
+"x"
+"1","Urban Subtransects: Main effects model ANOVA:  ~"
+"2","Urban Subtransects: Main effects model ANOVA:  Tetraopes_tetropthalmus"
+"3","Urban Subtransects: Main effects model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + City_dist + Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"City_dist",311.606672193044,1,9.75494534945578e-70
+"Transect_ID",336894.91530892,1,0
+"x"
+"1","Urban Subtransects: Main effects model R-squared: "
+"R2m","R2c"
+"delta",0.00322418471919892,0.085237853855494
+"lognormal",0.0155695039882693,0.411611375009668
+"trigamma",0.000144488157735045,0.00381983712022844
+""
+"x"
+"1","Gradient AIC (full model) = 600.984303322511"
+"x"
+"1","Urban subtransects AIC (full model) = 374.684946793241"
+"x"
+"1","Urban subtransects AIC (main effects model) = 373.188694148589"
+"x"
+"1","Gradient: Full model ANOVA:  ~"
+"2","Gradient: Full model ANOVA:  Tetraopes_tetropthalmus"
+"3","Gradient: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + City_dist"
+"Chisq","Df","Pr..Chisq."
+"City_dist",0.820003686957353,1,0.365179087854704
+"x"
+"1","Gradient: Full model R-squared: "
+"R2m","R2c"
+"delta",0.00104336560393727,0.171976427649677
+"lognormal",0.00335468172463357,0.552947285905378
+"trigamma",7.15461272331115e-05,0.0117928435893307
+"x"
+"1","Urban Subtransects: Full model ANOVA:  ~"
+"2","Urban Subtransects: Full model ANOVA:  Tetraopes_tetropthalmus"
+"3","Urban Subtransects: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + City_dist * Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"City_dist",0.145676876110941,1,0.702701405542796
+"Transect_ID",2.01216290912628,1,0.156042714179892
+"City_dist:Transect_ID",0.28468008623595,1,0.593650001441103
+"x"
+"1","Urban Subtransects: Full model R-squared: "
+"R2m","R2c"
+"delta",0.00407203523040519,0.0940484687575365
+"lognormal",0.0181888319185444,0.420092581138374
+"trigamma",0.000204291064849851,0.00471834371336302
+"x"
+"1","Urban Subtransects: Main effects model ANOVA:  ~"
+"2","Urban Subtransects: Main effects model ANOVA:  Tetraopes_tetropthalmus"
+"3","Urban Subtransects: Main effects model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + City_dist + Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"City_dist",0.145450075730726,1,0.702921910808275
+"Transect_ID",2.04771391975543,1,0.152434929801724
+"x"
+"1","Urban Subtransects: Main effects model R-squared: "
+"R2m","R2c"
+"delta",0.0033632418260437,0.0846351537979686
+"lognormal",0.016355618316294,0.411585114380184
+"trigamma",0.000149009788092702,0.00374979468766415
+""
+"x"
+"1","Gradient AIC (full model) = 600.781153380504"
+"x"
+"1","Urban subtransects AIC (full model) = 374.347922365833"
+"x"
+"1","Urban subtransects AIC (main effects model) = 372.635169550774"
+"x"
+"1","Gradient: Full model ANOVA:  ~"
+"2","Gradient: Full model ANOVA:  Tetraopes_tetropthalmus"
+"3","Gradient: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + City_dist"
+"Chisq","Df","Pr..Chisq."
+"City_dist",0.820003686957353,1,0.365179087854704
+"x"
+"1","Gradient: Full model R-squared: "
+"R2m","R2c"
+"delta",0.00104336560393727,0.171976427649677
+"lognormal",0.00335468172463357,0.552947285905378
+"trigamma",7.15461272331115e-05,0.0117928435893307
+"x"
+"1","Urban Subtransects: Full model ANOVA:  ~"
+"2","Urban Subtransects: Full model ANOVA:  Tetraopes_tetropthalmus"
+"3","Urban Subtransects: Full model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + City_dist * Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"City_dist",0.145676876110941,1,0.702701405542796
+"Transect_ID",2.01216290912628,1,0.156042714179892
+"City_dist:Transect_ID",0.28468008623595,1,0.593650001441103
+"x"
+"1","Urban Subtransects: Full model R-squared: "
+"R2m","R2c"
+"delta",0.00407203523040519,0.0940484687575365
+"lognormal",0.0181888319185444,0.420092581138374
+"trigamma",0.000204291064849851,0.00471834371336302
+"x"
+"1","Urban Subtransects: Main effects model ANOVA:  ~"
+"2","Urban Subtransects: Main effects model ANOVA:  Tetraopes_tetropthalmus"
+"3","Urban Subtransects: Main effects model ANOVA:  (1 | Block) + (1 | Population/Family) + (1 | Sample) + City_dist + Transect_ID"
+"Chisq","Df","Pr..Chisq."
+"City_dist",0.145450075730726,1,0.702921910808275
+"Transect_ID",2.04771391975543,1,0.152434929801724
+"x"
+"1","Urban Subtransects: Main effects model R-squared: "
+"R2m","R2c"
+"delta",0.0033632418260437,0.0846351537979686
+"lognormal",0.016355618316294,0.411585114380184
+"trigamma",0.000149009788092702,0.00374979468766415
+""
+"x"
+"1","Gradient AIC (full model) = 600.781153380504"
+"x"
+"1","Urban subtransects AIC (full model) = 374.347922365833"
+"x"
+"1","Urban subtransects AIC (main effects model) = 372.635169550774"
