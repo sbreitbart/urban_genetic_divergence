@@ -1,9 +1,9 @@
-"trait","h2","qst","cva"
-"LDMC",0,0.73,0
-"SLA",0,0.687,0
-"Height (before flowering)",0.188,0.078,0.014
-"Height (after flowering)",0.178,0.093,0.011
-"Relative growth rate",0,1,0.003
-"Ramets (before flowering)",0.114,0.051,0.134
-"Ramets (after flowering)",0.068,0.037,0.134
-"Mortality",0,1,NA
+trait,h2,qst,cva
+LDMC,0,0.73,0
+SLA,0,0.687,0
+Height (before flowering),0.188,0.078,0.014
+Height (after flowering),0.178,0.093,0.011
+Relative growth rate,0,1,0.003
+Ramets (before flowering),0.114,0.051,0.134
+Ramets (after flowering),0.068,0.037,0.134
+Mortality,0,1,NA

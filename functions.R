@@ -441,7 +441,6 @@ CreateRanovaOutput_bootstrap <- function(ranova_fam,
     dplyr::mutate(PVE = c(PVE_fam, PVE_pop)) %>%
     dplyr::select(c(5,1,6,7,2,3,4)) %>%
     flextable() %>%
-    merge_at(j = 1) %>%
     fix_border_issues() %>%
     bold(i = ~ p <= 0.05, j = 7) %>%
     flextable::compose(i = 1, j = 5, part = "header",
@@ -478,12 +477,12 @@ pb_ranova_1step <- function(full_model_forstep, trait_name){
   
   ranova.pop <- PBmodcomp(full_model_forstep,
                           test_pop,
-                          nsim = 10, 
+                          nsim = 1000, 
                           cl = makeCluster(6)) 
   
   ranova.fam <- PBmodcomp(full_model_forstep,
                           test_fam,
-                          nsim = 10, 
+                          nsim = 1000, 
                           cl = makeCluster(6)) 
   
   

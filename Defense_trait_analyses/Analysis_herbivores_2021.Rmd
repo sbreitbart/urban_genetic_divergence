@@ -72,12 +72,7 @@ herbivores <- read.csv(here::here("./Joined_annual_data/herbivores.csv")) %>%
                             "Year",
                             "Surveyor",
                           "Date")),
-                     as.factor)
-
-str(herbivores)  
-
-
-herbivores %<>%
+                     as.factor) %>%
   dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
 ```
 
@@ -276,8 +271,7 @@ monarchs_ranova1_pb <- glmer.nb(Monarch_Quantity_Observed ~
                                data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural" &
                                 Year == 2020),
-                            na.action = na.exclude,
-                            nAGQ = 0) # won't converge w/o this)
+                            na.action = na.exclude) 
 
 # performance::check_model(monarchs_ranova1_pb)
 
@@ -294,14 +288,14 @@ monarchs_ranova2_pb <- glmer.nb(Monarch_Quantity_Observed ~
                                data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural" &
                                 Year == 2021),
-                            na.action = na.exclude,
-                            nAGQ = 0) # won't converge w/o this)
+                control = glmerControl(optimizer = "Nelder_Mead"),
+                            na.action = na.exclude)
 
 # performance::check_model(monarchs_ranova2_pb)
 
 pb_ranova_transects(monarchs_ranova2_pb,
           "Monarch butterfly: 2021",
-          "./Defense_trait_analyses/Tables/Ranova/monarch_2021_transects.docx")
+          "./Defense_trait_analyses/Tables/Ranova/monarch_2021_transectstest.docx")
 
 ```
 
@@ -333,8 +327,7 @@ asclepiadis_ranova2_pb <- glmer.nb(Liriomyza_asclepiadis ~
                                data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural" &
                                 Year == 2021),
-                            na.action = na.exclude,
-                            nAGQ = 0) # won't converge w/o this)
+                            na.action = na.exclude)
 
 # performance::check_model(asclepiadis_ranova2_pb)
 
@@ -346,7 +339,6 @@ pb_ranova_transects(asclepiadis_ranova2_pb,
 
 #### L. clivicollis
 ```{r}
-
 # 2020-----
 clivicollis_ranova1_pb <- glmer.nb(Labidomera_clivicollis ~
                                Block +
@@ -355,8 +347,7 @@ clivicollis_ranova1_pb <- glmer.nb(Labidomera_clivicollis ~
                                data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural" &
                                 Year == 2020),
-                            na.action = na.exclude,
-                            nAGQ = 0) # won't converge w/o this)
+                            na.action = na.exclude)
 
 # performance::check_model(clivicollis_ranova1_pb)
 
@@ -373,8 +364,8 @@ clivicollis_ranova2_pb <- glmer.nb(Labidomera_clivicollis ~
                                data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural" &
                                 Year == 2021),
-                            na.action = na.exclude,
-                            nAGQ = 0) # won't converge w/o this)
+                nAGQ = 0,
+                            na.action = na.exclude)
 
 # performance::check_model(clivicollis_ranova2_pb)
 
@@ -474,7 +465,8 @@ make_all_anovas_tidy_altmods(clivicollis_mods_alt_u) %>%
 # R-sq values
 ```{r}
 all_rsq <- lapply(all_models, lapply, r.squaredGLMM) %>%
-  unlist(recursive = FALSE)
+  unlist(recursive = FALSE) %T>%
+  write.csv(here::here("./Defense_trait_analyses/Tables/Rsquare_herbivores.csv"))
 
 ```
 

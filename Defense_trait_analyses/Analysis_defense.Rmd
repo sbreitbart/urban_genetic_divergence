@@ -213,7 +213,6 @@ herb_e_bin_ranova1 <- glmer(Herbivory_mean_early_binary ~
                              data = herbivory %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
-                       #     nAGQ = 0, # doesn't converge w/o this
                              family = binomial)
 
 # performance::check_model(herb_e_bin_ranova1)
@@ -232,8 +231,6 @@ herb_e_bin_ranova2 <- glmer(Herbivory_mean_early_binary ~
                              data = herbivory %>%
                                dplyr::filter(Year == 2021),
                  na.action = na.exclude,
-             #    nAGQ = 0, # doesn't converge w/o this
-
                              family = binomial)
 
 # performance::check_model(herb_e_bin_ranova2)
@@ -252,8 +249,7 @@ herb_l_bin_ranova1 <- glmer(Herbivory_mean_late_binary ~
                              data = herbivory %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
-                   #         nAGQ = 0, # doesn't converge w/o this
-
+                            nAGQ = 0,# won't converge w/o this
                              family = binomial)
 
 # performance::check_model(herb_l_bin_ranova1)
@@ -271,10 +267,8 @@ herb_l_bin_ranova2 <- glmer(Herbivory_mean_late_binary ~
                                (1|Population:Fam_uniq),
                              data = herbivory %>%
                                dplyr::filter(Year == 2021),
-                    #        nAGQ = 0,# won't converge w/o this
-                 na.action = na.exclude,
-  # ,control=glmerControl(optimizer="bobyqa",
-  #                           optCtrl=list(maxfun=2e5)),
+                            nAGQ = 0,# won't converge w/o this
+                            na.action = na.exclude,
                              family = binomial)
 
 # performance::check_model(herb_l_bin_ranova2)
@@ -294,7 +288,6 @@ weev_bin_ranova1 <- glmer(Scar_binary ~
                              data = weevil %>%
                                dplyr::filter(Year == 2020),
                             na.action = na.exclude,
-                   #       nAGQ = 0, # doesn't converge w/o this
                           family = binomial)
 
 # performance::check_model(weev_bin_ranova1)
@@ -311,7 +304,6 @@ weev_bin_ranova2 <- glmer(Scar_binary ~
                                (1|Population:Fam_uniq),
                              data = weevil %>%
                                dplyr::filter(Year == 2021),
-                   #       nAGQ = 0, # doesn't converge w/o this
                           na.action = na.exclude,
                              family = binomial)
 
@@ -476,7 +468,6 @@ herb_e_bin_ranova1_pb <- glmer(Herbivory_mean_early_binary ~
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2020),
                             na.action = na.exclude,
-                   #         nAGQ = 0, # won't converge w/o this
                              family = binomial)
 
 # performance::check_model(herb_e_bin_ranova1_pb)
@@ -534,7 +525,7 @@ herb_l_bin_ranova2_pb <- glmer(Herbivory_mean_late_binary ~
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2021),
                             na.action = na.exclude,
-                #            nAGQ = 0, # doesn't converge w/o this
+                            nAGQ = 0, # won't converge w/o this
                        family = binomial)
 
 # performance::check_model(herb_l_bin_ranova2_pb)
@@ -554,8 +545,7 @@ weev_bin_ranova1_pb <- glmer(Scar_binary ~
                                                 Year == 2020),
                             na.action = na.exclude,
                              family = binomial,
-                      control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5))
+                            nAGQ = 0
                       )
 
 # performance::check_model(weev_bin_ranova1_pb)
@@ -574,12 +564,11 @@ weev_bin_ranova2_pb <- glmer(Scar_binary ~
                                dplyr::filter(Transect_ID != "Rural" & 
                                                 Year == 2021),
                             na.action = na.exclude,
-                             family = binomial ,control=glmerControl(optimizer="bobyqa",
-                            optCtrl=list(maxfun=2e5)))
+                             family = binomial)
 
 # performance::check_model(herb_l_bin_ranova2_pb)
 
-pb_ranova_transects(herb_l_bin_ranova2_pb,
+pb_ranova_transects(weev_bin_ranova2_pb,
           "Weevil damage, binary: 2021",
           "./Defense_trait_analyses/Tables/Ranova/weevil_bin_2021_transects.docx")
 
@@ -839,7 +828,7 @@ make_all_anovas_tidy_altmods(weev_quant_mods_alt_u) %>%
 ```{r}
 all_rsq <- lapply(all_models, lapply, r.squaredGLMM) %>%
   unlist(recursive = FALSE) %T>%
-  print()
+  write.csv(here::here("./Defense_trait_analyses/Tables/Rsquare.csv"))
 
 ```
 

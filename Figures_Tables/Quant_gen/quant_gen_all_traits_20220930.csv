@@ -1,0 +1,27 @@
+trait,h2,qst,cva
+Flowering Success,0.557,0.228,NA
+Mean flowers/inflor,0.002,0.532,0.005
+Flower size,0.321,0.246,0.086
+Flowering Duration,0,1,0
+Flowering Start,0,0.986,0
+Follicles,0.186,0.199,0.05
+Date of first follicle 2 in,0.007,0.038,0
+Peduncles (Inflorescences),0.004,0.458,0.06
+D. plexippus,0.064,0.1,0.525
+L. asclepiadis,0.275,0.099,0.086
+L. clivicollis,0,1,0.006
+Latex,0.092,0.296,0.015
+Chance of herbivory (before flowering),0,0.007,0
+Herbivory (before flowering),0.008,0.286,2.032
+Chance of herbivory (after flowering),0.103,0,0.353
+Herbivory (after flowering),0.03,0,2.232
+Chance of weevil damage,0.464,0,1.259
+Weevil scar length,0.069,0.112,0.034
+LDMC,0,0.73,0
+SLA,0,0.687,0
+Height (before flowering),0.188,0.078,0.014
+Height (after flowering),0.178,0.093,0.011
+Relative growth rate,0,1,0.003
+Ramets (before flowering),0.114,0.051,0.134
+Ramets (after flowering),0.068,0.037,0.134
+Mortality,0,1,NA
