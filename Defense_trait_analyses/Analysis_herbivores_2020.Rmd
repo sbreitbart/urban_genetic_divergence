@@ -55,9 +55,9 @@ herbivores <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/
 ```
 
 # Ordination
-## Does the herbivore community change along the gradient?
-## Or does it vary between urban subtransects?
-## Answer to both: Not really.
+Does the herbivore community change along the gradient?
+Or does it vary between urban subtransects?
+Answer to both: Not really.
 ## Set up input data
 ### Make herbivore subsets per month
 ```{r}
@@ -438,14 +438,14 @@ makeRDAplot_scaling2(RDA_Aug_urbscore.urb)
 ```
 
 # Regression
-## Does the abundance of individual herbivore species change along the gradient? Or does it vary between urban subtransects?
+Does the abundance of individual herbivore species change along the gradient? Or does it vary between urban subtransects?
 ## Monarchs- no and no
 ### Diagnostics
 #### All sites
 ```{r}
 # DISTANCE FROM CITY CENTER
 m1_DP <- glmer(Monarch_Quantity_Observed ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist 
               , data = herbivores , family = poisson) 
 res <- simulateResiduals(m1_DP)
@@ -458,7 +458,7 @@ plot(res)
 
 # URBANIZATION SCORE
 m2_DP <- glmer(Monarch_Quantity_Observed ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score 
               , data = herbivores , family = poisson,
               control=glmerControl(optimizer="bobyqa",
@@ -473,7 +473,7 @@ plot(res)
 # CITY DISTANCE
 
 # m1_DP.urb.1 <- glmer(Monarch_Quantity_Observed ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist * Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -481,7 +481,7 @@ plot(res)
 #               control=glmerControl(optimizer="bobyqa",
 #                                  optCtrl=list(maxfun=2e5))) # singular... try glmmTMB
 # m1_DP.urb.2 <- glmmTMB(Monarch_Quantity_Observed ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist * Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -530,7 +530,7 @@ m1_DP.urb_ME <- glmmTMB(Monarch_Quantity_Observed ~
 
 # URBANIZATION SCORE
 # m2_DP.urb.1 <- glmer(Monarch_Quantity_Observed ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               Urb_score * Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -538,7 +538,7 @@ m1_DP.urb_ME <- glmmTMB(Monarch_Quantity_Observed ~
 #               control=glmerControl(optimizer="bobyqa",
 #                                  optCtrl=list(maxfun=2e5))) # singular... try glmmTMB
 m2_DP.urb <- glmmTMB(Monarch_Quantity_Observed ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score * Transect_ID,
               data = herbivores %>%
                 filter(., Transect_ID != "Rural"),
@@ -550,7 +550,7 @@ plot(res) # looks good!
 
 # main effects
 m2_DP.urb_ME <- glmmTMB(Monarch_Quantity_Observed ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score + Transect_ID,
               data = herbivores %>%
                 filter(., Transect_ID != "Rural"),
@@ -604,12 +604,12 @@ Anova_etc_monarch(m1_DP,
 ```{r}
 # DISTANCE FROM CITY CENTER
 # m1_TT.1 <- glmer(Tetraopes_tetropthalmus ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist 
 #               , data = herbivores , family = poisson) #singular... try glmmTMB
 
 m1_TT <- glmmTMB(Tetraopes_tetropthalmus ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist 
               , data = herbivores ,
               family = poisson,
@@ -622,14 +622,14 @@ plot(res) # looks good.
 
 # URBANIZATION SCORE
 # m2_TT.1 <- glmer(Tetraopes_tetropthalmus ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               Urb_score 
 #               , data = herbivores , family = poisson,
 #               control=glmerControl(optimizer="bobyqa",
 #                                  optCtrl=list(maxfun=2e5))) #singular... try glmmTMB
 
 m2_TT <- glmmTMB(Tetraopes_tetropthalmus ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score 
               , data = herbivores ,
               family = poisson,
@@ -643,7 +643,7 @@ plot(res)
 ```{r}
 # CITY DISTANCE
 m1_TT.urb <- glmer(Tetraopes_tetropthalmus ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -656,7 +656,7 @@ plot(res)
 
 # main effects
 # m1_TT.urb_ME.1 <- glmer(Tetraopes_tetropthalmus ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist + Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -666,7 +666,7 @@ plot(res)
 # car::Anova(m1_TT.urb) # interaction isn't anywhere near sig
 
 m1_TT.urb_ME <- glmmTMB(Tetraopes_tetropthalmus ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -681,7 +681,7 @@ car::Anova(m1_TT.urb_ME) # nearly identical to full model values so that's good.
 
 # URBANIZATION SCORE
 # m2_TT.urb.1 <- glmer(Tetraopes_tetropthalmus ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               Urb_score * Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -690,7 +690,7 @@ car::Anova(m1_TT.urb_ME) # nearly identical to full model values so that's good.
 #                                  optCtrl=list(maxfun=2e5))) # singular... try glmmTMB
 
 m2_TT.urb <- glmmTMB(Tetraopes_tetropthalmus ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -701,7 +701,7 @@ plot(res) # looks good
 
 
 m2_TT.urb_ME <- glmmTMB(Tetraopes_tetropthalmus ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -752,7 +752,7 @@ Anova_etc(m1_TT,
 ```{r}
 # DISTANCE FROM CITY CENTER
 # m1_LA <- glmer(Liriomyza_asclepiadis ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist,
 #               data = herbivores ,
 #               family = poisson,
@@ -763,7 +763,7 @@ Anova_etc(m1_TT,
 # # try neg binomial
 
 m1_LA.nb <- glmmTMB(Liriomyza_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist,
               data = herbivores ,
               family = nbinom1(),
@@ -790,7 +790,7 @@ plotResiduals(simulationOutput, herbivores$City_dist)
 
 # URBANIZATION SCORE
 # m2_LA <- glmer(Liriomyza_asclepiadis ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               Urb_score,
 #               data = herbivores ,
 #               family = poisson,
@@ -801,7 +801,7 @@ plotResiduals(simulationOutput, herbivores$City_dist)
 # # try neg binomial
 
 m2_LA.nb <- glmmTMB(Liriomyza_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score,
               data = herbivores ,
               family = nbinom1(),
@@ -816,7 +816,7 @@ plot(res)
 ```{r}
 # DISTANCE FROM CITY CENTER
 # m1_LA.urb <- glmer(Liriomyza_asclepiadis ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist * Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -829,7 +829,7 @@ plot(res)
 
 
 m1_LA.urb.nb <- glmmTMB(Liriomyza_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -842,7 +842,7 @@ plot(res)
 
 # main effects
 m1_LA.urb.nb_ME <- glmmTMB(Liriomyza_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -855,7 +855,7 @@ m1_LA.urb.nb_ME <- glmmTMB(Liriomyza_asclepiadis ~
 
 # URBANIZATION SCORE
 # m2_LA.urb <- glmer(Liriomyza_asclepiadis ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               Urb_score * Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -868,7 +868,7 @@ m1_LA.urb.nb_ME <- glmmTMB(Liriomyza_asclepiadis ~
 
 
 m2_LA.urb.nb <- glmmTMB(Liriomyza_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -881,7 +881,7 @@ plot(res)
 
 # main effects
 m2_LA.urb.nb_ME <- glmmTMB(Liriomyza_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -938,7 +938,7 @@ anova_table_flx(m2_LA.urb.nb_ME)
 ```{r}
 # DISTANCE FROM CITY CENTER
 # m1_AN <- glmer(Aphis_nerii ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist,
 #               data = herbivores,
 #               family = poisson)
@@ -949,7 +949,7 @@ anova_table_flx(m2_LA.urb.nb_ME)
 # try neg binomial
 
 m1_AN.nb <- glmmTMB(Aphis_nerii ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist,
               data = herbivores ,
               family = nbinom1(),
@@ -965,7 +965,7 @@ plot(res)
 
 # URBANIZATION SCORE
 # m2_AN <- glmer(Aphis_nerii ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               Urb_score,
 #               data = herbivores,
 #               family = poisson)
@@ -976,7 +976,7 @@ plot(res)
 # # try neg binomial
 
 m2_AN.nb <- glmmTMB(Aphis_nerii ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score,
               data = herbivores ,
               family = nbinom1(),
@@ -990,7 +990,7 @@ plot(res)
 ```{r}
 # DISTANCE FROM CITY CENTER
 # m1_AN.urb <- glmer(Aphis_nerii ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist * Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -1003,7 +1003,7 @@ plot(res)
 
 
 m1_AN.urb.nb <- glmmTMB(Aphis_nerii ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1015,7 +1015,7 @@ plot(res)
 
 # main effects
 m1_AN.urb.nb_ME <- glmmTMB(Aphis_nerii ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1027,7 +1027,7 @@ m1_AN.urb.nb_ME <- glmmTMB(Aphis_nerii ~
 
 # URBANIZATION SCORE
 # m2_AN.urb <- glmer(Aphis_nerii ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               Urb_score * Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -1040,7 +1040,7 @@ m1_AN.urb.nb_ME <- glmmTMB(Aphis_nerii ~
 
 
 m2_AN.urb.nb <- glmmTMB(Aphis_nerii ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1052,7 +1052,7 @@ plot(res)
 
 # main effects
 m2_AN.urb.nb_ME <- glmmTMB(Aphis_nerii ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1100,7 +1100,7 @@ Anova_etc( m1_AN.nb,
 ```{r}
 # DISTANCE FROM CITY CENTER
 # m1_AA <- glmer(Aphis_asclepiadis ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist,
 #               data = herbivores,
 #               family = poisson)
@@ -1110,7 +1110,7 @@ Anova_etc( m1_AN.nb,
 # # try neg binomial
 
 m1_AA.nb <- glmmTMB(Aphis_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist,
               data = herbivores ,
               family = nbinom1(),
@@ -1126,7 +1126,7 @@ plot(res)
 
 # URBANIZATION SCORE
 # m2_AA <- glmer(Aphis_asclepiadis ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               Urb_score,
 #               data = herbivores,
 #               family = poisson)
@@ -1136,7 +1136,7 @@ plot(res)
 # # try neg binomial
 
 m2_AA.nb <- glmmTMB(Aphis_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score,
               data = herbivores ,
               family = nbinom1(),
@@ -1150,7 +1150,7 @@ plot(res)
 ```{r}
 # DISTANCE FROM CITY CENTER
 # m1_AA.urb <- glmer(Aphis_asclepiadis ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist * Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -1163,7 +1163,7 @@ plot(res)
 
 
 m1_AA.urb.nb <- glmmTMB(Aphis_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1175,7 +1175,7 @@ plot(res)
 
 # main effects
 m1_AA.urb.nb_ME <- glmmTMB(Aphis_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1187,7 +1187,7 @@ m1_AA.urb.nb_ME <- glmmTMB(Aphis_asclepiadis ~
 
 # URBANIZATION SCORE
 # m2_AA.urb <- glmer(Aphis_asclepiadis ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               Urb_score * Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -1200,7 +1200,7 @@ m1_AA.urb.nb_ME <- glmmTMB(Aphis_asclepiadis ~
 
 
 m2_AA.urb.nb <- glmmTMB(Aphis_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1212,7 +1212,7 @@ plot(res)
 
 # main effects
 m2_AA.urb.nb_ME <- glmmTMB(Aphis_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1260,7 +1260,7 @@ Anova_etc( m1_AA.nb,
 ```{r}
 # DISTANCE FROM CITY CENTER
 # m1_MA <- glmer(Myzocallis_asclepiadis ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist,
 #               data = herbivores,
 #               family = poisson)
@@ -1270,7 +1270,7 @@ Anova_etc( m1_AA.nb,
 # # try neg binomial
 
 m1_MA.nb <- glmmTMB(Myzocallis_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist,
               data = herbivores ,
               family = nbinom1(),
@@ -1284,7 +1284,7 @@ plot(res)
 
 # URBANIZATION SCORE
 # m2_MA <- glmer(Myzocallis_asclepiadis ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               Urb_score,
 #               data = herbivores,
 #               family = poisson)
@@ -1294,7 +1294,7 @@ plot(res)
 # # try neg binomial
 
 m2_MA.nb <- glmmTMB(Myzocallis_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score,
               data = herbivores ,
               family = nbinom1(),
@@ -1308,7 +1308,7 @@ plot(res)
 ```{r}
 # DISTANCE FROM CITY CENTER
 # m1_MA.urb <- glmer(Myzocallis_asclepiadis ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist * Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -1321,7 +1321,7 @@ plot(res)
 
 
 m1_MA.urb.nb <- glmmTMB(Myzocallis_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1333,7 +1333,7 @@ plot(res)
 
 # main effects
 m1_MA.urb.nb_ME <- glmmTMB(Myzocallis_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1346,7 +1346,7 @@ m1_MA.urb.nb_ME <- glmmTMB(Myzocallis_asclepiadis ~
 
 # URBANIZATION SCORE
 # m2_MA.urb <- glmer(Myzocallis_asclepiadis ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               Urb_score * Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -1359,7 +1359,7 @@ m1_MA.urb.nb_ME <- glmmTMB(Myzocallis_asclepiadis ~
 
 
 m2_MA.urb.nb <- glmmTMB(Myzocallis_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1371,7 +1371,7 @@ plot(res)
 
 # main effects
 m2_MA.urb.nb_ME <- glmmTMB(Myzocallis_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1442,7 +1442,7 @@ r.squaredGLMM(m1_MA.urb.nb)
 
 # MAIN EFFECTS:
 car::Anova(glmmTMB(Myzocallis_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1451,7 +1451,7 @@ car::Anova(glmmTMB(Myzocallis_asclepiadis ~
 # nothing significant
 
 r.squaredGLMM(glmmTMB(Myzocallis_asclepiadis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1465,7 +1465,7 @@ r.squaredGLMM(glmmTMB(Myzocallis_asclepiadis ~
 ```{r}
 # DISTANCE FROM CITY CENTER
 # m1_EE <- glmer(Euchaetes_egle ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist,
 #               data = herbivores,
 #               family = poisson,
@@ -1476,7 +1476,7 @@ r.squaredGLMM(glmmTMB(Myzocallis_asclepiadis ~
 # several technical issues with NAs and infinity even though diagnostics seem fine... trying neg bin transformation
 
 m1_EE.nb <- glmmTMB(Euchaetes_egle ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist,
               data = herbivores ,
               family = nbinom1(),
@@ -1493,7 +1493,7 @@ plot(res)
 
 # URBANIZATION SCORE
 # m2_EE <- glmer(Euchaetes_egle ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               Urb_score,
 #               data = herbivores,
 #               family = poisson,
@@ -1505,7 +1505,7 @@ plot(res)
 # several technical issues with NAs and infinity even though diagnostics seem fine... trying neg bin transformation
 
 m2_EE.nb <- glmmTMB(Euchaetes_egle ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score,
               data = herbivores ,
               family = nbinom1(),
@@ -1520,7 +1520,7 @@ plot(res)
 ```{r}
 # DISTANCE FROM CITY CENTER
 # m1_EE.urb <- glmer(Euchaetes_egle ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist * Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -1533,7 +1533,7 @@ plot(res)
 
 
 m1_EE.urb.nb <- glmmTMB(Euchaetes_egle ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1545,7 +1545,7 @@ plot(res)
 
 # main effects
 m1_EE.urb.nb_ME <- glmmTMB(Euchaetes_egle ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1558,7 +1558,7 @@ m1_EE.urb.nb_ME <- glmmTMB(Euchaetes_egle ~
 
 # URBANIZATION SCORE
 # m2_EE.urb <- glmer(Euchaetes_egle ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               Urb_score * Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -1571,7 +1571,7 @@ m1_EE.urb.nb_ME <- glmmTMB(Euchaetes_egle ~
 
 
 m2_EE.urb.nb <- glmmTMB(Euchaetes_egle ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1583,7 +1583,7 @@ plot(res)
 
 # main effects
 m2_EE.urb.nb_ME <- glmmTMB(Euchaetes_egle ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1640,7 +1640,7 @@ anova_table_flx(m2_EE.urb.nb_ME) # lower AIC (not sig lower) but still
 ```{r}
 # DISTANCE FROM CITY CENTER
 # m1_LK <- glmer(Lygaeus_kalmii ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist,
 #               data = herbivores,
 #               family = poisson,
@@ -1651,7 +1651,7 @@ anova_table_flx(m2_EE.urb.nb_ME) # lower AIC (not sig lower) but still
 # singular and KS test significant.. trying neg bin transformation
 
 m1_LK.nb <- glmmTMB(Lygaeus_kalmii ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist,
               data = herbivores ,
               family = nbinom1(),
@@ -1667,7 +1667,7 @@ plot(res)
 
 # URBANIZATION SCORE
 # m2_LK <- glmer(Lygaeus_kalmii ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               Urb_score,
 #               data = herbivores,
 #               family = poisson,
@@ -1678,7 +1678,7 @@ plot(res)
 # singular and KS test significant.. trying neg bin transformation
 
 m2_LK.nb <- glmmTMB(Lygaeus_kalmii ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score,
               data = herbivores ,
               family = nbinom1(),
@@ -1692,7 +1692,7 @@ plot(res)
 ```{r}
 # DISTANCE FROM CITY CENTER
 # m1_LK.urb <- glmer(Lygaeus_kalmii ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist * Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -1705,7 +1705,7 @@ plot(res)
 
 
 m1_LK.urb.nb <- glmmTMB(Lygaeus_kalmii ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1717,7 +1717,7 @@ plot(res)
 
 # main effects
 m1_LK.urb.nb_ME <- glmmTMB(Lygaeus_kalmii ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1729,7 +1729,7 @@ m1_LK.urb.nb_ME <- glmmTMB(Lygaeus_kalmii ~
 
 # URBANIZATION SCORE
 # m2_LK.urb <- glmer(Lygaeus_kalmii ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               Urb_score * Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -1742,7 +1742,7 @@ m1_LK.urb.nb_ME <- glmmTMB(Lygaeus_kalmii ~
 
 
 m2_LK.urb.nb <- glmmTMB(Lygaeus_kalmii ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1754,7 +1754,7 @@ plot(res)
 
 # main effects
 m2_LK.urb.nb_ME <- glmmTMB(Lygaeus_kalmii ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1812,7 +1812,7 @@ r.squaredGLMM(m1_LK.urb)
 
 # MAIN EFFECTS:
 car::Anova(glmer(Lygaeus_kalmii ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1822,7 +1822,7 @@ car::Anova(glmer(Lygaeus_kalmii ~
 # nothing significant
 
 r.squaredGLMM(glmer(Lygaeus_kalmii ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1838,7 +1838,7 @@ r.squaredGLMM(glmer(Lygaeus_kalmii ~
 ```{r}
 # DISTANCE FROM CITY CENTER
 m1_LC <- glmer(Labidomera_clivicollis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist,
               data = herbivores,
               family = poisson,
@@ -1849,7 +1849,7 @@ plot(res)
 # looks good... try neg bin transf just in case
 
 # m1_LC.nb <- glmmTMB(Labidomera_clivicollis ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist,
 #               data = herbivores ,
 #               family = nbinom1(),
@@ -1866,7 +1866,7 @@ plot(res)
 
 # URBANIZATION SCORE
 m2_LC <- glmer(Labidomera_clivicollis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score,
               data = herbivores,
               family = poisson,
@@ -1877,7 +1877,7 @@ plot(res)
 # looks good... try neg bin transf just in case
 
 m2_LC.nb <- glmmTMB(Labidomera_clivicollis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score,
               data = herbivores ,
               family = nbinom1(),
@@ -1892,7 +1892,7 @@ plot(res)
 ```{r}
 # DISTANCE FROM CITY CENTER
 # m1_LC.urb <- glmer(Labidomera_clivicollis ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist * Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -1905,7 +1905,7 @@ plot(res)
 
 
 m1_LC.urb.nb <- glmmTMB(Labidomera_clivicollis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1917,7 +1917,7 @@ plot(res)
 
 # main effects
 m1_LC.urb.nb_ME <- glmmTMB(Labidomera_clivicollis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1931,7 +1931,7 @@ m1_LC.urb.nb_ME <- glmmTMB(Labidomera_clivicollis ~
 
 # URBANIZATION SCORE
 m2_LC.urb <- glmer(Labidomera_clivicollis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1944,7 +1944,7 @@ plot(res)
 
 
 m2_LC.urb.nb <- glmmTMB(Labidomera_clivicollis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -1956,7 +1956,7 @@ plot(res)
 
 # main effects
 m2_LC.urb_ME <- glmer(Labidomera_clivicollis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -2029,7 +2029,7 @@ herbivores$Rhyssomatus_lineaticollis_bin[herbivores$Rhyssomatus_lineaticollis > 
 
 # DISTANCE FROM CITY CENTER
 # m1_RL <- glmer(Rhyssomatus_lineaticollis_bin ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist,
 #               data = herbivores,
 #               family = binomial,
@@ -2040,7 +2040,7 @@ herbivores$Rhyssomatus_lineaticollis_bin[herbivores$Rhyssomatus_lineaticollis > 
 # # several issues... try zero-inflated binomial
 
 # m1_RL.ZI.1 <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist,
 #               data = herbivores ,
 #               family = binomial(),
@@ -2081,7 +2081,7 @@ plot(res) # says there are some outliers but I think it looks good enough. Using
 
 # URBANIZATION SCORE
 # m2_RL <- glmer(Rhyssomatus_lineaticollis_bin ~
-#               (1|Block) + (1|Population/Family) + Sample +
+#               Block + (1|Population/Family) + Sample +
 #               Urb_score,
 #               data = herbivores,
 #               family = binomial,
@@ -2092,7 +2092,7 @@ plot(res) # says there are some outliers but I think it looks good enough. Using
 # # looks good except still zero-inflated... try ZI model
 
 # m2_RL.ZI.1 <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-#               (1|Block) + (1|Population/Family) + Sample +
+#               Block + (1|Population/Family) + Sample +
 #               Urb_score,
 #               data = herbivores ,
 #               family = binomial(),
@@ -2131,7 +2131,7 @@ plot(res) # NOT SINGULAR and looks good.
 ```{r}
 # DISTANCE FROM CITY CENTER
 # m1_RL.urb.1 <- glmer(Rhyssomatus_lineaticollis_bin ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist * Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -2140,7 +2140,7 @@ plot(res) # NOT SINGULAR and looks good.
 #                                  optCtrl=list(maxfun=2e5))) # singular... try glmmTMB
 
 m1_RL.urb <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -2152,7 +2152,7 @@ plot(res) # looks good and not singular
 
 # just main effects model:
 # m1_RL.urb_ME.1 <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist + Transect_ID,
 #               data = herbivores %>% 
 #                 filter(., Transect_ID != "Rural"),
@@ -2191,7 +2191,7 @@ car::Anova(m1_RL.urb_ME.3) # also has city_dist as sig... more sig here (0.02 vs
 
 # URBANIZATION SCORE
 m2_RL.urb.1<- glmer(Rhyssomatus_lineaticollis_bin ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -2200,7 +2200,7 @@ m2_RL.urb.1<- glmer(Rhyssomatus_lineaticollis_bin ~
                                  optCtrl=list(maxfun=2e5))) # singular... try glmmTMB
 
 m2_RL.urb <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -2212,7 +2212,7 @@ plot(res) # Looks good
 
 # main effects model:
 # m2_RL.urb_ME.1 <- glmer(Rhyssomatus_lineaticollis ~
-#               (1|Block) + (1|Population/Family) + (1|Sample) +
+#               Block + (1|Population/Family) + (1|Sample) +
 #               Urb_score + Transect_ID,
 #               data = herbivores %>%
 #                 filter(., Transect_ID != "Rural"),
@@ -2221,7 +2221,7 @@ plot(res) # Looks good
 #                                  optCtrl=list(maxfun=2e5))) # singular... try glmmTMB
 
 m2_RL.urb_ME <- glmmTMB(Rhyssomatus_lineaticollis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               Urb_score + Transect_ID,
               data = herbivores %>%
                 filter(., Transect_ID != "Rural"),
@@ -2298,7 +2298,7 @@ summary(m1_RL.urb_ME)
 # city_dist is significant!
 
 r.squaredGLMM(glmer(Rhyssomatus_lineaticollis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
@@ -2310,7 +2310,7 @@ r.squaredGLMM(glmer(Rhyssomatus_lineaticollis ~
 
 AIC(m1_RL.urb)
 AIC(glmer(Rhyssomatus_lineaticollis ~
-              (1|Block) + (1|Population/Family) + (1|Sample) +
+              Block + (1|Population/Family) + (1|Sample) +
               City_dist + Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
