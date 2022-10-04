@@ -1158,6 +1158,24 @@ make_all_anovas_tidy_altmods(mortality_mods_alt_u) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Alt_models/mortality_urbscore_alt.png"))
 ```
 
+## Put all tables into one document
+```{r}
+files <- list.files(path = "./Reproductive_trait_analyses/Figures/ANOVA/Best_models", full.names = T)
+
+# get all images in a list
+library(magick)
+images <- map(files, image_read)
+images <- image_join(images)
+
+library(grid)
+pdf("output.pdf", width=8, height=4)
+grid(images[[1]])
+lapply(images[-1], function(x) {grid.newpage(); grid.raster(x)} ) -> bquiet
+dev.off()
+
+
+```
+
 # R-squared values
 
 ```{r}
