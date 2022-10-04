@@ -27,17 +27,6 @@ editor_options:
     + To quantify urbanization, both distance from the city center and urbanization score were used, separately.
     + Transect was also used as a variable when analyzing the urban sites ONLY (i.e. excluding rural sites).
 
-
-**Questions:**
-
-* To what extent is urbanization associated with genetic divergence in phenotypic traits among subpopulations?
-* Is proximity to urban corridors related to the levels of genetic divergence among urban subpopulations?
-
-
-WHEN TOTALLY DONE, type this:
-renv::activate()
-renv::snapshot()
-
 # Set up notebook
 ## Load libraries & functions
 ```{r}
@@ -1313,206 +1302,96 @@ herbivores$Rhyssomatus_lineaticollis_bin[herbivores$Rhyssomatus_lineaticollis > 
 #               Block + (1|Population/Family) + (1|Sample) +
 #               City_dist,
 #               data = herbivores,
-#               family = binomial,
-#               control=glmmTMBControl(optimizer="bobyqa",
-#                                  optCtrl=list(maxfun=2e5)))
+#               family = binomial)
 # res <- simulateResiduals(m1_RL)
-# plot(res)
-# # several issues... try zero-inflated binomial
-
-# m1_RL.ZI.1 <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-#               Block + (1|Population/Family) + (1|Sample) +
-#               City_dist,
-#               data = herbivores ,
-#               family = binomial(),
-#               ziformula=~1,
-#               REML = F) # singular... try taking out block
-
-# m1_RL.ZI.2 <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-#               (1|Population/Family) + (1|Sample) +
-#               City_dist,
-#               data = herbivores ,
-#               family = binomial(),
-#               ziformula=~1,
-#               REML = F) # singular... try taking out sample
-
-# m1_RL.ZI.3 <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-#               (1|Population/Family) + 
-#               City_dist,
-#               data = herbivores ,
-#               family = binomial(),
-#               ziformula=~1,
-#               REML = F) # singular... take out family
-# res <- simulateResiduals(m1_RL.ZI)
-# plot(res)
-# testDispersion(m1_RL.ZI) # Looks good enough. Using this model
+# plot(res) # not converging- try zero-inflated binomial
 
 m1_RL.ZI <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-              (1|Population) + 
+              (1|Population) +
+                Block +
+                (1|Sample) +
               City_dist,
               data = herbivores ,
               family = binomial(),
               ziformula=~1,
-              REML = F) # NOT SINGULAR
+              REML = F) # not converging... tried taking out block and sample separately, then together... then took out family and finally converged. Could add block and sample back in
 res <- simulateResiduals(m1_RL.ZI)
-plot(res) # says there are some outliers but I think it looks good enough. Using this model
-
-
+plot(res)
 
 
 # URBANIZATION SCORE
-# m2_RL <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-#               Block + (1|Population/Family) + Sample +
-#               Urb_score,
-#               data = herbivores,
-#               family = binomial,
-#               control=glmmTMBControl(optimizer="bobyqa",
-#                                  optCtrl=list(maxfun=2e5)))
-# res <- simulateResiduals(m2_RL)
-# plot(res)
-# # looks good except still zero-inflated... try ZI model
-
-# m2_RL.ZI.1 <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-#               Block + (1|Population/Family) + Sample +
-#               Urb_score,
-#               data = herbivores ,
-#               family = binomial(),
-#               ziformula=~1,
-#               REML = F) # Singular... take out block
-
-# m2_RL.ZI.1 <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-#               (1|Population/Family) + Sample +
-#               Urb_score,
-#               data = herbivores ,
-#               family = binomial(),
-#               ziformula=~1,
-#               REML = F)  # Singular... take out sample
-
-# m2_RL.ZI <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-#               (1|Population/Family) + 
-#               Urb_score,
-#               data = herbivores ,
-#               family = binomial(),
-#               ziformula=~1,
-#               REML = F) # Singular... take out family
-
 m2_RL.ZI <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-              (1|Population) + 
+                      Block +
+                      (1|Sample) +
+              (1|Population) +
               Urb_score,
               data = herbivores ,
               family = binomial(),
               ziformula=~1,
-              REML = F)
+              REML = F) # not converging... tried taking out block and sample separately, then together... then took out family and finally converged. Could add block and sample back in
 res <- simulateResiduals(m2_RL.ZI)
-plot(res) # NOT SINGULAR and looks good.
-
+plot(res)
 ```
 
 #### Urban sites
 ```{r}
 # DISTANCE FROM CITY CENTER
-# m1_RL.urb.1 <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-#               Block + (1|Population/Family) + (1|Sample) +
-#               City_dist * Transect_ID,
-#               data = herbivores %>% 
-#                 filter(., Transect_ID != "Rural"),
-#               family = binomial,
-#               control=glmmTMBControl(optimizer="bobyqa",
-#                                  optCtrl=list(maxfun=2e5))) # singular... try glmmTMB
-
 m1_RL.urb <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-              Block + (1|Population/Family) + (1|Sample) +
+           #   Block + 
+                (1|Population/Family) + 
+           #     (1|Sample) +
               City_dist * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
-              family = binomial)
+              family = binomial) # won't converge unless I take out block and sample
 res <- simulateResiduals(m1_RL.urb)
-plot(res) # looks good and not singular
+plot(res) 
+car::Anova(m1_RL.urb)
 
-
-
-# just main effects model:
-# m1_RL.urb_ME.1 <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-#               Block + (1|Population/Family) + (1|Sample) +
-#               City_dist + Transect_ID,
-#               data = herbivores %>% 
-#                 filter(., Transect_ID != "Rural"),
-#               family = binomial) # not converging... take out block
-# 
-# car::Anova(m1_RL.urb) # interaxn not near sig anyway
-
-# m1_RL.urb_ME.2 <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-#                (1|Population/Family) + (1|Sample) +
-#               City_dist + Transect_ID,
-#               data = herbivores %>% 
-#                 filter(., Transect_ID != "Rural"),
-#               family = binomial) # not converging... take out sample
-
+# main effects model:
 m1_RL.urb_ME <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-               (1|Population/Family) + 
+            #  Block +
+                (1|Population/Family) +
+            #    (1|Sample) +
               City_dist + Transect_ID,
-              data = herbivores %>% 
+              data = herbivores %>%
                 filter(., Transect_ID != "Rural"),
-              family = binomial) # fine now
+              family = binomial) # can't get this to converge w/o taking out block and sample
 
-car::Anova(m1_RL.urb_ME) # city_dist sig... see if this holds up if I took out family instead of sample
-
-m1_RL.urb_ME.3 <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-               (1|Population) +  (1|Sample) +
-              City_dist + Transect_ID,
-              data = herbivores %>% 
-                filter(., Transect_ID != "Rural"),
-              family = binomial) # fine too
-
-car::Anova(m1_RL.urb_ME.3) # also has city_dist as sig... more sig here (0.02 vs 0.04 above)
-  
-  
-  
+AIC(m1_RL.urb,
+    m1_RL.urb_ME) # stat equiv but ME best
 
 
 # URBANIZATION SCORE
-m2_RL.urb.1<- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-              Block + (1|Population/Family) + (1|Sample) +
-              Urb_score * Transect_ID,
-              data = herbivores %>% 
-                filter(., Transect_ID != "Rural"),
-              family = binomial,
-              control=glmmTMBControl(optimizer="bobyqa",
-                                 optCtrl=list(maxfun=2e5))) # singular... try glmmTMB
-
 m2_RL.urb <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
-              Block + (1|Population/Family) + (1|Sample) +
+              Block +
+                (1|Population/Family) +
+            #    (1|Sample) +
               Urb_score * Transect_ID,
               data = herbivores %>% 
                 filter(., Transect_ID != "Rural"),
               family = binomial) 
 res <- simulateResiduals(m2_RL.urb)
-plot(res) # Looks good 
+plot(res) # won't converge unless I take out sample
 
 
 
 # main effects model:
-# m2_RL.urb_ME.1 <- glmmTMB(Rhyssomatus_lineaticollis ~
-#               Block + (1|Population/Family) + (1|Sample) +
-#               Urb_score + Transect_ID,
-#               data = herbivores %>%
-#                 filter(., Transect_ID != "Rural"),
-#               family = poisson,
-#               control=glmmTMBControl(optimizer="bobyqa",
-#                                  optCtrl=list(maxfun=2e5))) # singular... try glmmTMB
-
-m2_RL.urb_ME <- glmmTMB(Rhyssomatus_lineaticollis ~
-              Block + (1|Population/Family) + (1|Sample) +
+m2_RL.urb_ME <- glmmTMB(Rhyssomatus_lineaticollis_bin ~
+              Block + 
+                (1|Population/Family) +
+            #    (1|Sample) +
               Urb_score + Transect_ID,
               data = herbivores %>%
                 filter(., Transect_ID != "Rural"),
               family = poisson) # this works
 
+AIC(m2_RL.urb,
+    m2_RL.urb_ME) # stat equiv but ME best
 ```
 
 
 # Models for use in analysis
-**** RETURN HERE
 ## Monarchs
 ```{r}
 monarch_mods <- list(
@@ -1581,8 +1460,8 @@ m1_LA.urb ,
 m2_LA ,
 
 ## City_dist / urban subtransects
-m1_LA.urb, # Qualitatively identical model (<2 AIC away)
-m1_LA.urb_ME, # Best model
+m1_LA.urb.nb, # Qualitatively identical model (<2 AIC away)
+m1_LA.urb.nb_ME, # Best model
 
 ## Urbanization score  / urban subtransects
 m2_LA.urb.nb, # Qualitatively identical model (<2 AIC away)
@@ -1741,8 +1620,6 @@ names(lygaeus_mods) <- c("City_gr",
                      "Usc_urbsubs_best")
 ```
 
-
-
 ## Labidomera clivicollis
 ```{r}
 labidomera_mods <- list(
@@ -1771,24 +1648,23 @@ names(labidomera_mods) <- c("City_gr",
                      "Usc_urbsubs_best")
 ```
 
-
 ## Rhyssomatus lineaticollis
 ```{r}
 rhyssomatus_mods <- list(
 
-## City_dist / gradient
-m1_LC.nb ,
+## Ci4ty_dist / gradient
+m1_RL ,
 
 ## Urbanization score / gradient
-m2_LC.nb ,
+m1_RL.urb ,
 
 ## City_dist / urban subtransects
-m1_LC.urb.nb, # Qualitatively identical model (<2 AIC away)
-m1_LC.urb.nb_ME, # Best model
+m1_RL.urb, # Qualitatively identical model (<2 AIC away)
+m1_RL.urb_ME, # Best model
 
 ## Urbanization score  / urban subtransects
-m2_LC.urb.nb, # Qualitatively identical model (<2 AIC away)
-m2_LC.urb.nb_ME # Best model
+m2_RL.urb, # Qualitatively identical model (<2 AIC away)
+m2_RL.urb_ME # Best model
 
 )
 
@@ -1800,136 +1676,274 @@ names(rhyssomatus_mods) <- c("City_gr",
                      "Usc_urbsubs_best")
 ```
 
-
 # Export ANOVA
-
-# Find change in var estimates along gradient/across subtransects
-### Change along gradient: Just urban sites models
+## Monarchs
+### Best Models
+#### City_dist
 ```{r}
-# Function -----
-Perc_change_gradient.urbansites <- function(city_dist_model){
-
-  urban_terminus = 3.5 # km; most urban pop is close to this distance
-  rural_terminus =  32 # km; most rural pop is close to this distance
-
-  intercept1 <- fixef(city_dist_model)$cond[1] %>%
-  as.numeric() # gives intercept for city_dist
-  
-  slope1 <- fixef(city_dist_model)$cond[2] %>%
-  as.numeric() # gives slope for city_dist
-  
-  response_var <- names(city_dist_model$modelInfo$respCol) %>%
-    str_remove(., "[()]")
-      
-
-# y(urban terminus)
-  urban_estimate <- slope1 * urban_terminus + intercept1 #  %T>%
-  # print()
-  
-  print(paste(noquote(c("There are an average of", round(urban_estimate, 3), response_var, "per plant at the urban terminus")), collapse = ' '))
-
-# y(rural terminus)
-   rural_estimate <- slope1 * rural_terminus + intercept1 # %T>%
-  # print()
-  
-  print(paste(noquote(c("There are an average of", round(rural_estimate, 3), response_var, "per plant at the rural terminus")), collapse = ' '))
-
-# AVG NUM. OF RAMETS FROM URBAN TO RURAL TERMINUS:
-  avg_diff <- abs( urban_estimate - rural_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
-  # print()
-
-# % CHANGE
-  percent_change <- (((rural_estimate - urban_estimate) / abs(urban_estimate)) * 100) # %T>%
-  # print()
-  
-  print(paste(noquote(c("On average, the most rural plants produced", round(percent_change, 1), "% more", response_var, " per plant than the most urban plants")), collapse = ' '))
-  
-  # AVG NUM. OF RAMETS FROM RURAL TO URBAN TERMINUS:
-  avg_diff.1 <- abs( rural_estimate - urban_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
-  # print()
-
-# % CHANGE
-  percent_change.1 <- (((urban_estimate - rural_estimate ) / abs(rural_estimate)) * 100) # %T>%
-  # print()
-  
-  print(paste(noquote(c("On average, the most urban plants produced", round(percent_change.1, 1), "% more", response_var, " per plant than the most rural plants")), collapse = ' '))
-
-}
-
-## for the models that don't work with the original function, try this:
-Perc_change_gradient.2.urbansites <- function(city_dist_model){
-
-  urban_terminus = 3.5 # km; most urban pop is close to this distance
-  rural_terminus =  32 # km; most rural pop is close to this distance
-
-  intercept1 <- fixef(city_dist_model)[1] %>%
-  as.numeric() # gives intercept for city_dist
-  
-  slope1 <- fixef(city_dist_model)[2] %>%
-  as.numeric() # gives slope for city_dist
-  
-  response_var <- names(city_dist_model@frame)[1] 
-      
-
-# y(urban terminus)
-  urban_estimate <- slope1 * urban_terminus + intercept1 #  %T>%
-  # print()
-  
-  print(paste(noquote(c("There are an average of", round(urban_estimate, 3), response_var, "per plant at the urban terminus")), collapse = ' '))
-
-# y(rural terminus)
-   rural_estimate <- slope1 * rural_terminus + intercept1 # %T>%
-  # print()
-  
-  print(paste(noquote(c("There are an average of", round(rural_estimate, 3), response_var, "per plant at the rural terminus")), collapse = ' '))
-
-# AVG NUM. OF RAMETS FROM URBAN TO RURAL TERMINUS:
-  avg_diff <- abs( urban_estimate - rural_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
-  # print()
-
-# % CHANGE
-  percent_change <- (((rural_estimate - urban_estimate) / abs(urban_estimate)) * 100) # %T>%
-  # print()
-  
-  print(paste(noquote(c("On average, the most rural plants produced", round(percent_change, 1), "% more", response_var, " per plant than the most urban plants")), collapse = ' '))
-  
-  # AVG NUM. OF RAMETS FROM RURAL TO URBAN TERMINUS:
-  avg_diff.1 <- abs( rural_estimate - urban_estimate )  / (0.5* (    urban_estimate + rural_estimate  )  ) # %T>%
-  # print()
-
-# % CHANGE
-  percent_change.1 <- (((urban_estimate - rural_estimate ) / abs(rural_estimate)) * 100) # %T>%
-  # print()
-  
-  print(paste(noquote(c("On average, the most urban plants produced", round(percent_change.1, 1), "% more", response_var, " per plant than the most rural plants")), collapse = ' '))
-  
-}
-
-
-Perc_change_gradient.urbansites  (  m1_LC.urb.nb_ME             )
-
-
-Perc_change_gradient.urbansites(  m1_RL.urb_ME             )
-
+make_all_anovas_tidy_altmods(monarch_mods[c(1,4)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/Monarchs_citydist.png"))
 ```
 
-### Difference between urban subtransects models
+#### Urb_score
 ```{r}
+make_all_anovas_tidy_altmods(monarch_mods[c(2,6)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/Monarchs_urbscore.png"))
+```
 
-# Function -----
-Perc_change_subtransects <- function(urban_model) {
-  
-    response_var <- names(urban_model$modelInfo$respCol) %>%
-    str_remove(., "[()]")
-    
-    intercept2 <- (fixef(urban_model)$cond[3] * 100) %>%
-  as.numeric() # %T>% print() # gives estimate of difference btwn 2 subs
-    
-    print(paste(noquote(c("On average, plants from the corridor subtransect experienced", round(intercept2, 1), "% more ", response_var, "than plants from the non-corridor subtransect")), collapse = ' '))
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(monarch_mods[3]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/Monarchs_citydist_alt.png"))
+```
 
-}
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(monarch_mods[5]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/Monarchs_urbscore_alt.png"))
+```
+
+## tetraopes
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(tetraopes_mods[c(1,4)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/tetraopes_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(tetraopes_mods[c(2,6)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/tetraopes_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(tetraopes_mods[3]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/tetraopes_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(tetraopes_mods[5]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/tetraopes_urbscore_alt.png"))
+```
 
 
-Perc_change_subtransects(  m2_LA.urb.nb_ME ) 
+## liriomyza
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(liriomyza_mods[c(1,4)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/liriomyza_citydist.png"))
+```
 
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(liriomyza_mods[c(2,6)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/liriomyza_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(liriomyza_mods[3]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/liriomyza_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(liriomyza_mods[5]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/liriomyza_urbscore_alt.png"))
+```
+
+
+## Aphis nerii
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(nerii_mods[c(1,3)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/nerii_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(nerii_mods[c(2,6)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/nerii_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(nerii_mods[4]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/nerii_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(nerii_mods[5]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/nerii_urbscore_alt.png"))
+```
+
+
+## Aphis asclepiadis
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(aasclepiadis_mods[c(1,4)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/aasclepiadis_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(aasclepiadis_mods[c(2,6)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/aasclepiadis_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(aasclepiadis_mods[3]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/aasclepiadis_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(aasclepiadis_mods[5]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/aasclepiadis_urbscore_alt.png"))
+```
+
+## Myzocallis asclepiadis
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(masclepiadis_mods[c(1,4)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/masclepiadis_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(masclepiadis_mods[c(2,6)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/masclepiadis_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(masclepiadis_mods[3]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/masclepiadis_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(masclepiadis_mods[5]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/masclepiadis_urbscore_alt.png"))
+```
+
+## Euchaetes egle
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(euchaetes_mods[c(1,4)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/euchaetes_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(euchaetes_mods[c(2,6)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/euchaetes_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(euchaetes_mods[3]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/euchaetes_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(euchaetes_mods[5]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/euchaetes_urbscore_alt.png"))
+```
+
+## Lygaeus kalmii
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(lygaeus_mods[c(1,4)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/lygaeus_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(lygaeus_mods[c(2,6)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/lygaeus_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(lygaeus_mods[3]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/lygaeus_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(lygaeus_mods[5]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/lygaeus_urbscore_alt.png"))
+```
+## Labidomera clivicollis
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(labidomera_mods[c(1,4)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/labidomera_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(labidomera_mods[c(2,6)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/labidomera_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(labidomera_mods[3]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/labidomera_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(labidomera_mods[5]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/labidomera_urbscore_alt.png"))
+```
+## Rhyssomatus lineaticollis
+### Best Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(rhyssomatus_mods[c(1,4)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/rhyssomatus_citydist.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(rhyssomatus_mods[c(2,6)]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Best_models/rhyssomatus_urbscore.png"))
+```
+
+### Alternative Models
+#### City_dist
+```{r}
+make_all_anovas_tidy_altmods(rhyssomatus_mods[3]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/rhyssomatus_citydist_alt.png"))
+```
+
+#### Urb_score
+```{r}
+make_all_anovas_tidy_altmods(rhyssomatus_mods[5]) %>%
+  save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/2020_Herbivores/Alt_models/rhyssomatus_urbscore_alt.png"))
 ```
