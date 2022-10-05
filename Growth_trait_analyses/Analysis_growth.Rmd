@@ -14,12 +14,7 @@ output:
     toc_depth: '2'
 editor_options: 
   chunk_output_type: console
-NOTES:
-  -Still to do--
-    -make a ReadMe file for each level
-# WHEN TOTALLY DONE, type this:
-# renv::activate()
-# renv::snapshot()
+
 ---
 
 +---------------------------------+-----------+-----------+-----------+
@@ -54,12 +49,32 @@ set.seed(45)
 ### Gradient
 ```{r}
 # LDMC-------
-ldmc_ranova_mod1 <- lmer(sqrt(LDMC) ~
+# even after I remove populations with only 1 family, it's still singular
+# But when I remove FAMILY, it isn't singular! Makes sense b/c
+# there's no variance among families as per the summary
+ldmc_ranova_mod1 <- lmer((LDMC)^(1/3) ~
                            (1|Population/Family) +
                            Block,
                              data = sla_ldmc %>%
-                               dplyr::filter(LDMC < 1),
+                               dplyr::filter(LDMC < 0.7 &
+                                               Population != "23" &
+                                               Population != "26" &
+                                               Population != "32" &
+                                               Population != "45"),
                            REML = T)
+
+summary(ldmc_ranova_mod1) # this shows variance among families and populations nearly 0; on the order of 1x10^-6 or plain 0.
+summary(sla_ldmc$LDMC)
+
+# find fams w/1 replicate
+ldmc_sum <- sla_ldmc %>%
+  dplyr::filter(is.na(LDMC) ==F) %>%
+  dplyr::group_by(Population, Family) %>%
+  dplyr::summarise(reps = n()) %T>%
+  view()
+ldmc_sum2 <- sla_sum %>%
+  dplyr::group_by(Population) %>%
+  dplyr::summarise(reps = n())
 
 # check diagnostics and transform if necessary
 performance::check_model(ldmc_ranova_mod1)
@@ -72,17 +87,31 @@ ranova_2step(ldmc_ranova_mod1,
 
 # SLA-----
 # this is even singular untransformed and w/only SLA ~ (1|Pop)
+# but it's NOT singular w/glmmTMB!
 sla_ranova_mod1 <- lmer(SLA^(1/3) ~
                           (1|Population/Family) +
                           Block,
                         data = sla_ldmc %>%
-                          dplyr::filter(is.na(SLA) == F),
+                          dplyr::filter(is.na(SLA) == F &
+                                               Population != "23" &
+                                               Population != "26" &
+                                               Population != "32" &
+                                               Population != "45"),
                         REML = T)
 
-# find pops w/1 fam
+summary(sla_ldmc)
+plot(sla_ldmc$SLA)
+summary(sla_ranova_mod1) # this shows variance among families and populations is 0
+
+# find fams w/1 replicate
 sla_sum <- sla_ldmc %>%
+  dplyr::filter(is.na(SLA) ==F) %>%
   dplyr::group_by(Population, Family) %>%
-  dplyr::summarise(reps = unique(Replicate))
+  dplyr::summarise(reps = n()) %T>%
+  view()
+sla_sum2 <- sla_sum %>%
+  dplyr::group_by(Population) %>%
+  dplyr::summarise(reps = n())
 
 # check diagnostics and transform if necessary
 performance::check_model(sla_ranova_mod1)
@@ -265,11 +294,11 @@ ranova_2step(heights_l_ranova_mod3,
 ### Urban subtransects
 ```{r}
 # LDMC-------
-ldmc_ranova_mod1 <- lmer(LDMC ~
+ldmc_ranova_mod1 <- lmer(LDMC^(1/3) ~
                            (1|Population/Family) +
                            Block,
                              data = sla_ldmc %>%
-                          dplyr::filter(Transect_ID != "Rural"),
+                          dplyr::filter(Transect_ID != "Rural" & LDMC < 0.7),
                            REML = T)
 
 
@@ -282,7 +311,7 @@ ranova_transect(ldmc_ranova_mod1,
 
 
 # SLA-----
-sla_ranova_mod1 <- lmer(sqrt(SLA) ~
+sla_ranova_mod1 <- lmer((SLA)^(1/3) ~
                           (1|Population/Family) +
                           Block,
                              data = sla_ldmc %>%
@@ -1160,18 +1189,6 @@ make_all_anovas_tidy_altmods(mortality_mods_alt_u) %>%
 
 ## Put all tables into one document
 ```{r}
-files <- list.files(path = "./Reproductive_trait_analyses/Figures/ANOVA/Best_models", full.names = T)
-
-# get all images in a list
-library(magick)
-images <- map(files, image_read)
-images <- image_join(images)
-
-library(grid)
-pdf("output.pdf", width=8, height=4)
-grid(images[[1]])
-lapply(images[-1], function(x) {grid.newpage(); grid.raster(x)} ) -> bquiet
-dev.off()
 
 
 ```

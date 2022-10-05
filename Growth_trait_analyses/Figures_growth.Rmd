@@ -17,14 +17,14 @@ source(knitr::purl("Growth_trait_analyses/Model_diagnostics_Growth.Rmd", quiet=T
 ### Gradient
 ```{r}
 # city_dist
-ldmc_mods_best_c[1]
+ldmc_mods_best_c[1] # sqrt transformed
 ldmc_gradient_01_pred <- ggeffects::ggpredict(ldmc_mods_best_c[[1]],
                                    terms = c("City_dist"),
                                    type = "fe") %>%
   as.data.frame() 
 
 # urb_score
-ldmc_mods_best_u[1]
+ldmc_mods_best_u[1]# sqrt transformed
 ldmc_gradient_02_pred <- ggeffects::ggpredict(ldmc_mods_best_u[[1]],
                                    terms = c("Urb_score"),
                                    type = "fe") %>%
@@ -34,14 +34,14 @@ ldmc_gradient_02_pred <- ggeffects::ggpredict(ldmc_mods_best_u[[1]],
 ### Urban Subtransects
 ```{r}
 # city_dist
-ldmc_mods_best_c[2]
+ldmc_mods_best_c[2] # log transformed
 ldmc_urbsubs_01_pred <- ggeffects::ggpredict(ldmc_mods_best_c[[2]],
                                    terms = c("City_dist", "Transect_ID"),
                                    type = "fe") %>%
   as.data.frame()
 
 # urb_score
-ldmc_mods_best_u[2]
+ldmc_mods_best_u[2]# log transformed
 ldmc_urbsubs_02_pred <- ggeffects::ggpredict(ldmc_mods_best_u[[2]],
                                    terms = c("Urb_score", "Transect_ID"),
                                    type = "fe")
@@ -50,28 +50,17 @@ ldmc_urbsubs_02_pred <- ggeffects::ggpredict(ldmc_mods_best_u[[2]],
 ## SLA
 ### Gradient
 ```{r}
-sla_ldmc$sla_cuberoot <- (sla_ldmc$SLA)^(1/3)
-
-sla_mod1 <- update(
-  sla_mods_best_c[[1]],
-  sla_cuberoot ~ .
-)
-
-sla_mod2 <- update(
-  sla_mods_best_u[[1]],
-  sla_cuberoot ~ .
-)
 
 # city_dist
-sla_mods_best_c[1] # CUBE ROOT transformed
-sla_gradient_01_pred <- ggeffects::ggpredict(sla_mod1,
+sla_mods_best_c[1] # log(SLA + 1) transformed
+sla_gradient_01_pred <- ggeffects::ggpredict(sla_mods_best_c[[1]],
                                    terms = c("City_dist"),
                                    type = "fe") %>%
   as.data.frame() 
 
 # urb_score
-sla_mods_best_u[1] # CUBE ROOT transformed
-sla_gradient_02_pred <- ggeffects::ggpredict(sla_mod2,
+sla_mods_best_u[1] # log(SLA + 1) transformed
+sla_gradient_02_pred <- ggeffects::ggpredict(sla_mods_best_u[[1]],
                                    terms = c("Urb_score"),
                                    type = "fe") %>%
   as.data.frame()
@@ -80,26 +69,16 @@ sla_gradient_02_pred <- ggeffects::ggpredict(sla_mod2,
 
 ### Urban Subtransects
 ```{r}
-sla_mod3 <- update(
-  sla_mods_best_c[[2]],
-  sla_cuberoot ~ .
-)
-
-sla_mod4 <- update(
-  sla_mods_best_u[[2]],
-  sla_cuberoot ~ .
-)
-
 # city_dist
-sla_mods_best_c[2] # CUBE ROOT transformed
-sla_urbsubs_01_pred <- ggeffects::ggpredict(sla_mod3,
+sla_mods_best_c[2] # log(SLA + 1) transformed
+sla_urbsubs_01_pred <- ggeffects::ggpredict(sla_mods_best_c[[2]],
                                    terms = c("City_dist", "Transect_ID"),
                                    type = "fe") %>%
   as.data.frame()
 
 # urb_score
-sla_mods_best_u[2] # CUBE ROOT transformed
-sla_urbsubs_02_pred <- ggeffects::ggpredict(sla_mod4,
+sla_mods_best_u[2] # log(SLA + 1) transformed
+sla_urbsubs_02_pred <- ggeffects::ggpredict(sla_mods_best_u[[2]],
                                    terms = c("Urb_score", "Transect_ID"),
                                    type = "fe")
 ```
@@ -412,7 +391,7 @@ ggpred_Q1.citydist_sla <- ggplot(sla_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
        y = expression("Specific leaf area (SLA) "(cm^2/g))) +
-  ylim(NA, 2.76) +
+#  ylim(NA, 2.76) +
   theme_1() +
 #   # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
@@ -693,6 +672,10 @@ ggpred_Q1.urbscore_mortality
 # LDMC-----
 
 levels(ldmc_urbsubs_01_pred$group)
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+ldmc_urbsubs_01_pred$group <- factor(ldmc_urbsubs_01_pred$group, levels(ldmc_urbsubs_01_pred$group)[c(2,1)])
+
+levels(ldmc_urbsubs_01_pred$group)
 
 ggpred_Q2.citydist_ldmc <-
 ggplot(ldmc_urbsubs_01_pred) +
@@ -722,6 +705,10 @@ ggpred_Q2.citydist_ldmc
 
 
 # SLA-----
+
+levels(sla_urbsubs_01_pred$group)
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+sla_urbsubs_01_pred$group <- factor(sla_urbsubs_01_pred$group, levels(sla_urbsubs_01_pred$group)[c(2,1)])
 
 levels(sla_urbsubs_01_pred$group)
 
@@ -949,7 +936,10 @@ ggpred_Q2.citydist_mortality
 ```{r}
 # LDMC-----
 
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+ldmc_urbsubs_02_pred$group <- factor(ldmc_urbsubs_02_pred$group, levels(ldmc_urbsubs_02_pred$group)[c(2,1)])
 levels(ldmc_urbsubs_02_pred$group)
+
 
 ggpred_Q2.urbsubs_ldmc <-
 ggplot(ldmc_urbsubs_02_pred) +
@@ -979,7 +969,8 @@ ggpred_Q2.urbsubs_ldmc
 
 
 # SLA-----
-
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+sla_urbsubs_02_pred$group <- factor(sla_urbsubs_02_pred$group, levels(sla_urbsubs_02_pred$group)[c(2,1)])
 levels(sla_urbsubs_02_pred$group)
 
 ggpred_Q2.urbsubs_sla <- 
@@ -988,7 +979,7 @@ ggplot(sla_urbsubs_02_pred) +
        y = expression("Specific leaf area (SLA) "(cm^2/g)),
        color = "Transect",
        fill = "Transect") +
-  ylim(NA, 2.8) +
+  ylim(16,20) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +

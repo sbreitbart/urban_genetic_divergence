@@ -14,15 +14,7 @@ output:
     toc_depth: '2'
 editor_options: 
   chunk_output_type: console
-NOTES:
-  -Still to do--
-    -try to do an RDA (or PCA?) with all the traits
-    -make a ReadMe file for each level
-    -calculate heritability coefficients
 
-# WHEN TOTALLY DONE, type this:
-# renv::activate()
-# renv::snapshot()
 ---
 
 # Set up notebook

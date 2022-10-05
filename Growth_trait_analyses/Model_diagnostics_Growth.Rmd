@@ -57,9 +57,9 @@ ldmc_gr_city_m1 <- glmmTMB(sqrt(LDMC) ~
                              dplyr::filter(LDMC < 1), # next highest LMDC is 0.7, so removing the one more than double that
                         REML = F)
 
-# DHARMa::simulateResiduals(ldmc_gr_city_m1) %>%
-#   plot
-# performance::check_model(ldmc_gr_city_m1)
+ # DHARMa::simulateResiduals(ldmc_gr_city_m1) %>%
+ #   plot
+ # performance::check_model(ldmc_gr_city_m1)
 
 
 
@@ -103,9 +103,8 @@ ldmc_gr_usc_m1 <- glmmTMB(sqrt(LDMC) ~
 ### Urban Subtransects
 #### City_dist
 ```{r}
-# doesn't converge unless I remove block
 ldmc_urbsubs_city_m1 <- glmmTMB(log(LDMC) ~
-                              Block +
+                       #       Block +
                              (1|Population/Family) +
                              City_dist * Transect_ID,
                         data = sla_ldmc %>%
@@ -120,6 +119,7 @@ ldmc_urbsubs_city_m1 <- glmmTMB(log(LDMC) ~
 
 
 # MAIN EFFECTS MODEL
+# have to remove block for it to converge
 ldmc_urbsubs_city_m2 <- glmmTMB(log(LDMC) ~
                            #   Block +
                              (1|Population/Family) +
@@ -145,7 +145,7 @@ ldmc_urbsubs_city_m2 <- glmmTMB(log(LDMC) ~
 #                         City_dist*Transect_ID,
 #                         sla_ldmc %>%
 #                              dplyr::filter(LDMC < 1 &
-#                                              Transect_ID != "Rural"), 
+#                                              Transect_ID != "Rural"),
 #                         REML = F)
 # 
 # 
@@ -194,7 +194,7 @@ ldmc_urbsubs_usc_m2 <- glmmTMB(log(LDMC) ~
 #                         REML = F)
 # 
 # 
-# test_gxe(ldmc_urbsubs_usc_m1, gxe_test_ldmc4) # reg model best (I added block back to it)
+# test_gxe(ldmc_urbsubs_usc_m1, gxe_test_ldmc4) # reg model best
 ```
 
 ## SLA
@@ -202,13 +202,12 @@ ldmc_urbsubs_usc_m2 <- glmmTMB(log(LDMC) ~
 #### City_dist
 ```{r}
 # Basic data exploration
-# plot(SLA ~ City_dist, data = sla_ldmc) 
+# plot(SLA ~ City_dist, data = sla_ldmc)
 # 
 # boxplot(SLA ~ Block, data = sla_ldmc)
 
-# doesn't converge if I transform SLA to the extent that diagnostics look spotless (only if I remove block). I can also remove most outliers, but then sometimes it doesn't converge either. But if I remove some outliers (only use SLA < 40), anova results still qualitatitvley identical to other situations noted above. So I'll remove Block and transform SLA so I can compare with Urb_score model.
-sla_gr_city_m1 <- glmmTMB(SLA^(1/3) ~
-                            # Block +
+sla_gr_city_m1 <- glmmTMB(log(SLA+1) ~
+                            Block +
                             (1|Population/Family) +
                             City_dist,
                         data = sla_ldmc,
@@ -220,19 +219,19 @@ sla_gr_city_m1 <- glmmTMB(SLA^(1/3) ~
 
 
 # test for gxe intxns
-# gxe_test_sla <- glmmTMB(SLA^(1/3) ~
+# gxe_test_sla <- glmmTMB(log(SLA+1) ~
 #                              City_dist*Block +
 #                              (1|Population/Family),
 #                          data = sla_ldmc ,
 #                         REML = F)
 # 
-# test_gxe(sla_gr_city_m1, gxe_test_sla) # reg mod best (added back block to reg mod)
+# test_gxe(sla_gr_city_m1, gxe_test_sla) # reg mod best
 ```
 
 #### Urb_score
 ```{r}
-sla_gr_usc_m1 <- glmmTMB(SLA^(1/3) ~
-                    #        Block +
+sla_gr_usc_m1 <- glmmTMB(log(SLA+1) ~
+                            Block +
                             (1|Population/Family) +
                             Urb_score,
                         data = sla_ldmc,
@@ -244,7 +243,7 @@ sla_gr_usc_m1 <- glmmTMB(SLA^(1/3) ~
 
 
 # test for gxe intxns
-# gxe_test_sla2 <- glmmTMB(SLA^(1/3) ~
+# gxe_test_sla2 <- glmmTMB(log(SLA +1) ~
 #                              Urb_score*Block +
 #                              (1|Population/Family),
 #                          data = sla_ldmc ,
@@ -256,7 +255,7 @@ sla_gr_usc_m1 <- glmmTMB(SLA^(1/3) ~
 ### Urban Subtransects
 #### City_dist
 ```{r}
-sla_urbsubs_city_m1 <- glmmTMB(SLA^(1/3) ~
+sla_urbsubs_city_m1 <- glmmTMB(log(SLA+1) ~
                                  Block +
                                  (1|Population/Family) +
                                  City_dist * Transect_ID,
@@ -270,7 +269,7 @@ sla_urbsubs_city_m1 <- glmmTMB(SLA^(1/3) ~
 
 
 # MAIN EFFECTS
-sla_urbsubs_city_m2 <- glmmTMB(SLA^(1/3) ~
+sla_urbsubs_city_m2 <- glmmTMB(log(SLA+1) ~
                                  Block +
                                  (1|Population/Family) +
                                  City_dist + Transect_ID,
@@ -285,7 +284,7 @@ sla_urbsubs_city_m2 <- glmmTMB(SLA^(1/3) ~
 
 
 # test for gxe intxns
-# gxe_test_sla3 <- glmmTMB(SLA^(1/3) ~
+# gxe_test_sla3 <- glmmTMB(log(SLA+1) ~
 #                              City_dist*Block +
 #                              (1|Population/Family) +
 #                         City_dist*Transect_ID,
@@ -294,12 +293,12 @@ sla_urbsubs_city_m2 <- glmmTMB(SLA^(1/3) ~
 #                         REML = F)
 # 
 # 
-# test_gxe(sla_urbsubs_city_m1, gxe_test_sla3) # reg model best (I added block back to it)
+# test_gxe(sla_urbsubs_city_m1, gxe_test_sla3) # reg model best
 ```
 
 #### Urb_score
 ```{r}
-sla_urbsubs_usc_m1 <- glmmTMB(SLA^(1/3) ~
+sla_urbsubs_usc_m1 <- glmmTMB(log(SLA+1) ~
                                  Block +
                                  (1|Population/Family) +
                                  Urb_score * Transect_ID,
@@ -313,7 +312,7 @@ sla_urbsubs_usc_m1 <- glmmTMB(SLA^(1/3) ~
 
 
 # MAIN EFFECTS
-sla_urbsubs_usc_m2 <- glmmTMB(SLA^(1/3) ~
+sla_urbsubs_usc_m2 <- glmmTMB(log(SLA+1) ~
                                  Block +
                                  (1|Population/Family) +
                                  Urb_score + Transect_ID,
@@ -328,7 +327,7 @@ sla_urbsubs_usc_m2 <- glmmTMB(SLA^(1/3) ~
 
 
 # test for gxe intxns
-# gxe_test_sla4 <- glmmTMB(SLA^(1/3) ~
+# gxe_test_sla4 <- glmmTMB(log(SLA+1) ~
 #                              Urb_score*Block +
 #                              (1|Population/Family) +
 #                         Urb_score*Transect_ID,
@@ -337,7 +336,7 @@ sla_urbsubs_usc_m2 <- glmmTMB(SLA^(1/3) ~
 #                         REML = F)
 # 
 # 
-# test_gxe(sla_urbsubs_usc_m1, gxe_test_sla4) # reg model best (I added block back to it)
+# test_gxe(sla_urbsubs_usc_m1, gxe_test_sla4) # reg model best
 ```
 
 ## Heights

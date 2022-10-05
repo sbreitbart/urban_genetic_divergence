@@ -293,6 +293,8 @@ monarchs_ranova2_pb <- glmer.nb(Monarch_Quantity_Observed ~
 
 # performance::check_model(monarchs_ranova2_pb)
 
+summary(monarchs_ranova2_pb) # again, nearly zero variance among families and pops- on the order of 1x10^-11
+
 pb_ranova_transects(monarchs_ranova2_pb,
           "Monarch butterfly: 2021",
           "./Defense_trait_analyses/Tables/Ranova/monarch_2021_transectstest.docx")

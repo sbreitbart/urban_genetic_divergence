@@ -41,6 +41,48 @@ latex <-  read.csv(here::here("./CommonGardenExperiment_2020Data/partially_clean
 # Clean data- step 2
 #-------------------
 
+# Clean SLA/LDMC and latex data by removing duplicates
+# --------------------------------------------------
+# Remove some (14) rows that have the same Population, Family, and Replicate ID
+# (in pairs of 2 rows each). These duplication errors probably occurred while plant
+# pots were being labelled and/or recorded during the first field season.
+# I do this for all other multi-year traits in a later stage ("Joining_annual_datasets.Rmd).
+
+# Create duplicate data table
+# Row 7,  Col 39: 19  5 3
+# Row 20, Col 6 : 19  5 3
+# 
+# Row 1,  Col 41: 23  1 5
+# Row 5,  Col 12: 23  1 5
+# 
+# Row 14, Col 37: 35  4 2
+# Row 21, Col 33: 35  4 2
+# 
+# Row 14, Col 12:	35	3	1
+# Row 21, Col 25:	35	3	1
+# 
+# Row 14, Col 43:	41	1	2
+# Row 16, Col 13:	41	1	2
+# 
+# Row 12, Col 29:	41	1	3
+# Row 15, Col 3	: 41	1	3
+# 
+# Row 11, Col 43:	41	1	4
+# Row 13, Col 4	: 41	1	4
+
+repeats <- data.frame(Population  = c(19, 23, 35, 35, 41, 41, 41),
+                      Family =      c(5, 1, 4, 3, 1, 1, 1),
+                      Replicate =   c(3, 5, 2, 1, 2, 3, 4)
+)
+
+
+sla_ldmc %<>%
+  anti_join(., repeats)
+
+latex %<>%
+  anti_join(., repeats)
+
+
 
 ## Assess survival: Need cleaned heights csv to do this, so I made a second cleaning step.
 #-----------------------------------------------------------------------------------------

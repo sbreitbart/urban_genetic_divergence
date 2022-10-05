@@ -326,7 +326,7 @@ pb_ranova_2step(fltime_ranova3,
 
 # Flowering start-----
 # 2020-----
-flstart_ranova1 <- glmer(Julian_oldest_inflor ~
+flstart_ranova1 <- glmer(Julian_oldest_inflor-170 ~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
@@ -336,13 +336,14 @@ flstart_ranova1 <- glmer(Julian_oldest_inflor ~
                              family = poisson)
 
 # performance::check_model(flstart_ranova1)
+summary(flstart_ranova1)
 
 pb_ranova_2step(flstart_ranova1,
           "Flowering start: 2020",
           "./Reproductive_trait_analyses/Tables/Ranova/flowering_start_2020.docx")
 
 # 2021-----
-flstart_ranova2 <- glmer(Julian_oldest_inflor ~
+flstart_ranova2 <- glmer(Julian_oldest_inflor-170 ~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
@@ -358,7 +359,7 @@ pb_ranova_2step(flstart_ranova2,
           "./Reproductive_trait_analyses/Tables/Ranova/flowering_start_2021.docx")
 
 # 2022-----
-flstart_ranova3 <- glmer(Julian_oldest_inflor ~
+flstart_ranova3 <- glmer(Julian_oldest_inflor-170 ~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
@@ -424,8 +425,12 @@ pb_ranova_2step(pods_ranova3,
 
 
 # Date of first follicle-----
+
+# copied from transects chunk below:
+summary(flowering$Julian_first_follicle) # min is 201. I've been having issues getting these models to not be singular, and subtracting 200 from the response helps a lot. I think the issue is that the numbers are so big and could have the min subtracted to keep the range from ~1-45 vs. 201-245.
+
 # 2020-----
-firstpod_ranova1 <- glmer(Julian_first_follicle ~
+firstpod_ranova1 <- glmer(Julian_first_follicle-200 ~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
@@ -442,12 +447,13 @@ pb_ranova_2step(firstpod_ranova1,
 
 
 # 2021-----
-firstpod_ranova2 <- glmer(Julian_first_follicle ~
+firstpod_ranova2 <- glmer(Julian_first_follicle-200 ~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
                              data = flowering %>%
-                               dplyr::filter(Year == 2021),
+                               dplyr::filter(Year == 2021 &
+                                is.na(Julian_first_follicle) == FALSE),
                            na.action = na.exclude,
                              family = poisson)
 
@@ -458,12 +464,13 @@ pb_ranova_2step(firstpod_ranova2,
           "./Reproductive_trait_analyses/Tables/Ranova/first_pods_2021.docx")
 
 # 2022-----
-firstpod_ranova3 <- glmer(Julian_first_follicle ~
+firstpod_ranova3 <- glmer(Julian_first_follicle-200 ~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
                              data = flowering %>%
-                               dplyr::filter(Year == 2022),
+                               dplyr::filter(Year == 2022 &
+                                               is.na(Julian_first_follicle) == FALSE),
                            na.action = na.exclude,
                           family = poisson)
 
@@ -805,7 +812,11 @@ pb_ranova_transects(pods_ranova3,
 
 # Date of first follicle-----
 # 2020-----
-firstpod_ranova <- glmer(Julian_first_follicle^3 ~
+
+summary(flowering$Julian_first_follicle) # min is 201. I've been having issues getting these models to not be singular, and subtracting 200 from the response helps a lot. I think the issue is that the numbers are so big and could have the min subtracted to keep the range from ~1-45 vs. 201-245.
+
+
+firstpod_ranova <- glmer(Julian_first_follicle-200 ~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
@@ -815,8 +826,7 @@ firstpod_ranova <- glmer(Julian_first_follicle^3 ~
                                                Year == 2020),
                  
                             na.action = na.exclude,
-                    control = glmerControl(optimizer = "Nelder_Mead"),
-                             family = poisson)
+                             family = poisson) # singular but I think it's because it's a tiny sample size
 
 # performance::check_model(firstpod_ranova)
 
@@ -826,7 +836,7 @@ pb_ranova_transects(firstpod_ranova,
 
 
 # 2021-----
-firstpod_ranova2 <- glmer(Julian_first_follicle^3 ~
+firstpod_ranova2 <- glmer(Julian_first_follicle-200 ~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
@@ -840,13 +850,12 @@ firstpod_ranova2 <- glmer(Julian_first_follicle^3 ~
 
 # performance::check_model(firstpod_ranova2)
 
-
 pb_ranova_transects(firstpod_ranova2,
           "Date of first follicle: 2021",
           "./Reproductive_trait_analyses/Tables/Ranova/Date_first_follicle_2021_transects.docx")
 
 # 2022-----
-firstpod_ranova3 <- glmer(Julian_first_follicle^2 ~
+firstpod_ranova3 <- glmer((Julian_first_follicle-200) ~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
@@ -860,39 +869,7 @@ firstpod_ranova3 <- glmer(Julian_first_follicle^2 ~
                 control=glmerControl(optCtrl=list(maxfun=2e5)),
                 family = poisson)
 
-performance::check_model(firstpod_ranova3)
-
-
-# then rescale variable
-# use lmer b/c some values neg now= can't use poisson
-dfs <- flowering %>%
-                    dplyr::filter(is.na(
-                      Julian_first_follicle) == F &
-                        Transect_ID != "Rural" &
-                        Year == 2022)
-dfs[,"Julian_first_follicle"] <- scale(dfs[,'Julian_first_follicle'])
-
-# EVEN THIS IS STILL SINGULAR
-m1_sc <- lmer(Julian_first_follicle ~
-                           #    Block +
-                               (1|Population), #+
-                           #    (1|Population:Fam_uniq),
-                             data = dfs,
-                    na.action = na.exclude)#,
-                    # add more iterations
-         #      control=glmerControl(optCtrl=list(maxfun=2e5)))
-
-# this has LRT of 0, p of 1 for both pop and fam
-ranova(m1_sc)
-
-
-
-
-# same output... p = 1, chisq = 0
-pb_ranova_transects(m1_sc,
-          "Date of first follicle: 2022",
-          "./Reproductive_trait_analyses/Tables/Ranova/Date_first_follicle_2022_transects_recentering.docx")
-
+# performance::check_model(firstpod_ranova3)
 
 pb_ranova_transects(firstpod_ranova3,
           "Date of first follicle: 2022",

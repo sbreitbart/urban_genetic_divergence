@@ -337,7 +337,7 @@ weev_quant_urbsubs_02_pred <- ggeffects::ggpredict(weev_quant_mods_best_u[[2]],
 ggpred_Q1.citydist_latex <- ggplot(latex_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = expression("Latex Exudation (mg) " ^{1/3})) +
+       y = expression("Latex exudation (mg) " ^{1/3})) +
   # ylim(1.8, 2.2) +
   theme_1() +
 #   # adding stats from ANOVA
@@ -357,7 +357,7 @@ ggpred_Q1.citydist_latex
 ggpred_Q1.citydist_herb_e_bin <- ggplot(herb_e_bin_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = "Chance of Herbivory \n (before flowering)") +
+       y = "Chance of herbivory \n (before flowering)") +
     scale_y_continuous(labels = scales::percent_format(
     scale = 100,
     accuracy = 1),
@@ -400,7 +400,7 @@ ggpred_Q1.citydist_herb_e_quant
 ggpred_Q1.citydist_herb_l_bin <- ggplot(herb_l_bin_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = "Chance of Herbivory \n (after flowering)") +
+       y = "Chance of herbivory \n (after flowering)") +
     scale_y_continuous(labels = scales::percent_format(
     scale = 100,
     accuracy = 1),
@@ -443,7 +443,7 @@ ggpred_Q1.citydist_herb_l_quant
 ggpred_Q1.citydist_weev_bin <- ggplot(weev_b_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = "Chance of Weevil Damage") +
+       y = "Chance of weevil damage") +
     scale_y_continuous(labels = scales::percent_format(
     scale = 100,
     accuracy = 1),
@@ -468,7 +468,7 @@ ggpred_Q1.citydist_weev_quant <- ggplot(weev_q_gradient_01_pred) +
   rep_geoms +
 #  ylim(2.5, 4.5) +
   labs(x = "Distance to Urban Center (km)",
-       y = "Weevil Scar Length (cm)") +
+       y = "Weevil scar length (cm)") +
   theme_1() +
 #   # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.15, npcy = 0.08,
@@ -488,7 +488,7 @@ ggpred_Q1.citydist_weev_quant
 ggpred_Q1.urbscore_latex <- ggplot(latex_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
-       y = expression("Latex Exudation (mg) " ^{1/3})) +
+       y = expression("Latex exudation (mg) " ^{1/3})) +
     xlim(4, -4) +
   # ylim(6, 10) +
   theme_1() +
@@ -508,7 +508,7 @@ ggpred_Q1.urbscore_herb_e_bin <- ggplot(herb_e_bin_gradient_02_pred) +
   rep_geoms +
       xlim(4, -4) +
 labs(x = "Urbanization Score",
-       y = "Chance of Herbivory \n (before flowering)") +
+       y = "Chance of herbivory \n (before flowering)") +
     scale_y_continuous(labels = scales::percent_format(
     scale = 100,
     accuracy = 1),
@@ -553,7 +553,7 @@ ggpred_Q1.urbscore_herb_l_bin <- ggplot(herb_l_bin_gradient_02_pred) +
   rep_geoms +
       xlim(4, -4) +
 labs(x = "Urbanization Score",
-       y = "Chance of Herbivory \n (after flowering)") +
+       y = "Chance of herbivory \n (after flowering)") +
     scale_y_continuous(labels = scales::percent_format(
     scale = 100,
     accuracy = 1),
@@ -597,7 +597,7 @@ ggpred_Q1.urbscore_herb_l_quant
 ggpred_Q1.urbscore_weev_bin <- ggplot(weev_b_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
-       y = "Chance of Weevil Damage") +
+       y = "Chance of weevil damage") +
     xlim(4, -4) +
     scale_y_continuous(labels = scales::percent_format(
     scale = 100,
@@ -624,7 +624,7 @@ ggpred_Q1.urbscore_weev_quant <- ggplot(weev_q_gradient_02_pred) +
   ylim(3, 3.8) +
     xlim(4, -4) +
   labs(x = "Urbanization Score",
-       y = "Weevil Scar Length (cm)") +
+       y = "Weevil scar length (cm)") +
   theme_1() +
 #   # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
@@ -642,11 +642,13 @@ ggpred_Q1.urbscore_weev_quant
 ### City_dist
 ```{r}
 # latex-----
+levels(latex_urbsubs_01_pred$group)
+
 ggpred_Q2.citydist_latex <- 
 ggplot(latex_urbsubs_01_pred) +
   rep_geoms2 +
   labs(x = "Distance to Urban Center (km)",
-       y = expression("Latex Exudation (g) "^{1/3}),
+       y = expression("Latex exudation (g) "^{1/3}),
        color = "Transect",
        fill = "Transect") +
 #  ylim(6.25, 8.5) +
@@ -667,7 +669,7 @@ dplyr::select(p))),
 
 ggpred_Q2.citydist_latex
 
-# Herbivory, before flowering: Binary-----
+# herbivory, before flowering: Binary-----
 ## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
 herb_e_bin_urbsubs_01_pred$group <- factor(herb_e_bin_urbsubs_01_pred$group,
                                    levels(herb_e_bin_urbsubs_01_pred$group)[c(2,1)])
@@ -678,7 +680,7 @@ ggpred_Q2.citydist_herb_e_bin <-
 ggplot(herb_e_bin_urbsubs_01_pred) +
   rep_geoms2 +
   labs(x = "Distance to Urban Center (km)",
-       y = "Chance of Herbivory \n (before flowering)",
+       y = "Chance of herbivory \n (before flowering)",
        color = "Transect",
        fill = "Transect") +
   scale_y_continuous(labels = scales::percent_format(
@@ -710,7 +712,7 @@ dplyr::select(p))),
 ggpred_Q2.citydist_herb_e_bin
 
 
-# Herbivory, before flowering: Quantitative-----
+# herbivory, before flowering: Quantitative-----
 ## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
 herb_e_quant_urbsubs_01_pred$group <- factor(herb_e_quant_urbsubs_01_pred$group,
                                    levels(herb_e_quant_urbsubs_01_pred$group)[c(2,1)])
@@ -747,7 +749,7 @@ dplyr::select(p))),
 
 ggpred_Q2.citydist_herb_e_quant
 
-# Herbivory, after flowering: Binary-----
+# herbivory, after flowering: Binary-----
 ## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
 herb_l_bin_urbsubs_01_pred$group <- factor(herb_l_bin_urbsubs_01_pred$group,
                                    levels(herb_l_bin_urbsubs_01_pred$group)[c(2,1)])
@@ -758,7 +760,7 @@ ggpred_Q2.citydist_herb_l_bin <-
 ggplot(herb_l_bin_urbsubs_01_pred) +
   rep_geoms2 +
   labs(x = "Distance to Urban Center (km)",
-       y = "Chance of Herbivory \n (after flowering)",
+       y = "Chance of herbivory \n (after flowering)",
        color = "Transect",
        fill = "Transect") +
   scale_y_continuous(labels = scales::percent_format(
@@ -785,7 +787,7 @@ dplyr::select(p))),
 ggpred_Q2.citydist_herb_l_bin
 
 
-# Herbivory, after flowering: Quantitative-----
+# herbivory, after flowering: Quantitative-----
 ## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
 herb_l_quant_urbsubs_01_pred$group <- factor(herb_l_quant_urbsubs_01_pred$group,
                                    levels(herb_l_quant_urbsubs_01_pred$group)[c(2,1)])
@@ -828,7 +830,7 @@ ggpred_Q2.citydist_weev_bin <-
 ggplot(weev_bin_urbsubs_01_pred) +
   rep_geoms2 +
   labs(x = "Distance to Urban Center (km)",
-       y = "Chance of Weevil Damage",
+       y = "Chance of weevil damage",
        color = "Transect",
        fill = "Transect") +
   scale_y_continuous(labels = scales::percent_format(
@@ -866,7 +868,7 @@ ggpred_Q2.citydist_weev_quant <-
 ggplot(weev_quant_urbsubs_01_pred) +
   rep_geoms2 +
   labs(x = "Distance to Urban Center (km)",
-       y = "Weevil Scar Length (cm)",
+       y = "Weevil scar length (cm)",
        color = "Transect",
        fill = "Transect") +
   ylim(2, 4) +
@@ -901,7 +903,7 @@ ggpred_Q2.urbsubs_latex <-
 ggplot(latex_urbsubs_02_pred) +
   rep_geoms2 +
   labs(x = "Urbanization Score",
-       y = expression("Latex Exudation (g) "^{1/3}),
+       y = expression("Latex exudation (g) "^{1/3}),
        color = "Transect",
        fill = "Transect") +
   ylim(1.5, 2.5) +
@@ -931,7 +933,7 @@ ggpred_Q2.urbsubs_latex
 
 
 
-# Herbivory, before flowering: Binary-----
+# herbivory, before flowering: Binary-----
 ## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
 herb_e_bin_urbsubs_02_pred$group <- factor(herb_e_bin_urbsubs_02_pred$group,
                                    levels(herb_e_bin_urbsubs_02_pred$group)[c(2,1)])
@@ -942,7 +944,7 @@ ggpred_Q2.urbsubs_herb_e_bin <-
 ggplot(herb_e_bin_urbsubs_02_pred) +
   rep_geoms2 +
   labs(x = "Urbanization Score",
-       y = "Chance of Herbivory \n (before flowering)",
+       y = "Chance of herbivory \n (before flowering)",
        color = "Transect",
        fill = "Transect") +
   scale_y_continuous(labels = scales::percent_format(
@@ -969,7 +971,7 @@ dplyr::select(p))),
 ggpred_Q2.urbsubs_herb_e_bin
 
 
-# Herbivory, before flowering: Quantitative-----
+# herbivory, before flowering: Quantitative-----
 ## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
 herb_e_quant_urbsubs_02_pred$group <- factor(herb_e_quant_urbsubs_02_pred$group,
                                    levels(herb_e_quant_urbsubs_02_pred$group)[c(2,1)])
@@ -1006,7 +1008,7 @@ dplyr::select(p))),
 
 ggpred_Q2.urbsubs_herb_e_quant
 
-# Herbivory, after flowering: Binary-----
+# herbivory, after flowering: Binary-----
 ## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
 herb_l_bin_urbsubs_02_pred$group <- factor(herb_l_bin_urbsubs_02_pred$group,
                                    levels(herb_l_bin_urbsubs_02_pred$group)[c(2,1)])
@@ -1017,7 +1019,7 @@ ggpred_Q2.urbsubs_herb_l_bin <-
 ggplot(herb_l_bin_urbsubs_02_pred) +
   rep_geoms2 +
   labs(x = "Urbanization Score",
-       y = "Chance of Herbivory \n (after flowering)",
+       y = "Chance of herbivory \n (after flowering)",
        color = "Transect",
        fill = "Transect") +
   scale_y_continuous(labels = scales::percent_format(
@@ -1044,7 +1046,7 @@ dplyr::select(p))),
 ggpred_Q2.urbsubs_herb_l_bin
 
 
-# Herbivory, after flowering: Quantitative-----
+# herbivory, after flowering: Quantitative-----
 ## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
 herb_l_quant_urbsubs_02_pred$group <- factor(herb_l_quant_urbsubs_02_pred$group,
                                    levels(herb_l_quant_urbsubs_02_pred$group)[c(2,1)])
@@ -1087,7 +1089,7 @@ ggpred_Q2.urbsubs_weev_bin <-
 ggplot(weev_bin_urbsubs_02_pred) +
   rep_geoms2 +
   labs(x = "Urbanization Score",
-       y = "Chance of Weevil Damage",
+       y = "Chance of weevil damage",
        color = "Transect",
        fill = "Transect") +
   scale_y_continuous(labels = scales::percent_format(
@@ -1125,7 +1127,7 @@ ggpred_Q2.urbsubs_weev_quant <-
 ggplot(weev_quant_urbsubs_02_pred) +
   rep_geoms2 +
   labs(x = "Urbanization Score",
-       y = "Weevil Scar Length (cm)",
+       y = "Weevil scar length (cm)",
        color = "Transect",
        fill = "Transect") +
  ylim(2,4) +
@@ -1251,16 +1253,12 @@ dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q2_urbsubs_urbs
 # Create boxplots
 ## Weevil damage
 ```{r}
-ggplot(weevil %>%
-         dplyr::filter(Transect_ID != "Rural" &
-                         Scar_length_cm != 0),
-       aes(x = Transect_ID,
-           y = Scar_length_cm,
-           color = Transect_ID)) + 
-  geom_boxplot(
-       size = 0.5) + 
- # geom_point(position = "jitter") + 
-  theme_pubclean()
+
+ggpredict(weev_urbsubs_dist_m2_quant,
+          terms = c("Transect_ID")) %>%
+  plot(colors = "bw")
+
+
 ```
 
 
@@ -1268,26 +1266,26 @@ ggplot(weevil %>%
 ## Gradient
 ### City_dist
 #### Herbivory: Before flowering
-##### BINARY- can I do this??
+##### BINARY
 ```{r}
 herb_e_bin_gradient_01_pred <- ggeffects::ggpredict(herb_e_bin_mods_best_c[[1]],
                                    terms = c("City_dist"),
                                    type = "fe") %>%
   as.data.frame() 
 
-Calc_percent_change(herb_e_bin_gradient_01_pred) # 16.6%
+Calc_percent_change(herb_e_bin_gradient_01_pred) # 8.9%
 
 ```
 
 #### Herbivory: After flowering
-##### BINARY- can I do this??
+##### BINARY
 ```{r}
 herb_l_bin_gradient_01_pred <- ggeffects::ggpredict(herb_l_bin_mods_best_c[[1]],
                                    terms = c("City_dist"),
                                    type = "fe") %>%
   as.data.frame() 
 
-Calc_percent_change(herb_l_bin_gradient_01_pred) # -10.3%
+Calc_percent_change(herb_l_bin_gradient_01_pred) # -2%
 
 ```
 ### Urbanization Score
@@ -1301,8 +1299,8 @@ herb_e_urbsubs_bin_01_pred <- ggeffects::ggpredict(herb_e_bin_mods_best_c[[2]],
   as.data.frame()
 
 Calc_percent_change_urbsubs_intxn(herb_e_urbsubs_bin_01_pred)
-# "Percent change from suburban to urban terminus along corridor subtransect: -6.5%"
-# "Percent change from suburban to urban terminus along non-corridor subtransect: 25.3%"
+# [1] "Percent change from suburban to urban terminus along corridor subtransect: -3.9%"
+# [1] "Percent change from suburban to urban terminus along non-corridor subtransect: 15.1%"
 
 ```
 
@@ -1314,7 +1312,7 @@ herb_e_quant_urbsubs_01_pred <- ggeffects::ggpredict(herb_e_quant_mods_best_c[[2
   as.data.frame()
 
 # PERCENT CHANGE, suburban to urban terminus:
-Calc_percent_change_urbsubs(herb_e_quant_urbsubs_01_pred) # 48.6%
+Calc_percent_change_urbsubs(herb_e_quant_urbsubs_01_pred) # 47.9%
 ```
 
 #### Herbivory: After flowering- Quantitative
@@ -1325,7 +1323,7 @@ herb_l_quant_urbsubs_01_pred <- ggeffects::ggpredict(herb_l_quant_mods_best_c[[2
   as.data.frame()
 
 Calc_percent_change_transects(herb_l_quant_urbsubs_01_pred)
-# "Percent change from non-corridor to corridor subtransect: -13.6%"
+# "Percent change from non-corridor to corridor subtransect: -10.3%"
 
 ```
 
