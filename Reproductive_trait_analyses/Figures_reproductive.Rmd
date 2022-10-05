@@ -338,13 +338,13 @@ ggpred_Q1.citydist_flsucc
 
 
 
-# Mean flowers/infloresence-----
+# Mean flowers/inflorescence-----
 ggpred_Q1.citydist_flowers <- 
 ggplot(flowers_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
        y = "Mean flowers/infloresence") +
-#  ylim(NA, 1) +
+  ylim(44,60) +
   theme_1() +
   
 # adding stats from ANOVA
@@ -355,8 +355,6 @@ dplyr::select(p))),
 size = 4.5)
 
 ggpred_Q1.citydist_flowers
-
-
 
 
 # Flower size-----
@@ -399,14 +397,13 @@ ggpred_Q1.citydist_fltime
 
 
 
-
 # Flowering start-----
 ggpred_Q1.citydist_flstart <- 
 ggplot(flstart_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
        y = "Julian date of first flower") +
-#  ylim(NA, 1) +
+  ylim(208,210) +
   theme_1() +
   
 # adding stats from ANOVA
@@ -445,7 +442,7 @@ ggplot(firstpods_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
        y = "Julian date of first follicle") +
-#  ylim(NA, 1) +
+  ylim(225,229) +
   theme_1() +
   
 # adding stats from ANOVA
@@ -456,8 +453,6 @@ dplyr::select(p))),
 size = 4.5)
 
 ggpred_Q1.citydist_firstpods
-
-
 
 
 # Inflorescences (peduncles)-----
@@ -551,7 +546,7 @@ ggplot(fltime_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
        y = "Flowering duration (days)") +
-# ylim(NA, 1) +
+ ylim(5,7) +
     xlim(4, -4) +
   theme_1() +
   
@@ -594,7 +589,7 @@ ggplot(pods_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
        y = "Follicles") +
-# ylim(NA, 1) +
+ ylim(4.5,6.5) +
     xlim(4, -4) +
   theme_1() +
   
@@ -609,21 +604,19 @@ ggpred_Q1.urbscore_pods
 
 
 
-
-
 # First pods-----
 ggpred_Q1.urbscore_firstpods <- 
 ggplot(firstpods_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
        y = "Julian date of first follicle") +
-# ylim(NA, 1) +
+ ylim(226,228) +
     xlim(4, -4) +
   theme_1() +
   
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 1,
-                    label = paste0(" Urb. Score: p = ", tidy_anova(pods_mods_best_u[[1]]) %>%
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.96,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(first_pods_mods_best_u[[1]]) %>%
 dplyr::filter(Predictor == "Urbanization Score") %>%
 dplyr::select(p))),
 size = 4.5)
@@ -637,7 +630,7 @@ ggplot(peduncles_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
        y = expression("Inflorescences" ^3)) +
-#  ylim(0, 60) +
+  ylim(2,3) +
     xlim(4, -4) +
   theme_1() +
   
@@ -656,7 +649,9 @@ ggpred_Q1.urbscore_peduncles
 ### City_dist
 ```{r}
 # Flowering success-----
-
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+flsucc_urbsubs_01_pred$group <- factor(flsucc_urbsubs_01_pred$group,
+                                   levels(flsucc_urbsubs_01_pred$group)[c(2,1)])
 levels(flsucc_urbsubs_01_pred$group)
 
 ggpred_Q2.citydist_succ <-
@@ -686,7 +681,9 @@ ggpred_Q2.citydist_succ
 
 
 # Mean flowers/infloresence-----
-
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+flowers_urbsubs_01_pred$group <- factor(flowers_urbsubs_01_pred$group,
+                                   levels(flowers_urbsubs_01_pred$group)[c(2,1)])
 levels(flowers_urbsubs_01_pred$group)
 
 ggpred_Q2.citydist_flowers <-
@@ -695,7 +692,7 @@ ggplot(flowers_urbsubs_01_pred) +
        y = "Mean flowers/infloresence",
        color = "Transect",
        fill = "Transect") +
-  # ylim(20, 50) +
+   ylim(35,NA) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -717,8 +714,11 @@ ggpred_Q2.citydist_flowers
 
 
 # Flower size-----
-
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+flsize_urbsubs_01_pred$group <- factor(flsize_urbsubs_01_pred$group,
+                                   levels(flsize_urbsubs_01_pred$group)[c(2,1)])
 levels(flsize_urbsubs_01_pred$group)
+
 
 ggpred_Q2.citydist_flsize <-
 ggplot(flsize_urbsubs_01_pred) +
@@ -726,7 +726,7 @@ ggplot(flsize_urbsubs_01_pred) +
        y = expression("Flower size (" ~ mm^{3}~")"),
        color = "Transect",
        fill = "Transect") +
-#  ylim(20, 50) +
+  ylim(30, 40) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -747,9 +747,10 @@ ggpred_Q2.citydist_flsize
 
 
 
-
 # Flowering duration-----
-
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+fltime_urbsubs_01_pred$group <- factor(fltime_urbsubs_01_pred$group,
+                                   levels(fltime_urbsubs_01_pred$group)[c(2,1)])
 levels(fltime_urbsubs_01_pred$group)
 
 ggpred_Q2.citydist_fltime <-
@@ -777,11 +778,10 @@ size = 4.5)
 
 ggpred_Q2.citydist_fltime
 
-# dev.copy2pdf(file = here::here("./Reproductive_trait_analyses/Figures/Q1_grad_citydist_floweringduration.pdf"),
-#              width = 3.5, height = 3.75*1.1)
-
 # Flowering start-----
-
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+flstart_urbsubs_01_pred$group <- factor(flstart_urbsubs_01_pred$group,
+                                   levels(flstart_urbsubs_01_pred$group)[c(2,1)])
 levels(flstart_urbsubs_01_pred$group)
 
 ggpred_Q2.citydist_flstart <-
@@ -811,7 +811,9 @@ ggpred_Q2.citydist_flstart
 
 
 # Pods-----
-
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+pods_urbsubs_01_pred$group <- factor(pods_urbsubs_01_pred$group,
+                                   levels(pods_urbsubs_01_pred$group)[c(2,1)])
 levels(pods_urbsubs_01_pred$group)
 
 ggpred_Q2.citydist_pods <-
@@ -820,7 +822,7 @@ ggplot(pods_urbsubs_01_pred) +
        y = "Follicles",
        color = "Transect",
        fill = "Transect") +
-#  ylim(20, 50) +
+  ylim(2, 10) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -842,7 +844,9 @@ ggpred_Q2.citydist_pods
 
 
 # First pods-----
-
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+firstpods_urbsubs_01_pred$group <- factor(firstpods_urbsubs_01_pred$group,
+                                   levels(firstpods_urbsubs_01_pred$group)[c(2,1)])
 levels(firstpods_urbsubs_01_pred$group)
 
 ggpred_Q2.citydist_firstpods <-
@@ -873,8 +877,11 @@ ggpred_Q2.citydist_firstpods
 
 
 # Inflorescences (peduncles)-----
-
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+peduncles_urbsubs_01_pred$group <- factor(peduncles_urbsubs_01_pred$group,
+                                   levels(peduncles_urbsubs_01_pred$group)[c(2,1)])
 levels(peduncles_urbsubs_01_pred$group)
+
 
 ggpred_Q2.citydist_peduncles <-
 ggplot(peduncles_urbsubs_01_pred) +
@@ -882,7 +889,7 @@ ggplot(peduncles_urbsubs_01_pred) +
        y = expression("Inflorescences" ^2),
        color = "Transect",
        fill = "Transect") +
-#  ylim(20, 50) +
+  ylim(3,16) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -900,15 +907,16 @@ dplyr::select(p))),
 size = 4.5)
 
 ggpred_Q2.citydist_peduncles
-
-
 ```
 
 ### Urb score
 ```{r}
 # Flowering success-----
-
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+flsucc_urbsubs_02_pred$group <- factor(flsucc_urbsubs_02_pred$group,
+                                   levels(flsucc_urbsubs_02_pred$group)[c(2,1)])
 levels(flsucc_urbsubs_02_pred$group)
+
 
 ggpred_Q2.urbsubs_flsucc <-
 ggplot(flsucc_urbsubs_02_pred) +
@@ -937,8 +945,11 @@ ggpred_Q2.urbsubs_flsucc
 
 
 # Mean flowers/infloresence-----
-
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+flowers_urbsubs_02_pred$group <- factor(flowers_urbsubs_02_pred$group,
+                                   levels(flowers_urbsubs_02_pred$group)[c(2,1)])
 levels(flowers_urbsubs_02_pred$group)
+
 
 ggpred_Q2.urbsubs_flowers <-
 ggplot(flowers_urbsubs_02_pred) +
@@ -946,7 +957,7 @@ ggplot(flowers_urbsubs_02_pred) +
        y = "Mean flowers/infloresence",
        color = "Transect",
        fill = "Transect") +
- # ylim(20, 50) +
+  ylim(35, 55) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
@@ -968,7 +979,9 @@ ggpred_Q2.urbsubs_flowers
 
 
 # Flower size-----
-
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+flsize_urbsubs_02_pred$group <- factor(flsize_urbsubs_02_pred$group,
+                                   levels(flsize_urbsubs_02_pred$group)[c(2,1)])
 levels(flsize_urbsubs_02_pred$group)
 
 ggpred_Q2.urbsubs_flsize <-
@@ -977,7 +990,7 @@ ggplot(flsize_urbsubs_02_pred) +
        y = expression("Flower size (" ~ mm^{3}~")"),
        color = "Transect",
        fill = "Transect") +
-  ylim(20, 60) +
+  ylim(32, 40) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
@@ -992,12 +1005,7 @@ size = 4.5) +
                     label = paste0(" Transect: p = ", tidy_anova(flsize_mods_best_u[[2]]) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
-size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.78,
-                    label = paste0(" U x T: p = ", tidy_anova(flsize_mods_best_u[[2]]) %>%
-dplyr::filter(Predictor == "Urbanization Score x Subtransect") %>%
-dplyr::select(p))),
-size = 4.5)
+size = 4.5) 
 
 ggpred_Q2.urbsubs_flsize
 
@@ -1005,7 +1013,9 @@ ggpred_Q2.urbsubs_flsize
 
 
 # Flowering duration-----
-
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+fltime_urbsubs_02_pred$group <- factor(fltime_urbsubs_02_pred$group,
+                                   levels(fltime_urbsubs_02_pred$group)[c(2,1)])
 levels(fltime_urbsubs_02_pred$group)
 
 ggpred_Q2.urbsubs_fltime <-
@@ -1014,7 +1024,7 @@ ggplot(fltime_urbsubs_02_pred) +
        y = "Flowering duration (days)",
        color = "Transect",
        fill = "Transect") +
- ylim(2, NA) +
+ ylim(2, 8) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
@@ -1043,11 +1053,13 @@ ggpred_Q2.urbsubs_flstart1 <- flowering %>%
              x = Transect_ID,
              color = Transect_ID,
              fill = Transect_ID)) +
+  geom_boxplot(color = "black",
+               width = 0.2)+
   labs(x = "Transect",
        y = "Julian date of first flower",
        color = "Transect",
        fill = "Transect") +
-  ylim(170, 240) +
+  ylim(160, 240) +
  #xlim(4, -2) +
   theme_1() +
   theme(legend.position = "none") +
@@ -1071,7 +1083,7 @@ ggpred_Q2.urbsubs_flstart1
 
 
 ## URB SCORE ONLY-----
-levels(flstart_urbsubs_02_pred_transect$group)
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
 
 ggpred_Q2.urbsubs_flstart2 <-
 ggplot(flstart_urbsubs_02_pred_urbscore) +
@@ -1086,7 +1098,7 @@ ggplot(flstart_urbsubs_02_pred_urbscore) +
   theme(legend.position = "none") +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.96,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.1,
                     label = paste0(" Urb. Score: p = ", tidy_anova(flstart_mods_best_u[[3]]) %>%
 dplyr::filter(Predictor == "Urbanization Score") %>%
 dplyr::select(p))),
@@ -1097,8 +1109,11 @@ ggpred_Q2.urbsubs_flstart2
 
 
 # Pods-----
-
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+pods_urbsubs_02_pred$group <- factor(pods_urbsubs_02_pred$group,
+                                   levels(pods_urbsubs_02_pred$group)[c(2,1)])
 levels(pods_urbsubs_02_pred$group)
+
 
 ggpred_Q2.urbsubs_pods <-
 ggplot(pods_urbsubs_02_pred) +
@@ -1106,7 +1121,7 @@ ggplot(pods_urbsubs_02_pred) +
        y = "Follicles",
        color = "Transect",
        fill = "Transect") +
-#  ylim(20, 50) +
+  ylim(0,30) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
@@ -1133,8 +1148,11 @@ ggpred_Q2.urbsubs_pods
 
 
 # First pods-----
-
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+firstpods_urbsubs_02_pred$group <- factor(firstpods_urbsubs_02_pred$group,
+                                   levels(firstpods_urbsubs_02_pred$group)[c(2,1)])
 levels(firstpods_urbsubs_02_pred$group)
+
 
 ggpred_Q2.urbscore_firstpods <-
 ggplot(firstpods_urbsubs_02_pred) +
@@ -1142,7 +1160,7 @@ ggplot(firstpods_urbsubs_02_pred) +
        y = "Julian date of first follicle",
        color = "Transect",
        fill = "Transect") +
-#  ylim(20, 50) +
+  ylim(220, 240) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
@@ -1168,7 +1186,9 @@ ggpred_Q2.urbscore_firstpods
 
 
 # Inflorescences (peduncles)-----
-
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+peduncles_urbsubs_02_pred$group <- factor(peduncles_urbsubs_02_pred$group,
+                                   levels(peduncles_urbsubs_02_pred$group)[c(2,1)])
 levels(peduncles_urbsubs_02_pred$group)
 
 ggpred_Q2.urbsubs_peduncles <-
@@ -1200,8 +1220,6 @@ dplyr::select(p))),
 size = 4.5)
 
 ggpred_Q2.urbsubs_peduncles
-
-
 ```
 
 ## Combine plots into one figure

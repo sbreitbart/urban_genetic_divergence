@@ -1534,16 +1534,18 @@ flowers_mods_alt_u <- flowers_mods[6]
 ```{r}
 ## Best
 ### City_dist
-flsize_mods_best_c <- flsize_mods[c(1,3)]
+flsize_mods_best_c <- flsize_mods[c(1,4)]
 
 ### Urb_score
-flsize_mods_best_u <- flsize_mods[c(2,5)]
+flsize_mods_best_u <- flsize_mods[c(2,6)]
 
 ## Alt
 ### City_dist
-flsize_mods_alt_c <- flsize_mods[4]
+flsize_mods_alt_c <- flsize_mods[3]
 
-### Urb_score- NONE
+### Urb_score
+flsize_mods_alt_u <- flsize_mods[5]
+
 ```
 
 ### flowering time

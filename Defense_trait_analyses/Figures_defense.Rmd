@@ -1,30 +1,3 @@
----
-title: "Defense Trait Analysis"
-author: "Sophie Breitbart"
-output:
-  html_document:
-    number_sections: true
-    df_print: paged
-    toc: yes
-    toc_depth: 6
-    toc_float:
-      collapsed: yes
-  pdf_document:
-    toc: yes
-    toc_depth: '2'
-editor_options: 
-  chunk_output_type: console
-NOTES:
-  -Still to do--
-    -try to do an RDA (or PCA?) with all the traits
-    -make a ReadMe file for each level
-    -calculate heritability coefficients
-
-# WHEN TOTALLY DONE, type this:
-# renv::activate()
-# renv::snapshot()
----
-
 # Set up notebook
 ## Load libraries and add functions
 

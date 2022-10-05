@@ -1,33 +1,3 @@
----
-title: "Reproductive Trait Analysis"
-author: "Sophie Breitbart"
-output:
-  html_document:
-    number_sections: true
-    df_print: paged
-    toc: yes
-    toc_depth: 6
-    toc_float:
-      collapsed: yes
-  pdf_document:
-    toc: yes
-    toc_depth: '2'
-editor_options: 
-  chunk_output_type: console
-
-# WHEN TOTALLY DONE, type this:
-# renv::activate()
-# renv::snapshot()
----
-
-NOTES:
-
-+-----------------------------+-----------+-----------+-----------+-----------+
-| Trait                       | 2019 Data | 2020 Data | 2021 Data | 2022 Data |
-+=============================+:=========:+:=========:+:=========:+:=========:+
-| All reproductive traits     |           | X         | X         | X         |
-+-----------------------------+-----------+-----------+-----------+-----------+
-
 # Set up notebook
 ## Load libraries and add functions
 ```{r}
@@ -1012,7 +982,8 @@ make_all_anovas_tidy_altmods(flsize_mods_alt_c) %>%
 
 #### Urb_score
 ```{r}
-# NONE
+make_all_anovas_tidy_altmods(flsize_mods_alt_u) %>%
+  save_as_image(., path = here::here("./Reproductive_trait_analyses/Figures/ANOVA/Alt_models/FlowerSize_urbscore_alt.png"))
 ```
 
 
