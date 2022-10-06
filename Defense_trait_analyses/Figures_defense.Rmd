@@ -439,7 +439,7 @@ ggpred_Q1.citydist_weev_bin
 # weevil damage- quantitative-----
 ggpred_Q1.citydist_weev_quant <- ggplot(weev_q_gradient_01_pred) +
   rep_geoms +
-#  ylim(2.5, 4.5) +
+  ylim(0, NA) +
   labs(x = "Distance to Urban Center (km)",
        y = "Weevil scar length (cm)") +
   theme_1() +
@@ -594,7 +594,7 @@ ggpred_Q1.urbscore_weev_bin
 # weevil damage- quantitative-----
 ggpred_Q1.urbscore_weev_quant <- ggplot(weev_q_gradient_02_pred) +
   rep_geoms +
-  ylim(3, 3.8) +
+  ylim(0, 4) +
     xlim(4, -4) +
   labs(x = "Urbanization Score",
        y = "Weevil scar length (cm)") +
@@ -844,7 +844,7 @@ ggplot(weev_quant_urbsubs_01_pred) +
        y = "Weevil scar length (cm)",
        color = "Transect",
        fill = "Transect") +
-  ylim(2, 4) +
+  ylim(0, 4) +
   xlim(0, NA) +
   theme_1() +
 
@@ -1103,7 +1103,7 @@ ggplot(weev_quant_urbsubs_02_pred) +
        y = "Weevil scar length (cm)",
        color = "Transect",
        fill = "Transect") +
- ylim(2,4) +
+ ylim(0,4) +
   xlim(4, -2) +
   theme_1() +
 
@@ -1221,7 +1221,6 @@ urbsubs_urbscore_plots <- ggarrange(
 dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q2_urbsubs_urbscore_Defense.pdf"),
              width = 14.5, height = 8)
 ```
-
 
 # Create boxplots
 ## Weevil damage
