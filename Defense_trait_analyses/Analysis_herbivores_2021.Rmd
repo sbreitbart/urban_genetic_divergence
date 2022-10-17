@@ -186,7 +186,6 @@ pb_ranova_2step(monarch_ranova2,
           "./Defense_trait_analyses/Tables/Ranova/Monarch_2021.docx")
 ```
 
-
 #### L. asclepiadis
 ```{r}
 # 2020-----
@@ -220,7 +219,6 @@ pb_ranova_2step(asclepiadis_ranova2,
           "Liriomyza asclepiadis: 2021",
           "./Defense_trait_analyses/Tables/Ranova/asclepiadis_2021.docx")
 ```
-
 
 #### L. clivicollis
 ```{r}
@@ -257,7 +255,6 @@ pb_ranova_2step(clivicoll_ranova2,
           "./Defense_trait_analyses/Tables/Ranova/clivicollis_2021.docx")
 
 ```
-
 
 ## Urban Subtransects / City_dist
 ### non-Gaussian models
@@ -374,6 +371,133 @@ clivicollis_ranova2_pb <- glmer.nb(Labidomera_clivicollis ~
 pb_ranova_transects(clivicollis_ranova2_pb,
           "Labidomera clivicollis: 2021",
           "./Defense_trait_analyses/Tables/Ranova/clivicollis_2021_transects.docx")
+
+```
+
+## Recalculate PVE for non-Gaussian models
+As far as we know, there isn't a solid way to calculate percent variance explained for variables with a non-Gaussian distribution.
+The way that we handled this was to refit our non-Gaussian models (generalized linear mixed models) to general linear mixed models, then extract PVE for the last year of data collection.
+These new PVEs will be estimates. This is *not* a perfect solution but it will help us approximate PVE for these variables.
+### Q1
+```{r}
+# main models
+monarch_lmer <- lmer(Monarch_Quantity_Observed ~
+                               (1|Block) +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                             data = herbivores %>%
+                               dplyr::filter(Year == 2021),
+                            na.action = na.exclude)
+
+lasclep_lmer <- lmer(Liriomyza_asclepiadis ~
+                               (1|Block) +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                             data = herbivores %>%
+                               dplyr::filter(Year == 2021),
+                            na.action = na.exclude)
+
+lclivicoll_lmer <- lmer(Labidomera_clivicollis ~
+                               (1|Block) +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                             data = herbivores %>%
+                               dplyr::filter(Year == 2021),
+                          na.action = na.exclude)
+
+# get PVE from models
+pve_mon <- PVE_lm(monarch_lmer) 
+pve_lasclep <- PVE_lm(lasclep_lmer)
+pve_lclivi <- PVE_lm(lclivicoll_lmer)
+
+pve_mon_city <- PVE_lm(update(monarch_lmer, .~. + City_dist))
+pve_lasclep_city <- PVE_lm(update(lasclep_lmer, .~. + City_dist))
+pve_lclivi_city <- PVE_lm(update(lclivicoll_lmer, .~. + City_dist))
+
+pve_mon_urbsc <- PVE_lm(update(monarch_lmer, .~. + Urb_score))
+pve_lasclep_urbsc <- PVE_lm(update(lasclep_lmer, .~. + Urb_score))
+pve_lclivi_urbsc <- PVE_lm(update(lclivicoll_lmer, .~. + Urb_score))
+
+
+# make tables
+recalc_tab1 <- pve_table_recalc(pve_mon, pve_lasclep, pve_lclivi,
+                 "Danaus plexippus",
+                 "Liriomyza asclepiadis",
+                 "Labidomera clivicollis")
+
+recalc_tab2 <- pve_table_recalc(pve_mon_city, pve_lasclep_city, pve_lclivi_city,
+                 "Danaus plexippus",
+                 "Liriomyza asclepiadis",
+                 "Labidomera clivicollis")
+
+recalc_tab3 <- pve_table_recalc(pve_mon_urbsc, pve_lasclep_urbsc, pve_lclivi_urbsc,
+                 "Danaus plexippus",
+                 "Liriomyza asclepiadis",
+                 "Labidomera clivicollis")
+
+# Export to word
+export_recalc(recalc_tab1,
+              recalc_tab2,
+              recalc_tab3,
+              "./Defense_trait_analyses/Tables/Ranova/PVE_nonGaussmods/PVE_nonGaussmods_herbivores_Q1.docx")
+
+```
+
+### Q2
+```{r}
+# main models
+monarch_lmer2 <- update(monarch_lmer,
+                             data = herbivores %>%
+                               dplyr::filter(Year == 2021 &
+                                            Transect_ID != "Rural"))
+
+lasclep_lmer2 <- update(lasclep_lmer,
+                             data = herbivores %>%
+                               dplyr::filter(Year == 2021 &
+                                            Transect_ID != "Rural"))
+
+lclivicoll_lmer2 <- update(lclivicoll_lmer,
+                             data = herbivores %>%
+                               dplyr::filter(Year == 2021 &
+                                            Transect_ID != "Rural"),
+                           control=lmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
+
+# get PVE from models
+pve_mon2 <- PVE_lm(monarch_lmer2) 
+pve_lasclep2 <- PVE_lm(lasclep_lmer2)
+pve_lclivi2 <- PVE_lm(lclivicoll_lmer2)
+
+pve_mon_city2 <- PVE_lm(update(monarch_lmer2, .~. + City_dist*Transect_ID))
+pve_lasclep_city2 <- PVE_lm(update(lasclep_lmer2, .~. + City_dist*Transect_ID))
+pve_lclivi_city2 <- PVE_lm(update(lclivicoll_lmer2, .~. + City_dist*Transect_ID))
+
+pve_mon_urbsc2 <- PVE_lm(update(monarch_lmer2, .~. + Urb_score*Transect_ID))
+pve_lasclep_urbsc2 <- PVE_lm(update(lasclep_lmer2, .~. + Urb_score*Transect_ID))
+pve_lclivi_urbsc2 <- PVE_lm(update(lclivicoll_lmer2, .~. + Urb_score*Transect_ID))
+
+
+# make tables
+recalc_tab1 <- pve_table_recalc(pve_mon2, pve_lasclep2, pve_lclivi2,
+                 "Danaus plexippus",
+                 "Liriomyza asclepiadis",
+                 "Labidomera clivicollis")
+
+recalc_tab2 <- pve_table_recalc(pve_mon_city2, pve_lasclep_city2, pve_lclivi_city2,
+                 "Danaus plexippus",
+                 "Liriomyza asclepiadis",
+                 "Labidomera clivicollis")
+
+recalc_tab3 <- pve_table_recalc(pve_mon_urbsc2, pve_lasclep_urbsc2, pve_lclivi_urbsc2,
+                 "Danaus plexippus",
+                 "Liriomyza asclepiadis",
+                 "Labidomera clivicollis")
+
+# Export to word
+export_recalc(recalc_tab1,
+              recalc_tab2,
+              recalc_tab3,
+              "./Defense_trait_analyses/Tables/Ranova/PVE_nonGaussmods/PVE_nonGaussmods_herbivores_Q2.docx")
 
 ```
 

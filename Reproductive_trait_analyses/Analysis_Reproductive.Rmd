@@ -904,6 +904,402 @@ pb_ranova_transects(peduncles_ranova3,
 
 ```
 
+## Recalculate PVE for non-Gaussian models
+As far as we know, there isn't a solid way to calculate percent variance explained for variables with a non-Gaussian distribution.
+The way that we handled this was to refit our non-Gaussian models (generalized linear mixed models) to general linear mixed models, then extract PVE for the last year of data collection.
+These new PVEs will be estimates. This is *not* a perfect solution but it will help us approximate PVE for these variables.
+### Q1
+```{r}
+# main models
+flsucc_lmer <- lmer(as.numeric(Flowered) ~
+                               (1|Block) +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                             data = reproduc %>%
+                               dplyr::filter(Year == 2022),
+                            na.action = na.exclude)
+
+flowers_lmer <- lmer(mean_flower_count ~
+                               (1|Block) +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                             data = flowering %>%
+                               dplyr::filter(Year == 2022),
+                            na.action = na.exclude)
+
+fltime_lmer <- update(flowers_lmer,
+                      as.numeric(flowering_time) ~.)
+
+flstart_lmer <- update(flowers_lmer,
+                      Julian_oldest_inflor ~.)
+
+pods_lmer <- update(flowers_lmer,
+                      Pods ~.)
+
+firstpod_lmer <- update(flowers_lmer,
+                      Julian_first_follicle ~.)
+
+peduncles_lmer <- update(flowers_lmer,
+                      Peduncles ~.)
+
+# get PVE from models
+pve_flsucc    <- PVE_lm(flsucc_lmer) 
+pve_flowers   <- PVE_lm(flowers_lmer)
+pve_fltime    <- PVE_lm(fltime_lmer)
+pve_flstart   <- PVE_lm(flstart_lmer) 
+pve_pods      <- PVE_lm(pods_lmer)
+pve_firstpod  <- PVE_lm(firstpod_lmer)
+pve_peduncles <- PVE_lm(peduncles_lmer)
+
+
+pve_flsucc_city     <- PVE_lm(update(flsucc_lmer, .~. + City_dist))
+pve_flowers_city    <- PVE_lm(update(flowers_lmer, .~. + City_dist))
+pve_fltime_city     <- PVE_lm(update(fltime_lmer, .~. + City_dist))
+pve_flstart_city    <- PVE_lm(update(flstart_lmer, .~. + City_dist))
+pve_pods_city       <- PVE_lm(update(pods_lmer, .~. + City_dist))
+pve_firstpod_city   <- PVE_lm(update(firstpod_lmer, .~. + City_dist))
+pve_peduncles_city  <- PVE_lm(update(peduncles_lmer, .~. + City_dist))
+
+
+pve_flsucc_urbsc    <- PVE_lm(update(flsucc_lmer, .~. + Urb_score))
+pve_flowers_urbsc   <- PVE_lm(update(flowers_lmer, .~. + Urb_score))
+pve_fltime_urbsc    <- PVE_lm(update(fltime_lmer, .~. + Urb_score))
+pve_flstart_urbsc   <- PVE_lm(update(flstart_lmer, .~. + Urb_score))
+pve_pods_urbsc      <- PVE_lm(update(pods_lmer, .~. + Urb_score))
+pve_firstpod_urbsc  <- PVE_lm(update(firstpod_lmer, .~. + Urb_score))
+pve_peduncles_urbsc <- PVE_lm(update(peduncles_lmer, .~. + Urb_score))
+
+
+
+# make tables
+recalc_tab1.1 <- pve_table_recalc(pve_flsucc,
+                                  pve_flowers,
+                                  pve_fltime,
+                 "Flowering success",
+                  "Flowers per Inflorescence",
+                  "Flowering time")
+
+recalc_tab1.2 <- pve_table_recalc(pve_flstart,
+                                  pve_pods, 
+                                  pve_firstpod,
+                 "Flowering start",
+                  "Follicles",
+                  "Date of first follicle")
+
+recalc_tab1.3 <- pve_peduncles %>%
+      flextable() %>%
+      flextable::add_header_row(.,
+                                values = c("",
+                                           "Inflorescences"),
+                                colwidths = c(1,2)) %>%
+      flextable::align(i = c(1,2),
+                       align = "center",
+                       part = "header") %>%
+      flextable::align(j = c(2:3),
+                       align = "center",
+                       part = "body") %>%
+      bold(i = 1, part = "header")%>%
+      autofit()
+  
+  
+recalc_tab2.1 <- pve_table_recalc(pve_flsucc_city,
+                                  pve_flowers_city, 
+                                  pve_fltime_city,
+                 "Flowering success",
+                  "Flowers per Inflorescence",
+                  "Flowering time")
+
+recalc_tab2.2 <- pve_table_recalc(pve_flstart_city,
+                                  pve_pods_city, 
+                                  pve_firstpod_city,
+                 "Flowering start",
+                  "Follicles",
+                  "Date of first follicle")
+
+recalc_tab2.3 <- pve_peduncles_city %>%
+      flextable() %>%
+      flextable::add_header_row(.,
+                                values = c("",
+                                           "Inflorescences"),
+                                colwidths = c(1,2)) %>%
+      flextable::align(i = c(1,2),
+                       align = "center",
+                       part = "header") %>%
+      flextable::align(j = c(2:3),
+                       align = "center",
+                       part = "body") %>%
+      bold(i = 1, part = "header")%>%
+      autofit()
+
+
+recalc_tab3.1 <- pve_table_recalc(pve_flsucc_urbsc,
+                                  pve_flowers_urbsc,
+                                  pve_fltime_urbsc,
+                 "Flowering success",
+                  "Flowers per Inflorescence",
+                  "Flowering time")
+
+recalc_tab3.2 <- pve_table_recalc(pve_flstart_urbsc,
+                                  pve_pods_urbsc, 
+                                  pve_firstpod_urbsc,
+                  "Flowering start",
+                  "Follicles",
+                  "Date of first follicle")
+
+recalc_tab3.3 <- pve_peduncles_urbsc %>%
+      flextable() %>%
+      flextable::add_header_row(.,
+                                values = c("",
+                                           "Inflorescences"),
+                                colwidths = c(1,2)) %>%
+      flextable::align(i = c(1,2),
+                       align = "center",
+                       part = "header") %>%
+      flextable::align(j = c(2:3),
+                       align = "center",
+                       part = "body") %>%
+      bold(i = 1, part = "header")%>%
+      autofit()
+
+
+# Export to word
+  word_export <- read_docx()
+  
+  body_add_par(word_export,
+               value = "As far as we know, there isn't a solid way to calculate percent variance explained for variables with a non-Gaussian distribution. The way that we handled this was to refit our non-Gaussian models (generalized linear mixed models) to general linear mixed models, then extract PVE for the last year of data collection. These new PVEs will be estimates. This is not a perfect solution but it will help us approximate PVE for these variables.")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 1: Test for variance among families and populations")
+  body_add_flextable(word_export, recalc_tab1.1)
+  body_add_par(word_export, value = "")
+  body_add_flextable(word_export, recalc_tab1.2)
+  body_add_par(word_export, value = "")
+  body_add_flextable(word_export, recalc_tab1.3)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 2: Assess how much variance is explained by urbanization")
+  body_add_par(word_export, value = "Urbanization = Distance to the City Center")
+  body_add_flextable(word_export, recalc_tab2.1)
+  body_add_par(word_export, value = "")
+  body_add_flextable(word_export, recalc_tab2.2)
+  body_add_par(word_export, value = "")
+  body_add_flextable(word_export, recalc_tab2.3)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 3: Assess how much variance is explained by urbanization")
+  body_add_par(word_export, value = "Urbanization = Urbanization Score")
+  body_add_flextable(word_export, recalc_tab3.1)
+  body_add_par(word_export, value = "")
+  body_add_flextable(word_export, recalc_tab3.2)
+  body_add_par(word_export, value = "")
+  body_add_flextable(word_export, recalc_tab3.3)  
+  
+  print(word_export, here::here("./Reproductive_trait_analyses/Tables/Ranova/PVE_nonGaussmods/PVE_nonGaussmods_reproduction_Q1.docx"))
+
+```
+
+### Q2
+```{r}
+# main models
+flsucc_lmer2 <- update(flsucc_lmer,
+                             data = reproduc %>%
+                               dplyr::filter(Year == 2022 &
+                                            Transect_ID != "Rural"))
+
+flowers_lmer2 <- update(flowers_lmer,
+                             data = flowering %>%
+                               dplyr::filter(Year == 2022 &
+                                            Transect_ID != "Rural"))
+
+fltime_lmer2 <- update(fltime_lmer,
+                             data = flowering %>%
+                               dplyr::filter(Year == 2022 &
+                                            Transect_ID != "Rural"))
+
+flstart_lmer2 <- update(flstart_lmer,
+                             data = flowering %>%
+                               dplyr::filter(Year == 2022 &
+                                            Transect_ID != "Rural"))
+
+pods_lmer2 <- update(pods_lmer,
+                             data = flowering %>%
+                               dplyr::filter(Year == 2022 &
+                                            Transect_ID != "Rural"))
+
+firstpod_lmer2 <- update(firstpod_lmer,
+                             data = flowering %>%
+                               dplyr::filter(Year == 2022 &
+                                            Transect_ID != "Rural"))
+
+peduncles_lmer2 <- update(peduncles_lmer,
+                             data = flowering %>%
+                               dplyr::filter(Year == 2022 &
+                                            Transect_ID != "Rural"))
+
+# get PVE from models
+pve_flsucc2    <- PVE_lm(flsucc_lmer2) 
+pve_flowers2   <- PVE_lm(flowers_lmer2)
+pve_fltime2    <- PVE_lm(fltime_lmer2)
+pve_flstart2   <- PVE_lm(flstart_lmer2) 
+pve_pods2      <- PVE_lm(pods_lmer2)
+pve_firstpod2  <- PVE_lm(firstpod_lmer2)
+pve_peduncles2 <- PVE_lm(peduncles_lmer2)
+
+
+pve_flsucc_city2     <- PVE_lm(update(flsucc_lmer2, .~. + City_dist*Transect_ID))
+pve_flowers_city2    <- PVE_lm(update(flowers_lmer2, .~. + City_dist*Transect_ID))
+pve_fltime_city2     <- PVE_lm(update(fltime_lmer2, .~. + City_dist*Transect_ID))
+pve_flstart_city2    <- PVE_lm(update(flstart_lmer2, .~. + City_dist*Transect_ID))
+pve_pods_city2       <- PVE_lm(update(pods_lmer2, .~. + City_dist*Transect_ID))
+pve_firstpod_city2   <- PVE_lm(update(firstpod_lmer2, .~. + City_dist*Transect_ID))
+pve_peduncles_city2  <- PVE_lm(update(peduncles_lmer2, .~. + City_dist*Transect_ID))
+
+
+pve_flsucc_urbsc2    <- PVE_lm(update(flsucc_lmer2, .~. + Urb_score*Transect_ID))
+pve_flowers_urbsc2   <- PVE_lm(update(flowers_lmer2, .~. + Urb_score*Transect_ID))
+pve_fltime_urbsc2    <- PVE_lm(update(fltime_lmer2, .~. + Urb_score*Transect_ID))
+pve_flstart_urbsc2   <- PVE_lm(update(flstart_lmer2, .~. + Urb_score*Transect_ID))
+pve_pods_urbsc2      <- PVE_lm(update(pods_lmer2, .~. + Urb_score*Transect_ID))
+pve_firstpod_urbsc2  <- PVE_lm(update(firstpod_lmer2, .~. + Urb_score*Transect_ID))
+pve_peduncles_urbsc2 <- PVE_lm(update(peduncles_lmer2, .~. + Urb_score*Transect_ID))
+
+
+
+# make tables
+recalc_tab1.1 <- pve_table_recalc(pve_flsucc2,
+                                  pve_flowers2,
+                                  pve_fltime2,
+                 "Flowering success",
+                  "Flowers per Inflorescence",
+                  "Flowering time")
+
+recalc_tab1.2 <- pve_table_recalc(pve_flstart2,
+                                  pve_pods2, 
+                                  pve_firstpod2,
+                 "Flowering start",
+                  "Follicles",
+                  "Date of first follicle")
+
+recalc_tab1.3 <- pve_peduncles2 %>%
+      flextable() %>%
+      flextable::add_header_row(.,
+                                values = c("",
+                                           "Inflorescences"),
+                                colwidths = c(1,2)) %>%
+      flextable::align(i = c(1,2),
+                       align = "center",
+                       part = "header") %>%
+      flextable::align(j = c(2:3),
+                       align = "center",
+                       part = "body") %>%
+      bold(i = 1, part = "header")%>%
+      autofit()
+  
+  
+recalc_tab2.1 <- pve_table_recalc(pve_flsucc_city2,
+                                  pve_flowers_city2, 
+                                  pve_fltime_city2,
+                 "Flowering success",
+                  "Flowers per Inflorescence",
+                  "Flowering time")
+
+recalc_tab2.2 <- pve_table_recalc(pve_flstart_city2,
+                                  pve_pods_city2, 
+                                  pve_firstpod_city2,
+                 "Flowering start",
+                  "Follicles",
+                  "Date of first follicle")
+
+recalc_tab2.3 <- pve_peduncles_city2 %>%
+      flextable() %>%
+      flextable::add_header_row(.,
+                                values = c("",
+                                           "Inflorescences"),
+                                colwidths = c(1,2)) %>%
+      flextable::align(i = c(1,2),
+                       align = "center",
+                       part = "header") %>%
+      flextable::align(j = c(2:3),
+                       align = "center",
+                       part = "body") %>%
+      bold(i = 1, part = "header")%>%
+      autofit()
+
+
+recalc_tab3.1 <- pve_table_recalc(pve_flsucc_urbsc2,
+                                  pve_flowers_urbsc2,
+                                  pve_fltime_urbsc2,
+                 "Flowering success",
+                  "Flowers per Inflorescence",
+                  "Flowering time")
+
+recalc_tab3.2 <- pve_table_recalc(pve_flstart_urbsc2,
+                                  pve_pods_urbsc2, 
+                                  pve_firstpod_urbsc2,
+                  "Flowering start",
+                  "Follicles",
+                  "Date of first follicle")
+
+recalc_tab3.3 <- pve_peduncles_urbsc2 %>%
+      flextable() %>%
+      flextable::add_header_row(.,
+                                values = c("",
+                                           "Inflorescences"),
+                                colwidths = c(1,2)) %>%
+      flextable::align(i = c(1,2),
+                       align = "center",
+                       part = "header") %>%
+      flextable::align(j = c(2:3),
+                       align = "center",
+                       part = "body") %>%
+      bold(i = 1, part = "header")%>%
+      autofit()
+
+
+# Export to word
+  word_export <- read_docx()
+  
+  body_add_par(word_export,
+               value = "As far as we know, there isn't a solid way to calculate percent variance explained for variables with a non-Gaussian distribution. The way that we handled this was to refit our non-Gaussian models (generalized linear mixed models) to general linear mixed models, then extract PVE for the last year of data collection. These new PVEs will be estimates. This is not a perfect solution but it will help us approximate PVE for these variables.")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 1: Test for variance among families and populations")
+  body_add_flextable(word_export, recalc_tab1.1)
+  body_add_par(word_export, value = "")
+  body_add_flextable(word_export, recalc_tab1.2)
+  body_add_par(word_export, value = "")
+  body_add_flextable(word_export, recalc_tab1.3)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 2: Assess how much variance is explained by urbanization")
+  body_add_par(word_export, value = "Urbanization = Distance to the City Center")
+  body_add_flextable(word_export, recalc_tab2.1)
+  body_add_par(word_export, value = "")
+  body_add_flextable(word_export, recalc_tab2.2)
+  body_add_par(word_export, value = "")
+  body_add_flextable(word_export, recalc_tab2.3)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 3: Assess how much variance is explained by urbanization")
+  body_add_par(word_export, value = "Urbanization = Urbanization Score")
+  body_add_flextable(word_export, recalc_tab3.1)
+  body_add_par(word_export, value = "")
+  body_add_flextable(word_export, recalc_tab3.2)
+  body_add_par(word_export, value = "")
+  body_add_flextable(word_export, recalc_tab3.3)  
+  
+  print(word_export, here::here("./Reproductive_trait_analyses/Tables/Ranova/PVE_nonGaussmods/PVE_nonGaussmods_reproduction_Q2.docx"))
+
+```
+
 # Anova
 ## Flowering success
 ### Best Models
