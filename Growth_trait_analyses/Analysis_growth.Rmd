@@ -1,6 +1,5 @@
 # Set up notebook
 ## Load libraries and add functions
-
 ```{r}
 source("libraries.R")
 source("functions.R")
@@ -26,8 +25,7 @@ set.seed(45)
 # But when I remove FAMILY, it isn't singular! Makes sense b/c
 # there's no variance among families as per the summary
 ldmc_ranova_mod1 <- lmer((LDMC)^(1/3) ~
-                           (1|Population/Family) +
-                           Block,
+                           (1|Population/Family) ,
                              data = sla_ldmc %>%
                                dplyr::filter(LDMC < 0.7 &
                                                Population != "23" &
@@ -38,6 +36,18 @@ ldmc_ranova_mod1 <- lmer((LDMC)^(1/3) ~
 
 summary(ldmc_ranova_mod1) # this shows variance among families and populations nearly 0; on the order of 1x10^-6 or plain 0.
 summary(sla_ldmc$LDMC)
+ranova(ldmc_ranova_mod1)
+# shows very little variance among fams and pops too w/glmmtmb
+summary(glmmTMB(LDMC ~
+                  (1|Population/Family) +
+                  Block,
+                data = sla_ldmc %>%
+                  dplyr::filter(LDMC < 0.7 &
+                                  Population != "23" &
+                                  Population != "26" &
+                                  Population != "32" &
+                                  Population != "45"),
+                           REML = T))
 
 # find fams w/1 replicate
 ldmc_sum <- sla_ldmc %>%
@@ -507,7 +517,8 @@ ramets_e_ranova3 <- glmer(Ramets_early ~
                              family = poisson)
 
 # performance::check_model(ramets_e_ranova3)
-
+summary(ramets_e_ranova3)
+insight::get_variance_random(ramets_e_ranova3)
 pb_ranova_2step(ramets_e_ranova3,
           "Ramets before flowering: 2021",
           "./Growth_trait_analyses/Tables/Ranova/ramets_early_2021.docx")
@@ -840,6 +851,131 @@ pb_ranova_transects(surv_ranova4_pb,
 
 
 ```
+
+## Recalculate PVE for non-Gaussian models
+As far as we know, there isn't a solid way to calculate percent variance explained for variables with a non-Gaussian distribution.
+The way that we handled this was to refit our non-Gaussian models (generalized linear mixed models) to general linear mixed models, then extract PVE for the last year of data collection.
+These new PVEs will be estimates. This is *not* a perfect solution but it will help us approximate PVE for these variables.
+### Q1
+```{r}
+# main models
+ramets_e_lmer <- lmer(Ramets_early ~
+                               (1|Block) +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                             data = heights %>%
+                               dplyr::filter(Year == 2021),
+                            na.action = na.exclude)
+
+ramets_l_lmer <- lmer(Ramets_late ~
+                               (1|Block) +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                             data = heights %>%
+                               dplyr::filter(Year == 2021),
+                            na.action = na.exclude)
+
+survival_lmer <- lmer(as.numeric(Dead) ~
+                               (1|Block) +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                             data = survival %>%
+                               dplyr::filter(Year == 2022),
+                          na.action = na.exclude)
+
+# get PVE from models
+pve_rbf <- PVE_lm(ramets_e_lmer) 
+pve_raf <- PVE_lm(ramets_l_lmer)
+pve_surv <- PVE_lm(survival_lmer)
+
+pve_rbf_city <- PVE_lm(update(ramets_e_lmer, .~. + City_dist))
+pve_raf_city <- PVE_lm(update(ramets_l_lmer, .~. + City_dist))
+pve_surv_city <- PVE_lm(update(survival_lmer, .~. + City_dist))
+
+pve_rbf_urbsc <- PVE_lm(update(ramets_e_lmer, .~. + Urb_score))
+pve_raf_urbsc <- PVE_lm(update(ramets_l_lmer, .~. + Urb_score))
+pve_surv_urbsc <- PVE_lm(update(survival_lmer, .~. + Urb_score))
+
+
+# make tables
+recalc_tab1 <- pve_table_recalc(pve_rbf, pve_raf, pve_surv,
+                 "Ramets before flowering",
+                              "Ramets after flowering",
+                              "Mortality")
+
+recalc_tab2 <- pve_table_recalc(pve_rbf_city, pve_raf_city, pve_surv_city,
+                 "Ramets before flowering",
+                              "Ramets after flowering",
+                              "Mortality")
+
+recalc_tab3 <- pve_table_recalc(pve_rbf_urbsc, pve_raf_urbsc, pve_surv_urbsc,
+                 "Ramets before flowering",
+                              "Ramets after flowering",
+                              "Mortality")
+
+# Export to word
+export_recalc(recalc_tab1,
+              recalc_tab2,
+              recalc_tab3,
+              "./Growth_trait_analyses/Tables/Ranova/PVE_nonGaussmods/PVE_nonGaussmods_growth_Q1.docx")
+
+```
+
+### Q2
+```{r}
+# main models
+ramets_e_lmer2 <- update(ramets_e_lmer,
+                             data = heights %>%
+                               dplyr::filter(Year == 2021 &
+                                            Transect_ID != "Rural"))
+
+ramets_l_lmer2 <- update(ramets_l_lmer,
+                             data = heights %>%
+                               dplyr::filter(Year == 2021 &
+                                            Transect_ID != "Rural"))
+
+survival_lmer2 <- update(survival_lmer,
+                             data = survival %>%
+                               dplyr::filter(Year == 2022 &
+                                            Transect_ID != "Rural"))
+# get PVE from models
+pve_rbf2 <- PVE_lm(ramets_e_lmer2) 
+pve_raf2 <- PVE_lm(ramets_l_lmer2)
+pve_surv2 <- PVE_lm(survival_lmer2)
+
+pve_rbf_city2 <- PVE_lm(update(ramets_e_lmer2, .~. + City_dist*Transect_ID))
+pve_raf_city2 <- PVE_lm(update(ramets_l_lmer2, .~. + City_dist*Transect_ID))
+pve_surv_city2 <- PVE_lm(update(survival_lmer2, .~. + City_dist*Transect_ID))
+
+pve_rbf_urbsc2 <- PVE_lm(update(ramets_e_lmer2, .~. + Urb_score*Transect_ID))
+pve_raf_urbsc2 <- PVE_lm(update(ramets_l_lmer2, .~. + Urb_score*Transect_ID))
+pve_surv_urbsc2 <- PVE_lm(update(survival_lmer2, .~. + Urb_score*Transect_ID))
+
+
+# make tables
+recalc_tab1_Q2 <- pve_table_recalc(pve_rbf2, pve_raf2, pve_surv2,
+                 "Ramets before flowering",
+                              "Ramets after flowering",
+                              "Mortality")
+
+recalc_tab2_Q2 <- pve_table_recalc(pve_rbf_city2, pve_raf_city2, pve_surv_city2,
+                 "Ramets before flowering",
+                              "Ramets after flowering",
+                              "Mortality")
+
+recalc_tab3_Q2 <- pve_table_recalc(pve_rbf_urbsc2, pve_raf_urbsc2, pve_surv_urbsc2,
+                 "Ramets before flowering",
+                              "Ramets after flowering",
+                              "Mortality")
+
+# Export to word
+export_recalc(recalc_tab1_Q2,
+              recalc_tab2_Q2,
+              recalc_tab3_Q2,
+              "./Growth_trait_analyses/Tables/Ranova/PVE_nonGaussmods/PVE_nonGaussmods_growth_Q2.docx")
+```
+
+
 
 ## Create figure showing % variance explained per component
 Note: Can only do this for gaussian models for Q1. For models with transect as an effect, I can calculate PVE for models testing effect of distance only- not transect. But since I'm not as interested in that, I won't generate those plots now.

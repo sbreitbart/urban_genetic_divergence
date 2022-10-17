@@ -434,17 +434,19 @@ pb_ranova_2step(firstpod_ranova2,
           "./Reproductive_trait_analyses/Tables/Ranova/first_pods_2021.docx")
 
 # 2022-----
+# when I remove population (which summary shows has a variance of 0), the model isn't singular anymore. I think that's the key here
 firstpod_ranova3 <- glmer(Julian_first_follicle-200 ~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
                              data = flowering %>%
-                               dplyr::filter(Year == 2022 &
-                                               is.na(Julian_first_follicle) == FALSE),
+                               dplyr::filter(Year == 2022 & is.na(Julian_first_follicle) == FALSE),
                            na.action = na.exclude,
                           family = poisson)
 
 # performance::check_model(firstpod_ranova3)
+
+summary(firstpod_ranova3)
 
 pb_ranova_2step(firstpod_ranova3,
           "First follicle: 2022",
@@ -504,7 +506,6 @@ pb_ranova_2step(peduncles_ranova3,
 ### Urb subtransects
 ```{r}
 # Flowering success-----
-
 # 2020-----
 flsucc_ranova1 <- glmer(Flowered ~
                                Block +

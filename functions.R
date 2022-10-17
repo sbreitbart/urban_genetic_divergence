@@ -659,6 +659,80 @@ pb_ranova_transects <- function(glmer_model_without_urb, trait_name, filepath){
   print(word_export, here::here(filepath))
 }
 
+## get PVE for non-Gaussian models using lmer
+PVE_lm <- function(lmer){
+  
+  table1 <- lme4::VarCorr(lmer,
+                          comp="Variance") %>%
+    as.data.frame() %>%
+    dplyr::mutate(.,
+                  PVE = round((vcov*100 / sum(vcov)),3),
+                  vcov = round(vcov, 3)) %>%
+    dplyr::select(., c(grp, vcov, PVE)) %>%
+    dplyr::rename(., Group = grp,
+                  Variance = vcov) %>%
+    dplyr::mutate(Group = replace(Group,
+                                  Group == "Population:Fam_uniq", "Family"))
+  
+  
+  return(table1)
+  
+}
+pve_table_recalc <- function(pve_var1, pve_var2, pve_var3,
+                             var1_name, var2_name, var3_name){
+  return(
+    cbind(pve_var1,
+          pve_var2[,-1],
+          pve_var3[,-1]) %>%
+      dplyr::rename("Variance " = 4,
+                    "PVE " = 5,
+                    "Variance  " = 6,
+                    "PVE  " = 7) %>%
+      flextable() %>%
+      flextable::add_header_row(.,
+                                values = c("",
+                                           var1_name,
+                                           var2_name,
+                                           var3_name),
+                                colwidths = c(1,2,2,2)) %>%
+      flextable::align(i = c(1,2),
+                       align = "center",
+                       part = "header") %>%
+      flextable::align(j = c(2:7),
+                       align = "center",
+                       part = "body") %>%
+      bold(i = 1, part = "header")%>%
+      autofit() 
+  )
+}
+export_recalc <- function(table1, table2, table3, filepath){
+  
+  word_export <- read_docx()
+  
+  body_add_par(word_export,
+               value = "As far as we know, there isn't a solid way to calculate percent variance explained for variables with a non-Gaussian distribution. The way that we handled this was to refit our non-Gaussian models (generalized linear mixed models) to general linear mixed models, then extract PVE for the last year of data collection. These new PVEs will be estimates. This is not a perfect solution but it will help us approximate PVE for these variables.")
+  
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 1: Test for variance among families and populations")
+  body_add_flextable(word_export, table1)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 2: Assess how much variance is explained by urbanization")
+  body_add_par(word_export, value = "Urbanization = Distance to the City Center")
+  body_add_flextable(word_export, table2)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Table 3: Assess how much variance is explained by urbanization")
+  body_add_par(word_export, value = "Urbanization = Urbanization Score")
+  body_add_flextable(word_export, table3)
+  
+  print(word_export, here::here(filepath))
+}
 
 ############################################################
 ##################### HERITABILITY & QST ###################

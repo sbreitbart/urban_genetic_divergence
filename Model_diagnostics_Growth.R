@@ -1,11 +1,9 @@
-# Load libraries & functions
-```{r}
+## ----------------------------------------------
 source("libraries.R")
 source("functions.R")
-```
 
-# Import data
-```{r}
+
+## ----------------------------------------------
 sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv")) %>%
   dplyr::select(., -c(1:2)) %>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Transect_ID", "Urb_Rur", "Patch_ID")), as.character) %>%
@@ -32,13 +30,9 @@ survival <- read.csv(here::here("./Joined_annual_data/survival.csv"), na.strings
 
 str(survival)
 
-```
 
-# Diagnostics
-## LDMC
-### Gradient
-#### City_dist
-```{r}
+
+## ----------------------------------------------
 # # Basic data exploration
 # plot(LDMC ~ City_dist, data = sla_ldmc) # outlier > 1.5? It's biologically possible though
 # plot(LDMC ~ City_dist, data = sla_ldmc %>%
@@ -72,10 +66,9 @@ ldmc_gr_city_m1 <- glmmTMB(sqrt(LDMC) ~
 #                         REML = F)
 # 
 # test_gxe(ldmc_gr_city_m1, gxe_test_ldmc) # reg mod best
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------
 ldmc_gr_usc_m1 <- glmmTMB(sqrt(LDMC) ~
                              Block +
                              (1|Population/Family) +
@@ -98,11 +91,9 @@ ldmc_gr_usc_m1 <- glmmTMB(sqrt(LDMC) ~
 #                         REML = F)
 # 
 # test_gxe(ldmc_gr_usc_m1, gxe_test_ldmc2) # reg mod best
-```
 
-### Urban Subtransects
-#### City_dist
-```{r}
+
+## ----------------------------------------------
 ldmc_urbsubs_city_m1 <- glmmTMB(log(LDMC) ~
                        #       Block +
                              (1|Population/Family) +
@@ -150,10 +141,9 @@ ldmc_urbsubs_city_m2 <- glmmTMB(log(LDMC) ~
 # 
 # 
 # test_gxe(ldmc_urbsubs_city_m1, gxe_test_ldmc3) # reg model best (I added block back to it)
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------
 ldmc_urbsubs_usc_m1 <- glmmTMB(log(LDMC) ~
                              Block +
                              (1|Population/Family) +
@@ -195,12 +185,9 @@ ldmc_urbsubs_usc_m2 <- glmmTMB(log(LDMC) ~
 # 
 # 
 # test_gxe(ldmc_urbsubs_usc_m1, gxe_test_ldmc4) # reg model best
-```
 
-## SLA
-### Gradient
-#### City_dist
-```{r}
+
+## ----------------------------------------------
 # Basic data exploration
 # plot(SLA ~ City_dist, data = sla_ldmc)
 # 
@@ -226,10 +213,9 @@ sla_gr_city_m1 <- glmmTMB(log(SLA+1) ~
 #                         REML = F)
 # 
 # test_gxe(sla_gr_city_m1, gxe_test_sla) # reg mod best
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------
 sla_gr_usc_m1 <- glmmTMB(log(SLA+1) ~
                             Block +
                             (1|Population/Family) +
@@ -250,11 +236,9 @@ sla_gr_usc_m1 <- glmmTMB(log(SLA+1) ~
 #                         REML = F)
 # 
 # test_gxe(sla_gr_usc_m1, gxe_test_sla2) # reg mod best (added back block to reg mod)
-```
 
-### Urban Subtransects
-#### City_dist
-```{r}
+
+## ----------------------------------------------
 sla_urbsubs_city_m1 <- glmmTMB(log(SLA+1) ~
                                  Block +
                                  (1|Population/Family) +
@@ -294,10 +278,9 @@ sla_urbsubs_city_m2 <- glmmTMB(log(SLA+1) ~
 # 
 # 
 # test_gxe(sla_urbsubs_city_m1, gxe_test_sla3) # reg model best
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------
 sla_urbsubs_usc_m1 <- glmmTMB(log(SLA+1) ~
                                  Block +
                                  (1|Population/Family) +
@@ -337,13 +320,9 @@ sla_urbsubs_usc_m2 <- glmmTMB(log(SLA+1) ~
 # 
 # 
 # test_gxe(sla_urbsubs_usc_m1, gxe_test_sla4) # reg model best
-```
 
-## Heights
-### Early
-#### Gradient
-##### City_dist
-```{r}
+
+## ----------------------------------------------
 # hist(heights$Total_Height_early, breaks = 80) # zero-inflated?
 # 
 # boxplot(Total_Height_early ~ Year, data = heights)
@@ -375,10 +354,9 @@ height_e_gr_city_m1 <- glmmTMB(Total_Height_early^(1/3) ~
 # test_gxe(height_e_gr_city_m1, gxe_test_height_e) # modes stat equivalent
 # car::Anova(height_e_gr_city_m1, type = "III") # gxe mod below doesn't have sig gxe intxn but city_dist is marg sig at 0.0560, not sig in reg model
 # car::Anova(gxe_test_height_e, type = "III")
-```
 
-##### Urb_score
-```{r}
+
+## ----------------------------------------------
 height_e_gr_usc_m1 <- glmmTMB(Total_Height_early^(1/3) ~ 
                                  Block +
                                  Year +
@@ -405,11 +383,9 @@ height_e_gr_usc_m1 <- glmmTMB(Total_Height_early^(1/3) ~
 # test_gxe(height_e_gr_usc_m1, gxe_test_height_e2) # mods stat equivalent
 # car::Anova(height_e_gr_usc_m1, type = "III") # qualitatively identical results
 # car::Anova(gxe_test_height_e2, type = "III")
-```
 
-#### Urban Subtransects
-##### City_dist
-```{r}
+
+## ----------------------------------------------
 # year is adding a lot of variation and complicates model fit. When I treat it as random, model fits MUCH better as per diagnostics, yet anova shows nearly identical results for city_dist and transect_ID so I'll keep it fixed.
 height_e_urbsubs_city_m1 <- glmmTMB(Total_Height_early^(1/3) ~ 
                                  Block +
@@ -453,11 +429,9 @@ height_e_urbsubs_city_m2 <- glmmTMB(Total_Height_early^(1/3) ~
 #                           REML = F)
 # 
 # test_gxe(height_e_urbsubs_city_m1, gxe_test_height_e3) # reg mod best
-```
 
 
-##### Urb_score
-```{r}
+## ----------------------------------------------
 height_e_urbsubs_usc_m1 <- glmmTMB(Total_Height_early^(1/3) ~ 
                                  Block +
                                  Year +
@@ -502,12 +476,9 @@ height_e_urbsubs_usc_m2 <- glmmTMB(Total_Height_early^(1/3) ~
 # test_gxe(height_e_urbsubs_usc_m1, gxe_test_height_e4) # mods stat equivalent
 # car::Anova(gxe_test_height_e4, type = "III") # mods qual identical
 # car::Anova(height_e_urbsubs_usc_m1, type = "III")
-```
 
-### Late
-#### Gradient
-##### City_dist
-```{r}
+
+## ----------------------------------------------
 height_l_gr_city_m1 <- glmmTMB(Total_Height_late^(1/3) ~ 
                                  Block +
                                  Year +
@@ -531,10 +502,9 @@ height_l_gr_city_m1 <- glmmTMB(Total_Height_late^(1/3) ~
 #                         REML = F)
 # 
 # test_gxe(height_l_gr_city_m1, gxe_test_height_l) # reg mod best
-```
 
-##### Urb_score
-```{r}
+
+## ----------------------------------------------
 height_l_gr_usc_m1 <- glmmTMB(Total_Height_late^(1/3) ~ 
                                  Block +
                                  Year +
@@ -557,11 +527,9 @@ height_l_gr_usc_m1 <- glmmTMB(Total_Height_late^(1/3) ~
 #                         REML = F)
 # 
 # test_gxe(height_l_gr_usc_m1, gxe_test_height_l2) # reg mod best
-```
 
-#### Urban Subtransects
-##### City_dist
-```{r}
+
+## ----------------------------------------------
 # again, model fit isn't perfect but it's due to year being so variable. When it's taken out/turned into random effect, diagnostics looks fine and anova result for city_dist nearly identical.
 height_l_urbsubs_city_m1 <- glmmTMB(Total_Height_late^(1/3) ~ 
                                  Block +
@@ -604,10 +572,9 @@ height_l_urbsubs_city_m2 <- glmmTMB(Total_Height_late^(1/3) ~
 #                           REML = F)
 # 
 # test_gxe(height_l_urbsubs_city_m1, gxe_test_height_l3) # reg mod best
-```
 
-##### Urb_score
-```{r}
+
+## ----------------------------------------------
 height_l_urbsubs_usc_m1 <- glmmTMB(Total_Height_late^(1/3) ~ 
                                  Block +
                                  Year +
@@ -649,12 +616,9 @@ height_l_urbsubs_usc_m2 <- glmmTMB(Total_Height_late^(1/3) ~
 #                           REML = F)
 # 
 # test_gxe(height_l_urbsubs_usc_m1, gxe_test_height_l4) # reg mod best
-```
 
-## Relative growth rate
-### Gradient
-#### City_dist
-```{r}
+
+## ----------------------------------------------
 # hist(heights$rel_growth_rate, breaks = 80) 
 # boxplot(rel_growth_rate ~ Year, data = heights)
 
@@ -682,10 +646,9 @@ rgr_gr_city_m1 <- glmmTMB(rel_growth_rate^(1/3) ~
 # test_gxe(rgr_gr_city_m1, gxe_test_rgr) # stat equiv
 # car::Anova(gxe_test_rgr, type = "III") # block sig here and not in reg model; otherwise identical (block*city_dist not sig)
 # car::Anova(rgr_gr_city_m1, type = "III")
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------
 rgr_gr_usc_m1 <- glmmTMB(rel_growth_rate^(1/3) ~ 
                                  Block +
                                  Year +
@@ -710,11 +673,9 @@ rgr_gr_usc_m1 <- glmmTMB(rel_growth_rate^(1/3) ~
 # test_gxe(rgr_gr_usc_m1, gxe_test_rgr2) # stat equiv
 # car::Anova(gxe_test_rgr2, type = "III") # qual identical results
 # car::Anova(rgr_gr_usc_m1, type = "III")
-```
 
-### Urban Subtransects
-#### City_dist
-```{r}
+
+## ----------------------------------------------
 rgr_urbsubs_city_m1 <- glmmTMB(rel_growth_rate^(1/3) ~ 
                                  Block +
                                  Year +
@@ -756,10 +717,9 @@ rgr_urbsubs_city_m2 <- glmmTMB(rel_growth_rate^(1/3) ~
 #                          REML = F)
 # 
 # test_gxe(rgr_urbsubs_city_m1, gxe_test_rgr3) # reg mod best,but the gxe mod wouldn't converge unless I changed the response from ^(1/3) to untransformed
-```
 
-#### Urb_score
-```{r}
+
+## ----------------------------------------------
 rgr_urbsubs_usc_m1 <- glmmTMB(rel_growth_rate^(1/3) ~ 
                                  Block +
                                  Year +
@@ -809,13 +769,9 @@ r.squaredGLMM(gxe_test_rgr4)
 effectsize::eta_squared(gxe_test_rgr4, partial = FALSE)
 effectsize::eta_squared(rgr_urbsubs_usc_m1, partial = FALSE)
 VarCorr(gxe_test_rgr4)
-```
 
-## Ramets
-### Early
-#### Gradient
-##### City_dist
-```{r}
+
+## ----------------------------------------------
 ramets_e_gr_city_m1 <- glmmTMB(Ramets_early ~ 
                                  Block +
                                  Year +
@@ -854,10 +810,9 @@ aov_car(Ramets_early ~
 
 summary(gxe_test_ramets_e)
 
-```
 
-##### Urb_score
-```{r}
+
+## ----------------------------------------------
 ramets_e_gr_usc_m1 <- glmmTMB(Ramets_early ~ 
                                  Block +
                                  Year +
@@ -883,11 +838,9 @@ ramets_e_gr_usc_m1 <- glmmTMB(Ramets_early ~
 #                         REML = F)
 # 
 # test_gxe(ramets_e_gr_usc_m1, gxe_test_ramets_e2) # reg mod best
-```
 
-#### Urban Subtransects
-##### City_dist
-```{r}
+
+## ----------------------------------------------
 ramets_e_urbsubs_city_m1 <- glmmTMB(Ramets_early ~ 
                                  Block +
                                  Year +
@@ -930,10 +883,9 @@ ramets_e_urbsubs_city_m2 <- glmmTMB(Ramets_early ~
 #                         REML = F)
 # 
 # test_gxe(ramets_e_urbsubs_city_m1, gxe_test_ramets_e3) # reg mod best
-```
 
-##### Urb_score
-```{r}
+
+## ----------------------------------------------
 ramets_e_urbsubs_usc_m1 <- glmmTMB(Ramets_early ~ 
                                  Block +
                                  Year +
@@ -977,12 +929,9 @@ ramets_e_urbsubs_usc_m2 <- glmmTMB(Ramets_early ~
 #                         REML = F)
 # 
 # test_gxe(ramets_e_urbsubs_usc_m1, gxe_test_ramets_e4) # reg mod best
-```
 
-### Late
-#### Gradient
-##### City_dist
-```{r}
+
+## ----------------------------------------------
 ramets_l_gr_city_m1 <- glmmTMB(Ramets_late ~ 
                                  Block +
                                  Year +
@@ -1008,10 +957,9 @@ ramets_l_gr_city_m1 <- glmmTMB(Ramets_late ~
 # test_gxe(ramets_l_gr_city_m1, gxe_test_ramets_l) # mods stat equiv
 # car::Anova(gxe_test_ramets_l, type = "III") # block*city_dist  not sig, but city_dist is marg sig here but not in reg mod
 # car::Anova(ramets_l_gr_city_m1, type = "III")
-```
 
-##### Urb_score
-```{r}
+
+## ----------------------------------------------
 ramets_l_gr_usc_m1 <- glmmTMB(Ramets_late ~ 
                                  Block +
                                  Year +
@@ -1037,11 +985,9 @@ ramets_l_gr_usc_m1 <- glmmTMB(Ramets_late ~
 # 
 # test_gxe(ramets_l_gr_usc_m1, gxe_test_ramets_l2) # reg mod best
 
-```
 
-#### Urban Subtransects
-##### City_dist
-```{r}
+
+## ----------------------------------------------
 ramets_l_urbsubs_city_m1 <- glmmTMB(Ramets_late ~ 
                                  Block +
                                  Year +
@@ -1085,10 +1031,9 @@ ramets_l_urbsubs_city_m2 <- glmmTMB(Ramets_late ~
 #                         REML = F)
 # 
 # test_gxe(ramets_l_urbsubs_city_m1, gxe_test_ramets_l3) # reg mod best
-```
 
-##### Urb_score
-```{r}
+
+## ----------------------------------------------
 ramets_l_urbsubs_usc_m1 <- glmmTMB(Ramets_late ~ 
                                  Block +
                                  Year +
@@ -1132,13 +1077,9 @@ ramets_l_urbsubs_usc_m2 <- glmmTMB(Ramets_late ~
 #                         REML = F)
 # 
 # test_gxe(ramets_l_urbsubs_usc_m1, gxe_test_ramets_l4) # reg mod best
-```
 
-## Mortality
-### Regular GLMERs
-#### Gradient
-##### City_dist
-```{r}
+
+## ----------------------------------------------
 # Response: number of seasons alive (1-5)- NOT IN ANALYSIS-----
 # seasons survived until death
 survival_seasons <- survival %>%
@@ -1261,10 +1202,9 @@ surv_gr_city_m1_all <- glmmTMB(Dead ~
 #                         REML = F)
 # 
 # test_gxe(surv_gr_city_m1_all, gxe_test_mort) # reg mod best
-```
 
-##### Urb_score
-```{r}
+
+## ----------------------------------------------
 # Response: number of seasons alive (1-5)- NOT IN ANALYSIS-----
 # seasons survived until death
 
@@ -1375,11 +1315,9 @@ surv_gr_usc_m1_all <- glmmTMB(Dead ~
 #                         REML = F)
 # 
 # test_gxe(surv_gr_usc_m1_all, gxe_test_mort2) # reg mod best
-```
 
-#### Urban Subtransects
-##### City_dist
-```{r}
+
+## ----------------------------------------------
 # Response: number of seasons alive (1-5)- NOT IN ANALYSIS-----
 # seasons survived until death
 
@@ -1595,10 +1533,9 @@ surv_urbsubs_city_m2_all <- glmmTMB(Dead ~
 #                         REML = F)
 # 
 # test_gxe(surv_urbsubs_city_m1_all, gxe_test_mort3) # reg mod best
-```
 
-##### Urb_score
-```{r}
+
+## ----------------------------------------------
 # Response: number of seasons alive (1-5)- NOT IN ANALYSIS-----
 # seasons survived until death
 ## full model
@@ -1818,12 +1755,9 @@ gxe_test_mort4 <- glmmTMB(Dead ~
 test_gxe(surv_urbsubs_usc_m1_all, gxe_test_mort4) # stat equiv
 car::Anova(gxe_test_mort4, type = "III") # city*block marg sig
 car::Anova(surv_urbsubs_usc_m1_all, type = "III")
-```
 
-### Cox proportional hazards regressions
-#### Gradient
-##### City_dist
-```{r}
+
+## ----------------------------------------------
 # # install.packages("survival")
 # library(survival)
 # coxph(Surv(seasons, dead) ~
@@ -1839,21 +1773,18 @@ mortality_mod1 <- coxme(Surv(seasons, dead) ~
 # mortality_mod1
 
 # sjPlot::plot_model(mortality_mod1)
-```
 
-##### Urb_score
-```{r}
+
+## ----------------------------------------------
 mortality_mod2 <- coxme(Surv(seasons, dead) ~
                 (1|Population/Family) +
                 Block + Urb_score,
       data = survival_seasons)
 
 # sjPlot::plot_model(mortality_mod2)
-```
 
-#### Urban Subtransects
-##### City_dist
-```{r}
+
+## ----------------------------------------------
 surv_transects <- droplevels(
   subset(
     survival_seasons,
@@ -1896,10 +1827,9 @@ pop_mort_estimates <- ranef(mortality_mod3)$Population %>%
 #          geom_point() +
 #   geom_smooth(method = "lm") +
 #   theme_minimal()
-```
 
-##### Urb_score
-```{r}
+
+## ----------------------------------------------
 mortality_mod4 <- coxme(Surv(seasons, dead) ~
         (1|Population/Family) +
         Block +
@@ -1926,11 +1856,9 @@ mortality_mod4 <- coxme(Surv(seasons, dead) ~
 #   geom_smooth(method = "lm") +
 #   xlim(4, -2) +
 #   theme_minimal()
-```
 
-# Models for use in analysis
-## LDMC
-```{r}
+
+## ----------------------------------------------
 ldmc_mods <- list(
 
 ## City_dist / gradient
@@ -1956,10 +1884,9 @@ names(ldmc_mods) <- c("City_gr",
                      "City_urbsubs_best",
                      "Usc_urbsubs_alt",
                      "Usc_urbsubs_best")
-```
 
-## SLA
-```{r}
+
+## ----------------------------------------------
 sla_mods <- list(
 
 ## City_dist / gradient
@@ -1985,10 +1912,9 @@ names(sla_mods) <- c("City_gr",
                      "City_urbsubs_best",
                      "Usc_urbsubs_alt",
                      "Usc_urbsubs_best")
-```
 
-## Heights- early
-```{r}
+
+## ----------------------------------------------
 heights_early_mods <- list(
 
 ## City_dist / gradient
@@ -2014,10 +1940,9 @@ names(heights_early_mods) <- c("City_gr",
                      "City_urbsubs_best",
                      "Usc_urbsubs_alt",
                      "Usc_urbsubs_best")
-```
 
-## Heights- late
-```{r}
+
+## ----------------------------------------------
 heights_late_mods <- list(
 
 ## City_dist / gradient
@@ -2043,11 +1968,9 @@ names(heights_late_mods) <- c("City_gr",
                      "City_urbsubs_best",
                      "Usc_urbsubs_alt",
                      "Usc_urbsubs_best")
-```
 
 
-## Relative growth rate
-```{r}
+## ----------------------------------------------
 rgr_mods <- list(
 
 ## City_dist / gradient
@@ -2072,10 +1995,9 @@ names(rgr_mods) <- c("City_gr",
                      "City_urbsubs_best",
                      "Usc_urbsubs_alt",
                      "Usc_urbsubs_best")
-```
 
-## Ramets: Early
-```{r}
+
+## ----------------------------------------------
 ramets_early_mods <- list(
 
 ## City_dist / gradient
@@ -2101,10 +2023,9 @@ names(ramets_early_mods) <- c("City_gr",
                      "City_urbsubs_best",
                      "Usc_urbsubs_alt",
                      "Usc_urbsubs_best")
-```
 
-## Ramets: Late
-```{r}
+
+## ----------------------------------------------
 ramets_late_mods <- list(
 
 ## City_dist / gradient
@@ -2130,10 +2051,9 @@ names(ramets_late_mods) <- c("City_gr",
                      "City_urbsubs_best",
                      "Usc_urbsubs_alt",
                      "Usc_urbsubs_best")
-```
 
-## Mortality
-```{r}
+
+## ----------------------------------------------
 mortality_mods <- list(
 
 ## City_dist / gradient
@@ -2159,10 +2079,9 @@ names(mortality_mods) <- c("City_gr",
                      "City_urbsubs_alt",
                     "Usc_urbsubs_best",
                       "Usc_urbsubs_alt")
-```
 
-## Create full list
-```{r}
+
+## ----------------------------------------------
 
 all_models <- list(
 ldmc_mods,
@@ -2185,12 +2104,9 @@ names(all_models) <- c(
 "ramets_late_mods" ,
 "mortality_mods" 
   )
-```
 
-## Create separate lists of best vs. alt models for city_dist vs urb_score
-### LDMC
 
-```{r}
+## ----------------------------------------------
 ## Best
 ### City_dist
 ldmc_mods_best_c <- ldmc_mods[c(1,4)]
@@ -2204,11 +2120,9 @@ ldmc_mods_alt_c <- ldmc_mods[3]
 
 ### Urb_score
 ldmc_mods_alt_u <- ldmc_mods[5]
-```
 
-### SLA
 
-```{r}
+## ----------------------------------------------
 ## Best
 ### City_dist
 sla_mods_best_c <- sla_mods[c(1,4)]
@@ -2222,11 +2136,9 @@ sla_mods_alt_c <- sla_mods[3]
 
 ### Urb_score
 sla_mods_alt_u <- sla_mods[5]
-```
 
-### Heights- Early
 
-```{r}
+## ----------------------------------------------
 ## Best
 ### City_dist
 heights_early_mods_best_c <- heights_early_mods[c(1,4)]
@@ -2240,11 +2152,9 @@ heights_early_mods_alt_c <- heights_early_mods[3]
 
 ### Urb_score
 heights_early_mods_alt_u <- heights_early_mods[5]
-```
 
-### Heights- Late
 
-```{r}
+## ----------------------------------------------
 ## Best
 ### City_dist
 heights_late_mods_best_c <- heights_late_mods[c(1,4)]
@@ -2258,11 +2168,9 @@ heights_late_mods_alt_c <- heights_late_mods[3]
 
 ### Urb_score
 heights_late_mods_alt_u <- heights_late_mods[5]
-```
 
-### Relative growth rate
 
-```{r}
+## ----------------------------------------------
 ## Best
 ### City_dist
 rgr_mods_best_c <- rgr_mods[c(1,4)]
@@ -2276,11 +2184,9 @@ rgr_mods_alt_c <- rgr_mods[3]
 
 ### Urb_score
 rgr_mods_alt_u <- rgr_mods[5]
-```
 
-### Ramets- Early
 
-```{r}
+## ----------------------------------------------
 ## Best
 ### City_dist
 ramets_early_mods_best_c <- ramets_early_mods[c(1,4)]
@@ -2294,11 +2200,9 @@ ramets_early_mods_alt_c <- ramets_early_mods[3]
 
 ### Urb_score
 ramets_early_mods_alt_u <- ramets_early_mods[5]
-```
 
-### Ramets- Late
 
-```{r}
+## ----------------------------------------------
 ## Best
 ### City_dist
 ramets_late_mods_best_c <- ramets_late_mods[c(1,4)]
@@ -2312,11 +2216,9 @@ ramets_late_mods_alt_c <- ramets_late_mods[3]
 
 ### Urb_score
 ramets_late_mods_alt_u <- ramets_late_mods[5]
-```
 
-### Mortality
 
-```{r}
+## ----------------------------------------------
 ## Best
 ### City_dist
 mortality_mods_best_c <- mortality_mods[c(1,3)]
@@ -2330,5 +2232,4 @@ mortality_mods_alt_c <- mortality_mods[4]
 
 ### Urb_score
 mortality_mods_alt_u <- mortality_mods[6]
-```
 

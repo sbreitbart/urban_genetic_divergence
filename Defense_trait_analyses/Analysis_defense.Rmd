@@ -574,6 +574,130 @@ pb_ranova_transects(weev_bin_ranova2_pb,
 
 ```
 
+## Recalculate PVE for non-Gaussian models
+As far as we know, there isn't a solid way to calculate percent variance explained for variables with a non-Gaussian distribution.
+The way that we handled this was to refit our non-Gaussian models (generalized linear mixed models) to general linear mixed models, then extract PVE for the last year of data collection.
+These new PVEs will be estimates. This is *not* a perfect solution but it will help us approximate PVE for these variables.
+### Q1
+```{r}
+# main models
+herb_e_bin_lmer <- lmer(Herbivory_mean_early_binary ~
+                               (1|Block) +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                             data = herbivory %>%
+                               dplyr::filter(Year == 2021),
+                            na.action = na.exclude)
+
+herb_l_bin_lmer <- lmer(Herbivory_mean_late_binary ~
+                               (1|Block) +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                             data = herbivory %>%
+                               dplyr::filter(Year == 2021),
+                            na.action = na.exclude)
+
+weev_bin_lmer <- lmer(Scar_binary ~
+                               (1|Block) +
+                               (1|Population) +
+                               (1|Population:Fam_uniq),
+                             data = weevil %>%
+                               dplyr::filter(Year == 2021),
+                          na.action = na.exclude)
+
+# get PVE from models
+pve_hbfb <- PVE_lm(herb_e_bin_lmer) 
+pve_hafb <- PVE_lm(herb_l_bin_lmer)
+pve_weevb <- PVE_lm(weev_bin_lmer)
+
+pve_hbfb_city <- PVE_lm(update(herb_e_bin_lmer, .~. + City_dist))
+pve_hafb_city <- PVE_lm(update(herb_l_bin_lmer, .~. + City_dist))
+pve_weevb_city <- PVE_lm(update(weev_bin_lmer, .~. + City_dist))
+
+pve_hbfb_urbsc <- PVE_lm(update(herb_e_bin_lmer, .~. + Urb_score))
+pve_hafb_urbsc <- PVE_lm(update(herb_l_bin_lmer, .~. + Urb_score))
+pve_weevb_urbsc <- PVE_lm(update(weev_bin_lmer, .~. + Urb_score))
+
+
+# make tables
+recalc_tab1 <- pve_table_recalc(pve_hbfb, pve_hafb, pve_weevb,
+                 "Herbivory before flowering (binary)",
+                              "Herbivory after flowering (binary)",
+                              "Weevil damage (binary)")
+
+recalc_tab2 <- pve_table_recalc(pve_hbfb_city, pve_hafb_city, pve_weevb_city,
+                 "Herbivory before flowering (binary)",
+                              "Herbivory after flowering (binary)",
+                              "Weevil damage (binary)")
+
+recalc_tab3 <- pve_table_recalc(pve_hbfb_urbsc, pve_hafb_urbsc, pve_weevb_urbsc,
+                 "Herbivory before flowering (binary)",
+                              "Herbivory after flowering (binary)",
+                              "Weevil damage (binary)")
+
+# Export to word
+export_recalc(recalc_tab1,
+              recalc_tab2,
+              recalc_tab3,
+              "./Defense_trait_analyses/Tables/Ranova/PVE_nonGaussmods/PVE_nonGaussmods_defense_Q1.docx")
+
+```
+
+### Q2
+```{r}
+# main models
+herb_e_bin_lmer2 <- update(herb_e_bin_lmer,
+                             data = herbivory %>%
+                               dplyr::filter(Year == 2021 &
+                                            Transect_ID != "Rural"))
+
+herb_l_bin_lmer2 <- update(herb_l_bin_lmer,
+                             data = herbivory %>%
+                               dplyr::filter(Year == 2021 &
+                                            Transect_ID != "Rural"))
+
+weev_bin_lmer2 <- update(weev_bin_lmer,
+                             data = weevil %>%
+                               dplyr::filter(Year == 2021 &
+                                            Transect_ID != "Rural"))
+# get PVE from models
+pve_hbfb2 <- PVE_lm(herb_e_bin_lmer2) 
+pve_hafb2 <- PVE_lm(herb_l_bin_lmer2)
+pve_weevb2 <- PVE_lm(weev_bin_lmer2)
+
+pve_hbfb_city2 <- PVE_lm(update(herb_e_bin_lmer2, .~. + City_dist*Transect_ID))
+pve_hafb_city2 <- PVE_lm(update(herb_l_bin_lmer2, .~. + City_dist*Transect_ID))
+pve_weevb_city2 <- PVE_lm(update(weev_bin_lmer2, .~. + City_dist*Transect_ID))
+
+pve_hbfb_urbsc2 <- PVE_lm(update(herb_e_bin_lmer2, .~. + Urb_score*Transect_ID))
+pve_hafb_urbsc2 <- PVE_lm(update(herb_l_bin_lmer2, .~. + Urb_score*Transect_ID))
+pve_weevb_urbsc2 <- PVE_lm(update(weev_bin_lmer2, .~. + Urb_score*Transect_ID))
+
+
+# make tables
+recalc_tab1_Q2 <- pve_table_recalc(pve_hbfb2, pve_hafb2, pve_weevb2,
+                 "Herbivory before flowering (binary)",
+                              "Herbivory after flowering (binary)",
+                              "Weevil damage (binary)")
+
+recalc_tab2_Q2 <- pve_table_recalc(pve_hbfb_city2, pve_hafb_city2, pve_weevb_city2,
+                 "Herbivory before flowering (binary)",
+                              "Herbivory after flowering (binary)",
+                              "Weevil damage (binary)")
+
+recalc_tab3_Q2 <- pve_table_recalc(pve_hbfb_urbsc2, pve_hafb_urbsc2, pve_weevb_urbsc2,
+                 "Herbivory before flowering (binary)",
+                              "Herbivory after flowering (binary)",
+                              "Weevil damage (binary)")
+
+# Export to word
+export_recalc(recalc_tab1_Q2,
+              recalc_tab2_Q2,
+              recalc_tab3_Q2,
+              "./Defense_trait_analyses/Tables/Ranova/PVE_nonGaussmods/PVE_nonGaussmods_defense_Q2.docx")
+```
+
+
 ## Create figure showing % variance explained per component
 Note: Can only do this for gaussian models for Q1. For models with transect as an effect, I can calculate PVE for models testing effect of distance only- not transect. But since I'm not as interested in that, I won't generate those plots now.
 ```{r}
