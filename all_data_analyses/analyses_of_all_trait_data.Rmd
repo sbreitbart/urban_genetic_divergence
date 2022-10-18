@@ -475,3 +475,612 @@ all_pvalues_Q2_u %<>%
 write.csv(all_pvalues_Q2_u,
           here::here("./All_data_analyses/FDR_p_Q2_urbscore.csv"))
 ```
+
+# Perform binomial expansion test
+## Make trait list for use in all tables
+```{r}
+traits = c(
+  # growth traits 1-9
+  "G1",  "G2",   "G3",   "G4",   "G5",   "G6",   "G7",   "G8",
+  # herbivore community abundances 1-3
+  "H1",   "H2",   "H3",
+  # Defense traits 1-7
+  "D1",  "D2",   "D3",   "D4",   "D5",   "D6",   "D7",
+  # Reproduction traits 1-8
+  "R1",  "R2",   "R3",   "R4",   "R5",   "R6",   "R7",   "R8")
+```
+
+## Q1
+### Table 1
+#### Get data
+```{r}
+# changing all instances of "p<0.001" to 0.001
+
+binom_t1 <- data.frame(
+  
+  trait = traits,
+  
+  p_pop = c(
+      # growth traits
+    0.257,
+    0.189 ,
+    0.3805,
+    0.186,
+    0.429,
+    0.364,
+    0.5,
+    0.5,
+    # Herbivore community
+    0.4765,
+    0.2665,
+    0.1255,
+    # Defense traits
+    0.5,
+    0.3695,
+    0.4955,
+    0.5,
+    0.0165,
+    0.4995,
+    0.5,
+    # Reproductive traits
+    0.5,
+    0.5,
+    0.1345,
+    0.5,
+    0.014,
+    0.5,
+    0.035,
+    0.1805),
+  
+  p_fam = c(
+    # Growth traits
+    0.001,
+    0.009,
+    0.5,
+    0.189,
+    0.001,
+    0.001,
+    0.394,
+    0.5,
+    # Herbivore community
+    0.5,
+    0.5,
+    0.0395,
+    # Defense traits
+    0.49,
+    0.491,
+    0.004,
+    0.5,
+    0.077,
+    0.0305,
+    0.5,
+    # Reproductive traits
+    0.5,
+    0.001,
+    0.37,
+    0.5,
+    0.3025,
+    0.5,
+    0.4965,
+    0.5
+    )
+  )
+
+
+```
+
+#### Perform tests
+##### Population
+```{r}
+t1_pop_succ <- as.numeric(nrow(binom_t1[binom_t1$p_pop <= 0.05, ]))
+t1_pop_trials <- as.numeric(nrow(binom_t1))
+prob_succ <- 0.05 # critical p-value
+
+t1_results_pop <- binom.test(t1_pop_succ, t1_pop_trials, prob_succ, "two.sided")
+
+t1_results_pop$p.value # p-value: 0.1386324
+t1_results_pop$estimate # probability of success: 0.1153846  
+```
+
+##### Family
+```{r}
+t1_fam_succ <- as.numeric(nrow(binom_t1[binom_t1$p_fam <= 0.05, ]))
+t1_fam_trials <- as.numeric(nrow(binom_t1))
+prob_succ <- 0.05 # critical p-value
+
+t1_results_fam <- binom.test(t1_fam_succ, t1_fam_trials, prob_succ, "two.sided")
+
+t1_results_fam$p.value # p-value: 2.703918e-05 
+t1_results_fam$estimate # probability of success: 0.3076923 
+```
+
+### Table 2
+#### Get data
+```{r}
+# changing all instances of "p<0.001" to 0.001
+
+binom_t2 <- data.frame(
+  
+  trait = traits,
+  
+  p_pop = c(
+    # Growth traits
+    0.303,
+    0.205,
+    0.424,
+    0.185,
+    0.485,
+    0.437,
+    0.5,
+    0.5,
+    # Herbivore community
+    0.5,
+    0.2705,
+    0.1295,
+    # Defense traits
+    0.5,
+    0.4355,
+    0.4945,
+    0.5,
+    0.0155,
+    0.5,
+    0.5,
+    # Reproductive traits
+    0.5,
+    0.4765,
+    0.141,
+    0.5,
+    0.0145,
+    0.5,
+    0.035,
+    0.326
+),
+  
+  p_fam = c(
+    # Growth traits
+    0.001,
+    0.0085,
+    0.5,
+    0.1885,
+    0.001,
+    0.001,
+    0.377,
+    0.5,
+    # Herbivore community
+    0.5,
+    0.5,
+    0.038,
+    # Defense traits
+    0.5,
+    0.4545,
+    0.008,
+    0.5,
+    0.076,
+    0.032,
+    0.5,
+    # Reproductive traits
+    0.5,
+    0.001,
+    0.374,
+    0.5,
+    0.3025,
+    0.5,
+    0.5,
+    0.5
+    )
+  )
+```
+
+#### Perform tests
+##### Population
+```{r}
+t2_pop_succ <- as.numeric(nrow(binom_t2[binom_t2$p_pop <= 0.05, ]))
+t2_pop_trials <- as.numeric(nrow(binom_t2))
+prob_succ <- 0.05 # critical p-value
+
+t2_results_pop <- binom.test(t2_pop_succ, t2_pop_trials, prob_succ, "two.sided")
+
+t2_results_pop$p.value # p-value: 0.1386324 
+t2_results_pop$estimate # probability of success: 0.1153846  
+```
+
+##### Family
+```{r}
+t2_fam_succ <- as.numeric(nrow(binom_t2[binom_t2$p_fam <= 0.05, ]))
+t2_fam_trials <- as.numeric(nrow(binom_t2))
+prob_succ <- 0.05 # critical p-value
+
+t2_results_fam <- binom.test(t2_fam_succ, t2_fam_trials, prob_succ, "two.sided")
+
+t2_results_fam$p.value # p-value: 2.703918e-05 
+t2_results_fam$estimate # probability of success: 0.3076923 
+```
+
+### Table 3
+#### Get data
+```{r}
+# changing all instances of "p<0.001" to 0.001
+
+binom_t3 <- data.frame(
+  
+   trait = traits,
+  
+  p_pop = c(
+    # Growth traits
+     0.2485,
+     0.175,
+     0.346,
+     0.1825,
+     0.427,
+     0.368,
+     0.5,
+     0.5,
+     # Herbivore community
+     0.5,
+     0.2745,
+     0.152,
+     # Defense traits
+     0.5,
+     0.3365,
+     0.4865,
+     0.5,
+     0.0415,
+     0.5,
+     0.5,
+     # Reproductive traits
+     0.5,
+     0.5,
+     0.181,
+     0.5,
+     0.015,
+     0.5,
+     0.04,
+     0.403
+),
+  
+  p_fam = c(
+    # Growth traits
+    0.001,
+    0.009,
+    0.5,
+    0.192,
+    0.001,
+    0.001,
+    0.3755,
+    0.5,
+    # Herbivore community
+    0.5,
+    0.5,
+    0.0365,
+    # Defense traits
+    0.5,
+    0.491,
+    0.0085,
+    0.5,
+    0.0835,
+    0.0305,
+    0.5,
+    # Reproductive traits
+    0.5,
+    0.001,
+    0.358,
+    0.5,
+    0.3005,
+    0.5,
+    0.5,
+    0.5
+    )
+  )
+
+```
+
+#### Perform tests
+##### Population
+```{r}
+t3_pop_succ <- as.numeric(nrow(binom_t3[binom_t3$p_pop <= 0.05, ]))
+t3_pop_trials <- as.numeric(nrow(binom_t3))
+prob_succ <- 0.05 # critical p-value
+
+t3_results_pop <- binom.test(t3_pop_succ, t3_pop_trials, prob_succ, "two.sided")
+
+t3_results_pop$p.value # p-value: 0.1386324 
+t3_results_pop$estimate # probability of success: 0.1153846  
+```
+
+##### Family
+```{r}
+t3_fam_succ <- as.numeric(nrow(binom_t3[binom_t3$p_fam <= 0.05, ]))
+t3_fam_trials <- as.numeric(nrow(binom_t3))
+prob_succ <- 0.05 # critical p-value
+
+t3_results_fam <- binom.test(t3_fam_succ, t3_fam_trials, prob_succ, "two.sided")
+
+t3_results_fam$p.value # p-value: 2.703918e-05 
+t3_results_fam$estimate # probability of success: 0.3076923 
+```
+
+## Q2
+### Table 1
+#### Get data
+```{r}
+# changing all instances of "p<0.001" to 0.001
+
+binom_t1 <- data.frame(
+  
+  trait = traits,
+  
+  p_pop = c(
+      # Growth traits
+0.5,
+0.5,
+0.4115,
+0.5,
+0.5,
+0.5,
+0.2435,
+0.5,
+# Herbivore community
+0.5,
+0.5,
+0.4566,
+# Defense traits
+0.5,
+0.5,
+0.4895,
+0.5,
+0.055,
+0.5,
+0.0715,
+# Reproductive traits
+0.5,
+0.5,
+0.1245,
+0.5,
+0.3675,
+0.5,
+0.125,
+0.2745
+),
+  
+  p_fam = c(
+    # Growth traits
+    0.0025,
+0.0035,
+0.459,
+0.0235,
+0.001,
+0.001,
+0.5,
+0.5,
+# Herbivore community
+0.5,
+0.5,
+0.0085,
+# Defense traits
+0.5,
+0.5,
+0.2875,
+0.1495,
+0.04,
+0.049,
+0.029,
+# Reproductive traits
+0.5,
+0.001,
+0.286,
+0.5,
+0.0505,
+0.5,
+0.001,
+0.5
+    )
+  )
+
+
+```
+
+#### Perform tests
+##### Population
+```{r}
+t1_pop_succ <- as.numeric(nrow(binom_t1[binom_t1$p_pop <= 0.05, ]))
+t1_pop_trials <- as.numeric(nrow(binom_t1))
+prob_succ <- 0.05 # critical p-value
+
+t1_results_pop2 <- binom.test(t1_pop_succ, t1_pop_trials, prob_succ, "two.sided")
+
+t1_results_pop2$p.value # p-value: 0.6393936
+t1_results_pop2$estimate # probability of success: 0
+```
+
+##### Family
+```{r}
+t1_fam_succ <- as.numeric(nrow(binom_t1[binom_t1$p_fam <= 0.05, ]))
+t1_fam_trials <- as.numeric(nrow(binom_t1))
+prob_succ <- 0.05 # critical p-value
+
+t1_results_fam2 <- binom.test(t1_fam_succ, t1_fam_trials, prob_succ, "two.sided")
+
+t1_results_fam2$p.value # p-value: 1.86962e-08
+t1_results_fam2$estimate # probability of success: 0.4230769 
+```
+
+### Table 2
+#### Get data
+```{r}
+# changing all instances of "p<0.001" to 0.001
+
+binom_t2 <- data.frame(
+  
+  trait = traits,
+  
+  p_pop = c(
+   # Growth traits
+0.375,
+0.411,
+0.323,
+0.5,
+0.5,
+0.5,
+0.3135,
+0.5,
+# Herbivore community
+0.5,
+0.5,
+0.4385,
+# Defense traits
+0.5,
+0.5,
+0.4885,
+0.5,
+0.239,
+0.5,
+0.1025,
+# Reproductive traits
+0.5,
+0.5,
+0.179,
+0.5,
+0.437,
+0.5,
+0.1675,
+0.5
+
+),
+  
+  p_fam = c(
+    # Growth traits
+0.003,
+0.004,
+0.454,
+0.023,
+0.001,
+0.001,
+0.5,
+0.5,
+# Herbivore community
+0.5,
+0.5,
+0.01,
+# Defense traits
+0.5,
+0.5,
+0.2985,
+0.1945,
+0.036,
+0.053,
+0.027,
+# Reproductive traits
+0.5,
+0.001,
+0.26,
+0.5,
+0.0465,
+0.5,
+0.001,
+0.5
+    )
+  )
+```
+
+#### Perform tests
+##### Population
+```{r}
+t2_pop_succ <- as.numeric(nrow(binom_t2[binom_t2$p_pop <= 0.05, ]))
+t2_pop_trials <- as.numeric(nrow(binom_t2))
+prob_succ <- 0.05 # critical p-value
+
+t2_results_pop2 <- binom.test(t2_pop_succ, t2_pop_trials, prob_succ, "two.sided")
+
+t2_results_pop2$p.value # p-value: 0.6393936
+t2_results_pop2$estimate # probability of success: 0
+```
+
+##### Family
+```{r}
+t2_fam_succ <- as.numeric(nrow(binom_t2[binom_t2$p_fam <= 0.05, ]))
+t2_fam_trials <- as.numeric(nrow(binom_t2))
+prob_succ <- 0.05 # critical p-value
+
+t2_results_fam2 <- binom.test(t2_fam_succ, t2_fam_trials, prob_succ, "two.sided")
+
+t2_results_fam2$p.value # p-value: 1.86962e-08
+t2_results_fam2$estimate # probability of success: 0.4230769 
+```
+
+## Export
+```{r}
+# Q1 results
+binomial_results_q1 <- data.frame(
+  
+  Question = 1,
+  
+  Table = c(1,1,2,2,3,3),
+  
+  Group = c("Population", "Family",
+            "Population", "Family",
+            "Population", "Family"),
+  
+  Probability = c(round(t1_results_pop$estimate, 3),
+                  round(t1_results_fam$estimate, 3),
+                  round(t2_results_pop$estimate, 3),
+                  round(t2_results_fam$estimate, 3),
+                  round(t3_results_pop$estimate, 3),
+                  round(t3_results_fam$estimate, 3)),
+  
+  p = c(round(t1_results_pop$p.value, 3),
+        round(t1_results_fam$p.value, 3),
+        round(t2_results_pop$p.value, 3),
+        round(t2_results_fam$p.value, 3),
+        round(t3_results_pop$p.value, 3),
+        round(t3_results_fam$p.value, 3))
+  
+)
+
+
+# Q2 results
+binomial_results_q2 <- data.frame(
+  
+  Question = 2,
+  
+  Table = c(1,1,2,2),
+  
+  Group = c("Population", "Family",
+            "Population", "Family"),
+  
+  Probability = c(round(t1_results_pop2$estimate, 3),
+                  round(t1_results_fam2$estimate, 3),
+                  round(t2_results_pop2$estimate, 3),
+                  round(t2_results_fam2$estimate, 3)),
+  
+  p = c(round(t1_results_pop2$p.value, 3),
+        round(t1_results_fam2$p.value, 3),
+        round(t2_results_pop2$p.value, 3),
+        round(t2_results_fam2$p.value, 3))
+  
+)
+
+
+# merge tables
+binomial_results <- rbind(binomial_results_q1,
+                          binomial_results_q2)
+
+binomial_results$p[binomial_results$p == 0] <- "<0.001"
+
+write.csv(binomial_results,
+          here::here("./All_data_analyses/binomialtest_results.csv"))
+
+binomial_results %>%
+  flextable() %>%
+  merge_at(., i = 1:6, j = 1, part = "body") %>%
+  merge_at(., i = 7:10, j = 1, part = "body") %>%
+  merge_at(., i = 1:2, j = 2, part = "body") %>%
+  merge_at(., i = 3:4, j = 2, part = "body") %>%
+  merge_at(., i = 5:6, j = 2, part = "body") %>%
+  merge_at(., i = 7:8, j = 2, part = "body") %>%
+  merge_at(., i = 9:10, j = 2, part = "body") %>%
+  theme_box() %>% 
+  align(., j = c(1:2, 4:5), align = "center", part = "all") %>%
+  autofit() %>% 
+  fix_border_issues() %>%
+  save_as_docx(path =  here::here("./All_data_analyses/binomialtest_results.docx"))
+```
