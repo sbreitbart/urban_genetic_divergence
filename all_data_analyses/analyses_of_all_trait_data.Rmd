@@ -1010,9 +1010,21 @@ t2_results_fam2$estimate # probability of success: 0.4230769
 ## Export
 ```{r}
 # Q1 results
+
+q1.t1 <- "Trait ~ (1 | Population/Family) + Block"
+q1.t2 <- "Trait ~ (1 | Population/Family) + Block + Distance to City Center"
+q1.t3 <- "Trait ~ (1 | Population/Family) + Block + Urbanization Score"
+
+q2.t1 <- "Trait ~ (1 | Population/Family) + Block + Distance to City Center*Transect"
+q2.t2 <- "Trait ~ (1 | Population/Family) + Block + Urbanization Score*Transect"
+
 binomial_results_q1 <- data.frame(
   
   Question = 1,
+  
+  Model = c(q1.t1, q1.t1,
+            q1.t2, q1.t2,
+            q1.t3, q1.t3),
   
   Table = c(1,1,2,2,3,3),
   
@@ -1041,6 +1053,9 @@ binomial_results_q1 <- data.frame(
 binomial_results_q2 <- data.frame(
   
   Question = 2,
+  
+  Model = c(q2.t1, q2.t1,
+            q2.t2, q2.t2),
   
   Table = c(1,1,2,2),
   
@@ -1073,14 +1088,20 @@ binomial_results %>%
   flextable() %>%
   merge_at(., i = 1:6, j = 1, part = "body") %>%
   merge_at(., i = 7:10, j = 1, part = "body") %>%
-  merge_at(., i = 1:2, j = 2, part = "body") %>%
+   merge_at(., i = 1:2, j = 2, part = "body") %>%
   merge_at(., i = 3:4, j = 2, part = "body") %>%
   merge_at(., i = 5:6, j = 2, part = "body") %>%
   merge_at(., i = 7:8, j = 2, part = "body") %>%
   merge_at(., i = 9:10, j = 2, part = "body") %>%
+  merge_at(., i = 1:2, j = 3, part = "body") %>%
+  merge_at(., i = 3:4, j = 3, part = "body") %>%
+  merge_at(., i = 5:6, j = 3, part = "body") %>%
+  merge_at(., i = 7:8, j = 3, part = "body") %>%
+  merge_at(., i = 9:10, j = 3, part = "body") %>%
   theme_box() %>% 
-  align(., j = c(1:2, 4:5), align = "center", part = "all") %>%
+  align(., j = c(1, 3, 5:6), align = "center", part = "all") %>%
   autofit() %>% 
+  width(., j = 2, width = 2.5, unit = "in") %>%
   fix_border_issues() %>%
   save_as_docx(path =  here::here("./All_data_analyses/binomialtest_results.docx"))
 ```
