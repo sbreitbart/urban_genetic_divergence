@@ -975,3 +975,129 @@ Calc_percent_change_transects <- function(ggpredict_object){
                PC_noncorrTOcorridor, "%"))
   
 }
+
+
+########################################################
+## Change all models from REML = F to REML = T #########
+########################################################
+
+reml_to_true <- function(mod_list){
+  
+  new_mod_list <- mod_list
+  
+  for (i in 1:length(new_mod_list)) {
+    new_mod_list[[i]] %<>% update(., .~., REML = T)
+  }
+  
+  return(new_mod_list)
+}
+
+########################################################
+### Export r-squared values for list of models #########
+########################################################
+
+make_r2_table <- function(reml_T_modlist) {
+  
+  return(
+    
+    lapply(reml_T_modlist, r.squaredGLMM) %>%
+      as.data.frame()%>%
+      rownames_to_column() %>%
+      dplyr::mutate_at(2:length(.), round, 3) %>%
+      as.data.table() %>%
+      melt(.,
+           measure = patterns("City_gr.R2m",           "Usc_gr.R2m",
+                              "City_urbsubs_best.R2m", "City_urbsubs_alt.R2m",
+                              "Usc_urbsubs_best.R2m",  "Usc_urbsubs_alt.R2m",
+                              "City_gr.R2c",           "Usc_gr.R2c",
+                              "City_urbsubs_best.R2c", "City_urbsubs_alt.R2c",
+                              "Usc_urbsubs_best.R2c",  "Usc_urbsubs_alt.R2c"),
+           value.name = c("Distance_Q1.R2m",      "UrbScore_Q1.R2m",
+                          "Distance_Q2_best.R2m", "Distance_Q2_alt.R2m",
+                          "UrbScore_Q2_best.R2m", "UrbScore_Q2_alt.R2m",
+                          "Distance_Q1.R2c",      "UrbScore_Q1.R2c",
+                          "Distance_Q2_best.R2c", "Distance_Q2_alt.R2c",
+                          "UrbScore_Q2_best.R2c", "UrbScore_Q2_alt.R2c")) %>%
+      as.data.frame() %>%
+      dplyr::select(rowname,
+                    
+                    Distance_Q1.R2m,
+                    Distance_Q1.R2c,
+                    Distance_Q2_best.R2m,
+                    Distance_Q2_best.R2c,
+                    Distance_Q2_alt.R2m,
+                    Distance_Q2_alt.R2c,
+                    
+                    UrbScore_Q1.R2m,
+                    UrbScore_Q1.R2c,
+                    UrbScore_Q2_best.R2m,
+                    UrbScore_Q2_best.R2c,
+                    UrbScore_Q2_alt.R2m,
+                    UrbScore_Q2_alt.R2c) %>%
+      dplyr::rename("Type" = 1) %>%
+      flextable() %>%
+      add_header_row(
+        values = c("",
+                   "Model 1",
+                   "Model 2",
+                   "Model 3",
+                   "Model 4",
+                   "Model 5",
+                   "Model 6"),
+        colwidths = c(1,2,2,2,2,2,2))  %>%
+      add_header_row(
+        values = c("",
+                   "All Populations", "Urban Populations",
+                   "All Populations", "Urban Populations"),
+        colwidths = c(1,2,4,2,4))%>%
+      add_header_row(
+        values = c("",
+                   "Best Models", "Alternative Models",
+                   "Best Models", "Alternative Models"),
+        colwidths = c(1,4,2,4,2)) %>%
+      add_header_row(
+        values = c("",
+                   "Distance to City Center", "Urbanization Score"),
+        colwidths = c(1,6,6)) %>%
+      theme_box() %>%
+      align(align = "center",
+            part = "all") %>%
+      flextable::compose(part = "header",
+                         j = c(2,4,6,8,10,12), i = 5,
+                         value = as_paragraph("R", as_sup("2"), "m")
+      ) %>%
+      flextable::compose(part = "header",
+                         j = c(3,5,7,9,11,13), i = 5,
+                         value = as_paragraph("R", as_sup("2"), "c")
+      ) %>%
+      autofit() %>%
+      width(j = 1, width = 1, unit = "in")
+  ) 
+  
+}
+
+export_r2 <- function(table1, table2, table3,
+                      tab1_var, tab2_var, tab3_var,
+                      filepath){
+  
+  word_export <- read_docx()
+  
+  body_add_par(word_export, value = paste("R-squared estimates for", tab1_var, "Models"), style = "heading 1")
+  body_add_par(word_export, value = "")
+  body_add_flextable(word_export, table1)
+  
+  body_add_break(word_export)
+  
+  body_add_par(word_export, value = paste("R-squared estimates for", tab2_var, "Models"), style = "heading 1")
+  body_add_par(word_export, value = "")
+  body_add_flextable(word_export, table2)
+  
+  body_add_break(word_export)
+  
+  body_add_par(word_export, value = paste("R-squared estimates for", tab3_var, "Models"), style = "heading 1")
+  body_add_par(word_export, value = "")
+  body_add_flextable(word_export, table3)
+  
+  word_export <- body_end_section_landscape(word_export)
+  print(word_export, here::here(filepath))
+}

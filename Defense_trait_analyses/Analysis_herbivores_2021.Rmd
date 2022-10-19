@@ -1,22 +1,3 @@
----
-title: "KSR 2021 Herbivore Analysis"
-author: "Sophie Breitbart"
-output:
-  html_document:
-    number_sections: true
-    df_print: paged
-    toc: yes
-    toc_depth: 6
-    toc_float:
-      collapsed: yes
-  pdf_document:
-    toc: yes
-    toc_depth: '4'
-editor_options: 
-  chunk_output_type: console
----
-
-*Background information:*
 
 * Herbivore surveys were done twice: Once in July, once in August.
 * The species observed are in the column names. The only species with two columns was the Monarch butterfly:
@@ -26,17 +7,6 @@ editor_options:
 * Environmental variables are as follows:
     + To quantify urbanization, both distance from the city center and urbanization score were used, separately.
     + Transect was also used as a variable when analyzing the urban sites ONLY (i.e. excluding rural sites).
-
-
-**Questions:**
-
-* To what extent is urbanization associated with genetic divergence in phenotypic traits among subpopulations?
-* Is proximity to urban corridors related to the levels of genetic divergence among urban subpopulations?
-
-
-WHEN TOTALLY DONE, type this:
-renv::activate()
-renv::snapshot()
 
 # Set up notebook
 ## Load libraries & functions
@@ -590,10 +560,37 @@ make_all_anovas_tidy_altmods(clivicollis_mods_alt_u) %>%
 
 # R-sq values
 ```{r}
-all_rsq <- lapply(all_models, lapply, r.squaredGLMM) %>%
+# change REML to T
+monarch_mods_reml_T <- reml_to_true(monarch_mods)
+asclepiadis_mods_reml_T <- reml_to_true(asclepiadis_mods)
+clivicollis_mods_reml_T <- reml_to_true(clivicollis_mods)
+
+all_models_reml_T <- list(
+monarch_mods_reml_T          , 
+asclepiadis_mods_reml_T           , 
+clivicollis_mods_reml_T)
+
+names(all_models_reml_T) <- c(
+"monarch_mods"          ,
+"asclepiadis_mods"           ,
+"clivicollis_mods"         )
+
+# export to csv
+all_rsq <- lapply(all_models_reml_T, lapply, r.squaredGLMM) %>%
   unlist(recursive = FALSE) %T>%
   write.csv(here::here("./Defense_trait_analyses/Tables/Rsquare_herbivores.csv"))
 
+
+# export as nice tables in word doc
+mon_r2 <- make_r2_table(monarch_mods_reml_T)
+ascl_r2 <- make_r2_table(asclepiadis_mods_reml_T)
+clivi_r2 <- make_r2_table(clivicollis_mods_reml_T)
+
+export_r2(mon_r2, ascl_r2, clivi_r2, 
+          "Danaus plexippus",
+          "Liriomyza asclepiadis", 
+          "Labidomera clivicollis",
+          "./Defense_trait_analyses/Tables/R2_herbivores.docx")
 ```
 
 # Calculate heritability & Qst
