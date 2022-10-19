@@ -1143,7 +1143,7 @@ herb_e_bin_r2      ,
 herb_e_quant_r2,
           "Latex",
           "Herbivory before flowering (binary)", 
-          "Herbivory before flowering (quantitative",
+          "Herbivory before flowering (quantitative)",
           "./Defense_trait_analyses/Tables/R2_Defense1.docx")
 
 # table 2
