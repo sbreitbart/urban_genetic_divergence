@@ -1303,11 +1303,88 @@ make_all_anovas_tidy_altmods(mortality_mods_alt_u) %>%
 ```
 
 # R-squared values
-
 ```{r}
-all_rsq <- lapply(all_models, lapply, r.squaredGLMM) %>%
+# change REML to T
+ldmc_mods_reml_T      <- reml_to_true(ldmc_mods)
+sla_mods_reml_T       <- reml_to_true(sla_mods)
+heights_e_mods_reml_T <- reml_to_true(heights_early_mods)
+heights_l_mods_reml_T <- reml_to_true(heights_late_mods)
+rgr_mods_reml_T       <- reml_to_true(rgr_mods)
+ramets_e_mods_reml_T  <- reml_to_true(ramets_early_mods)
+ramets_l_mods_reml_T  <- reml_to_true(ramets_late_mods)
+mortality_mods_reml_T <- reml_to_true(mortality_mods)
+
+all_models_reml_T <- list(
+ldmc_mods_reml_T      ,
+sla_mods_reml_T       ,
+heights_e_mods_reml_T ,
+heights_l_mods_reml_T ,
+rgr_mods_reml_T       ,
+ramets_e_mods_reml_T  ,
+ramets_l_mods_reml_T  ,
+mortality_mods_reml_T )
+
+names(all_models_reml_T) <- c(
+"ldmc_mods"      ,
+"sla_mods"       ,
+"heights_e_mods" ,
+"heights_l_mods" ,
+"rgr_mods"       ,
+"ramets_e_mods"  ,
+"ramets_l_mods"  ,
+"mortality_mods" )
+
+# export to csv
+all_rsq <- lapply(all_models_reml_T, lapply, r.squaredGLMM) %>%
   unlist(recursive = FALSE) %T>%
   write.csv(here::here("./Growth_trait_analyses/Tables/Rsquare.csv"))
+
+
+
+# export as nice tables in word doc
+ldmc_r2      <- make_r2_table( ldmc_mods_reml_T    ) 
+sla_r2       <- make_r2_table(sla_mods_reml_T      ) 
+heights_e_r2 <- make_r2_table(heights_e_mods_reml_T) 
+heights_l_r2 <- make_r2_table( heights_l_mods_reml_T) 
+rgr_r2       <- make_r2_table(rgr_mods_reml_T      ) 
+ramets_e_r2  <- make_r2_table(ramets_e_mods_reml_T) 
+ramets_l_r2  <- make_r2_table( ramets_l_mods_reml_T ) 
+morality_r2  <- make_r2_table( mortality_mods_reml_T) 
+
+# will do this in 3 docs b/c function accepts 3 tables at a time (something to try tweaking in the future)
+# table 1
+export_r2(ldmc_r2    , 
+sla_r2      ,
+heights_e_r2,
+          "LDMC",
+          "SLA", 
+          "Height before flowering",
+          "./Growth_trait_analyses/Tables/R2_growth1.docx")
+# table 2
+export_r2(
+heights_l_r2,
+rgr_r2      ,
+ramets_e_r2 ,
+          "Height after flowering",
+          "Relative growth rate", 
+          "Ramets before flowering",
+          "./Growth_trait_analyses/Tables/R2_growth2.docx")
+
+# table 3: will just use code from function
+  word_export <- read_docx()
+  
+  body_add_par(word_export, value = paste("R-squared estimates for",  "Ramets, after flowering", "Models"), style = "heading 1")
+  body_add_par(word_export, value = "")
+  body_add_flextable(word_export, ramets_l_r2)
+  
+  body_add_break(word_export)
+  
+  body_add_par(word_export, value = paste("R-squared estimates for",  "Mortality", "Models"), style = "heading 1")
+  body_add_par(word_export, value = "")
+  body_add_flextable(word_export, morality_r2)
+  
+  word_export <- body_end_section_landscape(word_export)
+  print(word_export, here::here("./Growth_trait_analyses/Tables/R2_growth3.docx"))
 ```
 
 # Calculate heritability, Qst, and CVA
