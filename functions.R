@@ -149,6 +149,21 @@ make_all_anovas_tidy_altmods <- function(anova_list){
   )
 }
 
+
+# export all anovas into word doc
+export_anovas <- function(anova_list, filepath){
+  
+  my_doc <- read_docx()
+  for(i in seq_along(anova_list)){
+    my_doc <- body_add_flextable(my_doc,
+                                 anova_list[[i]]) %>% 
+      body_add_break() 
+  }
+  print(my_doc,
+        target = here::here(filepath)) %>% 
+    invisible()
+}
+
 ############################################################
 ########## Do linear regression on multiple models #########
 ############# (for cardenolide analysis)####################

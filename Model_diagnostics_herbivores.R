@@ -1,9 +1,9 @@
-## --------------------------------------------------
+## ----------------------------------------------
 source("libraries.R")
 source("functions.R")
 
 
-## --------------------------------------------------
+## ----------------------------------------------
 herbivores_all <- read.csv(here::here("./Joined_annual_data/herbivores.csv")) %>%
   dplyr::select(., -1) %>%
   dplyr::mutate_at(vars(c("Population",
@@ -34,14 +34,14 @@ herbivores_all <- read.csv(here::here("./Joined_annual_data/herbivores.csv")) %>
 str(herbivores_all)
 
 
-## --------------------------------------------------
+## ----------------------------------------------
 # filter out herbivores not surveyed in 2021
 # Herbivores surveyed in 2020-2021: Monarchs, L. asclepiadis, L. clivicollis
 herbivores <- herbivores_all %>%
   dplyr::select(c(1:7, 10, 13, 19, 22:Surveyor))
 
 
-## --------------------------------------------------
+## ----------------------------------------------
 monarch_gr_city_m1 <- glmmTMB(Monarch_Quantity_Observed ~
                                 Block +
                                 (1|Population/Family) +
@@ -56,7 +56,7 @@ monarch_gr_city_m1 <- glmmTMB(Monarch_Quantity_Observed ~
 # car::Anova(monarch_gr_city_m1)
 
 
-## --------------------------------------------------
+## ----------------------------------------------
 monarch_gr_usc_m1 <- glmmTMB(Monarch_Quantity_Observed ~
                                 Block +
                                 (1|Population/Family) +
@@ -70,7 +70,7 @@ monarch_gr_usc_m1 <- glmmTMB(Monarch_Quantity_Observed ~
 # performance::check_model(monarch_gr_usc_m1) # looks fine
 
 
-## --------------------------------------------------
+## ----------------------------------------------
 # Full model
 monarch_urbsubs_city_m1 <- glmmTMB(Monarch_Quantity_Observed ~
                                 Block +
@@ -104,7 +104,7 @@ monarch_urbsubs_city_m2 <- glmmTMB(Monarch_Quantity_Observed ~
 #     monarch_urbsubs_city_m2) # m2 better but <2 AIC apart
 
 
-## --------------------------------------------------
+## ----------------------------------------------
 # Full model
 monarch_urbsubs_usc_m1 <- glmmTMB(Monarch_Quantity_Observed ~
                                 Block +
@@ -137,7 +137,7 @@ monarch_urbsubs_usc_m2 <- glmmTMB(Monarch_Quantity_Observed ~
 #     monarch_urbsubs_usc_m2) # m2 better but <2 AIC apart
 
 
-## --------------------------------------------------
+## ----------------------------------------------
 asclepiadis_gr_city_m1 <- glmmTMB(Liriomyza_asclepiadis ~
                                 Block +
                                 (1|Population/Family) +
@@ -152,7 +152,7 @@ asclepiadis_gr_city_m1 <- glmmTMB(Liriomyza_asclepiadis ~
 
 
 
-## --------------------------------------------------
+## ----------------------------------------------
 asclepiadis_gr_usc_m1 <- glmmTMB(Liriomyza_asclepiadis ~
                                 Block +
                                 (1|Population/Family) +
@@ -167,7 +167,7 @@ asclepiadis_gr_usc_m1 <- glmmTMB(Liriomyza_asclepiadis ~
 
 
 
-## --------------------------------------------------
+## ----------------------------------------------
 # Full model
 asclepiadis_urbsubs_city_m1 <- glmmTMB(Liriomyza_asclepiadis ~
                                 Block +
@@ -200,7 +200,7 @@ asclepiadis_urbsubs_city_m2 <- glmmTMB(Liriomyza_asclepiadis ~
 #     asclepiadis_urbsubs_city_m2) # m2 better but <2 AIC apart
 
 
-## --------------------------------------------------
+## ----------------------------------------------
 # Full model
 asclepiadis_urbsubs_usc_m1 <- glmmTMB(Liriomyza_asclepiadis ~
                                 Block +
@@ -233,7 +233,7 @@ asclepiadis_urbsubs_usc_m2 <- glmmTMB(Liriomyza_asclepiadis ~
 #     asclepiadis_urbsubs_usc_m2) # m2 better but <2 AIC apart
 
 
-## --------------------------------------------------
+## ----------------------------------------------
 clivicollis_gr_city_m1 <- glmmTMB(Labidomera_clivicollis ~
                                 Block +
                                 (1|Population/Family) +
@@ -248,7 +248,7 @@ clivicollis_gr_city_m1 <- glmmTMB(Labidomera_clivicollis ~
 # performance::check_model(clivicollis_gr_city_m1)
 
 
-## --------------------------------------------------
+## ----------------------------------------------
 clivicollis_gr_usc_m1 <- glmmTMB(Labidomera_clivicollis ~
                                 Block +
                                 (1|Population/Family) +
@@ -264,7 +264,7 @@ clivicollis_gr_usc_m1 <- glmmTMB(Labidomera_clivicollis ~
 
 
 
-## --------------------------------------------------
+## ----------------------------------------------
 # Full model
 clivicollis_urbsubs_city_m1 <- glmmTMB(Labidomera_clivicollis ~
                                 Block +
@@ -299,7 +299,7 @@ AIC(clivicollis_urbsubs_city_m1,
     clivicollis_urbsubs_city_m2) # m1 better but <2 AIC apart
 
 
-## --------------------------------------------------
+## ----------------------------------------------
 # Full model
 clivicollis_urbsubs_usc_m1 <- glmmTMB(Labidomera_clivicollis ~
                                 Block +
@@ -333,7 +333,7 @@ clivicollis_urbsubs_usc_m2 <- glmmTMB(Labidomera_clivicollis ~
 #     clivicollis_urbsubs_usc_m2) # m2 better but <2 AIC apart
 
 
-## --------------------------------------------------
+## ----------------------------------------------
 monarch_mods <- list(
 
 ## City_dist / gradient
@@ -360,7 +360,7 @@ names(monarch_mods) <- c("City_gr",
                      "Usc_urbsubs_best")
 
 
-## --------------------------------------------------
+## ----------------------------------------------
 asclepiadis_mods <- list(
 
 ## City_dist / gradient
@@ -387,7 +387,7 @@ names(asclepiadis_mods) <- c("City_gr",
                      "Usc_urbsubs_best")
 
 
-## --------------------------------------------------
+## ----------------------------------------------
 clivicollis_mods <- list(
 
 ## City_dist / gradient

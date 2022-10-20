@@ -558,6 +558,57 @@ make_all_anovas_tidy_altmods(clivicollis_mods_alt_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Herbivores/Alt_models/clivicollis_urbscore_alt.png"))
 ```
 
+## Export all best / alt models in separate word docs
+### Distance / best
+```{r}
+all_models_best_c <- list(
+monarch_mods_best_c      , 
+asclepiadis_mods_best_c     , 
+clivicollis_mods_best_c       )
+
+
+anovas_best_c <- lapply(all_models_best_c, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_best_c, "./Defense_trait_analyses/Figures/ANOVA/Herbivores/Best_models/all_anova_herbivores_best_distance.docx")
+```
+
+### Distance / alt
+```{r}
+all_models_alt_c <- list(
+monarch_mods_alt_c      , 
+asclepiadis_mods_alt_c     , 
+clivicollis_mods_alt_c      )
+
+anovas_alt_c <- lapply(all_models_alt_c, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_alt_c, "./Defense_trait_analyses/Figures/ANOVA/Herbivores/Alt_models/all_anova_herbivores_alt_distance.docx")
+```
+
+### UrbScore / best
+```{r}
+all_models_best_u <- list(
+monarch_mods_best_u      ,
+asclepiadis_mods_best_u     , 
+clivicollis_mods_best_u     ) 
+
+anovas_best_u <- lapply(all_models_best_u, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_best_u, "./Defense_trait_analyses/Figures/ANOVA/Herbivores/Best_models/all_anova_herbivores_best_urbscore.docx")
+```
+
+### UrbScore / alt
+```{r}
+all_models_alt_u <- list(
+monarch_mods_alt_u      , 
+asclepiadis_mods_alt_u     , 
+clivicollis_mods_alt_u        ) 
+
+anovas_alt_u <- lapply(all_models_alt_u, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_alt_u, "./Defense_trait_analyses/Figures/ANOVA/Herbivores/Alt_models/all_anova_herbivores_alt_urbscore.docx")
+
+```
+
 # R-sq values
 ```{r}
 # change REML to T
