@@ -1,46 +1,3 @@
----
-title: "Defense Trait Analysis"
-author: "Sophie Breitbart"
-output:
-  html_document:
-    number_sections: true
-    df_print: paged
-    toc: yes
-    toc_depth: 6
-    toc_float:
-      collapsed: yes
-  pdf_document:
-    toc: yes
-    toc_depth: '2'
-editor_options: 
-  chunk_output_type: console
-NOTES:
-  -Still to do--
-    -try to do an RDA (or PCA?) with all the traits
-    -make a ReadMe file for each level
-    -calculate heritability coefficients
-
-# WHEN TOTALLY DONE, type this:
-# renv::activate()
-# renv::snapshot()
----
-
-+-----------------------------+-----------+-----------+-----------+
-| Trait                       | 2019 Data | 2020 Data | 2021 Data |
-+=============================+:=========:+:=========:+:=========:+
-| Herbivory: Before flowering |           | X         | X         |
-+-----------------------------+-----------+-----------+-----------+
-| Herbivory: After flowering  | X         | X         | X         |
-+-----------------------------+-----------+-----------+-----------+
-| Weevil damage: Quantitative |           | X         | X         |
-+-----------------------------+-----------+-----------+-----------+
-| Weevil damage: Binary       |           | X         | X         |
-+-----------------------------+-----------+-----------+-----------+
-| Cardenolide Concentration   |           | X         |           |
-+-----------------------------+-----------+-----------+-----------+
-| Latex Volume                |           | X         |           |
-+-----------------------------+-----------+-----------+-----------+
-
 # Set up notebook
 ## Load libraries and add functions
 
@@ -947,6 +904,75 @@ make_all_anovas_tidy_altmods(weev_quant_mods_alt_u) %>%
   save_as_image(., path = here::here("./Defense_trait_analyses/Figures/ANOVA/Alt_models/weev_quant_urbscore_alt.png"))
 ```
 
+
+## Export all best / alt models in separate word docs
+### Distance / best
+```{r}
+all_models_best_c <- list(
+latex_mods_best_c,
+herb_e_bin_mods_best_c,
+herb_e_quant_mods_best_c,
+herb_l_bin_mods_best_c,
+herb_l_quant_mods_best_c,
+weev_bin_mods_best_c,
+weev_quant_mods_best_c   )
+
+
+anovas_best_c <- lapply(all_models_best_c, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_best_c, "./Defense_trait_analyses/Figures/ANOVA/Best_models/all_anova_Defense_best_distance.docx")
+```
+
+### Distance / alt
+```{r}
+all_models_alt_c <- list(
+latex_mods_alt_c,
+# herb_e_bin_mods_alt_c, # NONE
+herb_e_quant_mods_alt_c,
+herb_l_bin_mods_alt_c,
+herb_l_quant_mods_alt_c,
+weev_bin_mods_alt_c,
+weev_quant_mods_alt_c)
+
+anovas_alt_c <- lapply(all_models_alt_c, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_alt_c, "./Defense_trait_analyses/Figures/ANOVA/Alt_models/all_anova_Defense_alt_distance.docx")
+```
+
+### UrbScore / best
+```{r}
+all_models_best_u <- list(
+latex_mods_best_u,
+herb_e_bin_mods_best_u,
+herb_e_quant_mods_best_u,
+herb_l_bin_mods_best_u,
+herb_l_quant_mods_best_u,
+weev_bin_mods_best_u,
+weev_quant_mods_best_u,
+mortality_mods_best_u    )
+
+anovas_best_u <- lapply(all_models_best_u, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_best_u, "./Defense_trait_analyses/Figures/ANOVA/Best_models/all_anova_Defense_best_urbscore.docx")
+```
+
+### UrbScore / alt
+```{r}
+all_models_alt_u <- list(
+# latex_mods_alt_u, # NONE
+herb_e_bin_mods_alt_u,
+herb_e_quant_mods_alt_u,
+herb_l_bin_mods_alt_u,
+herb_l_quant_mods_alt_u,
+weev_bin_mods_alt_u,
+weev_quant_mods_alt_u,
+mortality_mods_alt_u    )
+
+anovas_alt_u <- lapply(all_models_alt_u, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_alt_u, "./Defense_trait_analyses/Figures/ANOVA/Alt_models/all_anova_Defense_alt_urbscore.docx")
+
+```
 
 # R-squared values
 ```{r}
