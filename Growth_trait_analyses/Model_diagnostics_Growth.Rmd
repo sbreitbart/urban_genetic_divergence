@@ -791,7 +791,7 @@ rgr_urbsubs_usc_m2 <- glmmTMB(rel_growth_rate^(1/3) ~
 # AIC(rgr_urbsubs_usc_m1, rgr_urbsubs_usc_m2) # m2 best but <2 AIC from m2
 
 
-# test for gxe intxns
+# # test for gxe intxns
 # gxe_test_rgr4 <- glmmTMB(rel_growth_rate^(1/3) ~
 #                              Urb_score*Block +
 #                              (1|Population/Family) +
@@ -803,12 +803,33 @@ rgr_urbsubs_usc_m2 <- glmmTMB(rel_growth_rate^(1/3) ~
 # test_gxe(rgr_urbsubs_usc_m1, gxe_test_rgr4) # gxe mod best
 # car::Anova(rgr_urbsubs_usc_m1, type = "III") # shows urb_score*block intxn is sig (p = 0.035)
 # car::Anova(gxe_test_rgr4, type = "III")
-r.squaredGLMM(rgr_urbsubs_usc_m1)
-r.squaredGLMM(gxe_test_rgr4)
-# have to do this w/lmer, not glmmtmb
-effectsize::eta_squared(gxe_test_rgr4, partial = FALSE)
-effectsize::eta_squared(rgr_urbsubs_usc_m1, partial = FALSE)
-VarCorr(gxe_test_rgr4)
+# 
+# # compare ranovas
+# # have to use lmer instead of glmmtmb- ranova can't use glmmtmb- otherwise identical models
+# # GxE MOD
+# ranova(lmer(rel_growth_rate^(1/3) ~
+#                              Urb_score*Block +
+#                         #     Year +
+#                              (1|Population/Family) +
+#                              Urb_score*Transect_ID,
+#                          data = heights %>%
+#                           dplyr::filter(Transect_ID != "Rural" & Year == "2021"),
+#                          REML = F))
+# # p(Population) = 0.9111; p(Family) = 1
+# 
+# # REG MOD
+# ranova(lmer(rel_growth_rate^(1/3) ~
+#                                  Block +
+#                         #         Year +
+#                                  (1|Population/Family) +
+#                                  Urb_score * Transect_ID,
+#                         data = heights %>%
+#                           dplyr::filter(Transect_ID != "Rural" & Year == "2021"),
+#                          REML = F))
+# # p(Population) = 0.9819; p(Family) = 1
+# #
+# # p-values for both mods qualitatively identical, so I'll keep using regular model. Results identical when year is added.
+
 ```
 
 ## Ramets
@@ -831,29 +852,99 @@ ramets_e_gr_city_m1 <- glmmTMB(Ramets_early ~
 # car::Anova(ramets_e_gr_city_m1)
 
 
-# test for gxe intxns
-gxe_test_ramets_e <- glmmTMB(Ramets_early ~
-                                 Year +
-                                 (1|Population/Family) +
-                                 City_dist*Block,
-                        data = heights,
-                        family = poisson,
-                        REML = F)
+# # test for gxe intxns
+# gxe_test_ramets_e <- glmmTMB(Ramets_early ~
+#                                  Year +
+#                                  (1|Population/Family) +
+#                                  City_dist*Block,
+#                         data = heights,
+#                         family = poisson,
+#                         REML = F)
+# 
+# test_gxe(ramets_e_gr_city_m1, gxe_test_ramets_e) # gxe mod better
+# car::Anova(gxe_test_ramets_e, type = "III") # block*city_dist  sig at p = 0.0412
+# car::Anova(ramets_e_gr_city_m1, type = "III")
 
-test_gxe(ramets_e_gr_city_m1, gxe_test_ramets_e) # gxe mod better
-car::Anova(gxe_test_ramets_e, type = "III") # block*city_dist  sig at p = 0.0412
-car::Anova(ramets_e_gr_city_m1, type = "III")
-
-aov_car(Ramets_early ~
-                                 Year +
-                                 (1|Population/Family) +
-                                 City_dist*Block,
-                        data = heights,
-                        family = poisson,
-                        REML = F)
-
-summary(gxe_test_ramets_e)
-
+# compare ranovas
+# have to use lmer instead of glmmtmb- ranova can't use glmmtmb- otherwise identical models
+# # GxE MOD-----
+# #   test family
+# #     large mod
+# lgmod1 <- glmer(Ramets_early ~
+#               #    Year +
+#                   (1|Population) +
+#                   (1|Population:Fam_uniq) +
+#                   City_dist*Block,
+#                 data = heights %>%
+#                 dplyr::filter(Year == "2021"),
+#                 family = poisson,
+#                 nAGQ = 0) # won't converge w/o this
+# 
+# #     small mod 1
+# smmod1 <- glmer(Ramets_early ~
+#               #    Year +
+#                   (1|Population) +
+#                   City_dist*Block,
+#                 data = heights %>%
+#                 dplyr::filter(Year == "2021"),
+#                 family = poisson,
+#                 nAGQ = 0)
+# 
+# PBmodcomp(lgmod1, smmod1, seed = 45, nsim = 10) # p << 0.001
+# 
+# # test pop
+# #     small mod 2
+# smmod2 <- glmer(Ramets_early ~
+#               #    Year +
+#                   (1|Population:Fam_uniq) +
+#                   City_dist*Block,
+#                 data = heights %>%
+#                 dplyr::filter(Year == "2021"),
+#                 family = poisson,
+#                 nAGQ = 0)
+# 
+# PBmodcomp(lgmod1, smmod2, seed = 45, nsim = 10) # p = 0.8846
+# 
+# 
+# # REG MOD-----
+# #   test family
+# #     large mod
+# lgmod1.reg <- glmer(Ramets_early ~
+#               #    Year +
+#                   (1|Population) +
+#                   (1|Population:Fam_uniq) +
+#                   City_dist + Block,
+#                 data = heights %>%
+#                 dplyr::filter(Year == "2021"),
+#                 family = poisson,
+#                 nAGQ = 0) # won't converge w/o this
+# 
+# #     small mod 1
+# smmod1.reg <- glmer(Ramets_early ~
+#               #    Year +
+#                   (1|Population) +
+#                   City_dist + Block,
+#                 data = heights %>%
+#                 dplyr::filter(Year == "2021"),
+#                 family = poisson,
+#                 nAGQ = 0)
+# 
+# PBmodcomp(lgmod1.reg, smmod1.reg, seed = 45, nsim = 10) # p << 0.001
+# 
+# # test pop
+# #     small mod 2
+# smmod2.reg <- glmer(Ramets_early ~
+#              #     Year +
+#                   (1|Population:Fam_uniq) +
+#                   City_dist + Block,
+#                 data = heights %>%
+#                 dplyr::filter(Year == "2021"),
+#                 family = poisson,
+#                 nAGQ = 0)
+# 
+# PBmodcomp(lgmod1.reg, smmod2.reg, seed = 45, nsim = 10) # p = 0.9344
+# # mod comparison-----
+# # qualitatively identical so I'll keep using regular model. Results identical when year is added.
 ```
 
 ##### Urb_score
@@ -1804,20 +1895,115 @@ surv_urbsubs_usc_m2_all <- glmmTMB(Dead ~
 
 
 # # test for gxe intxns
-gxe_test_mort4 <- glmmTMB(Dead ~
-                           Year +
-                                 (1|Population/Family) +
-                                 Urb_score*Block +
-                            Urb_score*Transect_ID,
-
-                          data = survival %>%
-                          dplyr::filter( Transect_ID != "Rural"),
-                          family = binomial,
-                        REML = F)
-
-test_gxe(surv_urbsubs_usc_m1_all, gxe_test_mort4) # stat equiv
-car::Anova(gxe_test_mort4, type = "III") # city*block marg sig
-car::Anova(surv_urbsubs_usc_m1_all, type = "III")
+# gxe_test_mort4 <- glmmTMB(Dead ~
+#                            Year +
+#                                  (1|Population/Family) +
+#                                  Urb_score*Block +
+#                             Urb_score*Transect_ID,
+# 
+#                           data = survival %>%
+#                           dplyr::filter( Transect_ID != "Rural"),
+#                           family = binomial,
+#                         REML = F)
+# 
+# test_gxe(surv_urbsubs_usc_m1_all, gxe_test_mort4) # stat equiv
+# car::Anova(gxe_test_mort4, type = "III") # city*block marg sig
+# car::Anova(surv_urbsubs_usc_m1_all, type = "III")
+# 
+# 
+# # compare ranovas
+# GxE MOD-----
+#   test family
+# #     large mod
+# lgmod1 <- glmer(Dead ~
+#                  # Year +
+#                   (1|Population) +
+#                   (1|Population:Fam_uniq) +
+#                   Urb_score*Block +
+#                             Urb_score*Transect_ID,
+#                 data = survival %>%
+#                           dplyr::filter( Transect_ID != "Rural" & Year == "2022"),
+#                 family = binomial,
+#                   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))) # won't converge w/o this
+# 
+# 
+# #     small mod 1
+# smmod1 <- glmer(Dead ~
+#                 #  Year +
+#                   (1|Population) +
+#                   Urb_score*Block+
+#                             Urb_score*Transect_ID,
+#                 data = survival %>%
+#                           dplyr::filter( Transect_ID != "Rural" & Year == "2022"),
+#                 family = binomial,
+#                   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5))) # won't converge w/o this
+# 
+# PBmodcomp(lgmod1, smmod1, seed = 45, nsim = 10) # p = 0.03827
+# 
+# # test pop
+# #     small mod 2
+# smmod2 <- glmer(Dead ~
+#                #   Year +
+#                   (1|Population:Fam_uniq) +
+#                   Urb_score*Block+
+#                             Urb_score*Transect_ID,
+#                 data = survival %>%
+#                           dplyr::filter( Transect_ID != "Rural" & Year == "2022"),
+#                 family = binomial,
+#                   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# PBmodcomp(lgmod1, smmod2, seed = 45, nsim = 10) # p = 0.9999
+# 
+# 
+# # REG MOD-----
+# #   test family
+# #     large mod
+# lgmod1.reg <- glmer(Dead ~
+#                #   Year +
+#                   (1|Population) +
+#                   (1|Population:Fam_uniq) +
+#                   Urb_score + Block+
+#                             Urb_score*Transect_ID,
+#                 data = survival %>%
+#                           dplyr::filter( Transect_ID != "Rural" & Year == "2022"),
+#                 family = binomial,
+#                   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# #     small mod 1
+# smmod1.reg <- glmer(Dead ~
+#              #     Year +
+#                   (1|Population) +
+#                   Urb_score + Block+
+#                             Urb_score*Transect_ID,
+#                 data = survival %>%
+#                           dplyr::filter( Transect_ID != "Rural" & Year == "2022"),
+#                 family = binomial,
+#                   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# PBmodcomp(lgmod1.reg, smmod1.reg, seed = 45, nsim = 10) # p = 0.04645
+# 
+# # test pop
+# #     small mod 2
+# smmod2.reg <- glmer(Dead ~
+#               #    Year +
+#                   (1|Population:Fam_uniq) +
+#                   Urb_score + Block+
+#                             Urb_score*Transect_ID,
+#                 data = survival %>%
+#                           dplyr::filter( Transect_ID != "Rural" & Year == "2022"),
+#                 family = binomial,
+#                   control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# PBmodcomp(lgmod1.reg, smmod2.reg, seed = 45, nsim = 10) # p = 1
+# 
+# # mod comparison-----
+# # qualitatively identical so I'll keep using regular model.  Results identical when year is added. 
 ```
 
 ### Cox proportional hazards regressions

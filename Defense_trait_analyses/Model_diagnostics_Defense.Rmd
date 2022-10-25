@@ -1203,6 +1203,34 @@ weev_urbsubs_usc_m2_quant <- glmmTMB(log(Scar_length_cm) ~
 # test_gxe(weev_urbsubs_usc_m1_quant, gxetest_weev_quant4) # statistically equivalent
 # car::Anova(weev_urbsubs_usc_m1_quant, type = "III")
 # car::Anova(gxetest_weev_quant4, type = "III") # this has marg sig effect of block:urb_score at p = 0.0554; otherwise identical
+# 
+# 
+# # compare ranovas
+# # have to use lmer instead of glmmtmb- ranova can't use glmmtmb- otherwise identical models
+# # GxE MOD
+# ranova(lmer(log(Scar_length_cm) ~
+#                                Block*Urb_score +
+#                          #      Year +
+#                                (1|Population/Family) +
+#                                Urb_score * Transect_ID,
+#                               data = weevil %>%
+#                         dplyr::filter(
+#                           Scar_length_cm > 0 & Transect_ID != "Rural" & Year == "2021"),
+#                                REML = F))
+# # p(Population) = 0.4505. p(Family) = 0.0575.
+# 
+# # REG MOD
+# ranova( lmer(log(Scar_length_cm) ~
+#                                         Block +
+#                                  #       Year +
+#                                         (1|Population/Family) +
+#                                         Urb_score * Transect_ID,
+#                               data = weevil %>%
+#                                 dplyr::filter(Scar_length_cm > 0 & Transect_ID != "Rural"& Year == "2021"),
+#                                REML = F))
+# # p(Population) = 0.42821. p(Family) = 0.05169.
+# #
+# # p-values for both mods nearly identical, so I'll keep using regular model. This is also true when year is added.
 ```
 
 # Models for use in analysis
