@@ -511,7 +511,8 @@ anova(mod1_u)
 # 
 # This is done by using the p.uni="adjusted" argument in the anova function. The “adjusted” part of the argument refers to the resampling method used to compute the p values, taking into account the correlation between the response variables. This correlation is often found in ecological systems where different species will interact with each other, competing with or facilitating each others’ resource use.
 
-anova_blup_u <- anova(mod1_u, p.uni = "adjusted") %T>%
+anova_blup_u <- anova(mod1_u,
+                      p.uni = "adjusted") %T>%
   print()
 
 # Analysis of Variance Table
@@ -573,24 +574,104 @@ anova_blup_u <- anova(mod1_u, p.uni = "adjusted") %T>%
 
 
 # use urb_score as habitat descriptor
-anova_blup2_u <- manylm(mvab_all_u ~ City_dist,
+anova_blup2_u <- manylm(mvab_all_u ~ Urb_score,
                data = all_traits_u) %>%
   anova() %T>%
   print()
 
 # Analysis of Variance Table
 # 
-# Model: manylm(formula = mvab_all_u ~ City_dist, data = all_traits_u)
+# Model: manylm(formula = mvab_all_u ~ Urb_score, data = all_traits_u)
 # 
 # Overall test for all response variables
 # Test statistics:
 #             Res.Df Df.diff val(F) Pr(>F)
 # (Intercept)     47                      
-# City_dist       46       1  17.69  0.495
+# Urb_score       46       1  5.971  0.988
 # Arguments:
 #  Test statistics calculated assuming uncorrelated response (for faster computation) 
 #  P-value calculated using 999 iterations via residual (without replacement) resampling.
 
 # Still no effect of urbanization on herbivore abundance.
+```
+
+
+### Export
+#### Create function to export anovas
+```{r}
+anova_blup_table <- function(anova_blup){
+  
+  return(
+    
+    anova_blup$table %>%
+  as.matrix() %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column() %>%
+  dplyr::rename("Urbanization" = 1,
+                "df" = 2,
+                "diff(df)" = 3,
+                "F" = 4,
+                "p" = 5) %>%
+  dplyr::mutate_at(c(4,5), round, 3)
+    
+  )
+  
+}
+
+```
+
+#### City_dist models
+```{r}
+tab1 <- anova_blup_table(anova_blup) %>%
+  dplyr::mutate("Urbanization" = ifelse(row_number() == 2,
+                           "Urban/Rural (Distance)",
+                           "Intercept")) 
+
+tab2 <- anova_blup_table(anova_blup2) %>%
+    dplyr::mutate("Urbanization" = ifelse(row_number() == 2,
+                           "Distance to City Center",
+                           "Intercept")) 
+
+
+city_tables <- rbind(tab1, tab2) %>%
+  flextable() %>%
+  hline(i = 2 ) %>%
+  autofit() 
+
+```
+
+#### Urbanization score models
+```{r}
+
+tab1u <- anova_blup_table(anova_blup_u) %>%
+  dplyr::mutate("Urbanization" = ifelse(row_number() == 2,
+                           "Urban/Rural (Urb. Score)",
+                           "Intercept")) 
+
+tab2u <- anova_blup_table(anova_blup2_u) %>%
+    dplyr::mutate("Urbanization" = ifelse(row_number() == 2,
+                           "Urbanization Score",
+                           "Intercept")) 
+
+
+urb_sc_tables <- rbind(tab1u, tab2u) %>%
+  flextable() %>%
+  hline(i = 2 ) %>%
+  autofit() 
+
+```
+
+### Export all anovas in one table
+```{r}
+word_export <- read_docx()
+  
+  body_add_flextable(word_export, city_tables)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_flextable(word_export, urb_sc_tables)
+
+  print(word_export, here::here("./All_data_analyses/mvabund_anovas.docx"))
 ```
 
