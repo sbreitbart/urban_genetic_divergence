@@ -1116,3 +1116,27 @@ export_r2 <- function(table1, table2, table3,
   word_export <- body_end_section_landscape(word_export)
   print(word_export, here::here(filepath))
 }
+
+
+########################################################
+### Generate BLUP df from linear mixed model #########
+########################################################
+
+create_BLUP <- function(linear_mixed_mod){
+  ranef(
+    linear_mixed_mod
+  )$cond$Population %>%
+    tibble::rownames_to_column("Population") %>%
+    dplyr::rename(estimate = 2) %>%
+    left_join(., pop_vars %>% # add city_dist and other variables
+                dplyr::select(c(Population,
+                                Transect_ID,
+                                City_dist,
+                                Urb_score)
+                ) %>%
+                dplyr::group_by(Population) %>%
+                dplyr::summarise(Population  = first(Population),
+                                 Transect_ID = first(Transect_ID),
+                                 City_dist   = first(City_dist),
+                                 Urb_score   = first(Urb_score)))
+}

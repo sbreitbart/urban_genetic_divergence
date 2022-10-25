@@ -94,6 +94,7 @@ mortality_mods_best_u
 
 ## Cardenolides (part of defense, technically)
 ```{r}
+# open viewport for this!!
 # ONLY FOR Q1
 source(knitr::purl("Defense_trait_analyses/Analysis_cardenolides.Rmd", quiet=TRUE))
 
@@ -357,10 +358,6 @@ all_pvalues_Q1 %<>%
 write.csv(all_pvalues_Q1,
           here::here("./All_data_analyses/FDR_p_Q1.csv"))
 
-## just experimenting with gt's new ability to export to word tables. Great!
-# gt(all_pvalues_Q1) %>%
-#   gtsave("tab_1.docx")
-
 ```
 
 
@@ -400,8 +397,6 @@ all_pvalues_Q1_u %<>%
 write.csv(all_pvalues_Q1_u,
           here::here("./All_data_analyses/FDR_p_Q1_urbscore.csv"))
 ```
-
-
 
 ## Q2
 ### City_dist
@@ -474,6 +469,35 @@ all_pvalues_Q2_u %<>%
 # Export new p-values
 write.csv(all_pvalues_Q2_u,
           here::here("./All_data_analyses/FDR_p_Q2_urbscore.csv"))
+```
+
+## Export: basic
+```{r}
+
+ word_export <- read_docx()
+  
+  body_add_par(word_export, value = "All populations & Urbanization = Distance from City Center")
+  body_add_flextable(word_export, flextable(all_pvalues_Q1))
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "All populations & Urbanization = Urbanization Score")
+  body_add_flextable(word_export, flextable(all_pvalues_Q1_u))
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Urban populations & Urbanization = Distance from City Center")
+  body_add_flextable(word_export, flextable(all_pvalues_Q2))
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "Urban populations & Urbanization = Urbanization Score")
+  body_add_flextable(word_export, flextable(all_pvalues_Q2_u))
+
+  print(word_export, here::here("./All_data_analyses/FDR_p_all.docx"))
 ```
 
 # Perform binomial expansion test

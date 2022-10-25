@@ -2123,12 +2123,27 @@ names(flsize_mods) <- c("City_gr",
 
 ## Flowering time
 ```{r}
+fltime_mods <- list(
+## City_dist / gradient
+fl_time_gr_city1 ,
+## Urbanization score / gradient
+fl_time_gr_usc1 ,
+## City_dist / urban subtransects
+fl_time_urbsubs_city1,   # Qualitatively identical model (<2 AIC away)
+fl_time_urbsubs_city1_ME, # Best model
+## Urbanization score  / urban subtransects
+# fl_time_urbsubs_usc1, 
+fl_time_urbsubs_usc1_ME  # Best model
+)
+
+
 names(fltime_mods) <- c("City_gr",
                      "Usc_gr",
                      "City_urbsubs_alt",
                      "City_urbsubs_best",
                      # "Usc_urbsubs_alt",
                      "Usc_urbsubs_best")
+
 ```
 
 ## Flowering start

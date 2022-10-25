@@ -128,6 +128,16 @@
         "Rcpp"
       ]
     },
+    "RcppGSL": {
+      "Package": "RcppGSL",
+      "Version": "0.3.11",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "af9a4cf1669ff630aa4c5d2aa32c9732",
+      "Requirements": [
+        "Rcpp"
+      ]
+    },
     "SparseM": {
       "Package": "SparseM",
       "Version": "1.81",
@@ -563,18 +573,6 @@
         "tibble",
         "tidyselect",
         "vctrs"
-      ]
-    },
-    "effectsize": {
-      "Package": "effectsize",
-      "Version": "0.4.5",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "477cc3ae7a73b31f349f56ffe201a54e",
-      "Requirements": [
-        "bayestestR",
-        "insight",
-        "parameters"
       ]
     },
     "ellipsis": {
@@ -1027,6 +1025,17 @@
       "Hash": "f36bf1a849d9106dc2af72e501f9de41",
       "Requirements": []
     },
+    "librarian": {
+      "Package": "librarian",
+      "Version": "1.8.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "f3013b21e11f4acea0978aad656746aa",
+      "Requirements": [
+        "BiocManager",
+        "remotes"
+      ]
+    },
     "lifecycle": {
       "Package": "lifecycle",
       "Version": "1.0.0",
@@ -1161,6 +1170,20 @@
         "colorspace"
       ]
     },
+    "mvabund": {
+      "Package": "mvabund",
+      "Version": "4.2.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "5ecc462da7ceee1c9d2215ac553a5cb7",
+      "Requirements": [
+        "MASS",
+        "Rcpp",
+        "RcppGSL",
+        "statmod",
+        "tweedie"
+      ]
+    },
     "nlme": {
       "Package": "nlme",
       "Version": "3.1-152",
@@ -1228,17 +1251,6 @@
         "Rcpp",
         "stringi",
         "zip"
-      ]
-    },
-    "parameters": {
-      "Package": "parameters",
-      "Version": "0.14.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "21bb82d262bc2d27cb1cba7ac2ce2ecc",
-      "Requirements": [
-        "bayestestR",
-        "insight"
       ]
     },
     "pbkrtest": {
@@ -1670,6 +1682,14 @@
         "lattice"
       ]
     },
+    "statmod": {
+      "Package": "statmod",
+      "Version": "1.4.37",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "2bbd31c2903890c6ef3204470ecfe63b",
+      "Requirements": []
+    },
     "stringi": {
       "Package": "stringi",
       "Version": "1.7.4",
@@ -1806,6 +1826,14 @@
       "Requirements": [
         "xfun"
       ]
+    },
+    "tweedie": {
+      "Package": "tweedie",
+      "Version": "2.3.5",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "517d541554d2e9c392f9a67f42c8b842",
+      "Requirements": []
     },
     "tzdb": {
       "Package": "tzdb",

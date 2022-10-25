@@ -1,29 +1,22 @@
-# Set up notebook
-## Load libraries and add functions
-
-```{r}
+## ----------------------------------------------
 source("libraries.R")
 source("functions.R")
-```
 
-## Import data
-```{r}
+
+## ----------------------------------------------
 # cardenolides per population (pooled)
 cards <-  read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_cardenolides_clean.csv")) %>%
   dplyr::select(., -1) 
-```
 
-# Diagnostics + anova
-## Get names of response variables
-```{r}
+
+## ----------------------------------------------
 cards_vars <- cards %>%
   dplyr::select(3,5,7,10) %>%
   names() %>%
   as.list()
-```
 
-## Predictor: City_dist
-```{r}
+
+## ----------------------------------------------
 city_dist_list <- lapply(cards_vars,
        DoLinearReg,
        predictor_var = "City_dist",
@@ -38,37 +31,32 @@ city_dist_list2 <- lapply(cards_vars,
        input_data = cards %>% dplyr::filter(Transect_ID != "Rural"))
 names(city_dist_list2) <- cards_vars
 # looks fine
-```
 
-## Investigate non-normal-looking models
-```{r}
+
+## ----------------------------------------------
 # DoLinearReg("X17.6_main", "City_dist", cards)
 # DoLinearReg("log(X17.6_main)", "City_dist", cards)
 # car::Anova(lm(log(X17.6_main) ~ City_dist, cards)) # still isn't near p = 0.05 so maybe not worth worrying about
-```
 
-## Predictor: Urb_score
-```{r}
+
+## ----------------------------------------------
 urb_score_list <- lapply(cards_vars,
        DoLinearReg,
        predictor_var = "Urb_score",
        input_data = cards)
 names(urb_score_list) <- cards_vars
 # Num 3 doesn't look normal... try transformation. Looks bimodal
-```
 
-## Investigate non-normal-looking models
-```{r}
+
+## ----------------------------------------------
 # DoLinearReg("X17.6_main", "Urb_score", cards)
 # DoLinearReg("log(X17.6_main)", "Urb_score", cards) # looks better
 # car::Anova(lm(log(X17.6_main) ~ Urb_score, cards))
 
 urb_score_list[[3]] <- DoLinearReg("log(X17.6_main)", "Urb_score", cards)
-```
 
-# R-squared values
-## City_dist
-```{r}
+
+## ----------------------------------------------
 # # 6.6
 # city_dist_list[[1]][[1]] %>%
 #   performance::model_performance() %>%
@@ -92,10 +80,9 @@ urb_score_list[[3]] <- DoLinearReg("log(X17.6_main)", "Urb_score", cards)
 #   performance::model_performance() %>%
 #   as.data.frame() %>%
 #   dplyr::select(c(3:4))
-```
 
-## Urb_score
-```{r}
+
+## ----------------------------------------------
 # # 6.6
 # urb_score_list[[1]][[1]] %>%
 #   performance::model_performance() %>%
@@ -119,11 +106,9 @@ urb_score_list[[3]] <- DoLinearReg("log(X17.6_main)", "Urb_score", cards)
 #   performance::model_performance() %>%
 #   as.data.frame() %>%
 #   dplyr::select(c(3:4))
-```
 
 
-# Estimated marginal means
-```{r}
+## ----------------------------------------------
 # total cards
 m1 <- lm(total ~ City_dist, cards)
 summary(m1)
@@ -144,10 +129,9 @@ summary(m2)
 #### percent_change <- ((urb_mean - rur_mean) / rur_mean) * 100
 percent_change <- (((0.2619764 - 0.1563576) / 0.1563576) * 100) %T>%
   print()
-```
 
-# Heritability- not possible b/c no families within pops?
-```{r}
+
+## ----------------------------------------------
 # 6.6
 mod_66 <- lm(X6.6_main ~ City_dist,
              data = cards,
@@ -163,5 +147,4 @@ resid_var <- update(
 Calc_h2_qst(1.4560e-04,
          1.5085e-05,
          resid_var)
-```
 
