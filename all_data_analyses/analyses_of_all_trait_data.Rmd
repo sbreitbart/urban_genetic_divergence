@@ -540,12 +540,12 @@ binom_t1 <- data.frame(
     0.1255,
     # Defense traits
     0.5,
-    0.3695,
+    0.5,
     0.4955,
     0.5,
     0.0165,
     0.4995,
-    0.5,
+    0.136,
     # Reproductive traits
     0.5,
     0.5,
@@ -572,12 +572,12 @@ binom_t1 <- data.frame(
     0.0395,
     # Defense traits
     0.49,
-    0.491,
-    0.004,
     0.5,
+    0.004,
+    0.2605,
     0.077,
     0.0305,
-    0.5,
+    0.138,
     # Reproductive traits
     0.5,
     0.001,
@@ -643,12 +643,12 @@ binom_t2 <- data.frame(
     0.1295,
     # Defense traits
     0.5,
-    0.4355,
+    0.5,
     0.4945,
     0.5,
     0.0155,
     0.5,
-    0.5,
+    0.1335,
     # Reproductive traits
     0.5,
     0.4765,
@@ -676,12 +676,12 @@ binom_t2 <- data.frame(
     0.038,
     # Defense traits
     0.5,
-    0.4545,
-    0.008,
     0.5,
+    0.008,
+    0.241,
     0.076,
     0.032,
-    0.5,
+    0.153,
     # Reproductive traits
     0.5,
     0.001,
@@ -745,12 +745,12 @@ binom_t3 <- data.frame(
      0.152,
      # Defense traits
      0.5,
-     0.3365,
+     0.5,
      0.4865,
      0.5,
      0.0415,
      0.5,
-     0.5,
+     0.119,
      # Reproductive traits
      0.5,
      0.5,
@@ -778,12 +778,12 @@ binom_t3 <- data.frame(
     0.0365,
     # Defense traits
     0.5,
-    0.491,
-    0.0085,
     0.5,
+    0.0085,
+    0.244,
     0.0835,
     0.0305,
-    0.5,
+    0.1475,
     # Reproductive traits
     0.5,
     0.001,

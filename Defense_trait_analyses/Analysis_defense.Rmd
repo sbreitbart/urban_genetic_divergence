@@ -76,7 +76,7 @@ herbiv_e_quant_ranova_mod2 <- lmer(log(Herbivory_mean_early) ~
 performance::check_model(herbiv_e_quant_ranova_mod2)
 
 # export
-ranova_2step(herbiv_e_quant_ranova_mod1,
+ranova_2step(herbiv_e_quant_ranova_mod2,
              "Herbivory before flowering, quantitative: 2021",
              "./Defense_trait_analyses/Tables/Ranova/herbivory_early_quant_2021.docx")
 
@@ -113,7 +113,7 @@ herbiv_l_quant_ranova_mod2 <- lmer(log(Herbivory_mean_late) ~
 performance::check_model(herbiv_l_quant_ranova_mod2)
 
 # export
-ranova_2step(herbiv_l_quant_ranova_mod1,
+ranova_2step(herbiv_l_quant_ranova_mod2,
              "Herbivory after flowering, quantitative: 2021",
              "./Defense_trait_analyses/Tables/Ranova/herbivory_late_quant_2021.docx")
 
@@ -152,7 +152,7 @@ weev_quant_ranova_mod2 <- lmer(log(Scar_length_cm) ~
 performance::check_model(weev_quant_ranova_mod2)
 
 # export
-ranova_2step(weev_quant_ranova_mod1,
+ranova_2step(weev_quant_ranova_mod2,
              "Weevil damage, quantitative: 2021",
              "./Defense_trait_analyses/Tables/Ranova/weevil_quant_2021.docx")
 
@@ -973,6 +973,314 @@ anovas_alt_u <- lapply(all_models_alt_u, make_all_anovas_tidy_altmods)
 export_anovas(anovas_alt_u, "./Defense_trait_analyses/Figures/ANOVA/Alt_models/all_anova_Defense_alt_urbscore.docx")
 
 ```
+
+## Export comparisons of anovas w/1 vs. all years
+### Q1
+```{r}
+# latex-----
+# only one year of data for this. Compared anovas in "./Defense_trait_analyses/Tables/Ranova/nsim_10/latex.docx" and "./Defense_trait_analyses/Figures/ANOVA/Best_models/all_anova_Defense_best_distance.docx" and "...urbscore.docx" and they're nearly identical- differences probably due to glmer vs. glmmTMB
+
+# herbivory before flowering (binary)-----
+compare_anovas(
+  update(herb_e_bin_mods_best_c[[1]], .~. - City_dist),
+  herbivory,
+  "2021",
+  "Herbivory before flowering (binary)",
+  "./Defense_trait_analyses/Tables/Comparing_ANOVA/herbivory_early_binary.docx")
+
+# herbivory before flowering (quantitative)-----
+## doing this and other quant mods manually b/c I need to filter the dataset to exclude zeroes
+
+var_name <- "Herbivory before flowering (quantitative)"
+filepath <- "./Defense_trait_analyses/Tables/Comparing_ANOVA/herbivory_early_quant.docx"
+last_year <- "2021"
+
+  # city_dist
+  anov1.d <- tidy_anova(herb_e_quant_mods_best_c[[1]]) %>%
+    make_flxtable(., var_name)
+  
+  
+  mod_1yr_dist <- update(herb_e_quant_mods_best_c[[1]],
+                    .~. - Year,
+                    data = herbivory %>%
+                        dplyr::filter(
+                          Herbivory_mean_early_binary == 1 &
+                            Year == last_year))
+  
+  anov2.d <- tidy_anova(mod_1yr_dist) %>%
+    make_flxtable(., var_name)
+  
+  
+  # urb_score
+  mod_allyrs_usc <- update(herb_e_quant_mods_best_c[[1]], .~. + Urb_score - City_dist)
+  
+  anov1.u <- tidy_anova(mod_allyrs_usc) %>%
+    make_flxtable(., var_name)
+  
+  
+  mod_1yr_usc <- update(mod_allyrs_usc,
+                    .~. - Year,
+                     data = herbivory %>%
+                        dplyr::filter(
+                          Herbivory_mean_early_binary == 1 &
+                            Year == last_year))
+  
+  anov2.u <- tidy_anova(mod_1yr_usc) %>%
+    make_flxtable(., var_name)
+  
+  
+  # Export
+  word_export <- read_docx()
+  
+  body_add_par(word_export, "Urbanization = Distance to City Center",
+               style = "heading 1")
+  
+  body_add_par(word_export, value = "ANOVA with all years of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(herb_e_quant_mods_best_c[[1]])),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov1.d)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "ANOVA with one year of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_1yr_dist)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov2.d)
+  
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "") 
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, "Urbanization = Urbanization Score",
+               style = "heading 1")
+  
+  body_add_par(word_export, value = "ANOVA with all years of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_allyrs_usc)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov1.u)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "ANOVA with one year of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_1yr_usc)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov2.u)
+  
+  print(word_export, here::here(filepath))
+
+rm(var_name, filepath, last_year,anov1.d, mod_1yr_dist, anov2.d, mod_allyrs_usc, anov1.u, mod_1yr_usc, anov2.u)
+
+# herbivory after flowering (binary)-----
+compare_anovas(
+  update(herb_l_bin_mods_best_c[[1]], .~. - City_dist),
+  herbivory,
+  "2021",
+  "Herbivory after flowering (binary)",
+  "./Defense_trait_analyses/Tables/Comparing_ANOVA/herbivory_late_binary.docx")
+
+# herbivory after flowering (quantitative)-----
+
+var_name <- "Herbivory after flowering (quantitative)"
+filepath <- "./Defense_trait_analyses/Tables/Comparing_ANOVA/herbivory_late_quant.docx"
+last_year <- "2021"
+
+  # city_dist
+  anov1.d <- tidy_anova(herb_l_quant_mods_best_c[[1]]) %>%
+    make_flxtable(., var_name)
+  
+  
+  mod_1yr_dist <- update(herb_l_quant_mods_best_c[[1]],
+                    .~. - Year,
+                    data = herbivory %>%
+                        dplyr::filter(
+                          Herbivory_mean_late_binary == 1 &
+                            Year == last_year))
+  
+  anov2.d <- tidy_anova(mod_1yr_dist) %>%
+    make_flxtable(., var_name)
+  
+  
+  # urb_score
+  mod_allyrs_usc <- update(herb_l_quant_mods_best_c[[1]], .~. + Urb_score - City_dist)
+  
+  anov1.u <- tidy_anova(mod_allyrs_usc) %>%
+    make_flxtable(., var_name)
+  
+  
+  mod_1yr_usc <- update(mod_allyrs_usc,
+                    .~. - Year,
+                     data = herbivory %>%
+                        dplyr::filter(
+                          Herbivory_mean_late_binary == 1 &
+                            Year == last_year))
+  
+  anov2.u <- tidy_anova(mod_1yr_usc) %>%
+    make_flxtable(., var_name)
+  
+  
+  # Export
+  word_export <- read_docx()
+  
+  body_add_par(word_export, "Urbanization = Distance to City Center",
+               style = "heading 1")
+  
+  body_add_par(word_export, value = "ANOVA with all years of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(herb_l_quant_mods_best_c[[1]])),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov1.d)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "ANOVA with one year of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_1yr_dist)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov2.d)
+  
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "") 
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, "Urbanization = Urbanization Score",
+               style = "heading 1")
+  
+  body_add_par(word_export, value = "ANOVA with all years of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_allyrs_usc)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov1.u)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "ANOVA with one year of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_1yr_usc)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov2.u)
+  
+  print(word_export, here::here(filepath))
+
+rm(var_name, filepath, last_year,anov1.d, mod_1yr_dist, anov2.d, mod_allyrs_usc, anov1.u, mod_1yr_usc, anov2.u)
+
+
+# weevil damage (binary)-----
+compare_anovas(
+  update(weev_bin_mods_best_c[[1]], .~. - City_dist),
+  weevil,
+  "2021",
+  "Weevil damage (binary)",
+  "./Defense_trait_analyses/Tables/Comparing_ANOVA/Weevil_damage_binary.docx")
+
+# weevil damage (quantitative)-----
+
+var_name <- "Weevil damage (quantitative)"
+filepath <- "./Defense_trait_analyses/Tables/Comparing_ANOVA/Weevil_damage_quant.docx"
+last_year <- "2021"
+
+  # city_dist
+  anov1.d <- tidy_anova(weev_quant_mods_best_c[[1]]) %>%
+    make_flxtable(., var_name)
+  
+  
+  mod_1yr_dist <- update(weev_quant_mods_best_c[[1]],
+                    .~. - Year,
+                    data = weevil %>%
+                        dplyr::filter(
+                          Scar_length_cm > 0 &
+                            Year == last_year))
+  
+  anov2.d <- tidy_anova(mod_1yr_dist) %>%
+    make_flxtable(., var_name)
+  
+  
+  # urb_score
+  mod_allyrs_usc <- update(weev_quant_mods_best_c[[1]], .~. + Urb_score - City_dist)
+  
+  anov1.u <- tidy_anova(mod_allyrs_usc) %>%
+    make_flxtable(., var_name)
+  
+  
+  mod_1yr_usc <- update(mod_allyrs_usc,
+                    .~. - Year,
+                     data = weevil %>%
+                        dplyr::filter(
+                          Scar_length_cm > 0 &
+                            Year == last_year))
+  
+  anov2.u <- tidy_anova(mod_1yr_usc) %>%
+    make_flxtable(., var_name)
+  
+  
+  # Export
+  word_export <- read_docx()
+  
+  body_add_par(word_export, "Urbanization = Distance to City Center",
+               style = "heading 1")
+  
+  body_add_par(word_export, value = "ANOVA with all years of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(weev_quant_mods_best_c[[1]])),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov1.d)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "ANOVA with one year of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_1yr_dist)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov2.d)
+  
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "") 
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, "Urbanization = Urbanization Score",
+               style = "heading 1")
+  
+  body_add_par(word_export, value = "ANOVA with all years of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_allyrs_usc)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov1.u)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "ANOVA with one year of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_1yr_usc)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov2.u)
+  
+  print(word_export, here::here(filepath))
+
+rm(var_name, filepath, last_year,anov1.d, mod_1yr_dist, anov2.d, mod_allyrs_usc, anov1.u, mod_1yr_usc, anov2.u)
+
+
+```
+
+### Q2
+```{r}
+
+```
+
 
 # R-squared values
 ```{r}

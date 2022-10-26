@@ -749,6 +749,114 @@ export_recalc <- function(table1, table2, table3, filepath){
   print(word_export, here::here(filepath))
 }
 
+
+############################################################
+## compare anovas from ranovas (1 year) w/initial anovas
+## (all years)
+############################################################
+make_flxtable <- function(tidy_anova_obj, var_name){
+  
+  return(
+    tidy_anova_obj  %>%
+      dplyr::rename(Variable = 1) %>%
+      dplyr::mutate(Variable = var_name) %>%
+      dplyr::select(-Sites) %>%
+      flextable() %>%
+      merge_v(j = "Variable") %>% 
+      flextable::compose(i = 1, j = 3, part = "header",
+                         value = as_paragraph("χ", as_sup("2"))) %>%
+      bold(i = ~ p <= 0.05, j = 4) %>%
+      autofit()
+    
+  )
+}
+
+compare_anovas <- function(mod_allyrs_nourban, 
+                           mod_allyrs_df,
+                           last_year,
+                           var_name,
+                           filepath){
+  
+  # city_dist
+  mod_allyrs_dist <- update(mod_allyrs_nourban, .~. + City_dist)
+  
+  anov1.d <- tidy_anova(mod_allyrs_dist) %>%
+    make_flxtable(., var_name)
+  
+  
+  mod_1yr_dist <- update(mod_allyrs_dist,
+                    .~. - Year,
+                    data = mod_allyrs_df %>%
+                      dplyr::filter(Year == last_year))
+  
+  anov2.d <- tidy_anova(mod_1yr_dist) %>%
+    make_flxtable(., var_name)
+  
+  
+  # urb_score
+  mod_allyrs_usc <- update(mod_allyrs_nourban, .~. + Urb_score)
+  
+  anov1.u <- tidy_anova(mod_allyrs_usc) %>%
+    make_flxtable(., var_name)
+  
+  
+  mod_1yr_usc <- update(mod_allyrs_usc,
+                    .~. - Year,
+                    data = mod_allyrs_df %>%
+                      dplyr::filter(Year == last_year))
+  
+  anov2.u <- tidy_anova(mod_1yr_usc) %>%
+    make_flxtable(., var_name)
+  
+  
+  # Export
+  word_export <- read_docx()
+  
+  body_add_par(word_export, "Urbanization = Distance to City Center",
+               style = "heading 1")
+  
+  body_add_par(word_export, value = "ANOVA with all years of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_allyrs_dist)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov1.d)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "ANOVA with one year of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_1yr_dist)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov2.d)
+  
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "") 
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, "Urbanization = Urbanization Score",
+               style = "heading 1")
+  
+  body_add_par(word_export, value = "ANOVA with all years of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_allyrs_usc)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov1.u)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "ANOVA with one year of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_1yr_usc)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov2.u)
+  
+  print(word_export, here::here(filepath))
+}
+
 ############################################################
 ##################### HERITABILITY & QST ###################
 ############################################################
