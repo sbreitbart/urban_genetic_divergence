@@ -21,45 +21,13 @@ set.seed(45)
 ### Gradient
 ```{r}
 # LDMC-------
-# even after I remove populations with only 1 family, it's still singular
-# But when I remove FAMILY, it isn't singular! Makes sense b/c
-# there's no variance among families as per the summary
 ldmc_ranova_mod1 <- lmer((LDMC)^(1/3) ~
                            (1|Population/Family) ,
                              data = sla_ldmc %>%
-                               dplyr::filter(LDMC < 0.7 &
-                                               Population != "23" &
-                                               Population != "26" &
-                                               Population != "32" &
-                                               Population != "45"),
+                               dplyr::filter(LDMC < 0.7),
                            REML = T)
 
-summary(ldmc_ranova_mod1) # this shows variance among families and populations nearly 0; on the order of 1x10^-6 or plain 0.
-summary(sla_ldmc$LDMC)
-ranova(ldmc_ranova_mod1)
-# shows very little variance among fams and pops too w/glmmtmb
-summary(glmmTMB(LDMC ~
-                  (1|Population/Family) +
-                  Block,
-                data = sla_ldmc %>%
-                  dplyr::filter(LDMC < 0.7 &
-                                  Population != "23" &
-                                  Population != "26" &
-                                  Population != "32" &
-                                  Population != "45"),
-                           REML = T))
-
-# find fams w/1 replicate
-ldmc_sum <- sla_ldmc %>%
-  dplyr::filter(is.na(LDMC) ==F) %>%
-  dplyr::group_by(Population, Family) %>%
-  dplyr::summarise(reps = n()) %T>%
-  view()
-ldmc_sum2 <- sla_sum %>%
-  dplyr::group_by(Population) %>%
-  dplyr::summarise(reps = n())
-
-# check diagnostics and transform if necessary
+# Check diagnostics and transform if necessary
 performance::check_model(ldmc_ranova_mod1)
 
 # export
@@ -69,32 +37,12 @@ ranova_2step(ldmc_ranova_mod1,
 
 
 # SLA-----
-# this is even singular untransformed and w/only SLA ~ (1|Pop)
-# but it's NOT singular w/glmmTMB!
 sla_ranova_mod1 <- lmer(SLA^(1/3) ~
                           (1|Population/Family) +
                           Block,
                         data = sla_ldmc %>%
-                          dplyr::filter(is.na(SLA) == F &
-                                               Population != "23" &
-                                               Population != "26" &
-                                               Population != "32" &
-                                               Population != "45"),
+                          dplyr::filter(is.na(SLA) == F),
                         REML = T)
-
-summary(sla_ldmc)
-plot(sla_ldmc$SLA)
-summary(sla_ranova_mod1) # this shows variance among families and populations is 0
-
-# find fams w/1 replicate
-sla_sum <- sla_ldmc %>%
-  dplyr::filter(is.na(SLA) ==F) %>%
-  dplyr::group_by(Population, Family) %>%
-  dplyr::summarise(reps = n()) %T>%
-  view()
-sla_sum2 <- sla_sum %>%
-  dplyr::group_by(Population) %>%
-  dplyr::summarise(reps = n())
 
 # check diagnostics and transform if necessary
 performance::check_model(sla_ranova_mod1)
@@ -1366,6 +1314,69 @@ anovas_alt_u <- lapply(all_models_alt_u, make_all_anovas_tidy_altmods)
 export_anovas(anovas_alt_u, "./Growth_trait_analyses/Figures/ANOVA/Alt_models/all_anova_growth_alt_urbscore.docx")
 
 ```
+
+## Export comparisons of anovas w/1 vs. all years
+### Q1
+```{r}
+# LDMC & SLA-----
+# only one year of data for this. Compared anovas in "./Growth_trait_analyses/Tables/Ranova/nsim_10/LDMC.docx" and "./Growth_trait_analyses/Tables/Ranova/nsim_10/SLA.docx" and "./Growth_trait_analyses/Figures/ANOVA/Best_models/all_anova_Growth_best_distance.docx" and "...urbscore.docx" and they're qualitatively identical (very similar too)
+
+# height before flowering-----
+compare_anovas(
+  update(heights_early_mods_best_c[[1]], .~. - City_dist),
+  heights,
+  "2021",
+  "Height before flowering",
+  "./Growth_trait_analyses/Tables/Comparing_ANOVA/heights_early.docx")
+
+# height after flowering-----
+compare_anovas(
+  update(heights_late_mods_best_c[[1]], .~. - City_dist),
+  heights,
+  "2021",
+  "Height after flowering",
+  "./Growth_trait_analyses/Tables/Comparing_ANOVA/heights_late.docx")
+
+# relative growth rate-----
+compare_anovas(
+  update(rgr_mods_best_c[[1]], .~. - City_dist),
+  heights,
+  "2021",
+  "Relative growth rate",
+  "./Growth_trait_analyses/Tables/Comparing_ANOVA/rgr.docx")
+
+# ramets before flowering-----
+compare_anovas(
+  update(ramets_early_mods_best_c[[1]], .~. - City_dist),
+  heights,
+  "2021",
+  "Ramets before flowering",
+  "./Growth_trait_analyses/Tables/Comparing_ANOVA/ramets_early.docx")
+
+# ramets after flowering-----
+compare_anovas(
+  update(ramets_late_mods_best_c[[1]], .~. - City_dist),
+  heights,
+  "2021",
+  "Ramets after flowering",
+  "./Growth_trait_analyses/Tables/Comparing_ANOVA/ramets_late.docx")
+
+# mortality-----
+compare_anovas(
+  update(mortality_mods_best_c[[1]], .~. - City_dist),
+  survival,
+  "2022",
+  "Mortality",
+  "./Growth_trait_analyses/Tables/Comparing_ANOVA/mortality.docx")
+
+```
+
+### Q2
+```{r}
+
+```
+
+
 
 # R-squared values
 ```{r}

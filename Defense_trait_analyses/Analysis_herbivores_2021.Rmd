@@ -609,6 +609,41 @@ export_anovas(anovas_alt_u, "./Defense_trait_analyses/Figures/ANOVA/Herbivores/A
 
 ```
 
+## Export comparisons of anovas w/1 vs. all years
+### Q1
+```{r}
+# Monarchs-----
+compare_anovas(
+  update(monarch_mods_best_c[[1]], .~. - City_dist),
+  herbivores,
+  "2021",
+  "Danaus plexippus abundance",
+  "./Defense_trait_analyses/Tables/Comparing_ANOVA/monarch.docx")
+
+# L. asclepiadis-----
+compare_anovas(
+  update(asclepiadis_mods_best_c[[1]], .~. - City_dist),
+  herbivores,
+  "2021",
+  "Liriomyza asclepiadis abundance",
+  "./Defense_trait_analyses/Tables/Comparing_ANOVA/asclepiadis.docx")
+
+# L. clivicollis-----
+compare_anovas(
+  update(clivicollis_mods_best_c[[1]], .~. - City_dist),
+  herbivores,
+  "2021",
+  "Labidomera clivicollis abundance",
+  "./Defense_trait_analyses/Tables/Comparing_ANOVA/clivicollis.docx")
+
+```
+
+### Q2
+```{r}
+
+```
+
+
 # R-sq values
 ```{r}
 # change REML to T
