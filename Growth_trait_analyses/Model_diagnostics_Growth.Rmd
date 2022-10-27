@@ -103,8 +103,8 @@ ldmc_gr_usc_m1 <- glmmTMB(sqrt(LDMC) ~
 ### Urban Subtransects
 #### City_dist
 ```{r}
-ldmc_urbsubs_city_m1 <- glmmTMB(log(LDMC) ~
-                       #       Block +
+ldmc_urbsubs_city_m1 <- glmmTMB(LDMC^(1/3) ~
+                              Block +
                              (1|Population/Family) +
                              City_dist * Transect_ID,
                         data = sla_ldmc %>%
@@ -120,8 +120,8 @@ ldmc_urbsubs_city_m1 <- glmmTMB(log(LDMC) ~
 
 # MAIN EFFECTS MODEL
 # have to remove block for it to converge
-ldmc_urbsubs_city_m2 <- glmmTMB(log(LDMC) ~
-                           #   Block +
+ldmc_urbsubs_city_m2 <- glmmTMB(LDMC^(1/3) ~
+                              Block +
                              (1|Population/Family) +
                              City_dist + Transect_ID,
                         data = sla_ldmc %>%

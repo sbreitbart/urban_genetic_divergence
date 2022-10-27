@@ -640,6 +640,29 @@ compare_anovas(
 
 ### Q2
 ```{r}
+# Monarchs-----
+compare_anovas_transects(
+  update(monarch_mods_best_c[[2]], .~. - City_dist*Transect_ID),
+  herbivores,
+  "2021",
+  "Danaus plexippus abundance",
+  "./Defense_trait_analyses/Tables/Comparing_ANOVA/monarch_transects.docx")
+
+# L. asclepiadis-----
+compare_anovas_transects(
+  update(asclepiadis_mods_best_c[[2]], .~. - City_dist*Transect_ID),
+  herbivores,
+  "2021",
+  "Liriomyza asclepiadis abundance",
+  "./Defense_trait_analyses/Tables/Comparing_ANOVA/asclepiadis_transects.docx")
+
+# L. clivicollis-----
+compare_anovas_transects(
+  update(clivicollis_mods_best_c[[2]], .~. - City_dist*Transect_ID),
+  herbivores,
+  "2021",
+  "Labidomera clivicollis abundance",
+  "./Defense_trait_analyses/Tables/Comparing_ANOVA/clivicollis_transects.docx")
 
 ```
 

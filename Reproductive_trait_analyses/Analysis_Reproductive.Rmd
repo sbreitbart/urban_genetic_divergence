@@ -1695,7 +1695,73 @@ compare_anovas(
 
 ### Q2
 ```{r}
+# Flowering success-----
+compare_anovas_transects(
+  update(flsucc_mods_best_c[[2]], .~. - City_dist*Transect_ID),
+  reproduc,
+  "2022",
+  "Flowering success",
+  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/flsucc_transects.docx")
 
+# Mean flowers/inflors-----
+compare_anovas_transects(
+  update(flowers_mods_best_c[[2]], .~. - City_dist*Transect_ID),
+  flowering,
+  "2022",
+  "Flowers per inflorescences",
+  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/flowers_transects.docx")
+
+
+# Flower size-----
+compare_anovas_transects(
+  update(flsize_mods_best_c[[2]], .~. - City_dist*Transect_ID),
+  flowering,
+  "2022",
+  "Flower size",
+  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/flsize_transects.docx")
+
+
+# Flowering time-----
+compare_anovas_transects(
+  update(fltime_mods_best_c[[2]], .~. - City_dist*Transect_ID),
+  flowering,
+  "2022",
+  "Flowering duration",
+  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/fltime_transects.docx")
+
+
+# Flowering start-----
+compare_anovas_transects(
+  update(flstart_mods_best_c[[2]], .~. - City_dist*Transect_ID),
+  flowering,
+  "2022",
+  "Date of first flower",
+  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/flstart_transects.docx")
+# Pods-----
+compare_anovas_transects(
+  update(pods_mods_best_c[[2]], .~. - City_dist*Transect_ID),
+  flowering,
+  "2022",
+  "Follicles",
+  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/pods_transects.docx")
+
+
+# Date of first pod-----
+compare_anovas_transects(
+  update(first_pods_mods_best_c[[2]], .~. - City_dist*Transect_ID),
+  flowering,
+  "2022",
+  "Date of first follicle",
+  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/firstpod_transects.docx")
+
+
+# Peduncles-----
+compare_anovas_transects(
+  update(peduncles_mods_best_c[[2]], .~. - City_dist*Transect_ID),
+  flowering,
+  "2022",
+  "Inflorescences",
+  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/peduncles_transects.docx")
 ```
 
 

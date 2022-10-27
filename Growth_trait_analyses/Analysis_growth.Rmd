@@ -975,15 +975,11 @@ ggsave(filename = "pve_growth_Q1.png",
 
 # Anova
 ## LDMC
-
 ### Best Models
-
 #### City_dist
-
 ```{r}
 make_all_anovas_tidy_altmods(ldmc_mods_best_c) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/LDMC_citydist.png"))
-
 ```
 
 #### Urb_score
@@ -1010,11 +1006,8 @@ make_all_anovas_tidy_altmods(ldmc_mods_alt_u) %>%
 ```
 
 ## SLA
-
 ### Best Models
-
 #### City_dist
-
 ```{r}
 make_all_anovas_tidy_altmods(sla_mods_best_c) %>%
   save_as_image(., path = here::here("./Growth_trait_analyses/Figures/ANOVA/Best_models/sla_citydist.png"))
@@ -1373,10 +1366,58 @@ compare_anovas(
 
 ### Q2
 ```{r}
+# LDMC & SLA-----
+# only one year of data for this. Compared anovas in "./Growth_trait_analyses/Tables/Ranova/nsim_10/LDMC_transects.docx" and "./Growth_trait_analyses/Tables/Ranova/nsim_10/SLA_transects.docx" and "./Growth_trait_analyses/Figures/ANOVA/Best_models/all_anova_Growth_best_distance.docx" and "...urbscore.docx" and they're qualitatively identical (very similar too)
+
+# height before flowering-----
+compare_anovas_transects(
+  update(heights_early_mods_best_c[[2]], .~. - City_dist*Transect_ID),
+  heights,
+  "2021",
+  "Height before flowering",
+  "./Growth_trait_analyses/Tables/Comparing_ANOVA/heights_early_transects.docx")
+
+# height after flowering-----
+compare_anovas_transects(
+  update(heights_late_mods_best_c[[2]], .~. - City_dist*Transect_ID),
+  heights,
+  "2021",
+  "Height after flowering",
+  "./Growth_trait_analyses/Tables/Comparing_ANOVA/heights_late_transects.docx")
+
+# relative growth rate-----
+compare_anovas_transects(
+  update(rgr_mods_best_c[[2]], .~. - City_dist*Transect_ID),
+  heights,
+  "2021",
+  "Relative growth rate",
+  "./Growth_trait_analyses/Tables/Comparing_ANOVA/rgr_transects.docx")
+
+# ramets before flowering-----
+compare_anovas_transects(
+  update(ramets_early_mods_best_c[[2]], .~. - City_dist*Transect_ID),
+  heights,
+  "2021",
+  "Ramets before flowering",
+  "./Growth_trait_analyses/Tables/Comparing_ANOVA/ramets_early_transects.docx")
+
+# ramets after flowering-----
+compare_anovas_transects(
+  update(ramets_late_mods_best_c[[2]], .~. - City_dist*Transect_ID),
+  heights,
+  "2021",
+  "Ramets after flowering",
+  "./Growth_trait_analyses/Tables/Comparing_ANOVA/ramets_late_transects.docx")
+
+# mortality-----
+compare_anovas_transects(
+  update(mortality_mods_best_c[[2]], .~. - City_dist*Transect_ID),
+  survival,
+  "2022",
+  "Mortality",
+  "./Growth_trait_analyses/Tables/Comparing_ANOVA/mortality_transects.docx")
 
 ```
-
-
 
 # R-squared values
 ```{r}
