@@ -1621,6 +1621,84 @@ export_anovas(anovas_alt_u, "./Reproductive_trait_analyses/Figures/ANOVA/alt_mod
 
 ```
 
+## Export comparisons of anovas w/1 vs. all years
+### Q1
+```{r}
+# Flowering success-----
+compare_anovas(
+  update(flsucc_mods_best_c[[1]], .~. - City_dist),
+  reproduc,
+  "2022",
+  "Flowering success",
+  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/flsucc.docx")
+
+# Mean flowers/inflors-----
+compare_anovas(
+  update(flowers_mods_best_c[[1]], .~. - City_dist),
+  flowering,
+  "2022",
+  "Flowers per inflorescences",
+  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/flowers.docx")
+
+
+# Flower size-----
+compare_anovas(
+  update(flsize_mods_best_c[[1]], .~. - City_dist),
+  flowering,
+  "2022",
+  "Flower size",
+  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/flsize.docx")
+
+
+# Flowering time-----
+compare_anovas(
+  update(fltime_mods_best_c[[1]], .~. - City_dist),
+  flowering,
+  "2022",
+  "Flowering duration",
+  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/fltime.docx")
+
+
+# Flowering start-----
+compare_anovas(
+  update(flstart_mods_best_c[[1]], .~. - City_dist),
+  flowering,
+  "2022",
+  "Date of first flower",
+  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/flstart.docx")
+# Pods-----
+compare_anovas(
+  update(pods_mods_best_c[[1]], .~. - City_dist),
+  flowering,
+  "2022",
+  "Follicles",
+  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/pods.docx")
+
+
+# Date of first pod-----
+compare_anovas(
+  update(first_pods_mods_best_c[[1]], .~. - City_dist),
+  flowering,
+  "2022",
+  "Date of first follicle",
+  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/firstpod.docx")
+
+
+# Peduncles-----
+compare_anovas(
+  update(peduncles_mods_best_c[[1]], .~. - City_dist),
+  flowering,
+  "2022",
+  "Inflorescences",
+  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/peduncles.docx")
+```
+
+### Q2
+```{r}
+
+```
+
+
 # R-squared values
 ```{r}
 
