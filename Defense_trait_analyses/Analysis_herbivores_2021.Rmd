@@ -629,12 +629,94 @@ compare_anovas(
   "./Defense_trait_analyses/Tables/Comparing_ANOVA/asclepiadis.docx")
 
 # L. clivicollis-----
-compare_anovas(
-  update(clivicollis_mods_best_c[[1]], .~. - City_dist),
-  herbivores,
-  "2021",
-  "Labidomera clivicollis abundance",
-  "./Defense_trait_analyses/Tables/Comparing_ANOVA/clivicollis.docx")
+## doing this manually b/c I need to filter the dataset to exclude values > 9
+
+var_name <- "Labidomera clivicollis abundance"
+filepath <- "./Defense_trait_analyses/Tables/Comparing_ANOVA/clivicollis.docx"
+last_year <- "2021"
+
+  # city_dist
+  anov1.d <- tidy_anova(clivicollis_mods_best_c[[1]]) %>%
+    make_flxtable(., var_name)
+  
+  
+  mod_1yr_dist <- update(clivicollis_mods_best_c[[1]],
+                    .~. - Year,
+                    data = herbivores %>%
+                dplyr::filter(Labidomera_clivicollis < 9 &
+                            Year == last_year))
+  
+  anov2.d <- tidy_anova(mod_1yr_dist) %>%
+    make_flxtable(., var_name)
+  
+  
+  # urb_score
+  mod_allyrs_usc <- update(clivicollis_mods_best_c[[1]], .~. + Urb_score - City_dist)
+  
+  anov1.u <- tidy_anova(mod_allyrs_usc) %>%
+    make_flxtable(., var_name)
+  
+  
+  mod_1yr_usc <- update(mod_allyrs_usc,
+                    .~. - Year,
+                     data = herbivores %>%
+                dplyr::filter(Labidomera_clivicollis < 9 &
+                            Year == last_year))
+  
+  anov2.u <- tidy_anova(mod_1yr_usc) %>%
+    make_flxtable(., var_name)
+  
+  
+  # Export
+  word_export <- read_docx()
+  
+  body_add_par(word_export, "Urbanization = Distance to City Center",
+               style = "heading 1")
+  
+  body_add_par(word_export, value = "ANOVA with all years of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(clivicollis_mods_best_c[[1]])),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov1.d)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "ANOVA with one year of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_1yr_dist)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov2.d)
+  
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "") 
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, "Urbanization = Urbanization Score",
+               style = "heading 1")
+  
+  body_add_par(word_export, value = "ANOVA with all years of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_allyrs_usc)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov1.u)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "ANOVA with one year of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_1yr_usc)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov2.u)
+  
+  print(word_export, here::here(filepath))
+
+rm(var_name, filepath, last_year,anov1.d, mod_1yr_dist, anov2.d, mod_allyrs_usc, anov1.u, mod_1yr_usc, anov2.u)
+
+
 
 ```
 
@@ -657,12 +739,96 @@ compare_anovas_transects(
   "./Defense_trait_analyses/Tables/Comparing_ANOVA/asclepiadis_transects.docx")
 
 # L. clivicollis-----
-compare_anovas_transects(
-  update(clivicollis_mods_best_c[[2]], .~. - City_dist*Transect_ID),
-  herbivores,
-  "2021",
-  "Labidomera clivicollis abundance",
-  "./Defense_trait_analyses/Tables/Comparing_ANOVA/clivicollis_transects.docx")
+## doing this manually b/c I need to filter the dataset to exclude values > 20
+
+var_name <- "Labidomera clivicollis abundance"
+filepath <- "./Defense_trait_analyses/Tables/Comparing_ANOVA/clivicollis_transects.docx"
+last_year <- "2021"
+
+  # City_dist*Transect_ID
+  anov1.d <- tidy_anova(clivicollis_mods_best_c[[2]]) %>%
+    make_flxtable(., var_name)
+  
+  
+  mod_1yr_dist <- update(clivicollis_mods_best_c[[2]],
+                    .~. - Year,
+                    data = herbivores %>%
+                        dplyr::filter(
+                          Labidomera_clivicollis < 20 &
+                            Year == last_year &
+                            Transect_ID != "Rural"))
+  
+  anov2.d <- tidy_anova(mod_1yr_dist) %>%
+    make_flxtable(., var_name)
+  
+  
+  # Urb_score*Transect_ID
+  mod_allyrs_usc <- update(clivicollis_mods_best_c[[2]], .~. + Urb_score*Transect_ID - City_dist*Transect_ID + Transect_ID)
+  
+  anov1.u <- tidy_anova(mod_allyrs_usc) %>%
+    make_flxtable(., var_name)
+  
+  
+  mod_1yr_usc <- update(mod_allyrs_usc,
+                    .~. - Year,
+                     data = herbivores %>%
+                        dplyr::filter(
+                          Labidomera_clivicollis < 20 &
+                            Year == last_year &
+                            Transect_ID != "Rural"))
+  
+  anov2.u <- tidy_anova(mod_1yr_usc) %>%
+    make_flxtable(., var_name)
+  
+  
+  # Export
+  word_export <- read_docx()
+  
+  body_add_par(word_export, "Urbanization = Distance to City Center",
+               style = "heading 1")
+  
+  body_add_par(word_export, value = "ANOVA with all years of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(herb_e_quant_mods_best_c[[2]])),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov1.d)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "ANOVA with one year of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_1yr_dist)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov2.d)
+  
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "") 
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, "Urbanization = Urbanization Score",
+               style = "heading 1")
+  
+  body_add_par(word_export, value = "ANOVA with all years of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_allyrs_usc)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov1.u)
+  
+  body_add_par(word_export, value = "")
+  body_add_par(word_export, value = "")
+  
+  body_add_par(word_export, value = "ANOVA with one year of data")
+  body_add_par(word_export, value = paste("Model:", paste(deparse(formula(mod_1yr_usc)),
+                                                          collapse = "") %>%
+                                            unlist()))
+  body_add_flextable(word_export, anov2.u)
+  
+  print(word_export, here::here(filepath))
+
+rm(var_name, filepath, last_year,anov1.d, mod_1yr_dist, anov2.d, mod_allyrs_usc, anov1.u, mod_1yr_usc, anov2.u)
 
 ```
 
