@@ -726,14 +726,14 @@ fl_time_urbsubs_usc1_ME <- glmmTMB(flowering_time_num ~
 # 
 # boxplot(Julian_oldest_inflor ~ Year, data = flowering)
 
-# won't converge with nbinom1 or 2 families with all fixed effects. But anova shows there's no effect of Dist anyway
-fl_start_gr_city1 <- glmmTMB(Julian_oldest_inflor ~
-                     #          Block +
+# won't converge with nbinom1 or 2 families with all fixed effects unless I subtract a number like 170. Either way, there's no effect of urbanization
+fl_start_gr_city1 <- glmmTMB(Julian_oldest_inflor-170 ~
+                               Block +
                                Year +
                                (1|Population/Family) +
                                City_dist, 
                              data = flowering,
-                             family = poisson)
+                             family = nbinom2)
 
 # plot(DHARMa::simulateResiduals(fl_start_gr_city1))
 # performance::check_model(fl_start_gr_city1)
@@ -741,26 +741,108 @@ fl_start_gr_city1 <- glmmTMB(Julian_oldest_inflor ~
 
 
 # # test for gxe
-# gxe_test_flstart <- glmmTMB(Julian_oldest_inflor ~
+# gxe_test_flstart <- glmmTMB(Julian_oldest_inflor-170 ~
 #                                Year +
 #                                (1|Population/Family) +
-#                                City_dist*Block, 
+#                                City_dist*Block,
 #                              data = flowering,
-#                              family = poisson)
+#                              family = nbinom2)
 # 
-# test_gxe(fl_start_gr_city1, gxe_test_flstart) # reg mod best even though it doesn't include block (doesn't converge)
+# test_gxe(fl_start_gr_city1, gxe_test_flstart) # stat equiv
+# car::Anova(fl_start_gr_city1, type = "III") 
+# car::Anova(gxe_test_flstart, type = "III") # block*city sig (p = 0.03742)
+# 
+# 
+# # compare ranovas
+# # have to use glmer.nb instead of glmmtmb- ranova can't use glmmtmb- otherwise identical models
+# # GxE MOD-----
+# #   test family
+# #     large mod
+# lgmod1 <- glmer.nb(Julian_oldest_inflor - 170 ~
+#               #    Year +
+#                   (1|Population) +
+#                   (1|Population:Fam_uniq) +
+#                   City_dist*Block,
+#               data = flowering %>%
+#                 dplyr::filter(Year == "2022" &
+#                                 is.na(Julian_first_follicle) == FALSE),
+#               nAGQ = 0) # doesn't converge w/o this
+# 
+# #     small mod 1
+# smmod1 <- glmer.nb(Julian_oldest_inflor - 170 ~
+#               #    Year +
+#                   (1|Population) +
+#                   City_dist*Block,
+#                 data = flowering %>%
+#                 dplyr::filter(Year == "2022" &
+#                                 is.na(Julian_first_follicle) == FALSE),
+#               nAGQ = 0)
+# 
+# PBmodcomp(lgmod1, smmod1, seed = 45, nsim = 10) # p = 1
+# 
+# # test pop
+# #     small mod 2
+# smmod2 <- glmer.nb(Julian_oldest_inflor - 170 ~
+#               #    Year +
+#                   (1|Population:Fam_uniq) +
+#                   City_dist*Block,
+#                 data = flowering %>%
+#                 dplyr::filter(Year == "2022" &
+#                                 is.na(Julian_first_follicle) == FALSE),
+#               nAGQ = 0)
+# 
+# PBmodcomp(lgmod1, smmod2, seed = 45, nsim = 10) # p = 1
+# 
+# # REG MOD-----
+# #   test family
+# #     large mod
+# lgmod1.reg <- glmer.nb(Julian_oldest_inflor - 170 ~
+#               #    Year +
+#                   (1|Population) +
+#                   (1|Population:Fam_uniq) +
+#                   City_dist + Block,
+#                 data = flowering %>%
+#                 dplyr::filter(Year == "2022" &
+#                                 is.na(Julian_first_follicle) == FALSE),
+#               nAGQ = 0)
+# 
+# #     small mod 1
+# smmod1.reg <- glmer.nb(Julian_oldest_inflor - 170 ~
+#               #    Year +
+#                   (1|Population) +
+#                   City_dist + Block,
+#                 data = flowering %>%
+#                 dplyr::filter(Year == "2022" &
+#                                 is.na(Julian_first_follicle) == FALSE),
+#               nAGQ = 0)
+# 
+# PBmodcomp(lgmod1.reg, smmod1.reg, seed = 45, nsim = 10) # p = 1
+# 
+# # test pop
+# #     small mod 2
+# smmod2.reg <- glmer.nb(Julian_oldest_inflor - 170 ~
+#              #     Year +
+#                   (1|Population:Fam_uniq) +
+#                   City_dist + Block,
+#                 data = flowering %>%
+#                 dplyr::filter(Year == "2022" &
+#                                 is.na(Julian_first_follicle) == FALSE),
+#              nAGQ = 0)
+# 
+# PBmodcomp(lgmod1.reg, smmod2.reg, seed = 45, nsim = 10) # p = 1
+# # mod comparison-----
+# # qualitatively identical so I'll keep using regular model.
 ```
 
 #### Urb_score
 ```{r}
-# won't converge with nbinom1 or 2
-fl_start_gr_usc1 <- glmmTMB(Julian_oldest_inflor ~
+fl_start_gr_usc1 <- glmmTMB(Julian_oldest_inflor -170 ~
                                           Block +
                                            Year +
                                           (1|Population/Family) +
                                           Urb_score, 
                                         data = flowering,
-                             family = poisson)
+                             family = nbinom2)
 
 # plot(DHARMa::simulateResiduals(fl_start_gr_usc1))
 # performance::check_model(fl_start_gr_usc1)
@@ -768,131 +850,288 @@ fl_start_gr_usc1 <- glmmTMB(Julian_oldest_inflor ~
 
 
 # # test for gxe
-# gxe_test_flstart2 <- glmmTMB(Julian_oldest_inflor ~
+# gxe_test_flstart2 <- glmmTMB(Julian_oldest_inflor -170 ~
 #                                Year +
 #                                (1|Population/Family) +
 #                                Urb_score*Block,
 #                              data = flowering,
-#                              family = poisson)
+#                              family = nbinom2)
 # 
-# test_gxe(fl_start_gr_usc1, gxe_test_flstart2) # reg mod best 
+# test_gxe(fl_start_gr_usc1, gxe_test_flstart2) # stat equiv
+# car::Anova(fl_start_gr_usc1, type = "III")
+# car::Anova(gxe_test_flstart2, type = "III") # block*city marg sig (p = 0.0755)
+# 
+# 
+# # compare ranovas
+# # have to use glmer.nb instead of glmmtmb- ranova can't use glmmtmb- otherwise identical models
+# # GxE MOD-----
+# #   test family
+# #     large mod
+# lgmod1 <- glmer.nb(Julian_oldest_inflor - 170 ~
+#               #    Year +
+#                   (1|Population) +
+#                   (1|Population:Fam_uniq) +
+#                   Urb_score*Block,
+#               data = flowering %>%
+#                 dplyr::filter(Year == "2022" &
+#                                 is.na(Julian_first_follicle) == FALSE),
+#               control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# #     small mod 1
+# smmod1 <- glmer.nb(Julian_oldest_inflor - 170 ~
+#               #    Year +
+#                   (1|Population) +
+#                   Urb_score*Block,
+#                 data = flowering %>%
+#                 dplyr::filter(Year == "2022" &
+#                                 is.na(Julian_first_follicle) == FALSE),
+#               control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# PBmodcomp(lgmod1, smmod1, seed = 45, nsim = 10) # p = 1
+# 
+# # test pop
+# #     small mod 2
+# smmod2 <- glmer.nb(Julian_oldest_inflor - 170 ~
+#               #    Year +
+#                   (1|Population:Fam_uniq) +
+#                   Urb_score*Block,
+#                 data = flowering %>%
+#                 dplyr::filter(Year == "2022" &
+#                                 is.na(Julian_first_follicle) == FALSE),
+#               control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# PBmodcomp(lgmod1, smmod2, seed = 45, nsim = 10) # p = 1
+# 
+# # REG MOD-----
+# #   test family
+# #     large mod
+# lgmod1.reg <- glmer.nb(Julian_oldest_inflor - 170 ~
+#               #    Year +
+#                   (1|Population) +
+#                   (1|Population:Fam_uniq) +
+#                   Urb_score + Block,
+#                 data = flowering %>%
+#                 dplyr::filter(Year == "2022" &
+#                                 is.na(Julian_first_follicle) == FALSE),
+#               control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# #     small mod 1
+# smmod1.reg <- glmer.nb(Julian_oldest_inflor - 170 ~
+#               #    Year +
+#                   (1|Population) +
+#                   Urb_score + Block,
+#                 data = flowering %>%
+#                 dplyr::filter(Year == "2022" &
+#                                 is.na(Julian_first_follicle) == FALSE),
+#               control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# PBmodcomp(lgmod1.reg, smmod1.reg, seed = 45, nsim = 10) # p = 1
+# 
+# # test pop
+# #     small mod 2
+# smmod2.reg <- glmer.nb(Julian_oldest_inflor - 170 ~
+#              #     Year +
+#                   (1|Population:Fam_uniq) +
+#                   Urb_score + Block,
+#                 data = flowering %>%
+#                 dplyr::filter(Year == "2022" &
+#                                 is.na(Julian_first_follicle) == FALSE),
+#               control=glmerControl(optimizer="bobyqa",
+#                             optCtrl=list(maxfun=2e5)))
+# 
+# PBmodcomp(lgmod1.reg, smmod2.reg, seed = 45, nsim = 10) # p = 1
+# # mod comparison-----
+# # qualitatively identical so I'll keep using regular model.
 ```
 
 ### Urban subtransects
 #### City_dist
 ```{r}
-# won't converge w/poisson- only nbinom2. But main effects model, below, converges with poisson and no fixed effects removed! And AIC is significantly lower, so I'll leave this be and use ME model
-fl_start_urbsubs_city1 <- glmmTMB(Julian_oldest_inflor ~
-                                  #  Block +
-                                    #     Year +
+fl_start_urbsubs_city1 <- glmmTMB(Julian_oldest_inflor - 170 ~
+                                    Block +
+                                         Year +
                                     (1|Population/Family) +
                                     City_dist * Transect_ID, 
                                         data = flowering %>%
                                     dplyr::filter(Transect_ID != "Rural"),
-                             family = poisson)
+                             family = nbinom2)
 
 # plot(DHARMa::simulateResiduals(fl_start_urbsubs_city1))
 # performance::check_model(fl_start_urbsubs_city1)
 
 
 # Main effects model
-fl_start_urbsubs_city1_ME <- glmmTMB(Julian_oldest_inflor ~
+fl_start_urbsubs_city1_ME <- glmmTMB(Julian_oldest_inflor -170 ~
                                            Block +
                                            Year +
                                           (1|Population/Family) +
                                           City_dist + Transect_ID, 
                                         data = flowering %>%
                                     dplyr::filter(Transect_ID != "Rural"),
-                             family = poisson)
+                             family = nbinom2)
 
 # plot(DHARMa::simulateResiduals(fl_start_urbsubs_city1_ME))
 # performance::check_model(fl_start_urbsubs_city1_ME)
 # car::Anova(fl_start_urbsubs_city1_ME)
 # summary(fl_start_urbsubs_city1_ME)
 
-AIC(fl_start_urbsubs_city1, fl_start_urbsubs_city1_ME) # ME best model
+# AIC(fl_start_urbsubs_city1, fl_start_urbsubs_city1_ME) # ME best model but stat equiv
 
 
 # # test for gxe
-# gxe_test_flstart3 <- glmmTMB(Julian_oldest_inflor ~
+# gxe_test_flstart3 <- glmmTMB(Julian_oldest_inflor - 170 ~
 #                                Block*City_dist +
 #                                Year +
-#                                (1|Population/Family),# +
-#                            #    Transect_ID, 
+#                                (1|Population/Family) +
+#                                Transect_ID*City_dist,
 #                              data = flowering %>%
 #                                dplyr::filter(Transect_ID != "Rural"),
-#                              family = poisson)
+#                              family = nbinom2)
 # 
-# test_gxe(fl_start_urbsubs_city1_ME, gxe_test_flstart3) # stat equiv when I take out transect from both, otherwise gxe mod won't converge
-# car::Anova(gxe_test_flstart3, type = "III") # qual identical
+# test_gxe(fl_start_urbsubs_city1_ME, gxe_test_flstart3) # gxe mod best
+# car::Anova(gxe_test_flstart3, type = "III") # block*city very sig (p = 0.0009855 )
 # car::Anova(fl_start_urbsubs_city1_ME, type = "III")
+
+
+# # compare ranovas
+# # have to use glmer instead of glmmtmb- ranova can't use glmmtmb- otherwise identical models
+# # GxE MOD-----
+# #   test family
+# #     large mod
+# lgmod1 <- glmer.nb(Julian_oldest_inflor-170 ~
+#               #    Year +
+#                   (1|Population) +
+#                   (1|Population:Fam_uniq) +
+#                   City_dist*Block +
+#                 City_dist*Transect_ID,
+#               data = flowering %>%
+#                 dplyr::filter(Year == "2022" &
+#                                 is.na(Julian_first_follicle) == FALSE &
+#                                 Transect_ID != "Rural"),
+#               nAGQ = 0) # won't converge w/o this
+# 
+# #     small mod 1
+# smmod1 <- glmer.nb(Julian_oldest_inflor-170 ~
+#               #    Year +
+#                   (1|Population) +
+#                   City_dist*Block +
+#                 City_dist*Transect_ID,
+#                 data = flowering %>%
+#                 dplyr::filter(Year == "2022" &
+#                                 is.na(Julian_first_follicle) == FALSE &
+#                                 Transect_ID != "Rural"),
+#               nAGQ = 0)
+# 
+# PBmodcomp(lgmod1, smmod1, seed = 45, nsim = 10) # p = 1
+# 
+# # test pop
+# #     small mod 2
+# smmod2 <- glmer.nb(Julian_oldest_inflor-170 ~
+#               #    Year +
+#                   (1|Population:Fam_uniq) +
+#                   City_dist*Block +
+#                 City_dist*Transect_ID,
+#                 data = flowering %>%
+#                 dplyr::filter(Year == "2022" &
+#                                 is.na(Julian_first_follicle) == FALSE &
+#                                 Transect_ID != "Rural"),
+#               nAGQ = 0)
+# 
+# PBmodcomp(lgmod1, smmod2, seed = 45, nsim = 10) # p = 0.9191
+# 
+# 
+# # REG MOD-----
+# #   test family
+# #     large mod
+# lgmod1.reg <- glmer.nb(Julian_oldest_inflor-170 ~
+#               #    Year +
+#                   (1|Population) +
+#                   (1|Population:Fam_uniq) +
+#                   City_dist*Transect_ID + Block,
+#                 data = flowering %>%
+#                 dplyr::filter(Year == "2022" &
+#                                 is.na(Julian_first_follicle) == FALSE &
+#                                 Transect_ID != "Rural"),
+#               nAGQ = 0)
+# 
+# #     small mod 1
+# smmod1.reg <- glmer.nb(Julian_oldest_inflor-170 ~
+#               #    Year +
+#                   (1|Population) +
+#                   City_dist*Transect_ID + Block,
+#                 data = flowering %>%
+#                 dplyr::filter(Year == "2022" &
+#                                 is.na(Julian_first_follicle) == FALSE &
+#                                 Transect_ID != "Rural"),
+#               nAGQ = 0)
+# 
+# PBmodcomp(lgmod1.reg, smmod1.reg, seed = 45, nsim = 10) # p = 1
+# 
+# # test pop
+# #     small mod 2
+# smmod2.reg <- glmer.nb(Julian_oldest_inflor-170 ~
+#              #     Year +
+#                   (1|Population:Fam_uniq) +
+#                   City_dist*Transect_ID + Block,
+#                 data = flowering %>%
+#                 dplyr::filter(Year == "2022" &
+#                                 is.na(Julian_first_follicle) == FALSE &
+#                                 Transect_ID != "Rural"),
+#               nAGQ = 0)
+# 
+# 
+# PBmodcomp(lgmod1.reg, smmod2.reg, seed = 45, nsim = 10) # p = 1
+# # mod comparison-----
+# # qualitatively identical so I'll keep using regular model.
 ```
 
 #### Urb_score
 ```{r}
-# not converging
-# fl_start_urbsubs_usc1 <- glmmTMB(Julian_oldest_inflor ~
-#                                           # Block +
-#                                       #     Year +
-#                                           (1|Population/Family) +
-#                                           Urb_score * Transect_ID, 
-#                                         data = flowering %>%
-#                                     dplyr::filter(Transect_ID != "Rural"),
-#                              family = poisson)
-# 
-# plot(DHARMa::simulateResiduals(fl_start_urbsubs_usc1))
-# performance::check_model(fl_start_urbsubs_usc1)
-# car::Anova(fl_start_urbsubs_usc1)
-# summary(fl_start_urbsubs_usc1)
-
-
-
-# Main effects model
-# not converging, so I'll take out urb_score and test it separately
-# TEST TRANSECT
-fl_start_urbsubs_usc1_m1 <- glmmTMB(Julian_oldest_inflor ~
+fl_start_urbsubs_usc1 <- glmmTMB(Julian_oldest_inflor - 170 ~
                                            Block +
                                            Year +
                                           (1|Population/Family) +
-                                      #    Urb_score +
+                                          Urb_score * Transect_ID,
+                                        data = flowering %>%
+                                    dplyr::filter(Transect_ID != "Rural"),
+                             family = nbinom2)
+
+# plot(DHARMa::simulateResiduals(fl_start_urbsubs_usc1))
+# performance::check_model(fl_start_urbsubs_usc1)
+
+
+# Main effects model
+fl_start_urbsubs_usc1_ME <- glmmTMB(Julian_oldest_inflor - 170~
+                                           Block +
+                                           Year +
+                                          (1|Population/Family) +
+                                          Urb_score +
                                       Transect_ID, 
                                         data = flowering %>%
                                     dplyr::filter(Transect_ID != "Rural"),
-                             family = poisson)
+                             family = nbinom2)
 
 # plot(DHARMa::simulateResiduals(fl_start_urbsubs_usc1_m1))
 # performance::check_model(fl_start_urbsubs_usc1_m1)
-# car::Anova(fl_start_urbsubs_usc1_m1)
-# summary(fl_start_urbsubs_usc1_m1)
 
-
-# TEST URB_SCORE
-fl_start_urbsubs_usc1_m2 <- glmmTMB(Julian_oldest_inflor ~
-                                  #         Block +
-                                           Year +
-                                          (1|Population/Family) +
-                                          Urb_score, #+ Transect_ID, 
-                                        data = flowering %>%
-                                    dplyr::filter(Transect_ID != "Rural"),
-                             family = poisson)
-
-# plot(DHARMa::simulateResiduals(fl_start_urbsubs_usc1_m2))
-# performance::check_model(fl_start_urbsubs_usc1_m2)
-# car::Anova(fl_start_urbsubs_usc1_m2)
-# summary(fl_start_urbsubs_usc1_m2)
-
+# AIC(fl_start_urbsubs_usc1, fl_start_urbsubs_usc1_ME) # m1 best but stat equiv
 
 # # test for gxe
-# gxe_test_flstart4 <- glmmTMB(Julian_oldest_inflor ~
+# gxe_test_flstart4 <- glmmTMB(Julian_oldest_inflor - 170~
 #                                Block*Urb_score +
 #                                Year +
-#                                (1|Population/Family) +    Transect_ID*Urb_score, 
+#                                (1|Population/Family) +    Transect_ID*Urb_score,
 #                              data = flowering %>%
 #                                dplyr::filter(Transect_ID != "Rural"),
-#                              family = poisson)
+#                              family = nbinom2)
 # 
-# test_gxe(fl_start_urbsubs_usc1_m1, gxe_test_flstart4) # reg mod best
-# test_gxe(fl_start_urbsubs_usc1_m2, gxe_test_flstart4) # reg mod best
+# test_gxe(fl_start_urbsubs_usc1, gxe_test_flstart4) # stat equiv
+# car::Anova(gxe_test_flstart4, type = "III") # block*urb score not sig
+# car::Anova(fl_start_urbsubs_usc1, type = "III")
 ```
 
 ## Pods
@@ -2157,21 +2396,21 @@ fl_start_gr_city1 ,
 fl_start_gr_usc1 ,
 
 ## City_dist / urban subtransects
-# fl_start_urbsubs_city1, 
+fl_start_urbsubs_city1, # qual equivalent mod
 fl_start_urbsubs_city1_ME, # Best model
 
 ## Urbanization score  / urban subtransects
-fl_start_urbsubs_usc1_m1, # THIS MODEL TESTS TRANSECT ONLY
-fl_start_urbsubs_usc1_m2 # THIS MODEL TESTS URBSCORE ONLY
+fl_start_urbsubs_usc1, # best model
+fl_start_urbsubs_usc1_ME # qual equiv mod
 
 )
 
 names(flstart_mods) <- c("City_gr",
                      "Usc_gr",
-                     # "City_urbsubs_alt",
+                     "City_urbsubs_alt",
                      "City_urbsubs_best",
-                     "Usc_urbsubs_transectonly",
-                     "Usc_urbsubs_urbscoreonly")
+                     "Usc_urbsubs_best",
+                     "Usc_urbsubs_alt")
 ```
 
 ## Pods
@@ -2334,7 +2573,7 @@ flsize_mods_best_u <- flsize_mods[c(2,6)]
 
 ## Alt
 ### City_dist
-flsize_mods_alt_c <- flsize_mods[3]
+flsize_mods_alft_c <- flsize_mods[3]
 
 ### Urb_score
 flsize_mods_alt_u <- flsize_mods[5]
@@ -2362,18 +2601,17 @@ fltime_mods_alt_c <- fltime_mods[3]
 ```{r}
 ## Best
 ### City_dist
-flstart_mods_best_c <- flstart_mods[c(1,3)]
+flstart_mods_best_c <- flstart_mods[c(1,4)]
 
 ### Urb_score
-flstart_mods_best_u <- flstart_mods[c(2,4,5)] # includes transect-only and urbscore-only mods
+flstart_mods_best_u <- flstart_mods[c(2,5)] 
 
 ## Alt
 ### City_dist
-# NONE
+flstart_mods_alt_c <- flstart_mods[3] 
 
 ### Urb_score
-# NONE
-
+flstart_mods_alt_u <- flstart_mods[6] 
 ```
 
 ### pods (follicles)

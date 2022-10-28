@@ -44,6 +44,35 @@
         "qgam"
       ]
     },
+    "Deriv": {
+      "Package": "Deriv",
+      "Version": "4.1.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "bc727aba82bcda74db0bbe188ec6757c",
+      "Requirements": []
+    },
+    "GGally": {
+      "Package": "GGally",
+      "Version": "2.1.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "022f78c8698724b326f1838b1a98cafa",
+      "Requirements": [
+        "RColorBrewer",
+        "dplyr",
+        "forcats",
+        "ggplot2",
+        "gtable",
+        "lifecycle",
+        "plyr",
+        "progress",
+        "reshape",
+        "rlang",
+        "scales",
+        "tidyr"
+      ]
+    },
     "MASS": {
       "Package": "MASS",
       "Version": "7.3-54",
@@ -72,15 +101,16 @@
         "Matrix"
       ]
     },
-    "MuMIn": {
-      "Package": "MuMIn",
-      "Version": "1.43.17",
+    "PerformanceAnalytics": {
+      "Package": "PerformanceAnalytics",
+      "Version": "2.0.4",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "cb69eaf02bd4f7520d0e1f53290bd77c",
+      "Hash": "5ff15925d7e369565203053934e8d9d9",
       "Requirements": [
-        "Matrix",
-        "nlme"
+        "quadprog",
+        "xts",
+        "zoo"
       ]
     },
     "R6": {
@@ -164,6 +194,20 @@
       "Repository": "CRAN",
       "Hash": "4f57884290cc75ab22f4af9e9d4ca862",
       "Requirements": []
+    },
+    "afex": {
+      "Package": "afex",
+      "Version": "1.1-1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "e3761e56025c697ee62b1847fd4d5a73",
+      "Requirements": [
+        "car",
+        "lme4",
+        "lmerTest",
+        "pbkrtest",
+        "reshape2"
+      ]
     },
     "ape": {
       "Package": "ape",
@@ -412,6 +456,14 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "019388fc48e48b3da0d3a76ff94608a8",
+      "Requirements": []
+    },
+    "colorRamps": {
+      "Package": "colorRamps",
+      "Version": "2.3.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "f86f1e7d771ecc9692652743684a0027",
       "Requirements": []
     },
     "colorspace": {
@@ -752,6 +804,29 @@
         "withr"
       ]
     },
+    "ggpp": {
+      "Package": "ggpp",
+      "Version": "0.4.5",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "8a7c3609f00ac04d00d67abb797ad842",
+      "Requirements": [
+        "MASS",
+        "dplyr",
+        "ggplot2",
+        "glue",
+        "gridExtra",
+        "lubridate",
+        "magrittr",
+        "polynom",
+        "rlang",
+        "scales",
+        "stringr",
+        "tibble",
+        "xts",
+        "zoo"
+      ]
+    },
     "ggsci": {
       "Package": "ggsci",
       "Version": "2.9",
@@ -760,6 +835,19 @@
       "Hash": "81ccb8213ed592598210afd10c3a5936",
       "Requirements": [
         "ggplot2",
+        "scales"
+      ]
+    },
+    "ggtext": {
+      "Package": "ggtext",
+      "Version": "0.1.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "c5ba8f5056487403a299b91984be86ca",
+      "Requirements": [
+        "ggplot2",
+        "gridtext",
+        "rlang",
         "scales"
       ]
     },
@@ -830,6 +918,33 @@
         "rlang",
         "tibble",
         "vctrs"
+      ]
+    },
+    "gridExtra": {
+      "Package": "gridExtra",
+      "Version": "2.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "7d7f283939f563670a697165b2cf5560",
+      "Requirements": [
+        "gtable"
+      ]
+    },
+    "gridtext": {
+      "Package": "gridtext",
+      "Version": "0.1.5",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "05e4f5fffb1eecfeaac9ea0b7f255fef",
+      "Requirements": [
+        "Rcpp",
+        "curl",
+        "jpeg",
+        "markdown",
+        "png",
+        "rlang",
+        "stringr",
+        "xml2"
       ]
     },
     "gtable": {
@@ -966,6 +1081,14 @@
       "Hash": "64778782a89480e9a644f69aad9a2877",
       "Requirements": []
     },
+    "jpeg": {
+      "Package": "jpeg",
+      "Version": "0.1-9",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "441ee36360a57b363f4fa3df0c364630",
+      "Requirements": []
+    },
     "jquerylib": {
       "Package": "jquerylib",
       "Version": "0.1.4",
@@ -1065,6 +1188,19 @@
         "nloptr"
       ]
     },
+    "lmerTest": {
+      "Package": "lmerTest",
+      "Version": "3.1-3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "f04948de84602afc23bfa9f5427e954d",
+      "Requirements": [
+        "MASS",
+        "ggplot2",
+        "lme4",
+        "numDeriv"
+      ]
+    },
     "lmtest": {
       "Package": "lmtest",
       "Version": "0.9-38",
@@ -1104,6 +1240,17 @@
         "foreign",
         "lattice",
         "sp"
+      ]
+    },
+    "markdown": {
+      "Package": "markdown",
+      "Version": "1.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "61e4a10781dd00d7d81dd06ca9b94e95",
+      "Requirements": [
+        "mime",
+        "xfun"
       ]
     },
     "matrixStats": {
@@ -1325,6 +1472,22 @@
         "Rcpp"
       ]
     },
+    "png": {
+      "Package": "png",
+      "Version": "0.1-7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "03b7076c234cb3331288919983326c55",
+      "Requirements": []
+    },
+    "polynom": {
+      "Package": "polynom",
+      "Version": "1.4-0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "c396592ecfe9e75cee1013533efafe34",
+      "Requirements": []
+    },
     "prettyunits": {
       "Package": "prettyunits",
       "Version": "1.1.1",
@@ -1403,6 +1566,14 @@
         "shiny"
       ]
     },
+    "quadprog": {
+      "Package": "quadprog",
+      "Version": "1.5-8",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "5f919ae5e7f83a6f91dcf2288943370d",
+      "Requirements": []
+    },
     "quantreg": {
       "Package": "quantreg",
       "Version": "5.86",
@@ -1414,6 +1585,25 @@
         "MatrixModels",
         "SparseM",
         "conquer"
+      ]
+    },
+    "r2glmm": {
+      "Package": "r2glmm",
+      "Version": "0.1.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "37b001de1dc9fcb1eb4c308ca2c3920a",
+      "Requirements": [
+        "MASS",
+        "Matrix",
+        "afex",
+        "data.table",
+        "dplyr",
+        "ggplot2",
+        "gridExtra",
+        "lmerTest",
+        "mgcv",
+        "pbkrtest"
       ]
     },
     "rappdirs": {
@@ -1510,6 +1700,28 @@
         "withr"
       ]
     },
+    "reshape": {
+      "Package": "reshape",
+      "Version": "0.8.8",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "0f4d941129e00ed34a7d192b1da7ccef",
+      "Requirements": [
+        "plyr"
+      ]
+    },
+    "reshape2": {
+      "Package": "reshape2",
+      "Version": "1.4.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "bb5996d0bd962d214a11140d77589917",
+      "Requirements": [
+        "Rcpp",
+        "plyr",
+        "stringr"
+      ]
+    },
     "rio": {
       "Package": "rio",
       "Version": "0.5.27",
@@ -1559,6 +1771,20 @@
       "Repository": "CRAN",
       "Hash": "249d8cd1e74a8f6a26194a91b47f21d1",
       "Requirements": []
+    },
+    "rsq": {
+      "Package": "rsq",
+      "Version": "2.5",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "349b440b8108084da7364c1bef24c65e",
+      "Requirements": [
+        "Deriv",
+        "MASS",
+        "Matrix",
+        "lme4",
+        "nlme"
+      ]
     },
     "rstudioapi": {
       "Package": "rstudioapi",
@@ -1949,6 +2175,16 @@
       "Repository": "CRAN",
       "Hash": "b8acdf8af494d9ec19ccb2481a9b11c2",
       "Requirements": []
+    },
+    "xts": {
+      "Package": "xts",
+      "Version": "0.12.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "6731cbcbe2f9633865b59392aee7966d",
+      "Requirements": [
+        "zoo"
+      ]
     },
     "yaml": {
       "Package": "yaml",

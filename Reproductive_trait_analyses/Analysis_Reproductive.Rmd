@@ -1301,7 +1301,7 @@ recalc_tab3.3 <- pve_peduncles_urbsc2 %>%
 ```
 
 # Anova
-## Export all best / alt models in separate word docs
+## Export all best / alt multi-year models in separate word docs
 ### Distance / best
 ```{r}
 all_models_best_c <- list(
@@ -1327,7 +1327,7 @@ flsucc_mods_alt_c      , # flowering success
 flowers_mods_alt_c     , # mean flowers/inflor
 flsize_mods_alt_c      , # mean flower size
 fltime_mods_alt_c      , # flowering time
-# flstart_mods_alt_c     , # flowering start- NONE
+flstart_mods_alt_c     , # flowering start
 pods_mods_alt_c        , # pods (follicles)
 first_pods_mods_alt_c   , # first pods (follicles)
 peduncles_mods_alt_c   ) # peduncles (inflorescences)
@@ -1361,7 +1361,7 @@ flsucc_mods_alt_u      , # flowering success
 flowers_mods_alt_u     , # mean flowers/inflor
 flsize_mods_alt_u      , # mean flower size
 # fltime_mods_alt_u      , # flowering time - NONE
-# flstart_mods_alt_u     , # flowering start - NONE
+flstart_mods_alt_u     , # flowering start
 # pods_mods_alt_u        , # pods (follicles) - NONE
 first_pods_mods_alt_u ) # , # first pods (follicles)
 # peduncles_mods_alt_u   ) # peduncles (inflorescences) - NONE
@@ -1417,6 +1417,7 @@ compare_anovas(
   "2022",
   "Date of first flower",
   "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/flstart.docx")
+
 # Pods-----
 compare_anovas(
   update(pods_mods_best_c[[1]], .~. - City_dist),
@@ -1488,6 +1489,7 @@ compare_anovas_transects(
   "2022",
   "Date of first flower",
   "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/flstart_transects.docx")
+
 # Pods-----
 compare_anovas_transects(
   update(pods_mods_best_c[[2]], .~. - City_dist*Transect_ID),
@@ -1566,6 +1568,7 @@ flsucc_r2      <- make_r2_table( flsucc_mods_reml_T    )
 flowers_r2       <- make_r2_table(flowers_mods_reml_T      )
 flsize_r2 <- make_r2_table(flsize_mods_reml_T) 
 first_pods_r2  <- make_r2_table(first_pods_mods_reml_T )
+flstart_r2  <- make_r2_table(flstart_mods_reml_T )
 
 
 ## these models don't have an alternative model for urb score/ urbsubs and will use this table format
@@ -1647,79 +1650,6 @@ make_r2_table_modif1 <- function(mods_reml_T){
 fltime_r2 <- make_r2_table_modif1(fltime_mods_reml_T)
 pods_r2  <- make_r2_table_modif1(pods_mods_reml_T)
 peduncles_r2  <- make_r2_table_modif1(peduncles_mods_reml_T )
-
-
-## this models don't have an alternative model for distance/ urbsubs PLUS has these 2 options for usc / urbsubs: Usc_urbsubs_transectonly & Usc_urbsubs_urbscoreonly... will use this table format
-flstart_r2 <-  lapply(flstart_mods_reml_T, r.squaredGLMM) %>%
-      as.data.frame()%>%
-      rownames_to_column() %>%
-      dplyr::mutate_at(2:length(.), round, 3) %>%
-      as.data.table() %>%
-      melt(.,
-           measure = patterns("City_gr.R2m",           "Usc_gr.R2m",
-                              "City_urbsubs_best.R2m",
-                              "Usc_urbsubs_transectonly.R2m",  "Usc_urbsubs_urbscoreonly.R2m",
-                              "City_gr.R2c",           "Usc_gr.R2c",
-                              "City_urbsubs_best.R2c", 
-                              "Usc_urbsubs_transectonly.R2c",  "Usc_urbsubs_urbscoreonly.R2c"),
-           value.name = c("Distance_Q1.R2m",      "UrbScore_Q1.R2m",
-                          "Distance_Q2_best.R2m", 
-                          "UrbScore_Q2_transectonly.R2m", "UrbScore_Q2_urbscoreonly.R2m",
-                          "Distance_Q1.R2c",      "UrbScore_Q1.R2c",
-                          "Distance_Q2_best.R2c", 
-                          "UrbScore_Q2_transectonly.R2c", "UrbScore_Q2_urbscoreonly.R2c")) %>%
-      as.data.frame() %>%
-      dplyr::select(rowname,
-                    
-                    Distance_Q1.R2m,
-                    Distance_Q1.R2c,
-                    Distance_Q2_best.R2m,
-                    Distance_Q2_best.R2c,
-
-                    UrbScore_Q1.R2m,
-                    UrbScore_Q1.R2c,
-                    UrbScore_Q2_urbscoreonly.R2m,
-                    UrbScore_Q2_urbscoreonly.R2c,
-                    UrbScore_Q2_transectonly.R2m,
-                    UrbScore_Q2_transectonly.R2c) %>%
-      dplyr::rename("Type" = 1) %>%
-      flextable() %>%
-      add_header_row(
-        values = c("",
-                   "Model 1",
-                   "Model 2",
-                   "Model 3",
-                   "Model 4",
-                   "Model 5"),
-        colwidths = c(1,2,2,2,2,2))  %>%
-      add_header_row(
-        values = c("",
-                   "All Populations", "Urban Populations",
-                   "All Populations", "Urban Populations"),
-        colwidths = c(1,2,2,2,4))%>%
-      add_header_row(
-        values = c("",
-                   "Best Models", 
-                   "Best Models", "Alternative Models"),
-        colwidths = c(1,4,4,2)) %>%
-      add_header_row(
-        values = c("",
-                   "Distance to City Center", "Urbanization Score"),
-        colwidths = c(1,4,6)) %>%
-      theme_box() %>%
-      align(align = "center",
-            part = "all") %>%
-      flextable::compose(part = "header",
-                         j = c(2,4,6,8,10), i = 5,
-                         value = as_paragraph("R", as_sup("2"), "m")
-      ) %>%
-      flextable::compose(part = "header",
-                         j = c(3,5,7,9,11), i = 5,
-                         value = as_paragraph("R", as_sup("2"), "c")
-      ) %>%
-      autofit() %>%
-      width(j = 1, width = 1, unit = "in")
-
 
 
 # will do this in 3 docs b/c function accepts 3 tables at a time (something to try tweaking in the future)
@@ -1872,8 +1802,8 @@ resid_var <- update(
      flstart_mods_best_c[[1]], REML = T) %>%
     sigma()
 
-qg_flstart <- calc_quantgenvars( 4.0594e-07,
-                   4.8286e-06,
+qg_flstart <- calc_quantgenvars(0.148087,
+                   0.074724,
                    resid_var,
                    flstart_mean,
                    "Flowering Start")

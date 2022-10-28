@@ -974,7 +974,7 @@ ggsave(filename = "pve_growth_Q1.png",
 ```
 
 # Anova
-## Export all best / alt models in separate word docs
+## Export all best / alt multi-year models in separate word docs
 ### Distance / best
 ```{r}
 all_models_best_c <- list(
