@@ -155,7 +155,7 @@ all_blups <- blup_list(all) %>%
 oldnames <- colnames(all_blups)
 newnames <- c("Population",
              "Flowering (0/1)",
-             "Total Flower Count",
+             "Mean Flower Count",
              "Mean Flower Size",
              "Flowering Time",
              "Date of Oldest \nInflorescence",
