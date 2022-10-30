@@ -43,7 +43,64 @@ weevil <- read.csv(here::here("./Joined_annual_data/weevil.csv")) %>%
 
 weevil %<>%
   dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
+
+# cardenolides per population (pooled by population)
+cards <-  read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_cardenolides_clean.csv")) %>%
+  dplyr::select(., -1) 
 ```
+
+# Diagnostics: Traits only measured in 2020
+## Cardenolides (open up viewport for this chunk)
+### Get names of response variables
+```{r}
+cards_vars <- cards %>%
+  dplyr::select(3,5,7,10) %>%
+  names() %>%
+  as.list()
+```
+
+### City_dist
+```{r}
+city_dist_list <- lapply(cards_vars,
+       DoLinearReg,
+       predictor_var = "City_dist",
+       input_data = cards)
+names(city_dist_list) <- cards_vars
+# Num 3 doesn't look normal... try transformation. Residuals look bimodal
+
+# I don't think I should do this analysis because there are only 35 urban populations: 17 non-corridor and 18 corridor
+city_dist_list2 <- lapply(cards_vars,
+       DoLinearReg,
+       predictor_var = "City_dist * Transect_ID",
+       input_data = cards %>% dplyr::filter(Transect_ID != "Rural"))
+names(city_dist_list2) <- cards_vars
+# looks fine
+
+
+## Investigate non-normal-looking models
+# DoLinearReg("X17.6_main", "City_dist", cards)
+# DoLinearReg("log(X17.6_main)", "City_dist", cards)
+# car::Anova(lm(log(X17.6_main) ~ City_dist, cards)) # still isn't near p = 0.05 so maybe not worth worrying about
+```
+
+### Urb_score
+```{r}
+urb_score_list <- lapply(cards_vars,
+       DoLinearReg,
+       predictor_var = "Urb_score",
+       input_data = cards)
+names(urb_score_list) <- cards_vars
+# Num 3 doesn't look normal... try transformation. Looks bimodal
+
+
+## Investigate non-normal-looking models
+# DoLinearReg("X17.6_main", "Urb_score", cards)
+# DoLinearReg("log(X17.6_main)", "Urb_score", cards) # looks better
+# car::Anova(lm(log(X17.6_main) ~ Urb_score, cards))
+
+urb_score_list[[3]] <- DoLinearReg("log(X17.6_main)", "Urb_score", cards)
+```
+
 
 # Diagnostics: Traits only measured in 2021
 ## Latex
@@ -1234,6 +1291,91 @@ weev_urbsubs_usc_m2_quant <- glmmTMB(log(Scar_length_cm) ~
 ```
 
 # Models for use in analysis
+## Cardenolides
+### Total
+```{r}
+card_total_mods <- list(
+
+## City_dist / gradient
+city_dist_list[[4]][[1]]  ,
+
+## Urbanization score / gradient
+urb_score_list[[4]][[1]]
+
+## City_dist / urban subtransects
+# not doing this because sample size so low 
+
+## Urbanization score  / urban subtransects
+# not doing this because sample size so low 
+)
+
+names(card_total_mods) <- c("City_gr",
+                            "Usc_gr")
+```
+
+### Peak 6.6
+```{r}
+card_6.6_mods <- list(
+
+## City_dist / gradient
+city_dist_list[[1]][[1]]  ,
+
+## Urbanization score / gradient
+urb_score_list[[1]][[1]]
+
+## City_dist / urban subtransects
+# not doing this because sample size so low 
+
+## Urbanization score  / urban subtransects
+# not doing this because sample size so low 
+)
+
+names(card_6.6_mods) <- c("City_gr",
+                            "Usc_gr")
+```
+
+### Peak 15
+```{r}
+card_15_mods <- list(
+
+## City_dist / gradient
+city_dist_list[[2]][[1]]  ,
+
+## Urbanization score / gradient
+urb_score_list[[2]][[1]]
+
+## City_dist / urban subtransects
+# not doing this because sample size so low 
+
+## Urbanization score  / urban subtransects
+# not doing this because sample size so low 
+)
+
+names(card_15_mods) <- c("City_gr",
+                            "Usc_gr")
+```
+
+### Peak 17.6
+```{r}
+card_17.6_mods <- list(
+
+## City_dist / gradient
+city_dist_list[[3]][[1]]  ,
+
+## Urbanization score / gradient
+urb_score_list[[3]][[1]]
+
+## City_dist / urban subtransects
+# not doing this because sample size so low 
+
+## Urbanization score  / urban subtransects
+# not doing this because sample size so low 
+)
+
+names(card_17.6_mods) <- c("City_gr",
+                            "Usc_gr")
+```
+
 ## Latex
 ```{r}
 latex_mods <- list(
@@ -1416,7 +1558,7 @@ names(weev_mods_quant) <- c("City_gr",
 ```
 
 
-## Create full list
+## Create full list (keeping cardenolides separate to avoid issues w/other functions assuming lmers vs. lms)
 ```{r}
 
 all_models <- list(
@@ -1436,9 +1578,26 @@ names(all_models) <- c(
 "herb_late_mods_quant"     ,
 "weev_mods_binomial" ,
 "weev_mods_quant")
+
+
+
+all_card_models <- list(
+  card_total_mods,
+  card_6.6_mods,
+  card_15_mods,
+  card_17.6_mods
+)
+
+names(all_card_models) <- c(
+  "total_cardenolides",
+  "peak_6.6_cardenolides",
+  "peak_15_cardenolides",
+  "peak_17.6_cardenolides"
+  )
 ```
 
 ## Create separate lists of best vs. alt models for city_dist vs urb_score
+### Cardenolides: not doing this because there are only best models, no alt
 ### Latex
 ```{r}
 ## Best

@@ -10,129 +10,21 @@ source("libraries.R")
 ```{r}
 source(knitr::purl("Reproductive_trait_analyses/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
 
-# Best Models (first is Q1, second is Q2)
-## City_dist
-best_repro_mods <- list(
-flsucc_mods_best_c    ,   # flowering success
-flowers_mods_best_c    ,   # total flowers
-flsize_mods_best_c      , # mean flower size
-fltime_mods_best_c    ,   # flowering time
-flstart_mods_best_c    ,   # flowering start
-pods_mods_best_c      , # pods (follicles)
-peduncles_mods_best_c        # peduncles (inflors)
-)
-
-## Urb_score
-best_repro_mods_u <- list(
-flsucc_mods_best_u    ,   # flowering success
-flowers_mods_best_u    ,   # total flowers
-flsize_mods_best_u      , # mean flower size
-fltime_mods_best_u    ,   # flowering time
-flstart_mods_best_u    ,   # flowering start
-pods_mods_best_u      , # pods (follicles)
-peduncles_mods_best_u        # peduncles (inflors)
-)
-
 ```
 
-## Defense traits
+## Defense traits (including cardenolides)
 ```{r}
 source(knitr::purl("Defense_trait_analyses/Model_diagnostics_Defense.Rmd", quiet=TRUE))
 
-# Best Models (first is Q1, second is Q2)
-## City_dist
-best_defense_mods <- list(
-latex_mods_best_c, # latex
-herb_e_bin_mods_best_c, # herbivory early (0/1)
-herb_e_quant_mods_best_c, # herbivory early (quantitative)
-herb_l_bin_mods_best_c, # herbivory late (0/1)
-herb_l_quant_mods_best_c, # herbivory late (quantiative)
-weev_bin_mods_best_c, # weevil damage (0/1)
-weev_quant_mods_best_c # weevil damage (quantitative)
-)
-
-## Urb_score
-best_defense_mods_u <- list(
-latex_mods_best_u, # latex
-herb_e_bin_mods_best_u, # herbivory early (0/1)
-herb_e_quant_mods_best_u, # herbivory early (quantitative)
-herb_l_bin_mods_best_u, # herbivory late (0/1)
-herb_l_quant_mods_best_u, # herbivory late (quantiative)
-weev_bin_mods_best_u, # weevil damage (0/1)
-weev_quant_mods_best_u # weevil damage (quantitative)
-)
 ```
 
 ## Growth traits
 ```{r}
 source(knitr::purl("Growth_trait_analyses/Model_diagnostics_Growth.Rmd", quiet=TRUE))
 # I don't know why but this Rmd usually doesn't fully run with this line of code, so instead, just open the Rmd and run it all manually
-
-# Best Models (first is Q1, second is Q2)
-## City_dist
-best_growth_mods <- list(
-ldmc_mods_best_c,
-sla_mods_best_c,
-heights_early_mods_best_c,
-heights_late_mods_best_c,
-rgr_mods_best_c,
-ramets_early_mods_best_c,
-ramets_late_mods_best_c,
-mortality_mods_best_c
-)
-
-## Urb_score
-best_growth_mods_u <- list(
-ldmc_mods_best_u,
-sla_mods_best_u,
-heights_early_mods_best_u,
-heights_late_mods_best_u,
-rgr_mods_best_u,
-ramets_early_mods_best_u,
-ramets_late_mods_best_u,
-mortality_mods_best_u
-)
 ```
 
-## Cardenolides (part of defense, technically)
-```{r}
-# open viewport for this!!
-# ONLY FOR Q1
-source(knitr::purl("Defense_trait_analyses/Analysis_cardenolides.Rmd", quiet=TRUE))
-
-# Best Models' p-values
-## City_dist
-card1 <- city_dist_list[["X6.6_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
-
-card2 <- city_dist_list[["X15_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
-
-card3 <- city_dist_list[["X17.6_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
-
-card4 <- city_dist_list[["total"]][[2]][["Pr(>F)"]][1] %>% as.character()
-
-card_df <- data_frame(
-  variable = c("cardenolide_6.6", "cardenolide_15", "cardenolide_17.6", "cardenolide_Total"),
-  p = c(card1, card2, card3, card4))
-
-
-
-## Urb_score
-card1_u <- urb_score_list[["X6.6_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
-
-card2_u <- urb_score_list[["X15_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
-
-card3_u <- urb_score_list[["X17.6_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
-
-card4_u <- urb_score_list[["total"]][[2]][["Pr(>F)"]][1] %>% as.character()
-
-card_df_u <- data_frame(
-  variable = c("cardenolide_6.6", "cardenolide_15", "cardenolide_17.6", "cardenolide_Total"),
-  p = c(card1_u, card2_u, card3_u, card4_u))
-
-```
-
-# Create tables with ANOVA results from all one-year models
-## Make function that makes multi-year model --> one-year model
+# Make function that makes multi-year model --> one-year model
 ```{r}
 # Q1
 make_1yrmod <- function(orig_mod, last_year, mod_allyrs_df){
@@ -156,6 +48,8 @@ make_1yrmod_transects <- function(orig_mod, last_year, mod_allyrs_df){
 }
 ```
 
+
+# Create tables with ANOVA results from all one-year models
 ## Q1
 ### City_dist
 #### Make lists of models
@@ -579,4 +473,428 @@ all_1yr_mods.u %>%
 
 ## Q2
 ### City_dist
+#### Make lists of models
+##### Defense
+```{r}
+latex_mods_best_c[[2]]
+
+def.tr.m1 <- make_1yrmod_transects(herb_e_bin_mods_best_c[[2]], "2021", herbivory)
+
+def.tr.m2 <- update(herb_e_quant_mods_best_c[[2]],
+                 .~. - Year,
+                 data = herbivory %>%
+                   dplyr::filter(Transect_ID != "Rural" &
+                                   Year == "2021" &
+                                   Herbivory_mean_early_binary == 1))
+
+def.tr.m3 <- make_1yrmod_transects(herb_l_bin_mods_best_c[[2]], "2021", herbivory)
+
+def.tr.m4 <- update(herb_l_quant_mods_best_c[[2]],
+                 .~. - Year,
+                 data = herbivory %>%
+                   dplyr::filter(Transect_ID != "Rural" &
+                                   Year == "2021" &
+                                   Herbivory_mean_late_binary == 1))
+
+def.tr.m5 <- make_1yrmod_transects(weev_bin_mods_best_c[[2]], "2021", weevil)
+
+def.tr.m6 <- update(weev_quant_mods_best_c[[2]],
+                 .~. - Year,
+                 data = weevil %>%
+                   dplyr::filter(Transect_ID != "Rural" &
+                                   Year == "2021" &
+                                   Scar_length_cm > 0))
+```
+
+##### Reproduction
+```{r}
+repr.tr.m1 <- make_1yrmod_transects(flsucc_mods_best_c[[2]], "2022", reproduc)
+
+repr.tr.m2 <- make_1yrmod_transects(flowers_mods_best_c[[2]], "2022", flowering)
+
+repr.tr.m3 <- make_1yrmod_transects(flsize_mods_best_c[[2]], "2022", flowering)
+
+repr.tr.m4 <- make_1yrmod_transects(fltime_mods_best_c[[2]], "2022", flowering)
+
+repr.tr.m5 <- make_1yrmod_transects(flstart_mods_best_c[[2]], "2022", flowering)
+
+repr.tr.m6 <- make_1yrmod_transects(pods_mods_best_c[[2]], "2022", flowering)
+
+repr.tr.m7 <- make_1yrmod_transects(first_pods_mods_best_c[[2]], "2022", flowering)
+
+repr.tr.m8 <- make_1yrmod_transects(peduncles_mods_best_c[[2]], "2022", flowering)
+```
+
+##### Herbivores
+```{r}
+herb.tr.m1 <- make_1yrmod_transects(monarch_mods_best_c[[2]], "2021", herbivores)
+
+herb.tr.m2 <- make_1yrmod_transects(asclepiadis_mods_best_c[[2]], "2021", herbivores)
+
+herb.tr.m3 <- make_1yrmod_transects(clivicollis_mods_best_c[[2]], "2021", herbivores)
+```
+
+##### Growth
+```{r}
+grow.tr.m1 <- ldmc_mods_best_c[[2]]
+
+grow.tr.m2 <- sla_mods_best_c[[2]]
+
+grow.tr.m3 <- make_1yrmod_transects(heights_early_mods_best_c[[2]], "2021", heights)
+
+grow.tr.m4 <- make_1yrmod_transects(heights_late_mods_best_c[[2]], "2021", heights)
+
+grow.tr.m5 <- make_1yrmod_transects(rgr_mods_best_c[[2]], "2021", heights)
+
+grow.tr.m6 <- make_1yrmod_transects(ramets_early_mods_best_c[[2]], "2021", heights)
+
+grow.tr.m7 <- make_1yrmod_transects(ramets_late_mods_best_c[[2]], "2021", heights)
+
+grow.tr.m8 <- make_1yrmod_transects(mortality_mods_best_c[[2]], "2022", survival)
+```
+
+##### All
+```{r}
+all_1yr_mods_tr <- list(
+  
+  # defense
+  latex_mods_best_c[[2]],
+  def.tr.m1,
+  def.tr.m2,
+  def.tr.m3,
+  def.tr.m4,
+  def.tr.m5,
+  def.tr.m6,
+  
+  # reproduction
+  repr.tr.m1,
+  repr.tr.m2,
+  repr.tr.m3,
+  repr.tr.m4,
+  repr.tr.m5,
+  repr.tr.m6,
+  repr.tr.m7,
+  repr.tr.m8,
+  
+  # Herbivores
+  herb.tr.m1,
+  herb.tr.m2,
+  herb.tr.m3,
+  
+  # growth
+  grow.tr.m1,
+  grow.tr.m2,
+  grow.tr.m3,
+  grow.tr.m4,
+  grow.tr.m5,
+  grow.tr.m6,
+  grow.tr.m7,
+  grow.tr.m8
+  )
+```
+
+#### Create 1-yr ANOVA table
+```{r}
+# STEP 3: perform tidy_anova on all list items (i.e., models)
+all_1yr_mods_tr %>% 
+  lapply(., tidy_anova) %>%
+
+# STEP 4: merge all items
+  reduce(full_join, all = T) %>%
+
+# STEP 5: make flextable
+  dplyr::rename(Variable = 1) %>%
+  dplyr::select(-Sites) %>% 
+  dplyr::mutate(Variable = case_when(
+    
+    # Defense
+    str_detect(Variable, "Latex")~
+      "Latex exudation",
+    str_detect(Variable, "Herbivory_mean_early_binary") ~
+      "Herbivory before flowering (binary)",
+    str_detect(Variable, "(Herbivory_mean_early)") ~
+                 "Herbivory before flowering (quantitative)",
+    str_detect(Variable, "Herbivory_mean_late_binary")~
+      "Herbivory after flowering (binary)",
+    str_detect(Variable, "(Herbivory_mean_late)")~
+      "Herbivory before flowering (quantitative)",
+    str_detect(Variable, "Scar_binary")~
+      "Weevil damage (binary)",
+    str_detect(Variable, "Scar_length_cm")~
+      "Weevil damage (quantitative)",
+    
+    # Reproduction
+    str_detect(Variable, "Flowered")~
+      "Flowering success",
+    str_detect(Variable, "mean_flower_c")~
+      "Flowers per Inflorescence",
+    str_detect(Variable, "Overall")~
+      "Flower size",
+    str_detect(Variable, "flowering_time")~
+      "Flowering duration",
+    str_detect(Variable, "Julian_oldest_inflor")~
+      "Date of first flower",
+    str_detect(Variable, "Pods")~
+      "Follicles",
+    str_detect(Variable, "Julian_first")~
+      "Date of first follicle",
+    str_detect(Variable, "Peduncles")~
+      "Inflorescences",
+    
+    # Herbivores
+    str_detect(Variable, "Monarch")~
+      "Danaus plexippus abundance",
+    str_detect(Variable, "asclep")~
+      "Liriomyza asclepiadis abundance",
+    str_detect(Variable, "clivi")~
+      "Labidomera clivicollis abundance",
+    
+    # Growth
+    str_detect(Variable, "LDMC")~
+      "LDMC",
+    str_detect(Variable, "SLA")~
+      "SLA",
+    str_detect(Variable, "Total_Height_early")~
+      "Height before flowering",
+    str_detect(Variable, "Total_Height_late")~
+      "Height after flowering",
+    str_detect(Variable, "rel_gr")~
+      "Relative growth rate",
+    str_detect(Variable, "Ramets_early")~
+      "Ramets before flowering",
+    str_detect(Variable, "Ramets_late")~
+      "Ramets after flowering",
+    str_detect(Variable, "Dead")~
+      "Mortality"
+    
+    
+    )) %>%
+  flextable() %>%
+  theme_box() %>%
+  merge_v(j = ~Variable) %>% 
+  align(j = 3:4, align = "center", part = "all") %>%
+  hline(j = ~Variable, border = NULL, part = "body") %>%
+  flextable::compose(i = 1, j = 3, part = "header",
+                     value = as_paragraph("χ", as_sup("2"))) %>%
+  bold(i = ~ p <= 0.05, j = 4) %>%
+  padding(padding = 3) %>%
+  autofit() %T>%
+  
+# STEP 6: Export
+  flextable::save_as_docx(.,
+                          path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_Citydist_transects.docx"))
+```
+
 ### Urb_score
+#### Make lists of models
+##### Defense
+```{r}
+latex_mods_best_u[[2]]
+
+def.tr.m1_u <- make_1yrmod_transects(herb_e_bin_mods_best_u[[2]], "2021", herbivory)
+
+def.tr.m2_u <- update(herb_e_quant_mods_best_u[[2]],
+                 .~. - Year,
+                 data = herbivory %>%
+                   dplyr::filter(Transect_ID != "Rural" &
+                                   Year == "2021" &
+                                   Herbivory_mean_early_binary == 1))
+
+def.tr.m3_u <- make_1yrmod_transects(herb_l_bin_mods_best_u[[2]], "2021", herbivory)
+
+def.tr.m4_u <- update(herb_l_quant_mods_best_u[[2]],
+                 .~. - Year,
+                 data = herbivory %>%
+                   dplyr::filter(Transect_ID != "Rural" &
+                                   Year == "2021" &
+                                   Herbivory_mean_late_binary == 1))
+
+def.tr.m5_u <- make_1yrmod_transects(weev_bin_mods_best_u[[2]], "2021", weevil)
+
+def.tr.m6_u <- update(weev_quant_mods_best_u[[2]],
+                 .~. - Year,
+                 data = weevil %>%
+                   dplyr::filter(Transect_ID != "Rural" &
+                                   Year == "2021" &
+                                   Scar_length_cm > 0))
+```
+
+##### Reproduction
+```{r}
+repr.tr.m1_u <- make_1yrmod_transects(flsucc_mods_best_u[[2]], "2022", reproduc)
+
+repr.tr.m2_u <- make_1yrmod_transects(flowers_mods_best_u[[2]], "2022", flowering)
+
+repr.tr.m3_u <- make_1yrmod_transects(flsize_mods_best_u[[2]], "2022", flowering)
+
+repr.tr.m4_u <- make_1yrmod_transects(fltime_mods_best_u[[2]], "2022", flowering)
+
+repr.tr.m5_u <- make_1yrmod_transects(flstart_mods_best_u[[2]], "2022", flowering)
+
+repr.tr.m6_u <- make_1yrmod_transects(pods_mods_best_u[[2]], "2022", flowering)
+
+repr.tr.m7_u <- make_1yrmod_transects(first_pods_mods_best_u[[2]], "2022", flowering)
+
+repr.tr.m8_u <- make_1yrmod_transects(peduncles_mods_best_u[[2]], "2022", flowering)
+```
+
+##### Herbivores
+```{r}
+herb.tr.m1_u <- make_1yrmod_transects(monarch_mods_best_u[[2]], "2021", herbivores)
+
+herb.tr.m2_u <- make_1yrmod_transects(asclepiadis_mods_best_u[[2]], "2021", herbivores)
+
+herb.tr.m3_u <- make_1yrmod_transects(clivicollis_mods_best_u[[2]], "2021", herbivores)
+```
+
+##### Growth
+```{r}
+grow.tr.m1_u <- ldmc_mods_best_u[[2]]
+
+grow.tr.m2_u <- sla_mods_best_u[[2]]
+
+grow.tr.m3_u <- make_1yrmod_transects(heights_early_mods_best_u[[2]], "2021", heights)
+
+grow.tr.m4_u <- make_1yrmod_transects(heights_late_mods_best_u[[2]], "2021", heights)
+
+grow.tr.m5_u <- make_1yrmod_transects(rgr_mods_best_u[[2]], "2021", heights)
+
+grow.tr.m6_u <- make_1yrmod_transects(ramets_early_mods_best_u[[2]], "2021", heights)
+
+grow.tr.m7_u <- make_1yrmod_transects(ramets_late_mods_best_u[[2]], "2021", heights)
+
+grow.tr.m8_u <- make_1yrmod_transects(mortality_mods_best_u[[2]], "2022", survival)
+```
+
+##### All
+```{r}
+all_1yr_mods.u_tr <- list(
+  
+  # defense
+  latex_mods_best_u[[2]],
+  def.tr.m1_u,
+  def.tr.m2_u,
+  def.tr.m3_u,
+  def.tr.m4_u,
+  def.tr.m5_u,
+  def.tr.m6_u,
+  
+  # reproduction
+  repr.tr.m1_u,
+  repr.tr.m2_u,
+  repr.tr.m3_u,
+  repr.tr.m4_u,
+  repr.tr.m5_u,
+  repr.tr.m6_u,
+  repr.tr.m7_u,
+  repr.tr.m8_u,
+  
+  # Herbivores
+  herb.tr.m1_u,
+  herb.tr.m2_u,
+  herb.tr.m3_u,
+  
+  # growth
+  grow.tr.m1_u,
+  grow.tr.m2_u,
+  grow.tr.m3_u,
+  grow.tr.m4_u,
+  grow.tr.m5_u,
+  grow.tr.m6_u,
+  grow.tr.m7_u,
+  grow.tr.m8_u
+  )
+```
+
+#### Create 1-yr ANOVA table
+```{r}
+# STEP 3: perform tidy_anova on all list items (i.e., models)
+all_1yr_mods.u_tr %>% 
+  lapply(., tidy_anova) %>%
+
+# STEP 4: merge all items
+  reduce(full_join, all = T) %>%
+
+# STEP 5: make flextable
+  dplyr::rename(Variable = 1) %>%
+  dplyr::select(-Sites) %>%
+  dplyr::mutate(Variable = case_when(
+    
+    # Defense
+    str_detect(Variable, "Latex")~
+      "Latex exudation",
+    str_detect(Variable, "Herbivory_mean_early_binary") ~
+      "Herbivory before flowering (binary)",
+    str_detect(Variable, "(Herbivory_mean_early)") ~
+                 "Herbivory before flowering (quantitative)",
+    str_detect(Variable, "Herbivory_mean_late_binary")~
+      "Herbivory after flowering (binary)",
+    str_detect(Variable, "(Herbivory_mean_late)")~
+      "Herbivory before flowering (quantitative)",
+    str_detect(Variable, "Scar_binary")~
+      "Weevil damage (binary)",
+    str_detect(Variable, "Scar_length_cm")~
+      "Weevil damage (quantitative)",
+    
+    # Reproduction
+    str_detect(Variable, "Flowered")~
+      "Flowering success",
+    str_detect(Variable, "mean_flower_c")~
+      "Flowers per Inflorescence",
+    str_detect(Variable, "Overall")~
+      "Flower size",
+    str_detect(Variable, "flowering_time")~
+      "Flowering duration",
+    str_detect(Variable, "Julian_oldest_inflor")~
+      "Date of first flower",
+    str_detect(Variable, "Pods")~
+      "Follicles",
+    str_detect(Variable, "Julian_first")~
+      "Date of first follicle",
+    str_detect(Variable, "Peduncles")~
+      "Inflorescences",
+    
+    # Herbivores
+    str_detect(Variable, "Monarch")~
+      "Danaus plexippus abundance",
+    str_detect(Variable, "asclep")~
+      "Liriomyza asclepiadis abundance",
+    str_detect(Variable, "clivi")~
+      "Labidomera clivicollis abundance",
+    
+    # Growth
+    str_detect(Variable, "LDMC")~
+      "LDMC",
+    str_detect(Variable, "SLA")~
+      "SLA",
+    str_detect(Variable, "Total_Height_early")~
+      "Height before flowering",
+    str_detect(Variable, "Total_Height_late")~
+      "Height after flowering",
+    str_detect(Variable, "rel_gr")~
+      "Relative growth rate",
+    str_detect(Variable, "Ramets_early")~
+      "Ramets before flowering",
+    str_detect(Variable, "Ramets_late")~
+      "Ramets after flowering",
+    str_detect(Variable, "Dead")~
+      "Mortality"
+    
+    
+    )) %>%
+  flextable() %>%
+  theme_box() %>%
+  merge_v(j = ~Variable) %>% 
+  align(j = 3:4, align = "center", part = "all") %>%
+  hline(j = ~Variable, border = NULL, part = "body") %>%
+  flextable::compose(i = 1, j = 3, part = "header",
+                     value = as_paragraph("χ", as_sup("2"))) %>%
+  bold(i = ~ p <= 0.05, j = 4) %>%
+  padding(padding = 3) %>%
+  autofit() %T>%
+  
+# STEP 6: Export
+  flextable::save_as_docx(.,
+                          path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_Urbscore_transects.docx"))
+```
+

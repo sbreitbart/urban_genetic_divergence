@@ -103,8 +103,8 @@ ldmc_gr_usc_m1 <- glmmTMB(sqrt(LDMC) ~
 ### Urban Subtransects
 #### City_dist
 ```{r}
-ldmc_urbsubs_city_m1 <- glmmTMB(LDMC^(1/3) ~
-                              Block +
+ldmc_urbsubs_city_m1 <- glmmTMB(sqrt(LDMC) ~
+                        #      Block +
                              (1|Population/Family) +
                              City_dist * Transect_ID,
                         data = sla_ldmc %>%
@@ -119,9 +119,9 @@ ldmc_urbsubs_city_m1 <- glmmTMB(LDMC^(1/3) ~
 
 
 # MAIN EFFECTS MODEL
-# have to remove block for it to converge
-ldmc_urbsubs_city_m2 <- glmmTMB(LDMC^(1/3) ~
-                              Block +
+# have to remove block to converge
+ldmc_urbsubs_city_m2 <- glmmTMB(LDMC^(1/2) ~
+                           #   Block +
                              (1|Population/Family) +
                              City_dist + Transect_ID,
                         data = sla_ldmc %>%
@@ -139,7 +139,7 @@ ldmc_urbsubs_city_m2 <- glmmTMB(LDMC^(1/3) ~
 
 
 # test for gxe intxns
-# gxe_test_ldmc3 <- glmmTMB(log(LDMC) ~
+# gxe_test_ldmc3 <- glmmTMB(sqrt(LDMC) ~
 #                              City_dist*Block +
 #                              (1|Population/Family) +
 #                         City_dist*Transect_ID,
@@ -163,9 +163,9 @@ ldmc_urbsubs_usc_m1 <- glmmTMB(log(LDMC) ~
                                              Transect_ID != "Rural"), # next highest LMDC is 0.7, so removing the one more than double that
                         REML = F)
 
-# DHARMa::simulateResiduals(ldmc_urbsubs_usc_m1) %>%
-#   plot
-# performance::check_model(ldmc_urbsubs_usc_m1)
+ # DHARMa::simulateResiduals(ldmc_urbsubs_usc_m1) %>%
+ #   plot
+ # performance::check_model(ldmc_urbsubs_usc_m1)
 
 
 # MAIN EFFECTS MODEL

@@ -14,6 +14,7 @@ source(knitr::purl("Defense_trait_analyses/Model_diagnostics_Defense.Rmd", quiet
 # Ranova
 The point: to determine if there is much genetic diversity present within populations for natural selection to act on.
 - ranova can't handle GLMMTMB functions so I'll use lmer instead
+- NOT doing this for cardenolides because samples were pooled by population
 ## Set seed for random processes (bootstrapping)
 ```{r}
 set.seed(45)
@@ -784,9 +785,17 @@ export_anovas(anovas_alt_u, "./Defense_trait_analyses/Figures/ANOVA/Alt_models/a
 
 ```
 
+### Cardenolides (lms, not lmers)
+```{r}
+
+```
+
 ## Export comparisons of anovas w/1 vs. all years
 ### Q1
 ```{r}
+# cardenolides-----
+# only one year of data for this, and it's pooled by population, so I didn't perform ranova on these models and don't have any others to compare these to.
+
 # latex-----
 # only one year of data for this. Compared anovas in "./Defense_trait_analyses/Tables/Ranova/nsim_10/latex.docx" and "./Defense_trait_analyses/Figures/ANOVA/Best_models/all_anova_Defense_best_distance.docx" and "...urbscore.docx" and they're nearly identical- differences probably due to glmer vs. glmmTMB
 
@@ -1088,6 +1097,9 @@ rm(var_name, filepath, last_year,anov1.d, mod_1yr_dist, anov2.d, mod_allyrs_usc,
 
 ### Q2
 ```{r}
+# cardenolides-----
+# only one year of data for this, and it's pooled by population, so I didn't perform ranova on these models and don't have any others to compare these to.
+
 # latex-----
 # only one year of data for this. Compared anovas in "./Defense_trait_analyses/Tables/Ranova/nsim_10/latex_transects.docx" and "./Defense_trait_analyses/Figures/ANOVA/Best_models/all_anova_Defense_best_distance.docx" and "...urbscore.docx" and they're nearly identical- differences probably due to glmer vs. glmmTMB
 
@@ -1394,8 +1406,9 @@ rm(var_name, filepath, last_year,anov1.d, mod_1yr_dist, anov2.d, mod_allyrs_usc,
 ```
 
 # R-squared values
+## lmers
 ```{r}
-# change REML to T
+# change REML to T for lmers
 latex_mods_reml_T      <- reml_to_true(latex_mods)
 herb_e_bin_mods_reml_T       <- reml_to_true(herb_early_mods_binomial)
 herb_e_quant_mods_reml_T <- reml_to_true(herb_early_mods_quant)
@@ -1612,12 +1625,52 @@ weevil_bin_r2 ,
   print(word_export, here::here("./Defense_trait_analyses/Tables/R2_Defense3.docx"))
 ```
 
+## lms (cardenolides)
+```{r}
+
+
+
+# total / City_dist
+card_total_mods[[1]] %>%
+  broom::glance() %>%
+  dplyr::select(r.squared:adj.r.squared) %>%
+  as.data.frame() %>%
+  dplyr::mutate(Variable = toString(card_total_mods[[1]]$terms[[2]]),
+         Urbanization = toString(card_total_mods[[1]]$terms[[3]]),
+         r.squared = round(r.squared, 3),
+         adj.r.squared = round(adj.r.squared, 3)) %>%
+  dplyr::rename(R2 = 1, 
+                R2.adj = 2) %>%
+  dplyr::select(Variable, Urbanization, R2, R2.adj) %>%
+  
+  dplyr::mutate(Variable = case_when(
+    str_detect(Variable, "total")~
+      "Total Cardenolides",
+    str_detect(Variable, "6.6") ~
+      "Peak 6.6",
+    str_detect(Variable, "15") ~
+      "Peak 15",
+    str_detect(Variable, "17.6") ~
+      "Peak 17.6")) %>%
+  
+  dplyr::mutate(Urbanization = case_when(
+    str_detect(Urbanization, "City_dist")~
+      "Distance to City Center",
+    str_detect(Urbanization, "Urb_score")~
+      "Urbanization score")) %>%
+  
+  flextable() %>%
+  autofit()
+```
+
 # Calculate heritability, Qst, and CVA
 Just looking at gradient models- all pops included. 
 
 h2 represents the average heritability across populations after removing the genetic effects due to population differences.
 
 "[CVA, or additive genetic coefficient of variation] provides a measure of genetic variation standardized by the mean, allowing to qualitatively comparing genetic variation among different traits"
+
+-not possible for cardenolides because there are no families within pops (were pooled by population)
 ## Calculate values per trait
 ```{r}
 # Latex-----

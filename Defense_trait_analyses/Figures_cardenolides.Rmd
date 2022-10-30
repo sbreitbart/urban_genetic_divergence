@@ -1,22 +1,3 @@
----
-title: "Defense Trait Analysis"
-author: "Sophie Breitbart"
-output:
-  html_document:
-    number_sections: true
-    df_print: paged
-    toc: yes
-    toc_depth: 6
-    toc_float:
-      collapsed: yes
-  pdf_document:
-    toc: yes
-    toc_depth: '2'
-editor_options: 
-  chunk_output_type: console
-
----
-
 # Set up notebook
 ## Load libraries and add functions
 
@@ -231,21 +212,27 @@ dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q1_urbscore_Car
 ```
 
 
-# RDA
-```{r warning=FALSE, message=FALSE}
-pairs(cards[,c(3,5,7,10, 17)],
-      lower.panel = NULL)
+# Estimated marginal means
+```{r}
+# total cards
+m1 <- lm(total ~ City_dist, cards)
+summary(m1)
+## estimate at x = 0 (urban terminus): mx + b = 0 + b = 0.358397
+## estimate at x = 67 (rural terminus): (67)*(-0.001820) + 0.358397 = 0.236457
+## percent change, rur to urb: 
+#### percent_change <- ((urb_mean - rur_mean) / rur_mean) * 100
+percent_change <- (((0.358397 - 0.236457) / 0.236457) * 100) %T>%
+  print()
 
-my.rda <- rda(cards[,c(3,5,7,10)])
-biplot(my.rda)
 
-ordihull(my.rda,
-         group = cards$Urb_Rur,
-         col = c("Orange", "Green"))
-
-legend("topright",
-       col = c("Orange", "Green"),
-       lty = 1,
-       legend = unique(cards$Urb_Rur))
+# peak 6.6
+m2 <- lm(X6.6_main ~ City_dist, cards)
+summary(m2)
+## estimate at x = 0 (urban terminus): mx + b = 0 + b = 0.2619764  
+## estimate at x = 67 (rural terminus): (67)*(-0.0015764) + 0.2619764 = 0.1563576
+## percent change, rur to urb: 
+#### percent_change <- ((urb_mean - rur_mean) / rur_mean) * 100
+percent_change <- (((0.2619764 - 0.1563576) / 0.1563576) * 100) %T>%
+  print()
 ```
 
