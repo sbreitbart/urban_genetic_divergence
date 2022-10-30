@@ -1,5 +1,3 @@
-[] ADD  "Total Cardenolide Concentration"
-
 # Load libraries
 ```{r}
 source("libraries.R")
@@ -49,7 +47,7 @@ make_1yrmod_transects <- function(orig_mod, last_year, mod_allyrs_df){
 ```
 
 
-# Create tables with ANOVA results from all one-year models
+# Create tables with ANOVA results from all one-year models (lmers)
 ## Q1
 ### City_dist
 #### Make lists of models
@@ -898,3 +896,33 @@ all_1yr_mods.u_tr %>%
                           path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_Urbscore_transects.docx"))
 ```
 
+
+# Create tables with ANOVA results from cardenolide models (lms)
+## Q1, City_dist & Urb_score
+### Create 1-yr ANOVA table (only 1 year of data anyway)
+Not doing this for Q2 since sample size so small
+```{r}
+
+# anova on all list items (i.e., models)
+flatten(all_card_models) %>% 
+  lapply(., tidy_anova_cards) %>%
+
+# merge all items
+  reduce(full_join, all = T) %>%
+
+# make flextable
+  flextable() %>%
+  theme_box() %>%
+  merge_v(j = ~Variable) %>% 
+  align(j = 3:6, align = "center", part = "all") %>%
+  hline(j = ~Variable, border = NULL, part = "body") %>%
+  flextable::compose(i = 1, j = 6, part = "header",
+                         value = as_paragraph(as_i("p"))) %>%
+  bold(i = ~ p <= 0.05, j = 6) %>%
+  padding(padding = 3) %>%
+  autofit() %T>%
+  
+# STEP 6: Export
+  flextable::save_as_docx(.,
+                          path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_Citydist_cardenolides.docx"))
+```

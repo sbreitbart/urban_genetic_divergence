@@ -86,6 +86,51 @@ tidy_anova <- function(model){
                        replacement = c("Urbanization Score x Year"))
   )}
 
+# create function that basically does tidy_anova but with lms vs lmers
+tidy_anova_cards <- function(model){
+  
+  return(
+    car::Anova(model) %>%
+      broom.mixed::tidy() %>%
+      as.data.frame() %>%
+      dplyr::mutate(Variable = as.character(formula(model)[2]),
+                    .before = term) %>%
+      dplyr::mutate(Significance = case_when(p.value < 0.001 ~ "***",
+                                             p.value < 0.01 ~ "**",
+                                             p.value <= 0.05 ~ "*")) %>%
+      mutate_if(is.numeric, round, 3)      %>%
+      dplyr::mutate(p.value = replace(p.value,
+                                      Significance == "***", "<0.001"))  %>%
+      dplyr::rename(., F = statistic,
+                    Predictor = term,
+                    p = p.value,
+                    SS = sumsq) %>%
+      unite("p", p:Significance, sep = "", na.rm = TRUE) %>%
+      dplyr::mutate(df = paste("1, ", 
+                               as.character(model$df.residual))) %>%
+      dplyr::mutate_if(.,
+                       is.character,
+                       str_replace_all,
+                       pattern = c("City_dist"),
+                       replacement = c("Distance to City Center")) %>%
+      dplyr::mutate_if(.,
+                       is.character,
+                       str_replace_all,
+                       pattern = c("Urb_score"),
+                       replacement = c("Urbanization Score")) %>%
+      dplyr::mutate(Variable = case_when(
+        str_detect(Variable, "total")~
+          "Total Cardenolides",
+        str_detect(Variable, "6.6") ~
+          "Peak 6.6",
+        str_detect(Variable, "15") ~
+          "Peak 15",
+        str_detect(Variable, "17.6") ~
+          "Peak 17.6")) %>%
+      dplyr::filter(Predictor != "Residuals")
+  )
+}
+
 ### Next, create best and alt models for individual lists
 ### of traits
 make_all_anovas_tidy <- function(anova_list){
