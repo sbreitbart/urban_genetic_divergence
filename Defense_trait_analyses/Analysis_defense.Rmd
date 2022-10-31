@@ -786,9 +786,7 @@ export_anovas(anovas_alt_u, "./Defense_trait_analyses/Figures/ANOVA/Alt_models/a
 ```
 
 ### Cardenolides (lms, not lmers)
-```{r}
-
-```
+-already did this in create_summary_anova_table.Rmd
 
 ## Export comparisons of anovas w/1 vs. all years
 ### Q1
@@ -1627,16 +1625,15 @@ weevil_bin_r2 ,
 
 ## lms (cardenolides)
 ```{r}
-
-
-
-# total / City_dist
-card_total_mods[[1]] %>%
+make_card_rsq_table <- function(card_model){
+  
+  return(
+    card_model %>%
   broom::glance() %>%
   dplyr::select(r.squared:adj.r.squared) %>%
   as.data.frame() %>%
-  dplyr::mutate(Variable = toString(card_total_mods[[1]]$terms[[2]]),
-         Urbanization = toString(card_total_mods[[1]]$terms[[3]]),
+  dplyr::mutate(Variable = toString(card_model$terms[[2]]),
+         Urbanization = toString(card_model$terms[[3]]),
          r.squared = round(r.squared, 3),
          adj.r.squared = round(adj.r.squared, 3)) %>%
   dplyr::rename(R2 = 1, 
@@ -1657,10 +1654,24 @@ card_total_mods[[1]] %>%
     str_detect(Urbanization, "City_dist")~
       "Distance to City Center",
     str_detect(Urbanization, "Urb_score")~
-      "Urbanization score")) %>%
-  
+      "Urbanization Score"))
+  )
+}
+
+lapply(flatten(all_card_models), make_card_rsq_table) %>%
+  reduce(full_join, all = T) %>%
   flextable() %>%
-  autofit()
+  autofit() %>%
+  theme_box() %>%
+  merge_v(j = ~Variable) %>% 
+  align(j = 3:4, align = "center", part = "all") %>%
+  hline(j = ~Variable, border = NULL, part = "body") %>%
+  flextable::compose(i = 1, j = 3, part = "header",
+                     value = as_paragraph("R", as_sup("2"))) %>%  flextable::compose(i = 1, j = 4, part = "header",
+                     value = as_paragraph("R", as_sup("2"), as_sub("adj"))) %>%
+  padding(padding = 3) %>%
+    flextable::save_as_docx(.,
+                          path = here::here("./Defense_trait_analyses/Tables/R2_cardenolides.docx"))
 ```
 
 # Calculate heritability, Qst, and CVA
