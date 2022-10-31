@@ -1383,7 +1383,7 @@ pods_urbsubs_usc1_ME <- glmmTMB(Pods ~
 # 
 # boxplot(Julian_first_follicle ~ Year, data = flowering)
 
-pod_start_gr_city1 <- glmmTMB(Julian_first_follicle^2 ~
+pod_start_gr_city1 <- glmmTMB(Julian_first_follicle-170 ~
                                Block +
                                Year +
                                (1|Population/Family) +
@@ -1397,7 +1397,7 @@ pod_start_gr_city1 <- glmmTMB(Julian_first_follicle^2 ~
 
 
 # # test for gxe
-# gxe_test_firstpods <- glmmTMB(Julian_first_follicle^2 ~
+# gxe_test_firstpods <- glmmTMB(Julian_first_follicle-170 ~
 #                                City_dist*Block +
 #                                 as.factor(Year) +
 #                                 (1|Population/Family),
@@ -1405,7 +1405,7 @@ pod_start_gr_city1 <- glmmTMB(Julian_first_follicle^2 ~
 #                               family = poisson)
 # 
 # test_gxe(pod_start_gr_city1, gxe_test_firstpods) # gxe mod best
-# car::Anova(pod_start_gr_city1, type = "III") # block*city highly sig (p < 0.001)
+# car::Anova(pod_start_gr_city1, type = "III") # block*city highly sig (p = 0.006497)
 # car::Anova(gxe_test_firstpods, type = "III")
 # 
 # 
@@ -1414,7 +1414,7 @@ pod_start_gr_city1 <- glmmTMB(Julian_first_follicle^2 ~
 # # GxE MOD-----
 # #   test family
 # #     large mod
-# lgmod1 <- glmer(Julian_first_follicle-200 ~
+# lgmod1 <- glmer(Julian_first_follicle-200 ~ # using 200 here because I used 200 when doing the ranovas. Better diagnostics for 1 year
 #               #    Year +
 #                   (1|Population) +
 #                   (1|Population:Fam_uniq) +
@@ -1505,7 +1505,7 @@ pod_start_gr_city1 <- glmmTMB(Julian_first_follicle^2 ~
 
 #### Urb_score
 ```{r}
-pod_start_gr_usc1 <- glmmTMB(Julian_first_follicle^2 ~
+pod_start_gr_usc1 <- glmmTMB(Julian_first_follicle - 170 ~
                                Block +
                                Year +
                                (1|Population/Family) +
@@ -1517,7 +1517,7 @@ pod_start_gr_usc1 <- glmmTMB(Julian_first_follicle^2 ~
 # car::Anova(pod_start_gr_usc1)
 
 # # test for gxe
-# gxe_test_firstpods2 <- glmmTMB(Julian_first_follicle^2 ~
+# gxe_test_firstpods2 <- glmmTMB(Julian_first_follicle - 170 ~
 #                                Urb_score*Block +
 #                                 (Year) +
 #                                 (1|Population/Family),
@@ -1525,7 +1525,7 @@ pod_start_gr_usc1 <- glmmTMB(Julian_first_follicle^2 ~
 #                               family = poisson)
 # 
 # test_gxe(pod_start_gr_usc1, gxe_test_firstpods2) # gxe mod best
-# car::Anova(pod_start_gr_usc1, type = "III") # block*city highly sig (p < 0.001)
+# car::Anova(pod_start_gr_usc1, type = "III") # urbsc * block marg sig (p = 0.07129)
 # car::Anova(gxe_test_firstpods2, type = "III")
 # 
 # 
@@ -1627,7 +1627,7 @@ pod_start_gr_usc1 <- glmmTMB(Julian_first_follicle^2 ~
 #### City_dist
 ```{r}
 # full model
-pod_start_urbsubs_city1 <- glmmTMB(Julian_first_follicle^3 ~
+pod_start_urbsubs_city1 <- glmmTMB(Julian_first_follicle -170 ~
                                Block +
                                Year +
                                (1|Population/Family) +
@@ -1641,7 +1641,7 @@ pod_start_urbsubs_city1 <- glmmTMB(Julian_first_follicle^3 ~
 
 
 # ME model
-pod_start_urbsubs_city1_ME <- glmmTMB(Julian_first_follicle^3 ~
+pod_start_urbsubs_city1_ME <- glmmTMB(Julian_first_follicle-170 ~
                                Block +
                                Year +
                                (1|Population/Family) +
@@ -1657,11 +1657,11 @@ pod_start_urbsubs_city1_ME <- glmmTMB(Julian_first_follicle^3 ~
 
 
 # # test for gxe
-# gxe_test_firstpods3 <- glmmTMB(Julian_first_follicle^3 ~
+# gxe_test_firstpods3 <- glmmTMB(Julian_first_follicle-170 ~
 #                                Block*City_dist +
 #                                Year +
 #                                (1|Population/Family) +
-#                                City_dist*Transect_ID, 
+#                                City_dist*Transect_ID,
 #                              data = flowering  %>%
 #                            dplyr::filter(Transect_ID != "Rural"),
 #                              family = poisson)
@@ -1778,7 +1778,7 @@ pod_start_urbsubs_city1_ME <- glmmTMB(Julian_first_follicle^3 ~
 #### Urb_score
 ```{r}
 # full model
-pod_start_urbsubs_usc1 <- glmmTMB(Julian_first_follicle^3 ~
+pod_start_urbsubs_usc1 <- glmmTMB(Julian_first_follicle-170 ~
                                Block +
                                Year +
                                (1|Population/Family) +
@@ -1792,7 +1792,7 @@ pod_start_urbsubs_usc1 <- glmmTMB(Julian_first_follicle^3 ~
 
 
 # ME model
-pod_start_urbsubs_usc1_ME <- glmmTMB(Julian_first_follicle^3 ~
+pod_start_urbsubs_usc1_ME <- glmmTMB(Julian_first_follicle-170 ~
                                Block +
                                Year +
                                (1|Population/Family) +
@@ -1804,126 +1804,20 @@ pod_start_urbsubs_usc1_ME <- glmmTMB(Julian_first_follicle^3 ~
 # plot(DHARMa::simulateResiduals(pod_start_urbsubs_usc1_ME))
 # car::Anova(pod_start_urbsubs_usc1_ME)
 
-# AIC(pod_start_urbsubs_usc1, pod_start_urbsubs_usc1_ME) # full model better but <2 AIC from ME
+# AIC(pod_start_urbsubs_usc1, pod_start_urbsubs_usc1_ME) # full model best
 
 
 # # test for gxe
-# gxe_test_firstpods4 <- glmmTMB(Julian_first_follicle^3 ~
+# gxe_test_firstpods4 <- glmmTMB(Julian_first_follicle-170 ~
 #                                Block*Urb_score +
 #                                Year +
 #                                (1|Population/Family) +
-#                                Urb_score*Transect_ID, 
+#                                Urb_score*Transect_ID,
 #                              data = flowering  %>%
 #                            dplyr::filter(Transect_ID != "Rural"),
 #                              family = poisson)
 # 
-# test_gxe(pod_start_urbsubs_usc1, gxe_test_firstpods4) # gxe mod best
-# car::Anova(pod_start_urbsubs_usc1, type = "III") # block*city highly sig (p < 0.001)
-# car::Anova(gxe_test_firstpods4, type = "III")
-# 
-# 
-# # compare ranovas
-# # have to use glmer instead of glmmtmb- ranova can't use glmmtmb- otherwise identical models
-# # GxE MOD-----
-# #   test family
-# #     large mod
-# lgmod1 <- glmer(Julian_first_follicle-200 ~
-#               #    Year +
-#                   (1|Population) +
-#                   (1|Population:Fam_uniq) +
-#                   Urb_score*Block + 
-#                 Urb_score*Transect_ID,
-#               data = flowering %>%
-#                 dplyr::filter(Year == "2022" &
-#                                 is.na(Julian_first_follicle) == FALSE &
-#                                 Transect_ID != "Rural"),
-#               family = poisson,
-#               control=glmerControl(optimizer="bobyqa",
-#                              optCtrl=list(maxfun=2e5)))
-# 
-# #     small mod 1
-# smmod1 <- glmer(Julian_first_follicle-200 ~
-#               #    Year +
-#                   (1|Population) +
-#                   Urb_score*Block +
-#                 Urb_score*Transect_ID,
-#                 data = flowering %>%
-#                 dplyr::filter(Year == "2022" &
-#                                 is.na(Julian_first_follicle) == FALSE &
-#                                 Transect_ID != "Rural"),
-#               family = poisson,
-#               control=glmerControl(optimizer="bobyqa",
-#                              optCtrl=list(maxfun=2e5)))
-# 
-# PBmodcomp(lgmod1, smmod1, seed = 45, nsim = 10) # p << 0.001
-# 
-# # test pop
-# #     small mod 2
-# smmod2 <- glmer(Julian_first_follicle-200 ~
-#               #    Year +
-#                   (1|Population:Fam_uniq) +
-#                   Urb_score*Block + 
-#                 Urb_score*Transect_ID,
-#                 data = flowering %>%
-#                 dplyr::filter(Year == "2022" &
-#                                 is.na(Julian_first_follicle) == FALSE &
-#                                 Transect_ID != "Rural"),
-#               family = poisson,
-#               control=glmerControl(optimizer="bobyqa",
-#                              optCtrl=list(maxfun=2e5)))
-# 
-# PBmodcomp(lgmod1, smmod2, seed = 45, nsim = 10) # p = 1
-# 
-# 
-# # REG MOD-----
-# #   test family
-# #     large mod
-# lgmod1.reg <- glmer(Julian_first_follicle-200 ~
-#               #    Year +
-#                   (1|Population) +
-#                   (1|Population:Fam_uniq) +
-#                   Urb_score*Transect_ID + Block,
-#                 data = flowering %>%
-#                 dplyr::filter(Year == "2022" &
-#                                 is.na(Julian_first_follicle) == FALSE &
-#                                 Transect_ID != "Rural"),
-#               family = poisson,
-#               control=glmerControl(optimizer="bobyqa",
-#                              optCtrl=list(maxfun=2e5)))
-# 
-# #     small mod 1
-# smmod1.reg <- glmer(Julian_first_follicle-200 ~
-#               #    Year +
-#                   (1|Population) +
-#                   Urb_score*Transect_ID + Block,
-#                 data = flowering %>%
-#                 dplyr::filter(Year == "2022" &
-#                                 is.na(Julian_first_follicle) == FALSE &
-#                                 Transect_ID != "Rural"),
-#               family = poisson,
-#               control=glmerControl(optimizer="bobyqa",
-#                              optCtrl=list(maxfun=2e5)))
-# 
-# PBmodcomp(lgmod1.reg, smmod1.reg, seed = 45, nsim = 10) # p << 0.001
-# 
-# # test pop
-# #     small mod 2
-# smmod2.reg <- glmer(Julian_first_follicle-200 ~
-#              #     Year +
-#                   (1|Population:Fam_uniq) +
-#                   Urb_score*Transect_ID + Block,
-#                 data = flowering %>%
-#                 dplyr::filter(Year == "2022" &
-#                                 is.na(Julian_first_follicle) == FALSE &
-#                                 Transect_ID != "Rural"),
-#              family = poisson,
-#               control=glmerControl(optimizer="bobyqa",
-#                              optCtrl=list(maxfun=2e5)))
-# 
-# 
-# PBmodcomp(lgmod1.reg, smmod2.reg, seed = 45, nsim = 10) # p = 1
-# # mod comparison-----
-# # qualitatively identical so I'll keep using regular model.
+# test_gxe(pod_start_urbsubs_usc1, gxe_test_firstpods4) # reg mod best
 ```
 
 ## Peduncles (Inflorescences)
@@ -2458,8 +2352,7 @@ pod_start_urbsubs_city1, # Qualitatively identical model (<2 AIC away)
 pod_start_urbsubs_city1_ME, # Best model
 
 ## Urbanization score  / urban subtransects
-pod_start_urbsubs_usc1, # Best model 
-pod_start_urbsubs_usc1_ME # Qualitatively identical model (<2 AIC away)
+pod_start_urbsubs_usc1 # Best model 
 
 )
 
@@ -2468,8 +2361,7 @@ names(first_pods_mods) <- c("City_gr",
                      "Usc_gr",
                      "City_urbsubs_alt",
                      "City_urbsubs_best",
-                     "Usc_urbsubs_best",
-                     "Usc_urbsubs_alt"
+                     "Usc_urbsubs_best"
                      )
 ```
 
@@ -2646,7 +2538,7 @@ first_pods_mods_best_u <- first_pods_mods[c(2,5)]
 first_pods_mods_alt_c <- first_pods_mods[3]
 
 ### Urb_score
-first_pods_mods_alt_u <-  first_pods_mods[6]
+# NONE
 ```
 
 ### peduncles (inflorescences)

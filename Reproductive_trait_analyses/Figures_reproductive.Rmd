@@ -187,15 +187,13 @@ flstart_urbsubs_01_pred <- ggeffects::ggpredict(flstart_mods_best_c[[2]],
   as.data.frame()
 
 # urb_score- for this model, transect and urb score couldn't be put into same model. So there will be 2 figs for this instead of 1.
-flstart_mods_best_u[[2]] # tests TRANSECT ONLY
-flstart_urbsubs_02_pred_transect <- ggeffects::ggpredict(flstart_mods_best_u[[2]],
-                                   terms = c("Transect_ID"),
-                                   type = "fe")
+flstart_mods_best_u[[2]] 
+flstart_urbsubs_02_pred <- ggeffects::ggpredict(flstart_mods_best_u[[2]],
+                                   terms = c("Urb_score", "Transect_ID"),
+                                   type = "fe") %>%
+  as.data.frame()
 
-flstart_mods_best_u[[3]] # tests URB SCORE ONLY
-flstart_urbsubs_02_pred_urbscore <- ggeffects::ggpredict(flstart_mods_best_u[[3]],
-                                   terms = c("Urb_score"),
-                                   type = "fe")
+
 ```
 
 
@@ -241,39 +239,35 @@ pods_urbsubs_02_pred <- ggeffects::ggpredict(pods_mods_best_u[[2]] ,
 ```{r}
 
 # city_dist
-first_pods_mods_best_c[1]  # squared
+first_pods_mods_best_c[1]  # -170
 firstpods_gradient_01_pred <- ggeffects::ggpredict(first_pods_mods_best_c[[1]] ,
                                    terms = c("City_dist"),
                                    type = "fe") %>%
-  as.data.frame() %>%
-  dplyr::mutate(predicted = sqrt(predicted)) # back-transforming to Julian dates so figure axis makes sense
+  as.data.frame() 
 
 # urb_score
-first_pods_mods_best_u[1] 
+first_pods_mods_best_u[1] # -170
 firstpods_gradient_02_pred <- ggeffects::ggpredict(first_pods_mods_best_u[[1]],
                                    terms = c("Urb_score"),
                                    type = "fe") %>%
-  as.data.frame()%>%
-  dplyr::mutate(predicted = sqrt(predicted)) # back-transforming to Julian dates so figure axis makes sense
+  as.data.frame()
 ```
 
 ### Urban Subtransects
 ```{r}
 
 # city_dist
-first_pods_mods_best_c[2] 
+first_pods_mods_best_c[2] # -170
 firstpods_urbsubs_01_pred <- ggeffects::ggpredict(first_pods_mods_best_c[[2]] ,
                                    terms = c("City_dist", "Transect_ID"),
                                    type = "fe") %>%
-  as.data.frame()%>%
-  dplyr::mutate(predicted = (predicted)^(1/3)) # back-transforming to Julian dates so figure axis makes sense
+  as.data.frame()
 
 # urb_score
-first_pods_mods_best_u[2] 
+first_pods_mods_best_u[2] # -170
 firstpods_urbsubs_02_pred <- ggeffects::ggpredict(first_pods_mods_best_u[[2]] ,
                                    terms = c("Urb_score", "Transect_ID"),
-                                   type = "fe")%>%
-  dplyr::mutate(predicted = (predicted)^(1/3)) # back-transforming to Julian dates so figure axis makes sense
+                                   type = "fe")
 ```
 
 
@@ -402,8 +396,8 @@ ggpred_Q1.citydist_flstart <-
 ggplot(flstart_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = "Julian date of first flower") +
-  ylim(208,210) +
+       y = "Days to first flower\n (Day 0 = June 20)") +
+  ylim(34, 37) +
   theme_1() +
   
 # adding stats from ANOVA
@@ -441,8 +435,8 @@ ggpred_Q1.citydist_firstpods <-
 ggplot(firstpods_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = "Julian date of first follicle") +
-  ylim(225,229) +
+       y = "Days to first follicle\n (Day 0 = June 20)") +
+  ylim(54, 60) +
   theme_1() +
   
 # adding stats from ANOVA
@@ -566,8 +560,8 @@ ggpred_Q1.urbscore_flstart <-
 ggplot(flstart_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
-       y = "Julian date of first flower") +
-# ylim(NA, 1) +
+       y = "Days to first flower\n (Day 0 = June 20)") +
+ ylim(35, 37) +
     xlim(4, -4) +
   theme_1() +
   
@@ -579,8 +573,6 @@ dplyr::select(p))),
 size = 4.5)
 
 ggpred_Q1.urbscore_flstart
-
-
 
 
 # Pods-----
@@ -609,8 +601,8 @@ ggpred_Q1.urbscore_firstpods <-
 ggplot(firstpods_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
-       y = "Julian date of first follicle") +
- ylim(226,228) +
+       y = "Days to first follicle\n (Day 0 = June 20)") +
+# ylim(226,228) +
     xlim(4, -4) +
   theme_1() +
   
@@ -787,10 +779,10 @@ levels(flstart_urbsubs_01_pred$group)
 ggpred_Q2.citydist_flstart <-
 ggplot(flstart_urbsubs_01_pred) +
   labs(x = "Distance to Urban Center (km)",
-       y = "Julian date of first flower",
+       y = "Days to first flower\n (Day 0 = June 20)",
        color = "Transect",
        fill = "Transect") +
-#  ylim(20, 50) +
+  ylim(28, 42) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -852,7 +844,7 @@ levels(firstpods_urbsubs_01_pred$group)
 ggpred_Q2.citydist_firstpods <-
 ggplot(firstpods_urbsubs_01_pred) +
   labs(x = "Distance to Urban Center (km)",
-       y = "Julian date of first follicle",
+       y = "Days to first follicle\n (Day 0 = June 20)",
        color = "Transect",
        fill = "Transect") +
 #  ylim(20, 50) +
@@ -1045,66 +1037,42 @@ ggpred_Q2.urbsubs_fltime
 
 
 # Flowering start-----
-## TRANSECT ONLY
-
-ggpred_Q2.urbsubs_flstart1 <- flowering %>%
-  dplyr::filter(Transect_ID != "Rural") %>%
-  ggplot(aes(y = Julian_oldest_inflor,
-             x = Transect_ID,
-             color = Transect_ID,
-             fill = Transect_ID)) +
-  geom_boxplot(color = "black",
-               width = 0.2)+
-  labs(x = "Transect",
-       y = "Julian date of first flower",
-       color = "Transect",
-       fill = "Transect") +
-  ylim(160, 240) +
- #xlim(4, -2) +
-  theme_1() +
-  theme(legend.position = "none") +
-  geom_violin(alpha = 0.3) +
-
-# adding stats from ANOVA
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
-                    label = paste0(" Transect: p = ", tidy_anova(flstart_mods_best_u[[2]]) %>%
-dplyr::filter(Predictor == "Subtransect") %>%
-dplyr::select(p))),
-size = 4.5) +
-  scale_colour_manual(values = c("#FC8D62",
-                               "#66C2A5")) +
-  scale_fill_manual(values = c("#FC8D62",
-                               "#66C2A5")) +
-  scale_x_discrete(labels=c("North" = "Non-Corridor",
-                            "South" = "Corridor"))
-
-ggpred_Q2.urbsubs_flstart1
-
-
-
-## URB SCORE ONLY-----
 ## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
 
-ggpred_Q2.urbsubs_flstart2 <-
-ggplot(flstart_urbsubs_02_pred_urbscore) +
+flstart_urbsubs_02_pred$group <- factor(flstart_urbsubs_02_pred$group,
+                                   levels(flstart_urbsubs_02_pred$group)[c(2,1)])
+levels(flstart_urbsubs_02_pred$group)
+
+ggpred_Q2.urbsubs_flstart <-
+ggplot(flstart_urbsubs_02_pred) +
   labs(x = "Urbanization Score",
-       y = "Julian date of first flower",
-       color = "#66C2A5",
-       fill = "#66C2A5") +
-  ylim(205, NA) +
+       y = "Days to first flower\n (Day 0 = June 20)",
+       color = "Transect",
+       fill = "Transect") +
+  ylim(25, 45) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
   theme(legend.position = "none") +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.1,
-                    label = paste0(" Urb. Score: p = ", tidy_anova(flstart_mods_best_u[[3]]) %>%
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.2,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(flstart_mods_best_u[[2]]) %>%
 dplyr::filter(Predictor == "Urbanization Score") %>%
 dplyr::select(p))),
-size = 4.5) 
+size = 4.5)  +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.13,
+                    label = paste0(" Transect: p = ", tidy_anova(flstart_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
+                    label = paste0(" U x S: p = ", tidy_anova(flstart_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score x Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
 
-ggpred_Q2.urbsubs_flstart2
+ggpred_Q2.urbsubs_flstart
 
 
 
@@ -1157,26 +1125,26 @@ levels(firstpods_urbsubs_02_pred$group)
 ggpred_Q2.urbscore_firstpods <-
 ggplot(firstpods_urbsubs_02_pred) +
   labs(x = "Urbanization Score",
-       y = "Julian date of first follicle",
+       y = "Days to first follicle\n (Day 0 = June 20)",
        color = "Transect",
        fill = "Transect") +
-  ylim(220, 240) +
+  ylim(45, 60) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 1, npcy = 1,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.2,
                     label = paste0(" Urb. Score: p = ", tidy_anova(first_pods_mods_best_u[[2]]) %>%
 dplyr::filter(Predictor == "Urbanization Score") %>%
 dplyr::select(p))),
 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.92,
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.13,
                     label = paste0(" Transect: p = ", tidy_anova(first_pods_mods_best_u[[2]]) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.86,
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
                     label = paste0(" U x T: p = ", tidy_anova(first_pods_mods_best_u[[2]]) %>%
 dplyr::filter(Predictor == "Urbanization Score x Subtransect") %>%
 dplyr::select(p))),
@@ -1307,16 +1275,15 @@ ggpred_Q2.urbsubs_flsucc,
 ggpred_Q2.urbsubs_flowers,
 ggpred_Q2.urbsubs_flsize,
 ggpred_Q2.urbsubs_fltime,
-ggpred_Q2.urbsubs_flstart1,
-ggpred_Q2.urbsubs_flstart2,
+ggpred_Q2.urbsubs_flstart,
 ggpred_Q2.urbsubs_pods,
 ggpred_Q2.urbscore_firstpods,
 ggpred_Q2.urbsubs_peduncles +
             font("x.text"),
-          ncol = 5,
+          ncol = 4,
           nrow = 2,
           align = "hv",
-          labels = list("A", "B", "C", "D", "E", "F", "G", "H", "I"),
+          labels = list("A", "B", "C", "D", "E", "F", "G", "H"),
           font.label = (size =16),
           common.legend = TRUE,
           legend = "top") %T>%

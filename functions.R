@@ -1260,8 +1260,8 @@ make_r2_table <- function(reml_T_modlist) {
       as.data.frame()%>%
       rownames_to_column() %>%
       dplyr::mutate_at(2:length(.), round, 3) %>%
-      as.data.table() %>%
-      melt(.,
+      data.table::as.data.table() %>%
+      data.table::melt(.,
            measure = patterns("City_gr.R2m",           "Usc_gr.R2m",
                               "City_urbsubs_best.R2m", "City_urbsubs_alt.R2m",
                               "Usc_urbsubs_best.R2m",  "Usc_urbsubs_alt.R2m",

@@ -1562,7 +1562,6 @@ print(all_rsq)
 sink()
 
 
-
 # export as nice tables in word doc
 flsucc_r2      <- make_r2_table( flsucc_mods_reml_T    ) 
 flowers_r2       <- make_r2_table(flowers_mods_reml_T      )
@@ -1579,8 +1578,8 @@ make_r2_table_modif1 <- function(mods_reml_T){
       as.data.frame()%>%
       rownames_to_column() %>%
       dplyr::mutate_at(2:length(.), round, 3) %>%
-      as.data.table() %>%
-      melt(.,
+      data.table::as.data.table() %>%
+      data.table::melt(.,
            measure = patterns("City_gr.R2m",           "Usc_gr.R2m",
                               "City_urbsubs_best.R2m", "City_urbsubs_alt.R2m",
                               "Usc_urbsubs_best.R2m",

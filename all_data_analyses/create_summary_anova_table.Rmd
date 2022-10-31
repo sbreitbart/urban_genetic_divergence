@@ -924,5 +924,5 @@ flatten(all_card_models) %>%
   
 # STEP 6: Export
   flextable::save_as_docx(.,
-                          path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_Citydist_cardenolides.docx"))
+                          path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_cardenolides.docx"))
 ```
