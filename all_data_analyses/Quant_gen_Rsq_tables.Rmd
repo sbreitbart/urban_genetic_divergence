@@ -35,7 +35,6 @@ h2 represents the average heritability across populations after removing the gen
 -not possible for cardenolides because there are no families within pops (were pooled by population)
 
 ## Reproduction
-### Calculate values per trait
 ```{r}
 # Flowering success-----
 update(
@@ -223,26 +222,7 @@ qg_peduncles <- calc_quantgenvars( 0.19237 ,
 
 ```
 
-### Combine values into one table and export
-```{r}
-qg_joined <- list(
-  qg_flsucc,
-  qg_flowers,
-  qg_flsize,
-  qg_fltime,
-  qg_flstart,
-  qg_pods,
-  qg_first_pods,
-  qg_peduncles
-                  ) %>% 
-  bind_rows() %>%
-  dplyr::mutate_at(2:4, round, 3) %>%
-  write.csv(file = "./Reproductive_trait_analyses/Tables/quant_gen_reproduc.csv",
-          row.names=FALSE)
-
-```
 ## Defense
-### Calculate values per trait
 ```{r}
 # Latex-----
 update(
@@ -393,25 +373,7 @@ qg_weev_quant <- calc_quantgenvars( 0.20088 ,
 
 ```
 
-### Combine values into one table and export
-```{r}
-qg_joined <- list(qg_latex,
-                  qg_herb_e_bin,
-                  qg_herb_e_quant,
-                  qg_herb_l_bin,
-                  qg_herb_l_quant,
-                  qg_weev_bin,
-                  qg_weev_quant) %>% 
-  bind_rows() %>%
-  dplyr::mutate_at(2:4, round, 3) %>%
-  write.csv(file = "./Defense_trait_analyses/Tables/quant_gen_defense.csv",
-          row.names=FALSE)
-
-```
-
-
 ## 2021 Herbivores
-### Calculate values per trait
 ```{r}
 # Monarchs-----
 VarCorr(
@@ -492,18 +454,6 @@ qg_clivicoll <- calc_quantgenvars(0.00011488,
             "L. clivicollis")
 ```
 
-### Combine values into one table and export
-```{r}
-qg_joined <- list(qg_monarch,
-                  qg_lasclep,
-                  qg_clivicoll
-                  ) %>% 
-  bind_rows() %>%
-  dplyr::mutate_at(2:4, round, 3) %>%
-  write.csv(file = "./Defense_trait_analyses/Tables/quant_gen_herbivores_2021.csv",
-          row.names=FALSE)
-
-```
 ## Growth
 ```{r}
 # LDMC-----
@@ -668,21 +618,62 @@ qg_survival <- calc_quantgenvars(6.6969e-08,
 
 ## Combine values into one table and export
 ```{r}
-qg_joined <- list(qg_ldmc,
-                  qg_sla,
-                  qg_heights_e,
-                  qg_heights_l,
-                  qg_rgr,
-                  qg_ramets_e,
-                  qg_ramets_l,
-                  qg_survival
+list(
+  
+  # Reproduction
+  qg_flsucc,
+  qg_flowers,
+  qg_flsize,
+  qg_fltime,
+  qg_flstart,
+  qg_pods,
+  qg_first_pods,
+  qg_peduncles,
+  
+  # Defense
+  qg_latex,
+  qg_herb_e_bin,
+  qg_herb_e_quant,
+  qg_herb_l_bin,
+  qg_herb_l_quant,
+  qg_weev_bin,
+  qg_weev_quant,
+  
+  # Herbivores
+  qg_monarch,
+  qg_lasclep,
+  qg_clivicoll,
+  
+  # Growth
+  qg_ldmc,
+  qg_sla,
+  qg_heights_e,
+  qg_heights_l,
+  qg_rgr,
+  qg_ramets_e,
+  qg_ramets_l,
+  qg_survival
                   ) %>% 
   bind_rows() %>%
   dplyr::mutate_at(2:4, round, 3) %>%
-  write.csv(file = "./Growth_trait_analyses/Tables/quant_gen_growth.csv",
-          row.names=FALSE)
+  dplyr::rename(Variable = 1) %>%
+  flextable() %>%
+  flextable::compose(part = "header", i = 1, j = 2,
+         value = as_paragraph("h",
+                              as_sup("2"))) %>%
+  flextable::compose(part = "header", i = 1, j = 3,
+         value = as_paragraph("Q",
+                              as_sub("ST"))) %>%
+  flextable::compose(part = "header", i = 1, j = 4,
+         value = as_paragraph("CV",
+                              as_sub("A"))) %>%
+  theme_box() %>%
+  flextable::align(j = 2:4, align = "center", part = "all") %>%
+  autofit() %>%
+  save_as_docx(path = here::here("./Figures_Tables/Quant_gen/Quant_gen.docx"))
 
 ```
+
 # Calculate R-squared values
 ## Reproduction
 ```{r}
