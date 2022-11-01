@@ -61,60 +61,6 @@ names(all_models) <- c(
 "clivicollis_mods"         )
 ```
 
-### Create separate lists of best vs. alt models for city_dist vs urb_score
-#### Monarchs
-```{r}
-## Best
-### City_dist
-monarch_mods_best_c <- monarch_mods[c(1,4)]
-
-### Urb_score
-monarch_mods_best_u <- monarch_mods[c(2,6)]
-
-## Alt
-### City_dist
-monarch_mods_alt_c <- monarch_mods[3]
-
-### Urb_score
-monarch_mods_alt_u <- monarch_mods[5]
-```
-
-#### L. asclepiadis
-```{r}
-## Best
-### City_dist
-asclepiadis_mods_best_c <- asclepiadis_mods[c(1,4)]
-
-### Urb_score
-asclepiadis_mods_best_u <- asclepiadis_mods[c(2,6)]
-
-## Alt
-### City_dist
-asclepiadis_mods_alt_c <- asclepiadis_mods[3]
-
-### Urb_score
-asclepiadis_mods_alt_u <- asclepiadis_mods[5]
-```
-
-
-#### L. clivicollis
-```{r}
-## Best
-### City_dist
-clivicollis_mods_best_c <- clivicollis_mods[c(1,3)]
-
-### Urb_score
-clivicollis_mods_best_u <- clivicollis_mods[c(2,6)]
-
-## Alt
-### City_dist
-clivicollis_mods_alt_c <- clivicollis_mods[4]
-
-### Urb_score
-clivicollis_mods_alt_u <- clivicollis_mods[5]
-
-```
-
 # Ranova
 ## Set seed
 ```{r}

@@ -35,6 +35,8 @@ peduncles_mods_best_u        # peduncles (inflors)
 
 ## Defense traits
 ```{r}
+# open viewport for this!!
+
 source(knitr::purl("Defense_trait_analyses/Model_diagnostics_Defense.Rmd", quiet=TRUE))
 
 # Best Models (first is Q1, second is Q2)
@@ -59,6 +61,39 @@ herb_l_quant_mods_best_u, # herbivory late (quantiative)
 weev_bin_mods_best_u, # weevil damage (0/1)
 weev_quant_mods_best_u # weevil damage (quantitative)
 )
+
+
+
+# ONLY FOR Q1 for Cardenolides
+
+# Best Models' p-values
+## City_dist
+card1 <- city_dist_list[["X6.6_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
+
+card2 <- city_dist_list[["X15_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
+
+card3 <- city_dist_list[["X17.6_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
+
+card4 <- city_dist_list[["total"]][[2]][["Pr(>F)"]][1] %>% as.character()
+
+card_df <- data_frame(
+  variable = c("cardenolide_6.6", "cardenolide_15", "cardenolide_17.6", "cardenolide_Total"),
+  p = c(card1, card2, card3, card4))
+
+
+
+## Urb_score
+card1_u <- urb_score_list[["X6.6_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
+
+card2_u <- urb_score_list[["X15_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
+
+card3_u <- urb_score_list[["X17.6_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
+
+card4_u <- urb_score_list[["total"]][[2]][["Pr(>F)"]][1] %>% as.character()
+
+card_df_u <- data_frame(
+  variable = c("cardenolide_6.6", "cardenolide_15", "cardenolide_17.6", "cardenolide_Total"),
+  p = c(card1_u, card2_u, card3_u, card4_u))
 ```
 
 ## Growth traits
@@ -92,55 +127,47 @@ mortality_mods_best_u
 )
 ```
 
-## Cardenolides (part of defense, technically)
+## 2021 Herbivores
 ```{r}
-# open viewport for this!!
-# ONLY FOR Q1
-source(knitr::purl("Defense_trait_analyses/Analysis_cardenolides.Rmd", quiet=TRUE))
+source(knitr::purl("Defense_trait_analyses/Model_diagnostics_herbivores.Rmd", quiet=TRUE))
 
-# Best Models' p-values
+# Best Models (first is Q1, second is Q2)
 ## City_dist
-card1 <- city_dist_list[["X6.6_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
-
-card2 <- city_dist_list[["X15_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
-
-card3 <- city_dist_list[["X17.6_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
-
-card4 <- city_dist_list[["total"]][[2]][["Pr(>F)"]][1] %>% as.character()
-
-card_df <- data_frame(
-  variable = c("cardenolide_6.6", "cardenolide_15", "cardenolide_17.6", "cardenolide_Total"),
-  p = c(card1, card2, card3, card4))
-
-
+best_herbivore_mods <- list(
+monarch_mods_best_c,
+asclepiadis_mods_best_c,
+clivicollis_mods_best_c
+)
 
 ## Urb_score
-card1_u <- urb_score_list[["X6.6_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
-
-card2_u <- urb_score_list[["X15_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
-
-card3_u <- urb_score_list[["X17.6_main"]][[2]][["Pr(>F)"]][1] %>% as.character()
-
-card4_u <- urb_score_list[["total"]][[2]][["Pr(>F)"]][1] %>% as.character()
-
-card_df_u <- data_frame(
-  variable = c("cardenolide_6.6", "cardenolide_15", "cardenolide_17.6", "cardenolide_Total"),
-  p = c(card1_u, card2_u, card3_u, card4_u))
+best_herbivore_mods_u <- list(
+monarch_mods_best_u,
+asclepiadis_mods_best_u,
+clivicollis_mods_best_u
+)
 
 ```
 
-# Extract p values where predictor = city_dist, then put into df
+# Control the false discovery rate
+The methods Holm, Hochberg, Hommel, and Bonferroni control the family-wise error rate.  These methods attempt to limit the probability of even one false discovery (a type I error, incorrectly rejecting the null hypothesis when there is no real effect), and so are all relatively strong (conservative).
+
+The methods BH (Benjamini–Hochberg, which is the same as FDR in R) and BY control the false discovery rate.  These methods attempt to control the expected proportion of false discoveries.
+
+(From this site: https://rcompanion.org/rcompanion/f_01.html)
+## Extract p values where predictor = city_dist, then put into df
 ```{r}
 # merge lists
 # city_dist
 all_best_mods <- do.call(c, list(best_growth_mods,
                                  best_defense_mods,
-                                 best_repro_mods))
+                                 best_repro_mods,
+                                 best_herbivore_mods))
 
 # urb_score
 all_best_mods_u <- do.call(c, list(best_growth_mods_u,
                                  best_defense_mods_u,
-                                 best_repro_mods_u))
+                                 best_repro_mods_u,
+                                 best_herbivore_mods_u))
 
 
 # Question 1-----
@@ -205,20 +232,12 @@ all_pvalues_Q1_u <- sapply(all_best_mods_u,
 # Question 2-----
 extract_p_Q2 <- function(best_mod_list){
  response_var <- tidy_anova(best_mod_list[[2]]) %>%
-    dplyr::filter(Predictor != "Distance to City Center" &
-                  Predictor != "Urbanization Score" &
-                  Predictor != "Year" &
-                  Predictor != "Block" &
-                  Predictor != "(Intercept)") %>%
+    dplyr::filter(row_number()==n()) %>% # take last row = either interaction or subtransect
     dplyr::select(Response) %>%
   as.character()
     
   pval <- tidy_anova(best_mod_list[[2]]) %>%
-    dplyr::filter(Predictor != "Distance to City Center" &
-                  Predictor != "Urbanization Score" &
-                  Predictor != "Year" &
-                  Predictor != "Block" &
-                  Predictor != "(Intercept)") %>%
+    dplyr::filter(row_number()==n()) %>% # take last row = either interaction or subtransect
     dplyr::select(p) %>%
   as.character()
   
@@ -237,33 +256,11 @@ all_pvalues_Q2 <- sapply(all_best_mods,
   dplyr::rename("variable" = 1,
                 "p" = 2) %>%
   # order df by p-value
-  dplyr::arrange(-desc(p))
-
-# 3 models had interactions btwn subtransect & dist or year, so I'll manually add those p-values
-
-# this p-value is for dist x subtr interaxn though dist and subtr are also marg sig (0.065 and 0.064, respectively)
-# tidy_anova(all_best_mods[[10]][[2]])
-all_pvalues_Q2[20,1] = "Herbivory_mean_early_binary"
-all_pvalues_Q2[20,2] = "0.068"
-
-
-# this p-value is for dist x subtr interaxn
-# tidy_anova(all_best_mods[[11]][[2]])
-all_pvalues_Q2[22,1] = "log(Herbivory_mean_early)"
-all_pvalues_Q2[22,2] = "0.145"
-
-# this p-value is for dist x subtr interaxn
-# tidy_anova(all_best_mods[[18]][[2]])
-all_pvalues_Q2[21,1] = "Overall_mean"
-all_pvalues_Q2[21,2] = "0.141"
-
-# order df by p-value again
-all_pvalues_Q2 %<>% 
   dplyr::arrange(-desc(p)) %>%
-# remove asterisk from a p-value
+# remove asterisks from p-values
   dplyr::mutate(p = str_replace(
     p,
-    "\\*",
+    "[*]{1,3}",
     "")) %>%
   dplyr::mutate(p = as.numeric(p))
 
@@ -278,50 +275,21 @@ all_pvalues_Q2_u <- sapply(all_best_mods_u,
   dplyr::rename("variable" = 1,
                 "p" = 2) %>%
   # order df by p-value
-  dplyr::arrange(-desc(p))
-
-# 5 models had interactions btwn subtransect & urb_score or year, so I'll manually add those p-values
-
-# this p-value is for urb_score x subtr interaxn 
-all_pvalues_Q2_u[22,1] = "Pods"
-all_pvalues_Q2_u[22,2] = "0.114"
-
-# this p-value is for urb_score x subtr interaxn
-all_pvalues_Q2_u[21,1] = "Peduncles"
-all_pvalues_Q2_u[21,2] = "0.027"
-
-# this p-value is for urb_score x subtr interaxn
-all_pvalues_Q2_u[18,1] = "Overall_mean"
-all_pvalues_Q2_u[18,2] = "0.003"
-
-
-# this p-value is for urb_score x subtr interaxn
-all_pvalues_Q2_u[20,1] = "Herbivory_mean_early_quant"
-all_pvalues_Q2_u[20,2] = "0.062"
-
-# this p-value is for urb_score x subtr interaxn
-all_pvalues_Q2_u[19,1] = "Latex"
-all_pvalues_Q2_u[19,2] = "0.023"
-
-# order df by p-value again
-all_pvalues_Q2_u %<>% 
   dplyr::arrange(-desc(p)) %>%
-# remove asterisk from a p-value
+# remove asterisks from p-values
   dplyr::mutate(p = str_replace(
     p,
-    "\\*",
+    "[*]{1,3}",
+    "")) %>%
+  # remove < from p-values (for p < 0.001)
+  dplyr::mutate(p = str_replace(
+    p,
+    "<",
     "")) %>%
   dplyr::mutate(p = as.numeric(p))
 ```
   
-# Control the false discovery rate with Benjamini–Hochberg procedure
-The methods Holm, Hochberg, Hommel, and Bonferroni control the family-wise error rate.  These methods attempt to limit the probability of even one false discovery (a type I error, incorrectly rejecting the null hypothesis when there is no real effect), and so are all relatively strong (conservative).
-
-The methods BH (Benjamini–Hochberg, which is the same as FDR in R) and BY control the false discovery rate.  These methods attempt to control the expected proportion of false discoveries.
-
-(From this site: https://rcompanion.org/rcompanion/f_01.html)
-
-## Q1
+## FDR tests: Q1
 ### City_dist
 ```{r}
 all_pvalues_Q1 %<>%
@@ -351,12 +319,6 @@ all_pvalues_Q1 %<>%
       p,
       method = "BY")  # stands for Benjamini, Hochberg, and Yekutieli procedure- what I want (tests for FDR)
     )
-
-# All the tests suggest I can't reject any null hypothesis!
-
-# Export new p-values
-write.csv(all_pvalues_Q1,
-          here::here("./All_data_analyses/FDR_p_Q1.csv"))
 
 ```
 
@@ -391,14 +353,9 @@ all_pvalues_Q1_u %<>%
       method = "BY")  # stands for Benjamini, Hochberg, and Yekutieli procedure- what I want (tests for FDR)
     )
 
-# All the tests suggest I can't reject any null hypothesis!
-
-# Export new p-values
-write.csv(all_pvalues_Q1_u,
-          here::here("./All_data_analyses/FDR_p_Q1_urbscore.csv"))
 ```
 
-## Q2
+## FDR tests: Q2
 ### City_dist
 ```{r}
 all_pvalues_Q2 %<>%
@@ -427,12 +384,6 @@ all_pvalues_Q2 %<>%
       p,
       method = "BY"))  # stands for Benjamini, Hochberg, and Yekutieli procedure- what I want (tests for FDR)
 
-# All the tests suggest I can't reject any null hypothesis!
-
-
-# Export new p-values
-write.csv(all_pvalues_Q2,
-          here::here("./All_data_analyses/FDR_p_Q2.csv"))
 ```
 
 ### Urb_score
@@ -463,39 +414,63 @@ all_pvalues_Q2_u %<>%
       p,
       method = "BY"))  # stands for Benjamini, Hochberg, and Yekutieli procedure- what I want (tests for FDR)
 
-# These tests suggest I can't reject null hypotheses for all traits EXCEPT overall_mean (i.e., flower size)- p ~ 0.06
-
-
-# Export new p-values
-write.csv(all_pvalues_Q2_u,
-          here::here("./All_data_analyses/FDR_p_Q2_urbscore.csv"))
 ```
 
-## Export: basic
+## Export
+### Create neat tables
+```{r}
+make_FDR_table <- function(p_val_df){
+  return(
+    p_val_df %>%
+  dplyr::select(1:2, "Bonferroni", "BH", "BY") %>%
+    dplyr::mutate(p = round(p, 3),
+                  Bonferroni = round(Bonferroni, 3),
+                  BH = round(BH, 3),
+                  BY = round(BY, 3)) %>%
+  dplyr::rename("Original p" = "p",
+                "Variable" = "variable",
+                "Benjamini-\nHochberg" = "BH",
+                "Benjamini-\nHochberg-\nYekutieli" = "BY") %>%
+  flextable() %>%
+  theme_box() %>%
+  flextable::align(j = 2:5, align = "center", part = "all") %>%
+  autofit() %>%
+    flextable::padding(padding = 1)
+  )
+}
+
+FDR_tab1 <- make_FDR_table(all_pvalues_Q1)
+FDR_tab2 <- make_FDR_table(all_pvalues_Q1_u)
+FDR_tab3 <- make_FDR_table(all_pvalues_Q2)
+FDR_tab4 <- make_FDR_table(all_pvalues_Q2_u)
+
+```
+
+### Export to word
 ```{r}
 
  word_export <- read_docx()
   
-  body_add_par(word_export, value = "All populations & Urbanization = Distance from City Center")
-  body_add_flextable(word_export, flextable(all_pvalues_Q1))
+  body_add_par(word_export, value = "All populations & Urbanization = Distance from City Center", style = "heading 1")
+  body_add_flextable(word_export, (FDR_tab1))
   
   body_add_par(word_export, value = "")
   body_add_par(word_export, value = "")
   
-  body_add_par(word_export, value = "All populations & Urbanization = Urbanization Score")
-  body_add_flextable(word_export, flextable(all_pvalues_Q1_u))
+  body_add_par(word_export, value = "All populations & Urbanization = Urbanization Score", style = "heading 1")
+  body_add_flextable(word_export, (FDR_tab2))
   
   body_add_par(word_export, value = "")
   body_add_par(word_export, value = "")
   
-  body_add_par(word_export, value = "Urban populations & Urbanization = Distance from City Center")
-  body_add_flextable(word_export, flextable(all_pvalues_Q2))
+  body_add_par(word_export, value = "Urban populations & Urbanization = Distance from City Center", style = "heading 1")
+  body_add_flextable(word_export, (FDR_tab3))
   
   body_add_par(word_export, value = "")
   body_add_par(word_export, value = "")
   
-  body_add_par(word_export, value = "Urban populations & Urbanization = Urbanization Score")
-  body_add_flextable(word_export, flextable(all_pvalues_Q2_u))
+  body_add_par(word_export, value = "Urban populations & Urbanization = Urbanization Score", style = "heading 1")
+  body_add_flextable(word_export, (FDR_tab4))
 
   print(word_export, here::here("./All_data_analyses/FDR_p_all.docx"))
 ```

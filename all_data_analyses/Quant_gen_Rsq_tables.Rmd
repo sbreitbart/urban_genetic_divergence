@@ -23,6 +23,10 @@ source(knitr::purl("Growth_trait_analyses/Model_diagnostics_Growth.Rmd", quiet=T
 # I don't know why but this Rmd usually doesn't fully run with this line of code, so instead, just open the Rmd and run it all manually
 ```
 
+## 2021 Herbivores
+```{r}
+source(knitr::purl("Defense_trait_analyses/Model_diagnostics_herbivores.Rmd", quiet=TRUE))
+```
 
 # Calculate heritability, Qst, and CVA (Quantitative genetic parameters)
 
