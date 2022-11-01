@@ -338,7 +338,7 @@ ggplot(flowers_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
        y = "Mean flowers/infloresence") +
-  ylim(44,60) +
+  ylim(NA, 24) +
   theme_1() +
   
 # adding stats from ANOVA
@@ -684,7 +684,7 @@ ggplot(flowers_urbsubs_01_pred) +
        y = "Mean flowers/infloresence",
        color = "Transect",
        fill = "Transect") +
-   ylim(35,NA) +
+   ylim(13, 20) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -949,18 +949,18 @@ ggplot(flowers_urbsubs_02_pred) +
        y = "Mean flowers/infloresence",
        color = "Transect",
        fill = "Transect") +
-  ylim(35, 55) +
+#  ylim(35, 55) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.16,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 1,
                     label = paste0(" Urb. Score: p = ", tidy_anova(flowers_mods_best_u[[2]]) %>%
 dplyr::filter(Predictor == "Urbanization Score") %>%
 dplyr::select(p))),
 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.09,
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.93,
                     label = paste0(" Transect: p = ", tidy_anova(flowers_mods_best_u[[2]]) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),

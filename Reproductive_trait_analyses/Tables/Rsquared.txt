@@ -185,40 +185,34 @@ lognormal 0.29579506 0.3134906
 trigamma  0.09877081 0.1046796
 
 $first_pods_mods.City_gr
-               R2m       R2c
-delta     0.371958 0.9964391
-lognormal 0.371958 0.9964392
-trigamma  0.371958 0.9964391
+                R2m       R2c
+delta     0.3026204 0.3716797
+lognormal 0.3045800 0.3740866
+trigamma  0.3006458 0.3692545
 
 $first_pods_mods.Usc_gr
                 R2m       R2c
-delta     0.3714178 0.9964557
-lognormal 0.3714178 0.9964557
-trigamma  0.3714178 0.9964556
+delta     0.2982728 0.3731384
+lognormal 0.3001997 0.3755491
+trigamma  0.2963310 0.3707093
 
 $first_pods_mods.City_urbsubs_alt
                 R2m       R2c
-delta     0.4593223 0.9999932
-lognormal 0.4593223 0.9999932
-trigamma  0.4593223 0.9999932
+delta     0.3292815 0.3890170
+lognormal 0.3313427 0.3914520
+trigamma  0.3272039 0.3865625
 
 $first_pods_mods.City_urbsubs_best
-               R2m       R2c
-delta     0.455299 0.9999931
-lognormal 0.455299 0.9999931
-trigamma  0.455299 0.9999931
+                R2m       R2c
+delta     0.3300191 0.3835554
+lognormal 0.3321034 0.3859779
+trigamma  0.3279183 0.3811139
 
 $first_pods_mods.Usc_urbsubs_best
                 R2m       R2c
-delta     0.4482152 0.9999932
-lognormal 0.4482152 0.9999932
-trigamma  0.4482152 0.9999932
-
-$first_pods_mods.Usc_urbsubs_alt
-                R2m       R2c
-delta     0.4276711 0.9999932
-lognormal 0.4276711 0.9999932
-trigamma  0.4276711 0.9999932
+delta     0.3407946 0.3754132
+lognormal 0.3429756 0.3778157
+trigamma  0.3385968 0.3729921
 
 $peduncles_mods.City_gr
                  R2m       R2c
