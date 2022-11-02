@@ -1361,9 +1361,9 @@ flsucc_mods_alt_u      , # flowering success
 flowers_mods_alt_u     , # mean flowers/inflor
 flsize_mods_alt_u      , # mean flower size
 # fltime_mods_alt_u      , # flowering time - NONE
-flstart_mods_alt_u     , # flowering start
+flstart_mods_alt_u )     # flowering start
 # pods_mods_alt_u        , # pods (follicles) - NONE
-first_pods_mods_alt_u ) # , # first pods (follicles)
+#first_pods_mods_alt_u ) # , # first pods (follicles) - NONE
 # peduncles_mods_alt_u   ) # peduncles (inflorescences) - NONE
 
 anovas_alt_u <- lapply(all_models_alt_u, make_all_anovas_tidy_altmods)
@@ -1428,8 +1428,9 @@ compare_anovas(
 
 
 # Date of first pod-----
+## I'm subbing Julian_first_follicle-170 with Julian_first_follicle-200 because it doesn't converge with 170
 compare_anovas(
-  update(first_pods_mods_best_c[[1]], .~. - City_dist),
+  update(first_pods_mods_best_c[[1]], Julian_first_follicle-200~. - City_dist),
   flowering,
   "2022",
   "Date of first follicle",

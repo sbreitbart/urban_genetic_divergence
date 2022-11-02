@@ -1394,7 +1394,7 @@ ltx_urbsubs_city_m2, # Best model
 ltx_urbsubs_usc_m1 # Best model
 )
 
-names(latex_mods) <- c("City_gr", "Usc_gr", "City_urbsubs_alt", "City_urbsubs_best", "Usc_urbsubs")
+names(latex_mods) <- c("City_gr", "Usc_gr", "City_urbsubs_alt", "City_urbsubs_best", "Usc_urbsubs_best")
 ```
 
 ## Herbivory: Early- Hurdle models (Binomial and gaussian families)

@@ -2465,7 +2465,7 @@ flsize_mods_best_u <- flsize_mods[c(2,6)]
 
 ## Alt
 ### City_dist
-flsize_mods_alft_c <- flsize_mods[3]
+flsize_mods_alt_c <- flsize_mods[3]
 
 ### Urb_score
 flsize_mods_alt_u <- flsize_mods[5]

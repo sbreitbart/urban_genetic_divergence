@@ -138,6 +138,37 @@ mortality_BLUP_u <- create_BLUP(mortality_mods[[2]]) %>%
   dplyr::rename(mortality = 2)
 ```
 
+### Herbivores
+#### City_dist
+```{r}
+# Create BLUP dfs for each trait
+monarch_BLUP <- create_BLUP(monarch_mods[[1]]) %>%
+  dplyr::rename(monarch = 2)
+
+asclepiadis_BLUP <- create_BLUP(asclepiadis_mods[[1]]) %>%
+  dplyr::rename(asclepiadis = 2)
+
+clivicollis_BLUP <- create_BLUP(clivicollis_mods[[1]]) %>%
+  dplyr::rename(clivicollis = 2)
+
+
+```
+
+#### Urb_score
+```{r}
+# Create BLUP dfs for each trait
+monarch_BLUP_u <- create_BLUP(monarch_mods[[2]]) %>%
+  dplyr::rename(monarch = 2)
+
+asclepiadis_BLUP_u <- create_BLUP(asclepiadis_mods[[2]]) %>%
+  dplyr::rename(asclepiadis = 2)
+
+clivicollis_BLUP_u <- create_BLUP(clivicollis_mods[[2]]) %>%
+  dplyr::rename(clivicollis = 2)
+
+```
+
+
 ### Reproductive
 #### City_dist
 ```{r}
@@ -231,7 +262,12 @@ all_traits <- purrr::reduce(
      peduncles_BLUP, 
     
     # cardenolides
-    cards_BLUPs
+    cards_BLUPs,
+    
+    # herbivores
+    monarch_BLUP,
+    asclepiadis_BLUP,
+    clivicollis_BLUP
                       ),
               dplyr::left_join,
               by = c('Population',
@@ -279,7 +315,12 @@ all_traits_u <- purrr::reduce(
      peduncles_BLUP_u, 
     
     # cardenolides
-    cards_BLUPs
+    cards_BLUPs,
+    
+    # herbivores
+    monarch_BLUP_u,
+    asclepiadis_BLUP_u,
+    clivicollis_BLUP_u
                       ),
               dplyr::left_join,
               by = c('Population',
@@ -350,7 +391,7 @@ anova(mod1)
 # Test statistics:
 #             Res.Df Df.diff val(F) Pr(>F)
 # (Intercept)     47                      
-# Urb_Rur         46       1  10.73  0.845
+# Urb_Rur         46       1  11.97  0.835
 # Arguments:
 #  Test statistics calculated assuming uncorrelated response (for faster computation) 
 #  P-value calculated using 999 iterations via residual (without replacement) resampling.
@@ -372,54 +413,44 @@ anova_blup <- anova(mod1, p.uni = "adjusted") %T>%
 # Test statistics:
 #             Res.Df Df.diff val(F) Pr(>F)
 # (Intercept)     47                      
-# Urb_Rur         46       1  10.73  0.861
+# Urb_Rur         46       1  11.97  0.835
 # 
 # Univariate Tests
 # Test statistics:
-#               latex        herb_e_bin        herb_e_quant
-#             F value Pr(>F)    F value Pr(>F)      F value
-# (Intercept)                                              
-# Urb_Rur       2.117  0.900          0  1.000        0.004
-#                    herb_l_bin        herb_l_quant       
-#             Pr(>F)    F value Pr(>F)      F value Pr(>F)
-# (Intercept)                                             
-# Urb_Rur      1.000          0  1.000            0  1.000
-#             weev_mods_bin        weev_mods_quant       
-#                   F value Pr(>F)         F value Pr(>F)
-# (Intercept)                                            
-# Urb_Rur                 0  1.000           0.356  0.998
-#                ldmc            sla        heights_early
-#             F value Pr(>F) F value Pr(>F)       F value
-# (Intercept)                                            
-# Urb_Rur           0  1.000       0  1.000         0.009
-#                    heights_late            rgr       
-#             Pr(>F)      F value Pr(>F) F value Pr(>F)
-# (Intercept)                                          
-# Urb_Rur      1.000        0.097  1.000   0.165  1.000
-#             ramets_early        ramets_late       
-#                  F value Pr(>F)     F value Pr(>F)
-# (Intercept)                                       
-# Urb_Rur            0.151  1.000       0.444  0.998
-#             mortality         flsucc        flowers       
-#               F value Pr(>F) F value Pr(>F) F value Pr(>F)
-# (Intercept)                                               
-# Urb_Rur         0.014  1.000   0.901  0.994   0.325  0.998
-#              flsize         fltime        flstart       
-#             F value Pr(>F) F value Pr(>F) F value Pr(>F)
-# (Intercept)                                             
-# Urb_Rur       0.012  1.000   0.603  0.998       0  1.000
-#                pods        peduncles        X6.6_main
-#             F value Pr(>F)   F value Pr(>F)   F value
-# (Intercept)                                          
-# Urb_Rur       0.369  0.998     0.659  0.996     0.776
-#                    X15_main        X17.6_main       
-#             Pr(>F)  F value Pr(>F)    F value Pr(>F)
-# (Intercept)                                         
-# Urb_Rur      0.994    1.374  0.971      1.291  0.973
-#               total       
-#             F value Pr(>F)
-# (Intercept)               
-# Urb_Rur       1.065  0.988
+#               latex        herb_e_bin        herb_e_quant       
+#             F value Pr(>F)    F value Pr(>F)      F value Pr(>F)
+# (Intercept)                                                     
+# Urb_Rur       2.117  0.907          0  1.000        0.004  1.000
+#             herb_l_bin        herb_l_quant        weev_mods_bin       
+#                F value Pr(>F)      F value Pr(>F)       F value Pr(>F)
+# (Intercept)                                                           
+# Urb_Rur              0  1.000            0  1.000             0  1.000
+#             weev_mods_quant           ldmc            sla       
+#                     F value Pr(>F) F value Pr(>F) F value Pr(>F)
+# (Intercept)                                                     
+# Urb_Rur               0.356  1.000       0  1.000       0  1.000
+#             heights_early        heights_late            rgr       
+#                   F value Pr(>F)      F value Pr(>F) F value Pr(>F)
+# (Intercept)                                                        
+# Urb_Rur             0.009  1.000        0.097  1.000   0.165  1.000
+#             ramets_early        ramets_late        mortality       
+#                  F value Pr(>F)     F value Pr(>F)   F value Pr(>F)
+# (Intercept)                                                        
+# Urb_Rur            0.151  1.000       0.444  1.000     0.014  1.000
+#              flsucc        flowers         flsize         fltime       
+#             F value Pr(>F) F value Pr(>F) F value Pr(>F) F value Pr(>F)
+# (Intercept)                                                            
+# Urb_Rur       0.901  0.997   0.325  1.000   0.012  1.000   0.603  0.998
+#             flstart           pods        peduncles        X6.6_main
+#             F value Pr(>F) F value Pr(>F)   F value Pr(>F)   F value
+# (Intercept)                                                         
+# Urb_Rur       1.237  0.980   0.369  1.000     0.659  0.997     0.776
+#                    X15_main        X17.6_main          total       
+#             Pr(>F)  F value Pr(>F)    F value Pr(>F) F value Pr(>F)
+# (Intercept)                                                        
+# Urb_Rur      0.997    1.374  0.976      1.291  0.977   1.065  0.993
+# 
+# Arguments: with 999 resampling iterations using residual (without replacement) resampling and uncorrelated response (for faster computation) 
 
 
 # after adjusting for multiple testing, there are still no effects of habitat on any specific trait.
@@ -439,7 +470,7 @@ anova_blup2 <- manylm(mvab_all ~ City_dist,
 # Test statistics:
 #             Res.Df Df.diff val(F) Pr(>F)
 # (Intercept)     47                      
-# City_dist       46       1   10.2  0.865
+# City_dist       46       1   10.2  0.908
 # Arguments:
 #  Test statistics calculated assuming uncorrelated response (for faster computation) 
 #  P-value calculated using 999 iterations via residual (without replacement) resampling.
@@ -500,7 +531,7 @@ anova(mod1_u)
 # Test statistics:
 #             Res.Df Df.diff val(F) Pr(>F)
 # (Intercept)     47                      
-# Urb_Rur         46       1  7.516  0.957
+# Urb_Rur         46       1  8.197  0.953
 # Arguments:
 #  Test statistics calculated assuming uncorrelated response (for faster computation) 
 #  P-value calculated using 999 iterations via residual (without replacement) resampling.
@@ -518,57 +549,49 @@ anova_blup_u <- anova(mod1_u,
 # Analysis of Variance Table
 # 
 # Model: manylm(formula = mvab_all_u ~ Urb_Rur, data = all_traits_u)
-# 
+#
 # Overall test for all response variables
 # Test statistics:
 #             Res.Df Df.diff val(F) Pr(>F)
 # (Intercept)     47                      
-# Urb_Rur         46       1  7.516   0.95
+# Urb_Rur         46       1  8.197  0.964
 # 
 # Univariate Tests
 # Test statistics:
-#               latex        herb_e_bin        herb_e_quant
-#             F value Pr(>F)    F value Pr(>F)      F value
-# (Intercept)                                              
-# Urb_Rur       0.098  1.000          0  1.000        0.862
-#                    herb_l_bin        herb_l_quant       
-#             Pr(>F)    F value Pr(>F)      F value Pr(>F)
-# (Intercept)                                             
-# Urb_Rur      0.997          0  1.000            0  1.000
-#             weev_mods_bin        weev_mods_quant       
-#                   F value Pr(>F)         F value Pr(>F)
-# (Intercept)                                            
-# Urb_Rur                 0  1.000               0  1.000
-#                ldmc            sla        heights_early
-#             F value Pr(>F) F value Pr(>F)       F value
-# (Intercept)                                            
-# Urb_Rur           0  1.000       0  1.000         0.065
-#                    heights_late            rgr       
-#             Pr(>F)      F value Pr(>F) F value Pr(>F)
-# (Intercept)                                          
-# Urb_Rur      1.000        0.059  1.000   0.079  1.000
-#             ramets_early        ramets_late        mortality
-#                  F value Pr(>F)     F value Pr(>F)   F value
-# (Intercept)                                                 
-# Urb_Rur            0.178  1.000       0.066  1.000     0.017
-#                     flsucc        flowers         flsize
-#             Pr(>F) F value Pr(>F) F value Pr(>F) F value
-# (Intercept)                                             
-# Urb_Rur      1.000   0.976  0.994   0.026  1.000       0
-#                     fltime        flstart           pods
-#             Pr(>F) F value Pr(>F) F value Pr(>F) F value
-# (Intercept)                                             
-# Urb_Rur      1.000   0.038  1.000       0  1.000   0.544
-#                    peduncles        X6.6_main       
-#             Pr(>F)   F value Pr(>F)   F value Pr(>F)
-# (Intercept)                                         
-# Urb_Rur      0.999     0.002  1.000     0.776  0.998
-#             X15_main        X17.6_main          total       
-#              F value Pr(>F)    F value Pr(>F) F value Pr(>F)
-# (Intercept)                                                 
-# Urb_Rur        1.374  0.972      1.291  0.972   1.065  0.986
+#               latex        herb_e_bin        herb_e_quant       
+#             F value Pr(>F)    F value Pr(>F)      F value Pr(>F)
+# (Intercept)                                                     
+# Urb_Rur       0.098  1.000          0  1.000        0.862  0.996
+#             herb_l_bin        herb_l_quant        weev_mods_bin       
+#                F value Pr(>F)      F value Pr(>F)       F value Pr(>F)
+# (Intercept)                                                           
+# Urb_Rur              0  1.000            0  1.000             0  1.000
+#             weev_mods_quant           ldmc            sla       
+#                     F value Pr(>F) F value Pr(>F) F value Pr(>F)
+# (Intercept)                                                     
+# Urb_Rur                   0  1.000       0  1.000       0  1.000
+#             heights_early        heights_late            rgr       
+#                   F value Pr(>F)      F value Pr(>F) F value Pr(>F)
+# (Intercept)                                                        
+# Urb_Rur             0.065  1.000        0.059  1.000   0.079  1.000
+#             ramets_early        ramets_late        mortality       
+#                  F value Pr(>F)     F value Pr(>F)   F value Pr(>F)
+# (Intercept)                                                        
+# Urb_Rur            0.178  1.000       0.066  1.000     0.017  1.000
+#              flsucc        flowers         flsize         fltime       
+#             F value Pr(>F) F value Pr(>F) F value Pr(>F) F value Pr(>F)
+# (Intercept)                                                            
+# Urb_Rur       0.976  0.994   0.026  1.000       0  1.000   0.038  1.000
+#             flstart           pods        peduncles        X6.6_main
+#             F value Pr(>F) F value Pr(>F)   F value Pr(>F)   F value
+# (Intercept)                                                         
+# Urb_Rur       0.681  0.998   0.544  0.998     0.002  1.000     0.776
+#                    X15_main        X17.6_main          total       
+#             Pr(>F)  F value Pr(>F)    F value Pr(>F) F value Pr(>F)
+# (Intercept)                                                        
+# Urb_Rur      0.998    1.374  0.990      1.291  0.990   1.065  0.991
 # 
-# Arguments: with 999 resampling iterations using residual (without replacement) resampling and uncorrelated response (for faster computation) 
+# Arguments: with 999 resampling iterations using residual (without replacement) resampling and uncorrelated response (for faster computation)
 
 # after adjusting for multiple testing, there are still no effects of habitat on any specific trait.
 
@@ -587,12 +610,12 @@ anova_blup2_u <- manylm(mvab_all_u ~ Urb_score,
 # Test statistics:
 #             Res.Df Df.diff val(F) Pr(>F)
 # (Intercept)     47                      
-# Urb_score       46       1  5.971  0.988
+# Urb_score       46       1  5.972  0.994
 # Arguments:
 #  Test statistics calculated assuming uncorrelated response (for faster computation) 
 #  P-value calculated using 999 iterations via residual (without replacement) resampling.
 
-# Still no effect of urbanization on herbivore abundance.
+# Still no effect of urbanization on traits.
 ```
 
 
@@ -665,13 +688,15 @@ urb_sc_tables <- rbind(tab1u, tab2u) %>%
 ```{r}
 word_export <- read_docx()
   
+  body_add_par(word_export, value = "Urbanization = Distance to City Center", style = "heading 1")
   body_add_flextable(word_export, city_tables)
   
   body_add_par(word_export, value = "")
   body_add_par(word_export, value = "")
   
+    body_add_par(word_export, value = "Urbanization = Urbanization Score", style = "heading 1")
   body_add_flextable(word_export, urb_sc_tables)
 
-  print(word_export, here::here("./All_data_analyses/mvabund_anovas.docx"))
+  print(word_export, here::here("./All_data_analyses/mvabund_anovas_allyears.docx"))
 ```
 

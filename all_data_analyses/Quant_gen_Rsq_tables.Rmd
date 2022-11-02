@@ -12,6 +12,7 @@ source(knitr::purl("Reproductive_trait_analyses/Model_diagnostics_Reproduc.Rmd",
 ```
 
 ## Defense traits (including cardenolides)
+Open up viewport for this
 ```{r}
 source(knitr::purl("Defense_trait_analyses/Model_diagnostics_Defense.Rmd", quiet=TRUE))
 
@@ -20,7 +21,6 @@ source(knitr::purl("Defense_trait_analyses/Model_diagnostics_Defense.Rmd", quiet
 ## Growth traits
 ```{r}
 source(knitr::purl("Growth_trait_analyses/Model_diagnostics_Growth.Rmd", quiet=TRUE))
-# I don't know why but this Rmd usually doesn't fully run with this line of code, so instead, just open the Rmd and run it all manually
 ```
 
 ## 2021 Herbivores
@@ -853,12 +853,12 @@ pods_r2 ,
 ### lmers
 ```{r}
 # change REML to T for lmers
-latex_mods_reml_T      <- reml_to_true(latex_mods)
+latex_mods_reml_T          <- reml_to_true(latex_mods)
 herb_e_bin_mods_reml_T       <- reml_to_true(herb_early_mods_binomial)
-herb_e_quant_mods_reml_T <- reml_to_true(herb_early_mods_quant)
-herb_l_bin_mods_reml_T <- reml_to_true(herb_late_mods_binomial)
+herb_e_quant_mods_reml_T   <- reml_to_true(herb_early_mods_quant)
+herb_l_bin_mods_reml_T     <- reml_to_true(herb_late_mods_binomial)
 herb_l_quant_mods_reml_T       <- reml_to_true(herb_late_mods_quant)
-weevil_bin_mods_reml_T  <- reml_to_true(weev_mods_binomial)
+weevil_bin_mods_reml_T       <- reml_to_true(weev_mods_binomial)
 weevil_quant_mods_reml_T  <- reml_to_true(weev_mods_quant)
 
 all_models_reml_T <- list(
@@ -1240,5 +1240,236 @@ ramets_e_r2 ,
   
   word_export <- body_end_section_landscape(word_export)
   print(word_export, here::here("./Growth_trait_analyses/Tables/R2_growth3.docx"))
+```
+
+## Export all Rsq tables into one docx
+```{r}
+
+make_full_R2_table <- function(list1, list2, list3,
+                               list4, list5, list6,
+                               list7, list8, list9,
+                               list10, list11, list12,
+                               list13, list14, list15,
+                               list16, list17, list18,
+                               list19 , list20, list21,
+                               list22, list23, list24,
+                               list25 , list26
+                               ){
+      
+  make_1_table <- function(list1){
+    
+      lapply(list1, r.squaredGLMM) %>%
+      as.data.frame()%>%
+      rownames_to_column() %>%
+      dplyr::mutate_at(2:length(.), round, 3) %>%
+      dplyr::select(-contains("alt")) %>%
+      dplyr::rename("Type" = 1) %>%
+      dplyr::filter(row_number()==n()) %>%
+      data.table::as.data.table() %>%
+      data.table::melt(.,
+           measure = patterns("City_gr.R2m",           "Usc_gr.R2m",
+                              "City_urbsubs_best.R2m",
+                              "Usc_urbsubs_best.R2m", 
+                              "City_gr.R2c",           "Usc_gr.R2c",
+                              "City_urbsubs_best.R2c",
+                              "Usc_urbsubs_best.R2c"),
+           value.name = c("Distance_Q1.R2m",      "UrbScore_Q1.R2m",
+                          "Distance_Q2_best.R2m",
+                          "UrbScore_Q2_best.R2m",
+                          "Distance_Q1.R2c",      "UrbScore_Q1.R2c",
+                          "Distance_Q2_best.R2c",
+                          "UrbScore_Q2_best.R2c")) %>%
+      as.data.frame() %>%
+      dplyr::select(Type,
+                    
+                    Distance_Q1.R2m,
+                    Distance_Q1.R2c,
+                    Distance_Q2_best.R2m,
+                    Distance_Q2_best.R2c,
+
+                    UrbScore_Q1.R2m,
+                    UrbScore_Q1.R2c,
+                    UrbScore_Q2_best.R2m,
+                    UrbScore_Q2_best.R2c)
+    }
+
+  full_table <- lapply(list(list1, list2, list3,
+                               list4, list5, list6,
+                               list7, list8, list9,
+                               list10, list11, list12,
+                               list13, list14, list15,
+                               list16, list17, list18,
+                               list19 , list20, list21,
+                               list22, list23, list24,
+                                list25 , list26),
+                       make_1_table) %>%
+    reduce(full_join, all = T) %>%
+      dplyr::mutate(Variable = c(list1[[1]]$call[[2]][[2]],
+                                 list2[[1]]$call[[2]][[2]],
+                                 list3[[1]]$call[[2]][[2]],
+                                 list4[[1]]$call[[2]][[2]],
+                                 list5[[1]]$call[[2]][[2]],
+                                 list6[[1]]$call[[2]][[2]],
+                                 list7[[1]]$call[[2]][[2]],
+                                 list8[[1]]$call[[2]][[2]],
+                                 list9[[1]]$call[[2]][[2]],
+                                 list10[[1]]$call[[2]][[2]],
+                                 list11[[1]]$call[[2]][[2]],
+                                 list12[[1]]$call[[2]][[2]],
+                                 list13[[1]]$call[[2]][[2]],
+                                 list14[[1]]$call[[2]][[2]],
+                                 list15[[1]]$call[[2]][[2]],
+                                 list16[[1]]$call[[2]][[2]],
+                                 list17[[1]]$call[[2]][[2]],
+                                 list18[[1]]$call[[2]][[2]],
+                                 list19[[1]]$call[[2]][[2]] ,
+                                 list20[[1]]$call[[2]][[2]],
+                                 list21[[1]]$call[[2]][[2]],
+                                 list22[[1]]$call[[2]][[2]],
+                                 list23[[1]]$call[[2]][[2]],
+                                 list24[[1]]$call[[2]][[2]],
+                                 list25[[1]]$call[[2]][[2]],
+                                 list26[[1]]$call[[2]][[2]]
+                                 )) %>%
+      dplyr::relocate(Variable) %>%
+  dplyr::mutate(Variable = case_when(
+    
+    # Defense
+    str_detect(Variable, "Latex")~
+      "Latex exudation",
+    str_detect(Variable, "Herbivory_mean_early_binary") ~
+      "Herbivory before flowering (binary)",
+    str_detect(Variable, "(Herbivory_mean_early)") ~
+                 "Herbivory before flowering (quantitative)",
+    str_detect(Variable, "Herbivory_mean_late_binary")~
+      "Herbivory after flowering (binary)",
+    str_detect(Variable, "(Herbivory_mean_late)")~
+      "Herbivory before flowering (quantitative)",
+    str_detect(Variable, "Scar_binary")~
+      "Weevil damage (binary)",
+    str_detect(Variable, "Scar_length_cm")~
+      "Weevil damage (quantitative)",
+    
+    # Reproduction
+    str_detect(Variable, "Flowered")~
+      "Flowering success",
+    str_detect(Variable, "mean_flower_c")~
+      "Flowers per Inflorescence",
+    str_detect(Variable, "Overall")~
+      "Flower size",
+    str_detect(Variable, "flowering_time")~
+      "Flowering duration",
+    str_detect(Variable, "Julian_oldest_inflor")~
+      "Date of first flower",
+    str_detect(Variable, "Pods")~
+      "Follicles",
+    str_detect(Variable, "Julian_first")~
+      "Date of first follicle",
+    str_detect(Variable, "Peduncles")~
+      "Inflorescences",
+    
+    # Herbivores
+    str_detect(Variable, "Monarch")~
+      "Danaus plexippus abundance",
+    str_detect(Variable, "asclep")~
+      "Liriomyza asclepiadis abundance",
+    str_detect(Variable, "clivi")~
+      "Labidomera clivicollis abundance",
+    
+    # Growth
+    str_detect(Variable, "LDMC")~
+      "LDMC",
+    str_detect(Variable, "SLA")~
+      "SLA",
+    str_detect(Variable, "Total_Height_early")~
+      "Height before flowering",
+    str_detect(Variable, "Total_Height_late")~
+      "Height after flowering",
+    str_detect(Variable, "rel_gr")~
+      "Relative growth rate",
+    str_detect(Variable, "Ramets_early")~
+      "Ramets before flowering",
+    str_detect(Variable, "Ramets_late")~
+      "Ramets after flowering",
+    str_detect(Variable, "Dead")~
+      "Mortality"
+    
+    
+    )) %>%
+      flextable() %>%
+      add_header_row(
+        values = c("",
+                   "Model 1",
+                   "Model 2",
+                   "Model 3",
+                   "Model 4"),
+        colwidths = c(2,2,2,2,2))  %>%
+      add_header_row(
+        values = c("",
+                   "All Populations", "Urban Populations",
+                   "All Populations", "Urban Populations"),
+        colwidths = c(2,2,2,2,2))%>%
+      add_header_row(
+        values = c("",
+                   "Distance to City Center", "Urbanization Score"),
+        colwidths = c(2,4,4)) %>%
+      theme_box() %>%
+      align(j = c(2:10), align = "center",
+            part = "all") %>%
+      flextable::compose(part = "header",
+                         j = c(3,5,7,9), i = 4,
+                         value = as_paragraph("R", as_sup("2"), "m")
+      ) %>%
+      flextable::compose(part = "header",
+                         j = c(4,6,8,10), i = 4,
+                         value = as_paragraph("R", as_sup("2"), "c")
+      ) %>%
+      autofit()
+    
+  return(full_table) 
+  
+}
+
+
+
+make_full_R2_table(
+  # defense
+                   latex_mods_reml_T        ,
+                  herb_e_bin_mods_reml_T   ,
+                  herb_e_quant_mods_reml_T ,
+                  herb_l_bin_mods_reml_T   ,
+                  herb_l_quant_mods_reml_T ,
+                  weevil_bin_mods_reml_T   ,
+                  weevil_quant_mods_reml_T ,
+  # reproductive traits
+                   flsucc_mods_reml_T   ,  
+                   flowers_mods_reml_T    ,
+                   flsize_mods_reml_T     ,
+                   fltime_mods_reml_T     ,
+                   flstart_mods_reml_T    ,
+                   pods_mods_reml_T       ,
+                   first_pods_mods_reml_T ,
+                   peduncles_mods_reml_T ,
+                   
+  # herbivores
+                   monarch_mods_reml_T,
+                   asclepiadis_mods_reml_T,
+                   clivicollis_mods_reml_T,
+  # growth traits
+                   ldmc_mods_reml_T     ,
+                   sla_mods_reml_T      ,
+                   heights_e_mods_reml_T,
+                   heights_l_mods_reml_T,
+                   rgr_mods_reml_T      ,
+                   ramets_e_mods_reml_T ,
+                   ramets_l_mods_reml_T ,
+                   mortality_mods_reml_T) %T>%
+  save_as_docx(path = here::here("./Figures_Tables/Rsquared/Rsquared_all.docx"),
+              pr_section = prop_section(
+                page_size = page_size(
+                  orient = "landscape",
+                  width = 16, height = 15),
+                type = "continuous",
+                page_margins = page_mar()))
 ```
 
