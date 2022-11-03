@@ -33,7 +33,7 @@ performance::check_model(ldmc_ranova_mod1)
 # export
 ranova_2step(ldmc_ranova_mod1,
              "LDMC",
-             "./Growth_trait_analyses/Tables/Ranova/ldmc.docx")
+             "./Figures_Tables/ranova_PVE/Growth/ldmc.docx")
 
 
 # SLA-----
@@ -50,7 +50,7 @@ performance::check_model(sla_ranova_mod1)
 # export
 ranova_2step(sla_ranova_mod1,
              "SLA",
-             "./Growth_trait_analyses/Tables/Ranova/sla.docx")
+             "./Figures_Tables/ranova_PVE/Growth/sla.docx")
 
 
 # Rel growth rate-----
@@ -69,7 +69,7 @@ performance::check_model(rgr_ranova_mod1)
 # export
 ranova_2step(rgr_ranova_mod1,
              "Relative growth rate: 2019",
-             "./Growth_trait_analyses/Tables/Ranova/rgr_2019.docx")
+             "./Figures_Tables/ranova_PVE/Growth/rgr_2019.docx")
 
 
 # 2020--------
@@ -87,7 +87,7 @@ performance::check_model(rgr_ranova_mod2)
 # export
 ranova_2step(rgr_ranova_mod2,
              "Relative growth rate: 2020",
-             "./Growth_trait_analyses/Tables/Ranova/rgr_2020.docx")
+             "./Figures_Tables/ranova_PVE/Growth/rgr_2020.docx")
 
 
 # 2021--------
@@ -105,7 +105,7 @@ performance::check_model(rgr_ranova_mod3)
 # export
 ranova_2step(rgr_ranova_mod3,
              "Relative growth rate: 2021",
-             "./Growth_trait_analyses/Tables/Ranova/rgr_2021.docx")
+             "./Figures_Tables/ranova_PVE/Growth/rgr_2021.docx")
 
 
 
@@ -125,7 +125,7 @@ performance::check_model(heights_e_ranova_mod1)
 # export
 ranova_2step(heights_e_ranova_mod1,
              "Height, before flowering: 2019",
-             "./Growth_trait_analyses/Tables/Ranova/heights_early_2019.docx")
+             "./Figures_Tables/ranova_PVE/Growth/heights_early_2019.docx")
 
 
 # 2020-----
@@ -143,7 +143,7 @@ performance::check_model(heights_e_ranova_mod2)
 # export
 ranova_2step(heights_e_ranova_mod2,
              "Height, before flowering: 2020",
-             "./Growth_trait_analyses/Tables/Ranova/heights_early_2020.docx")
+             "./Figures_Tables/ranova_PVE/Growth/heights_early_2020.docx")
 
 
 # 2021-----
@@ -161,7 +161,7 @@ performance::check_model(heights_e_ranova_mod3)
 # export
 ranova_2step(heights_e_ranova_mod3,
              "Height, before flowering: 2021",
-             "./Growth_trait_analyses/Tables/Ranova/heights_early_2021.docx")
+             "./Figures_Tables/ranova_PVE/Growth/heights_early_2021.docx")
 
 
 
@@ -181,7 +181,7 @@ performance::check_model(heights_l_ranova_mod1)
 # export
 ranova_2step(heights_l_ranova_mod1,
              "Height, after flowering: 2019",
-             "./Growth_trait_analyses/Tables/Ranova/heights_late_2019.docx")
+             "./Figures_Tables/ranova_PVE/Growth/heights_late_2019.docx")
 
 
 # 2020-----
@@ -199,7 +199,7 @@ performance::check_model(heights_l_ranova_mod2)
 # export
 ranova_2step(heights_l_ranova_mod2,
              "Height, after flowering: 2020",
-             "./Growth_trait_analyses/Tables/Ranova/heights_late_2020.docx")
+             "./Figures_Tables/ranova_PVE/Growth/heights_late_2020.docx")
 
 
 # 2021-----
@@ -217,7 +217,7 @@ performance::check_model(heights_l_ranova_mod3)
 # export
 ranova_2step(heights_l_ranova_mod3,
              "Height, after flowering: 2021",
-             "./Growth_trait_analyses/Tables/Ranova/heights_late_2021.docx")
+             "./Figures_Tables/ranova_PVE/Growth/heights_late_2021.docx")
 
 
 ```
@@ -238,7 +238,7 @@ performance::check_model(ldmc_ranova_mod1)
 
 ranova_transect(ldmc_ranova_mod1,
                 "LDMC",
-                "./Growth_trait_analyses/Tables/Ranova/ldmc_transects.docx")
+                "./Figures_Tables/ranova_PVE/Growth/ldmc_transects.docx")
 
 
 # SLA-----
@@ -254,7 +254,7 @@ performance::check_model(sla_ranova_mod1)
 
 ranova_transect(sla_ranova_mod1,
                 "SLA",
-                "./Growth_trait_analyses/Tables/Ranova/sla_transects.docx")
+                "./Figures_Tables/ranova_PVE/Growth/sla_transects.docx")
 
 
 # Rel growth rate-----
@@ -272,7 +272,7 @@ performance::check_model(rgr_ranova_mod1)
 
 ranova_transect(rgr_ranova_mod1,
                 "Relative growth rate: 2019",
-                "./Growth_trait_analyses/Tables/Ranova/rgr_transects_2019.docx")
+                "./Figures_Tables/ranova_PVE/Growth/rgr_transects_2019.docx")
 
 
 # 2020-----
@@ -289,7 +289,7 @@ performance::check_model(rgr_ranova_mod2)
 
 ranova_transect(rgr_ranova_mod2,
                 "Relative growth rate: 2020",
-                "./Growth_trait_analyses/Tables/Ranova/rgr_transects_2020.docx")
+                "./Figures_Tables/ranova_PVE/Growth/rgr_transects_2020.docx")
 
 
 # 2021-----
@@ -306,7 +306,7 @@ performance::check_model(rgr_ranova_mod3)
 
 ranova_transect(rgr_ranova_mod3,
                 "Relative growth rate: 2021",
-                "./Growth_trait_analyses/Tables/Ranova/rgr_transects_2021.docx")
+                "./Figures_Tables/ranova_PVE/Growth/rgr_transects_2021.docx")
 
 
 # Total_Height_early-----
@@ -324,7 +324,7 @@ performance::check_model(heights_e_ranova_mod1)
 
 ranova_transect(heights_e_ranova_mod1,
                 "Height before flowering: 2019",
-                "./Growth_trait_analyses/Tables/Ranova/heights_e_transects_2019.docx")
+                "./Figures_Tables/ranova_PVE/Growth/heights_e_transects_2019.docx")
 
 
 # 2020-----
@@ -341,7 +341,7 @@ performance::check_model(heights_e_ranova_mod2)
 
 ranova_transect(heights_e_ranova_mod2,
                 "Height before flowering: 2020",
-                "./Growth_trait_analyses/Tables/Ranova/heights_e_transects_2020.docx")
+                "./Figures_Tables/ranova_PVE/Growth/heights_e_transects_2020.docx")
 
 
 # 2021-----
@@ -358,7 +358,7 @@ performance::check_model(heights_e_ranova_mod3)
 
 ranova_transect(heights_e_ranova_mod3,
                 "Height before flowering: 2021",
-                "./Growth_trait_analyses/Tables/Ranova/heights_e_transects_2021.docx")
+                "./Figures_Tables/ranova_PVE/Growth/heights_e_transects_2021.docx")
 
 # Total_Height_late-----
 # 2019-----
@@ -375,7 +375,7 @@ performance::check_model(heights_l_ranova_mod1)
 
 ranova_transect(heights_l_ranova_mod1,
                 "Height after flowering: 2019",
-                "./Growth_trait_analyses/Tables/Ranova/heights_l_transects_2019.docx")
+                "./Figures_Tables/ranova_PVE/Growth/heights_l_transects_2019.docx")
 
 
 # 2020-----
@@ -392,7 +392,7 @@ performance::check_model(heights_l_ranova_mod2)
 
 ranova_transect(heights_l_ranova_mod2,
                 "Height after flowering: 2020",
-                "./Growth_trait_analyses/Tables/Ranova/heights_l_transects_2020.docx")
+                "./Figures_Tables/ranova_PVE/Growth/heights_l_transects_2020.docx")
 
 
 # 2021-----
@@ -409,7 +409,7 @@ performance::check_model(heights_l_ranova_mod3)
 
 ranova_transect(heights_l_ranova_mod3,
                 "Height after flowering: 2021",
-                "./Growth_trait_analyses/Tables/Ranova/heights_l_transects_2021.docx")
+                "./Figures_Tables/ranova_PVE/Growth/heights_l_transects_2021.docx")
 
 ```
 
@@ -432,7 +432,7 @@ ramets_e_ranova1 <- glmer(Ramets_early ~
 
 pb_ranova_2step(ramets_e_ranova1,
           "Ramets before flowering: 2019",
-           "./Growth_trait_analyses/Tables/Ranova/ramets_early_2019.docx")
+           "./Figures_Tables/ranova_PVE/Growth/ramets_early_2019.docx")
 
 
 # 2020-----
@@ -450,7 +450,7 @@ ramets_e_ranova2 <- glmer(Ramets_early ~
 
 pb_ranova_2step(ramets_e_ranova2,
           "Ramets before flowering: 2020",
-          "./Growth_trait_analyses/Tables/Ranova/ramets_early_2020.docx")
+          "./Figures_Tables/ranova_PVE/Growth/ramets_early_2020.docx")
 
 
 # 2021-----
@@ -469,7 +469,7 @@ summary(ramets_e_ranova3)
 insight::get_variance_random(ramets_e_ranova3)
 pb_ranova_2step(ramets_e_ranova3,
           "Ramets before flowering: 2021",
-          "./Growth_trait_analyses/Tables/Ranova/ramets_early_2021.docx")
+          "./Figures_Tables/ranova_PVE/Growth/ramets_early_2021.docx")
 
 
 # Number of ramets (LATE)-------
@@ -487,7 +487,7 @@ ramets_l_ranova1 <- glmer(Ramets_late ~
 
 pb_ranova_2step(ramets_l_ranova1,
           "Ramets after flowering: 2019",
-          "./Growth_trait_analyses/Tables/Ranova/ramets_late_2019.docx")
+          "./Figures_Tables/ranova_PVE/Growth/ramets_late_2019.docx")
 
 
 # 2020-----
@@ -505,7 +505,7 @@ ramets_l_ranova2 <- glmer(Ramets_late ~
 
 pb_ranova_2step(ramets_l_ranova2,
           "Ramets after flowering: 2020",
-          "./Growth_trait_analyses/Tables/Ranova/ramets_late_2020.docx")
+          "./Figures_Tables/ranova_PVE/Growth/ramets_late_2020.docx")
 
 
 # 2021-----
@@ -523,7 +523,7 @@ ramets_l_ranova3 <- glmer(Ramets_late ~
 
 pb_ranova_2step(ramets_l_ranova3,
           "Ramets after flowering: 2021",
-          "./Growth_trait_analyses/Tables/Ranova/ramets_late_2021.docx")
+          "./Figures_Tables/ranova_PVE/Growth/ramets_late_2021.docx")
 
 
 
@@ -544,7 +544,7 @@ mortality_ranova1 <- glmer(Dead ~
 
 pb_ranova_2step(mortality_ranova1,
           "Mortality: 2019",
-          "./Growth_trait_analyses/Tables/Ranova/mortality_2019.docx")
+          "./Figures_Tables/ranova_PVE/Growth/mortality_2019.docx")
 
 # 2020-----
 mortality_ranova2 <- glmer(Dead ~
@@ -561,7 +561,7 @@ mortality_ranova2 <- glmer(Dead ~
 
 pb_ranova_2step(mortality_ranova2,
           "Mortality: 2020",
-          "./Growth_trait_analyses/Tables/Ranova/mortality_2020.docx")
+          "./Figures_Tables/ranova_PVE/Growth/mortality_2020.docx")
 
 
 # 2021-----
@@ -579,7 +579,7 @@ mortality_ranova3 <- glmer(Dead ~
 
 pb_ranova_2step(mortality_ranova3,
           "Mortality: 2021",
-          "./Growth_trait_analyses/Tables/Ranova/mortality_2021.docx")
+          "./Figures_Tables/ranova_PVE/Growth/mortality_2021.docx")
 
 # 2022-----
 mortality_ranova4 <- glmer(Dead ~
@@ -595,7 +595,7 @@ mortality_ranova4 <- glmer(Dead ~
 
 pb_ranova_2step(mortality_ranova4,
           "Mortality: 2022",
-          "./Growth_trait_analyses/Tables/Ranova/mortality_2022.docx")
+          "./Figures_Tables/ranova_PVE/Growth/mortality_2022.docx")
 
 
 ```
@@ -619,7 +619,7 @@ ramets_e_ranova1_pb <- glmer(Ramets_early ~
 
 pb_ranova_transects(ramets_e_ranova1_pb,
           "Ramets before flowering: 2019",
-          "./Growth_trait_analyses/Tables/Ranova/ramets_early_2019_transects.docx")
+          "./Figures_Tables/ranova_PVE/Growth/ramets_early_2019_transects.docx")
 
 
 
@@ -639,7 +639,7 @@ ramets_e_ranova2_pb <- glmer(Ramets_early ~
 
 pb_ranova_transects(ramets_e_ranova2_pb,
           "Ramets before flowering: 2020",
-          "./Growth_trait_analyses/Tables/Ranova/ramets_early_2020_transects.docx")
+          "./Figures_Tables/ranova_PVE/Growth/ramets_early_2020_transects.docx")
 
 
 # 2021-----
@@ -658,7 +658,7 @@ ramets_e_ranova3_pb <- glmer(Ramets_early ~
 
 pb_ranova_transects(ramets_e_ranova3_pb,
           "Ramets before flowering: 2021",
-          "./Growth_trait_analyses/Tables/Ranova/ramets_early_2021_transects.docx")
+          "./Figures_Tables/ranova_PVE/Growth/ramets_early_2021_transects.docx")
 
 
 # Ramets (after flowering)-------
@@ -678,7 +678,7 @@ ramets_l_ranova1_pb <- glmer(Ramets_late ~
 
 pb_ranova_transects(ramets_l_ranova1_pb,
           "Ramets after flowering: 2019",
-          "./Growth_trait_analyses/Tables/Ranova/ramets_late_2019_transects.docx")
+          "./Figures_Tables/ranova_PVE/Growth/ramets_late_2019_transects.docx")
 
 
 
@@ -698,7 +698,7 @@ ramets_l_ranova2_pb <- glmer(Ramets_late ~
 
 pb_ranova_transects(ramets_l_ranova2_pb,
           "Ramets after flowering: 2020",
-          "./Growth_trait_analyses/Tables/Ranova/ramets_late_2020_transects.docx")
+          "./Figures_Tables/ranova_PVE/Growth/ramets_late_2020_transects.docx")
 
 
 # 2021-----
@@ -717,7 +717,7 @@ ramets_l_ranova3_pb <- glmer(Ramets_late ~
 
 pb_ranova_transects(ramets_l_ranova3_pb,
           "Ramets after flowering: 2021",
-          "./Growth_trait_analyses/Tables/Ranova/ramets_late_2021_transects.docx")
+          "./Figures_Tables/ranova_PVE/Growth/ramets_late_2021_transects.docx")
 
 
 
@@ -738,7 +738,7 @@ surv_ranova1_pb <- glmer(Dead ~
 
 pb_ranova_transects(surv_ranova1_pb,
           "Mortality: 2019",
-          "./Growth_trait_analyses/Tables/Ranova/mortality_2019_transects.docx")
+          "./Figures_Tables/ranova_PVE/Growth/mortality_2019_transects.docx")
 
 
 # 2020-----
@@ -757,7 +757,7 @@ surv_ranova2_pb <- glmer(Dead ~
 
 pb_ranova_transects(surv_ranova2_pb,
           "Mortality: 2020",
-          "./Growth_trait_analyses/Tables/Ranova/mortality_2020_transects.docx")
+          "./Figures_Tables/ranova_PVE/Growth/mortality_2020_transects.docx")
 
 
 # 2021-----
@@ -776,7 +776,7 @@ surv_ranova3_pb <- glmer(Dead ~
 
 pb_ranova_transects(surv_ranova3_pb,
           "Mortality: 2021",
-          "./Growth_trait_analyses/Tables/Ranova/mortality_2021_transects.docx")
+          "./Figures_Tables/ranova_PVE/Growth/mortality_2021_transects.docx")
 
 
 # 2022-----
@@ -795,7 +795,7 @@ surv_ranova4_pb <- glmer(Dead ~
 
 pb_ranova_transects(surv_ranova4_pb,
           "Mortality: 2022",
-          "./Growth_trait_analyses/Tables/Ranova/mortality_2022_transects.docx")
+          "./Figures_Tables/ranova_PVE/Growth/mortality_2022_transects.docx")
 
 
 ```
@@ -865,7 +865,7 @@ recalc_tab3 <- pve_table_recalc(pve_rbf_urbsc, pve_raf_urbsc, pve_surv_urbsc,
 export_recalc(recalc_tab1,
               recalc_tab2,
               recalc_tab3,
-              "./Growth_trait_analyses/Tables/Ranova/PVE_nonGaussmods/PVE_nonGaussmods_growth_Q1.docx")
+              "./Figures_Tables/ranova_PVE/Growth/PVE_nonGaussmods/PVE_nonGaussmods_growth_Q1.docx")
 
 ```
 
@@ -920,7 +920,7 @@ recalc_tab3_Q2 <- pve_table_recalc(pve_rbf_urbsc2, pve_raf_urbsc2, pve_surv_urbs
 export_recalc(recalc_tab1_Q2,
               recalc_tab2_Q2,
               recalc_tab3_Q2,
-              "./Growth_trait_analyses/Tables/Ranova/PVE_nonGaussmods/PVE_nonGaussmods_growth_Q2.docx")
+              "./Figures_Tables/ranova_PVE/Growth/PVE_nonGaussmods/PVE_nonGaussmods_growth_Q2.docx")
 ```
 
 
@@ -939,7 +939,7 @@ Note: Can only do this for gaussian models for Q1. For models with transect as a
 
 
 
-pve <- read.csv(here::here("./Growth_trait_analyses/Tables/Ranova/pve_growth_Q1.csv")) %>%
+pve <- read.csv(here::here("./Figures_Tables/ranova_PVE/Growth/pve_growth_Q1.csv")) %>%
   dplyr::rename(Variable = 1) %>%
   # make alphabetical order for plot
    mutate(Variable = fct_reorder(Variable,

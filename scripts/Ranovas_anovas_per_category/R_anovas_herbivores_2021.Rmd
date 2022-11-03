@@ -84,7 +84,7 @@ monarch_ranova1 <- glmer.nb(Monarch_Quantity_Observed ~
 
 pb_ranova_2step(monarch_ranova1,
           "Monarch butterfly: 2020",
-          "./Defense_trait_analyses/Tables/Ranova/Monarch_2020.docx")
+          "./Figures_Tables/ranova_PVE/Defense/Monarch_2020.docx")
 
 # 2021-----
 monarch_ranova2 <- glmer.nb(Monarch_Quantity_Observed ~
@@ -99,7 +99,7 @@ monarch_ranova2 <- glmer.nb(Monarch_Quantity_Observed ~
 
 pb_ranova_2step(monarch_ranova2,
           "Monarch butterfly: 2021",
-          "./Defense_trait_analyses/Tables/Ranova/Monarch_2021.docx")
+          "./Figures_Tables/ranova_PVE/Defense/Monarch_2021.docx")
 ```
 
 #### L. asclepiadis
@@ -117,7 +117,7 @@ asclepiadis_ranova1 <- glmer.nb(Liriomyza_asclepiadis ~
 
 pb_ranova_2step(asclepiadis_ranova1,
           "Liriomyza asclepiadis: 2020",
-          "./Defense_trait_analyses/Tables/Ranova/asclepiadis_2020.docx")
+          "./Figures_Tables/ranova_PVE/Defense/asclepiadis_2020.docx")
 
 
 # 2021-----
@@ -133,7 +133,7 @@ asclepiadis_ranova2 <- glmer.nb(Liriomyza_asclepiadis ~
 
 pb_ranova_2step(asclepiadis_ranova2,
           "Liriomyza asclepiadis: 2021",
-          "./Defense_trait_analyses/Tables/Ranova/asclepiadis_2021.docx")
+          "./Figures_Tables/ranova_PVE/Defense/asclepiadis_2021.docx")
 ```
 
 #### L. clivicollis
@@ -152,7 +152,7 @@ clivicoll_ranova1 <- glmer.nb(Labidomera_clivicollis ~
 
 pb_ranova_2step(clivicoll_ranova1,
           "Labidomera clivicollis: 2020",
-          "./Defense_trait_analyses/Tables/Ranova/clivicollis_2020.docx")
+          "./Figures_Tables/ranova_PVE/Defense/clivicollis_2020.docx")
 
 
 # 2021-----
@@ -168,7 +168,7 @@ clivicoll_ranova2 <- glmer.nb(Labidomera_clivicollis ~
 
 pb_ranova_2step(clivicoll_ranova2,
           "Labidomera clivicollis: 2021",
-          "./Defense_trait_analyses/Tables/Ranova/clivicollis_2021.docx")
+          "./Figures_Tables/ranova_PVE/Defense/clivicollis_2021.docx")
 
 ```
 
@@ -190,7 +190,7 @@ monarchs_ranova1_pb <- glmer.nb(Monarch_Quantity_Observed ~
 
 pb_ranova_transects(monarchs_ranova1_pb,
           "Monarch butterfly: 2020",
-          "./Defense_trait_analyses/Tables/Ranova/monarch_2020_transects.docx")
+          "./Figures_Tables/ranova_PVE/Defense/monarch_2020_transects.docx")
 
 
 # 2021-----
@@ -210,7 +210,7 @@ summary(monarchs_ranova2_pb) # again, nearly zero variance among families and po
 
 pb_ranova_transects(monarchs_ranova2_pb,
           "Monarch butterfly: 2021",
-          "./Defense_trait_analyses/Tables/Ranova/monarch_2021_transectstest.docx")
+          "./Figures_Tables/ranova_PVE/Defense/monarch_2021_transectstest.docx")
 
 ```
 
@@ -231,7 +231,7 @@ asclepiadis_ranova1_pb <- glmer.nb(Liriomyza_asclepiadis ~
 
 pb_ranova_transects(asclepiadis_ranova1_pb,
           "Liriomyza asclepiadis: 2020",
-          "./Defense_trait_analyses/Tables/Ranova/asclepiadis_2020_transects.docx")
+          "./Figures_Tables/ranova_PVE/Defense/asclepiadis_2020_transects.docx")
 
 
 # 2021-----
@@ -248,7 +248,7 @@ asclepiadis_ranova2_pb <- glmer.nb(Liriomyza_asclepiadis ~
 
 pb_ranova_transects(asclepiadis_ranova2_pb,
           "Liriomyza asclepiadis: 2021",
-          "./Defense_trait_analyses/Tables/Ranova/asclepiadis_2021_transects.docx")
+          "./Figures_Tables/ranova_PVE/Defense/asclepiadis_2021_transects.docx")
 
 ```
 
@@ -268,7 +268,7 @@ clivicollis_ranova1_pb <- glmer.nb(Labidomera_clivicollis ~
 
 pb_ranova_transects(clivicollis_ranova1_pb,
           "Labidomera clivicollis: 2020",
-          "./Defense_trait_analyses/Tables/Ranova/clivicollis_2020_transects.docx")
+          "./Figures_Tables/ranova_PVE/Defense/clivicollis_2020_transects.docx")
 
 
 # 2021-----
@@ -286,7 +286,7 @@ clivicollis_ranova2_pb <- glmer.nb(Labidomera_clivicollis ~
 
 pb_ranova_transects(clivicollis_ranova2_pb,
           "Labidomera clivicollis: 2021",
-          "./Defense_trait_analyses/Tables/Ranova/clivicollis_2021_transects.docx")
+          "./Figures_Tables/ranova_PVE/Defense/clivicollis_2021_transects.docx")
 
 ```
 
@@ -355,7 +355,7 @@ recalc_tab3 <- pve_table_recalc(pve_mon_urbsc, pve_lasclep_urbsc, pve_lclivi_urb
 export_recalc(recalc_tab1,
               recalc_tab2,
               recalc_tab3,
-              "./Defense_trait_analyses/Tables/Ranova/PVE_nonGaussmods/PVE_nonGaussmods_herbivores_Q1.docx")
+              "./Figures_Tables/ranova_PVE/Defense/PVE_nonGaussmods/PVE_nonGaussmods_herbivores_Q1.docx")
 
 ```
 
@@ -413,7 +413,7 @@ recalc_tab3 <- pve_table_recalc(pve_mon_urbsc2, pve_lasclep_urbsc2, pve_lclivi_u
 export_recalc(recalc_tab1,
               recalc_tab2,
               recalc_tab3,
-              "./Defense_trait_analyses/Tables/Ranova/PVE_nonGaussmods/PVE_nonGaussmods_herbivores_Q2.docx")
+              "./Figures_Tables/ranova_PVE/Defense/PVE_nonGaussmods/PVE_nonGaussmods_herbivores_Q2.docx")
 
 ```
 

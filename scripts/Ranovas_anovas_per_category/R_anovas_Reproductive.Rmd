@@ -36,7 +36,7 @@ performance::check_model(flsize_ranova_mod1)
 # export
 ranova_2step(flsize_ranova_mod1,
              "Flower size: 2020",
-             "./Reproductive_trait_analyses/Tables/Ranova/flower_size_2020.docx")
+             "./Figures_Tables/ranova_PVE/Reproduction/flower_size_2020.docx")
 
 
 # 2021-----
@@ -53,7 +53,7 @@ performance::check_model(flsize_ranova_mod2)
 # export
 ranova_2step(flsize_ranova_mod2,
              "Flower size: 2021",
-             "./Reproductive_trait_analyses/Tables/Ranova/flower_size_2021.docx")
+             "./Figures_Tables/ranova_PVE/Reproduction/flower_size_2021.docx")
 
 
 
@@ -71,7 +71,7 @@ performance::check_model(flsize_ranova_mod3)
 # export
 ranova_2step(flsize_ranova_mod3,
              "Flower size: 2022",
-             "./Reproductive_trait_analyses/Tables/Ranova/flower_size_2022.docx")
+             "./Figures_Tables/ranova_PVE/Reproduction/flower_size_2022.docx")
 ```
 
 ### Urban subtransects
@@ -92,7 +92,7 @@ performance::check_model(flsize_ranova_mod1)
 
 ranova_transect(flsize_ranova_mod1,
                 "Flower size: 2020",
-                "./Reproductive_trait_analyses/Tables/Ranova/flsize_transects_2020.docx")
+                "./Figures_Tables/ranova_PVE/Reproduction/flsize_transects_2020.docx")
 
 
 
@@ -111,7 +111,7 @@ performance::check_model(flsize_ranova_mod2)
 
 ranova_transect(flsize_ranova_mod2,
                 "Flower size: 2021",
-                "./Reproductive_trait_analyses/Tables/Ranova/flsize_transects_2021.docx")
+                "./Figures_Tables/ranova_PVE/Reproduction/flsize_transects_2021.docx")
 
 
 # 2022-----
@@ -129,7 +129,7 @@ performance::check_model(flsize_ranova_mod3)
 
 ranova_transect(flsize_ranova_mod3,
                 "Flower size: 2022",
-                "./Reproductive_trait_analyses/Tables/Ranova/flsize_transects_2022.docx")
+                "./Figures_Tables/ranova_PVE/Reproduction/flsize_transects_2022.docx")
 
 ```
 
@@ -154,7 +154,7 @@ flsucc_ranova1 <- glmer(Flowered ~
 
 pb_ranova_2step(flsucc_ranova1,
           "Flowering success: 2020",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowering_success_2020.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowering_success_2020.docx")
 
 # 2021-----
 flsucc_ranova2 <- glmer(Flowered ~
@@ -171,7 +171,7 @@ flsucc_ranova2 <- glmer(Flowered ~
 
 pb_ranova_2step(flsucc_ranova2,
           "Flowering success: 2021",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowering_success_2021.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowering_success_2021.docx")
 
 # 2022-----
 flsucc_ranova3 <- glmer(Flowered ~
@@ -188,7 +188,7 @@ flsucc_ranova3 <- glmer(Flowered ~
 
 pb_ranova_2step(flsucc_ranova3,
           "Flowering success: 2022",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowering_success_2022.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowering_success_2022.docx")
 
 
 # Flowers/inflor-----
@@ -206,7 +206,7 @@ flowers_ranova1 <- glmer.nb(mean_flower_count ~
 
 pb_ranova_2step(flowers_ranova1,
           "Mean flower count: 2020",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2020.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowercount_2020.docx")
 
 # 2021-----
 flowers_ranova2 <- glmer.nb(mean_flower_count ~
@@ -222,7 +222,7 @@ flowers_ranova2 <- glmer.nb(mean_flower_count ~
 
 pb_ranova_2step(flowers_ranova2,
           "Mean flower count: 2021",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2021.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowercount_2021.docx")
 
 # 2022-----
 flowers_ranova3 <- glmer.nb(mean_flower_count ~
@@ -238,7 +238,7 @@ flowers_ranova3 <- glmer.nb(mean_flower_count ~
 
 pb_ranova_2step(flowers_ranova3,
           "Mean flower count: 2022",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2022.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowercount_2022.docx")
 
 # Flowering time-----
 # 2020-----
@@ -255,7 +255,7 @@ fltime_ranova1 <- glmer.nb(as.numeric(flowering_time) ~
 
 pb_ranova_2step(fltime_ranova1,
           "Flowering duration: 2020",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowertime_2020.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowertime_2020.docx")
 
 
 
@@ -273,7 +273,7 @@ fltime_ranova2 <- glmer.nb(as.numeric(flowering_time) ~
 
 pb_ranova_2step(fltime_ranova2,
           "Flowering duration: 2021",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowertime_2021.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowertime_2021.docx")
 
 
 
@@ -292,7 +292,7 @@ fltime_ranova3 <- glmer.nb(as.numeric(flowering_time) ~
 
 pb_ranova_2step(fltime_ranova3,
           "Flowering duration: 2022",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowertime_2022.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowertime_2022.docx")
 
 # Flowering start-----
 # 2020-----
@@ -310,7 +310,7 @@ summary(flstart_ranova1)
 
 pb_ranova_2step(flstart_ranova1,
           "Flowering start: 2020",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowering_start_2020.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowering_start_2020.docx")
 
 # 2021-----
 flstart_ranova2 <- glmer(Julian_oldest_inflor-170 ~
@@ -326,7 +326,7 @@ flstart_ranova2 <- glmer(Julian_oldest_inflor-170 ~
 
 pb_ranova_2step(flstart_ranova2,
           "Flowering start: 2021",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowering_start_2021.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowering_start_2021.docx")
 
 # 2022-----
 flstart_ranova3 <- glmer(Julian_oldest_inflor-170 ~
@@ -342,7 +342,7 @@ flstart_ranova3 <- glmer(Julian_oldest_inflor-170 ~
 
 pb_ranova_2step(flstart_ranova3,
           "Flowering start: 2022",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowering_start_2022.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowering_start_2022.docx")
 
 
 # Pods-----
@@ -359,7 +359,7 @@ pods_ranova1 <- glmer.nb(Pods ~
 
 pb_ranova_2step(pods_ranova1,
           "Follicles: 2020",
-          "./Reproductive_trait_analyses/Tables/Ranova/pods_2020.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/pods_2020.docx")
 
 
 # 2021-----
@@ -375,7 +375,7 @@ pods_ranova2 <- glmer.nb(Pods ~
 
 pb_ranova_2step(pods_ranova2,
           "Follicles: 2021",
-          "./Reproductive_trait_analyses/Tables/Ranova/pods_2021.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/pods_2021.docx")
 
 # 2022-----
 pods_ranova3 <- glmer.nb(Pods ~
@@ -391,7 +391,7 @@ pods_ranova3 <- glmer.nb(Pods ~
 
 pb_ranova_2step(pods_ranova3,
           "Follicles: 2022",
-          "./Reproductive_trait_analyses/Tables/Ranova/pods_2022.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/pods_2022.docx")
 
 
 # Date of first follicle-----
@@ -413,7 +413,7 @@ firstpod_ranova1 <- glmer(Julian_first_follicle-200 ~
 
 pb_ranova_2step(firstpod_ranova1,
           "First follicle: 2020",
-          "./Reproductive_trait_analyses/Tables/Ranova/first_pods_2020.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/first_pods_2020.docx")
 
 
 # 2021-----
@@ -431,7 +431,7 @@ firstpod_ranova2 <- glmer(Julian_first_follicle-200 ~
 
 pb_ranova_2step(firstpod_ranova2,
           "First follicle: 2021",
-          "./Reproductive_trait_analyses/Tables/Ranova/first_pods_2021.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/first_pods_2021.docx")
 
 # 2022-----
 # when I remove population (which summary shows has a variance of 0), the model isn't singular anymore. I think that's the key here
@@ -450,7 +450,7 @@ summary(firstpod_ranova3)
 
 pb_ranova_2step(firstpod_ranova3,
           "First follicle: 2022",
-          "./Reproductive_trait_analyses/Tables/Ranova/first_pods_2022.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/first_pods_2022.docx")
 
 # Peduncles-----
 # 2020-----
@@ -466,7 +466,7 @@ peduncles_ranova1 <- glmer.nb(Peduncles ~
 
 pb_ranova_2step(peduncles_ranova1,
           "Inflorescences: 2020",
-          "./Reproductive_trait_analyses/Tables/Ranova/peduncles_2020.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/peduncles_2020.docx")
 
 
 # 2021-----
@@ -483,7 +483,7 @@ peduncles_ranova2 <- glmer.nb(Peduncles ~
 
 pb_ranova_2step(peduncles_ranova2,
           "Inflorescences: 2021",
-          "./Reproductive_trait_analyses/Tables/Ranova/peduncles_2021.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/peduncles_2021.docx")
 
 
 # 2022-----
@@ -499,7 +499,7 @@ peduncles_ranova3 <- glmer.nb(Peduncles ~
 
 pb_ranova_2step(peduncles_ranova3,
           "Inflorescences: 2022",
-          "./Reproductive_trait_analyses/Tables/Ranova/peduncles_2022.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/peduncles_2022.docx")
 
 ```
 
@@ -522,7 +522,7 @@ flsucc_ranova1 <- glmer(Flowered ~
 
 pb_ranova_transects(flsucc_ranova1,
           "Flowering success: 2020",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowering_success_2020_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowering_success_2020_transects.docx")
 
 # 2021-----
 flsucc_ranova2 <- glmer(Flowered ~
@@ -540,7 +540,7 @@ flsucc_ranova2 <- glmer(Flowered ~
 
 pb_ranova_transects(flsucc_ranova2,
           "Flowering success: 2021",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowering_success_2021_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowering_success_2021_transects.docx")
 
 # 2022-----
 flsucc_ranova3 <- glmer(Flowered ~
@@ -558,7 +558,7 @@ flsucc_ranova3 <- glmer(Flowered ~
 
 pb_ranova_transects(flsucc_ranova3,
           "Flowering success: 2022",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowering_success_2022_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowering_success_2022_transects.docx")
 
 
 # Flowers/inflor-----
@@ -577,7 +577,7 @@ flowers_ranova1 <- glmer.nb(mean_flower_count ~
 
 pb_ranova_transects(flowers_ranova1,
           "Mean flower count: 2020",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2020_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowercount_2020_transects.docx")
 
 # 2021-----
 flowers_ranova2 <- glmer.nb(mean_flower_count ~
@@ -594,7 +594,7 @@ flowers_ranova2 <- glmer.nb(mean_flower_count ~
 
 pb_ranova_transects(flowers_ranova2,
           "Mean flower count: 2021",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2021_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowercount_2021_transects.docx")
 
 # 2022-----
 flowers_ranova3 <- glmer.nb(mean_flower_count ~
@@ -611,7 +611,7 @@ flowers_ranova3 <- glmer.nb(mean_flower_count ~
 
 pb_ranova_transects(flowers_ranova3,
           "Mean flower count: 2022",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowercount_2022_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowercount_2022_transects.docx")
 
 
 # Flowering time-----
@@ -630,7 +630,7 @@ fltime_ranova1 <- glmer.nb(as.numeric(flowering_time) ~
 
 pb_ranova_transects(fltime_ranova1,
           "Flowering duration: 2020",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowertime_2020_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowertime_2020_transects.docx")
 
 
 
@@ -649,7 +649,7 @@ fltime_ranova2 <- glmer.nb(as.numeric(flowering_time) ~
 
 pb_ranova_transects(fltime_ranova2,
           "Flowering duration: 2021",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowertime_2021_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowertime_2021_transects.docx")
 
 
 # 2022-----
@@ -667,7 +667,7 @@ fltime_ranova3 <- glmer.nb(as.numeric(flowering_time) ~
 
 pb_ranova_transects(fltime_ranova3,
           "Flowering duration: 2022",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowertime_2022_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowertime_2022_transects.docx")
 
 
 # Flowering start-----
@@ -687,7 +687,7 @@ flstart_ranova1 <- glmer(Julian_oldest_inflor ~
 
 pb_ranova_transects(flstart_ranova1,
           "Flowering start: 2020",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowering_start_2020_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowering_start_2020_transects.docx")
 
 
 # 2021-----
@@ -706,7 +706,7 @@ flstart_ranova2 <- glmer(Julian_oldest_inflor ~
 
 pb_ranova_transects(flstart_ranova2,
           "Flowering start: 2021",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowering_start_2021_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowering_start_2021_transects.docx")
 
 # 2022-----
 flstart_ranova3 <- glmer(Julian_oldest_inflor ~
@@ -724,7 +724,7 @@ flstart_ranova3 <- glmer(Julian_oldest_inflor ~
 
 pb_ranova_transects(flstart_ranova3,
           "Flowering start: 2022",
-          "./Reproductive_trait_analyses/Tables/Ranova/flowering_start_2022_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/flowering_start_2022_transects.docx")
 
 
 
@@ -744,7 +744,7 @@ pods_ranova1 <- glmer.nb(Pods ~
 
 pb_ranova_transects(pods_ranova1,
           "Pods: 2020",
-          "./Reproductive_trait_analyses/Tables/Ranova/pods_2020_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/pods_2020_transects.docx")
 
 # 2021-----
 pods_ranova2 <- glmer.nb(Pods ~
@@ -761,7 +761,7 @@ pods_ranova2 <- glmer.nb(Pods ~
 
 pb_ranova_transects(pods_ranova2,
           "Pods: 2021",
-          "./Reproductive_trait_analyses/Tables/Ranova/pods_2021_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/pods_2021_transects.docx")
 
 # 2022-----
 pods_ranova3 <- glmer.nb(Pods ~
@@ -778,7 +778,7 @@ pods_ranova3 <- glmer.nb(Pods ~
 
 pb_ranova_transects(pods_ranova3,
           "Pods: 2022",
-          "./Reproductive_trait_analyses/Tables/Ranova/pods_2022_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/pods_2022_transects.docx")
 
 
 # Date of first follicle-----
@@ -803,7 +803,7 @@ firstpod_ranova <- glmer(Julian_first_follicle-200 ~
 
 pb_ranova_transects(firstpod_ranova,
           "Date of first follicle: 2020",
-          "./Reproductive_trait_analyses/Tables/Ranova/Date_first_follicle_2020_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/Date_first_follicle_2020_transects.docx")
 
 
 # 2021-----
@@ -823,7 +823,7 @@ firstpod_ranova2 <- glmer(Julian_first_follicle-200 ~
 
 pb_ranova_transects(firstpod_ranova2,
           "Date of first follicle: 2021",
-          "./Reproductive_trait_analyses/Tables/Ranova/Date_first_follicle_2021_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/Date_first_follicle_2021_transects.docx")
 
 # 2022-----
 firstpod_ranova3 <- glmer((Julian_first_follicle-200) ~
@@ -844,7 +844,7 @@ firstpod_ranova3 <- glmer((Julian_first_follicle-200) ~
 
 pb_ranova_transects(firstpod_ranova3,
           "Date of first follicle: 2022",
-          "./Reproductive_trait_analyses/Tables/Ranova/Date_first_follicle_2022_transects_test.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/Date_first_follicle_2022_transects_test.docx")
 
 
 
@@ -864,7 +864,7 @@ performance::check_model(peduncles_ranova1)
 
 pb_ranova_transects(peduncles_ranova1,
           "Peduncles: 2020",
-          "./Reproductive_trait_analyses/Tables/Ranova/peduncles_2020_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/peduncles_2020_transects.docx")
 
 
 # 2021-----
@@ -882,7 +882,7 @@ peduncles_ranova2 <- glmer.nb(Peduncles ~
 
 pb_ranova_transects(peduncles_ranova2,
           "Peduncles: 2021",
-          "./Reproductive_trait_analyses/Tables/Ranova/peduncles_2021_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/peduncles_2021_transects.docx")
 
 # 2022-----
 peduncles_ranova3 <- glmer.nb(Peduncles ~
@@ -900,7 +900,7 @@ peduncles_ranova3 <- glmer.nb(Peduncles ~
 
 pb_ranova_transects(peduncles_ranova3,
           "Peduncles: 2022",
-          "./Reproductive_trait_analyses/Tables/Ranova/peduncles_2022_transects.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/peduncles_2022_transects.docx")
 
 ```
 
@@ -1098,7 +1098,7 @@ recalc_tab3.3 <- pve_peduncles_urbsc %>%
   body_add_par(word_export, value = "")
   body_add_flextable(word_export, recalc_tab3.3)  
   
-  print(word_export, here::here("./Reproductive_trait_analyses/Tables/Ranova/PVE_nonGaussmods/PVE_nonGaussmods_reproduction_Q1.docx"))
+  print(word_export, here::here("./Figures_Tables/ranova_PVE/Reproduction/PVE_nonGaussmods/PVE_nonGaussmods_reproduction_Q1.docx"))
 
 ```
 
@@ -1296,7 +1296,7 @@ recalc_tab3.3 <- pve_peduncles_urbsc2 %>%
   body_add_par(word_export, value = "")
   body_add_flextable(word_export, recalc_tab3.3)  
   
-  print(word_export, here::here("./Reproductive_trait_analyses/Tables/Ranova/PVE_nonGaussmods/PVE_nonGaussmods_reproduction_Q2.docx"))
+  print(word_export, here::here("./Figures_Tables/ranova_PVE/Reproduction/PVE_nonGaussmods/PVE_nonGaussmods_reproduction_Q2.docx"))
 
 ```
 

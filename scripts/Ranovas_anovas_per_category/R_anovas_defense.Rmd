@@ -40,7 +40,7 @@ performance::check_model(latex_ranova_mod1)
 # export
 ranova_2step(latex_ranova_mod1,
              "Latex",
-             "./Defense_trait_analyses/Tables/Ranova/latex.docx")
+             "./Figures_Tables/ranova_PVE/Defense/latex.docx")
 
 
 ############ MEASURED IN MULTIPLE YEARS ########
@@ -61,7 +61,7 @@ performance::check_model(herbiv_e_quant_ranova_mod1)
 # export
 ranova_2step(herbiv_e_quant_ranova_mod1,
              "Herbivory before flowering, quantitative: 2020",
-             "./Defense_trait_analyses/Tables/Ranova/herbivory_early_quant_2020.docx")
+             "./Figures_Tables/ranova_PVE/Defense/herbivory_early_quant_2020.docx")
 
 
 herbiv_e_quant_ranova_mod2 <- lmer(log(Herbivory_mean_early) ~
@@ -79,7 +79,7 @@ performance::check_model(herbiv_e_quant_ranova_mod2)
 # export
 ranova_2step(herbiv_e_quant_ranova_mod2,
              "Herbivory before flowering, quantitative: 2021",
-             "./Defense_trait_analyses/Tables/Ranova/herbivory_early_quant_2021.docx")
+             "./Figures_Tables/ranova_PVE/Defense/herbivory_early_quant_2021.docx")
 
 
 # Herbivory (after flowering) (quantitative)-------
@@ -98,7 +98,7 @@ performance::check_model(herbiv_l_quant_ranova_mod1)
 # export
 ranova_2step(herbiv_l_quant_ranova_mod1,
              "Herbivory after flowering, quantitative: 2020",
-             "./Defense_trait_analyses/Tables/Ranova/herbivory_late_quant_2020.docx")
+             "./Figures_Tables/ranova_PVE/Defense/herbivory_late_quant_2020.docx")
 
 
 herbiv_l_quant_ranova_mod2 <- lmer(log(Herbivory_mean_late) ~
@@ -116,7 +116,7 @@ performance::check_model(herbiv_l_quant_ranova_mod2)
 # export
 ranova_2step(herbiv_l_quant_ranova_mod2,
              "Herbivory after flowering, quantitative: 2021",
-             "./Defense_trait_analyses/Tables/Ranova/herbivory_late_quant_2021.docx")
+             "./Figures_Tables/ranova_PVE/Defense/herbivory_late_quant_2021.docx")
 
 
 
@@ -137,7 +137,7 @@ performance::check_model(weev_quant_ranova_mod1)
 # export
 ranova_2step(weev_quant_ranova_mod1,
              "Weevil damage, quantitative: 2020",
-             "./Defense_trait_analyses/Tables/Ranova/weevil_quant_2020.docx")
+             "./Figures_Tables/ranova_PVE/Defense/weevil_quant_2020.docx")
 
 
 weev_quant_ranova_mod2 <- lmer(log(Scar_length_cm) ~
@@ -155,7 +155,7 @@ performance::check_model(weev_quant_ranova_mod2)
 # export
 ranova_2step(weev_quant_ranova_mod2,
              "Weevil damage, quantitative: 2021",
-             "./Defense_trait_analyses/Tables/Ranova/weevil_quant_2021.docx")
+             "./Figures_Tables/ranova_PVE/Defense/weevil_quant_2021.docx")
 
 
 ```
@@ -177,7 +177,7 @@ herb_e_bin_ranova1 <- glmer(Herbivory_mean_early_binary ~
 
 pb_ranova_2step(herb_e_bin_ranova1,
           "Herbivory before flowering, binary: 2020",
-          "./Defense_trait_analyses/Tables/Ranova/herb_e_bin_2020.docx")
+          "./Figures_Tables/ranova_PVE/Defense/herb_e_bin_2020.docx")
 
 
 
@@ -195,7 +195,7 @@ herb_e_bin_ranova2 <- glmer(Herbivory_mean_early_binary ~
 
 pb_ranova_2step(herb_e_bin_ranova2,
           "Herbivory before flowering, binary: 2021",
-          "./Defense_trait_analyses/Tables/Ranova/herb_e_bin_2021.docx")
+          "./Figures_Tables/ranova_PVE/Defense/herb_e_bin_2021.docx")
 
 
 # Herbivory (after flowering) (Binary)-------
@@ -214,7 +214,7 @@ herb_l_bin_ranova1 <- glmer(Herbivory_mean_late_binary ~
 
 pb_ranova_2step(herb_l_bin_ranova1,
           "Herbivory after flowering, binary: 2020",
-          "./Defense_trait_analyses/Tables/Ranova/herb_l_bin_2020.docx")
+          "./Figures_Tables/ranova_PVE/Defense/herb_l_bin_2020.docx")
 
 
 
@@ -233,7 +233,7 @@ herb_l_bin_ranova2 <- glmer(Herbivory_mean_late_binary ~
 
 pb_ranova_2step(herb_l_bin_ranova2,
           "Herbivory after flowering, binary: 2021",
-          "./Defense_trait_analyses/Tables/Ranova/herb_l_bin_2021.docx")
+          "./Figures_Tables/ranova_PVE/Defense/herb_l_bin_2021.docx")
 
 
 
@@ -252,7 +252,7 @@ weev_bin_ranova1 <- glmer(Scar_binary ~
 
 pb_ranova_2step(weev_bin_ranova1,
           "Weevil Damage, binary: 2020",
-          "./Defense_trait_analyses/Tables/Ranova/weevil_bin_2020.docx")
+          "./Figures_Tables/ranova_PVE/Defense/weevil_bin_2020.docx")
 
 
 # 2021-----
@@ -269,7 +269,7 @@ weev_bin_ranova2 <- glmer(Scar_binary ~
 
 pb_ranova_2step(weev_bin_ranova2,
           "Weevil Damage, binary: 2021",
-          "./Defense_trait_analyses/Tables/Ranova/weevil_bin_2021.docx")
+          "./Figures_Tables/ranova_PVE/Defense/weevil_bin_2021.docx")
 ```
 
 ## Urban Subtransects
@@ -291,7 +291,7 @@ performance::check_model(latex_ranova_mod1)
 
 ranova_transect(latex_ranova_mod1,
                 "Latex",
-                "./Defense_trait_analyses/Tables/Ranova/latex_transects.docx")
+                "./Figures_Tables/ranova_PVE/Defense/latex_transects.docx")
 
 
 ############ MEASURED IN MULTIPLE YEARS ########
@@ -314,7 +314,7 @@ performance::check_model(herb_e_quant_ranova_mod1)
 
 ranova_transect(herb_e_quant_ranova_mod1,
                 "Herbivory before flowering, quantitative: 2020",
-                "./Defense_trait_analyses/Tables/Ranova/herb_e_quant_transects_2020.docx")
+                "./Figures_Tables/ranova_PVE/Defense/herb_e_quant_transects_2020.docx")
 
 # 2021-----
 herb_e_quant_ranova_mod2 <- lmer(log(Herbivory_mean_early) ~
@@ -332,7 +332,7 @@ performance::check_model(herb_e_quant_ranova_mod2)
 
 ranova_transect(herb_e_quant_ranova_mod2,
                 "Herbivory before flowering, quantitative: 2021",
-                "./Defense_trait_analyses/Tables/Ranova/herb_e_quant_transects_2021.docx")
+                "./Figures_Tables/ranova_PVE/Defense/herb_e_quant_transects_2021.docx")
 
 
 # Herbivory (after flowering) (quantitative)-------
@@ -352,7 +352,7 @@ performance::check_model(herb_l_quant_ranova_mod1)
 
 ranova_transect(herb_l_quant_ranova_mod1,
                 "Herbivory after flowering, quantitative: 2020",
-                "./Defense_trait_analyses/Tables/Ranova/herb_l_quant_transects_2020.docx")
+                "./Figures_Tables/ranova_PVE/Defense/herb_l_quant_transects_2020.docx")
 
 # 2021-----
 herb_l_quant_ranova_mod2 <- lmer(log(Herbivory_mean_late) ~
@@ -370,7 +370,7 @@ performance::check_model(herb_l_quant_ranova_mod2)
 
 ranova_transect(herb_l_quant_ranova_mod2,
                 "Herbivory after flowering, quantitative: 2021",
-                "./Defense_trait_analyses/Tables/Ranova/herb_l_quant_transects_2021.docx")
+                "./Figures_Tables/ranova_PVE/Defense/herb_l_quant_transects_2021.docx")
 
 
 
@@ -391,7 +391,7 @@ performance::check_model(weev_quant_ranova_mod1)
 
 ranova_transect(weev_quant_ranova_mod1,
                 "Weevil damage, quantitative: 2020",
-                "./Defense_trait_analyses/Tables/Ranova/weevil_quant_transects_2020.docx")
+                "./Figures_Tables/ranova_PVE/Defense/weevil_quant_transects_2020.docx")
 
 # 2021-----
 weev_quant_ranova_mod2 <- lmer(log(Scar_length_cm) ~
@@ -409,7 +409,7 @@ performance::check_model(weev_quant_ranova_mod2)
 
 ranova_transect(weev_quant_ranova_mod2,
                 "Weevil damage, quantitative: 2021",
-                "./Defense_trait_analyses/Tables/Ranova/weevil_quant_transects_2021.docx")
+                "./Figures_Tables/ranova_PVE/Defense/weevil_quant_transects_2021.docx")
 
 
 ```
@@ -432,7 +432,7 @@ herb_e_bin_ranova1_pb <- glmer(Herbivory_mean_early_binary ~
 
 pb_ranova_transects(herb_e_bin_ranova1_pb,
           "Herbivory before flowering, binary: 2020",
-          "./Defense_trait_analyses/Tables/Ranova/herb_e_bin_2020_transects.docx")
+          "./Figures_Tables/ranova_PVE/Defense/herb_e_bin_2020_transects.docx")
 
 
 # 2021-----
@@ -452,7 +452,7 @@ herb_e_bin_ranova2_pb <- glmer(Herbivory_mean_early_binary ~
 
 pb_ranova_transects(herb_e_bin_ranova2_pb,
           "Herbivory before flowering, binary: 2021",
-          "./Defense_trait_analyses/Tables/Ranova/herb_e_bin_2021_transects.docx")
+          "./Figures_Tables/ranova_PVE/Defense/herb_e_bin_2021_transects.docx")
 
 # Herbivory (after flowering) (binary)-------
 # 2020-----
@@ -471,7 +471,7 @@ herb_l_bin_ranova1_pb <- glmer(Herbivory_mean_late_binary ~
 
 pb_ranova_transects(herb_l_bin_ranova1_pb,
           "Herbivory after flowering, binary: 2020",
-          "./Defense_trait_analyses/Tables/Ranova/herb_l_bin_2020_transects.docx")
+          "./Figures_Tables/ranova_PVE/Defense/herb_l_bin_2020_transects.docx")
 
 
 # 2021-----
@@ -490,7 +490,7 @@ herb_l_bin_ranova2_pb <- glmer(Herbivory_mean_late_binary ~
 
 pb_ranova_transects(herb_l_bin_ranova2_pb,
           "Herbivory after flowering, binary: 2021",
-          "./Defense_trait_analyses/Tables/Ranova/herb_l_bin_2021_transects.docx")
+          "./Figures_Tables/ranova_PVE/Defense/herb_l_bin_2021_transects.docx")
 
 # Weevil scar length (binary)-----
 # 2020-----
@@ -510,7 +510,7 @@ weev_bin_ranova1_pb <- glmer(Scar_binary ~
 
 pb_ranova_transects(weev_bin_ranova1_pb,
           "Weevil damage, binary: 2020",
-          "./Defense_trait_analyses/Tables/Ranova/weevil_bin_2020_transects.docx")
+          "./Figures_Tables/ranova_PVE/Defense/weevil_bin_2020_transects.docx")
 
 
 # 2021-----
@@ -528,7 +528,7 @@ weev_bin_ranova2_pb <- glmer(Scar_binary ~
 
 pb_ranova_transects(weev_bin_ranova2_pb,
           "Weevil damage, binary: 2021",
-          "./Defense_trait_analyses/Tables/Ranova/weevil_bin_2021_transects.docx")
+          "./Figures_Tables/ranova_PVE/Defense/weevil_bin_2021_transects.docx")
 
 ```
 
@@ -597,7 +597,7 @@ recalc_tab3 <- pve_table_recalc(pve_hbfb_urbsc, pve_hafb_urbsc, pve_weevb_urbsc,
 export_recalc(recalc_tab1,
               recalc_tab2,
               recalc_tab3,
-              "./Defense_trait_analyses/Tables/Ranova/PVE_nonGaussmods/PVE_nonGaussmods_defense_Q1.docx")
+              "./Figures_Tables/ranova_PVE/Defense/PVE_nonGaussmods/PVE_nonGaussmods_defense_Q1.docx")
 
 ```
 
@@ -652,7 +652,7 @@ recalc_tab3_Q2 <- pve_table_recalc(pve_hbfb_urbsc2, pve_hafb_urbsc2, pve_weevb_u
 export_recalc(recalc_tab1_Q2,
               recalc_tab2_Q2,
               recalc_tab3_Q2,
-              "./Defense_trait_analyses/Tables/Ranova/PVE_nonGaussmods/PVE_nonGaussmods_defense_Q2.docx")
+              "./Figures_Tables/ranova_PVE/Defense/PVE_nonGaussmods/PVE_nonGaussmods_defense_Q2.docx")
 ```
 
 
@@ -661,7 +661,7 @@ Note: Can only do this for gaussian models for Q1. For models with transect as a
 ```{r}
 # this isn't working
 # library(XML)
-# rawHTML <- XML::readHTMLTable("Defense_trait_analyses/Tables/Ranova/latex.html",
+# rawHTML <- XML::readHTMLTable("Figures_Tables/ranova_PVE/Defense/latex.html",
 #            # header = c("Variable",
 #            #            "Group",
 #            #            "Variance",
@@ -681,7 +681,7 @@ Note: Can only do this for gaussian models for Q1. For models with transect as a
 # -LDMC ("ldmc.html")
 
 
-pve <- read.csv(here::here("./Defense_trait_analyses/Tables/Ranova/pve_defense_Q1.csv")) %>%
+pve <- read.csv(here::here("./Figures_Tables/ranova_PVE/Defense/pve_defense_Q1.csv")) %>%
   dplyr::rename(Variable = 1) %>%
   # make alphabetical order for plot
    mutate(Variable = fct_reorder(Variable,
