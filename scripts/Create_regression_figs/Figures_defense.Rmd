@@ -7,7 +7,7 @@ source("functions.R")
 
 ## Import data & models
 ```{r}
-source(knitr::purl("Defense_trait_analyses/Model_diagnostics_defense.Rmd", quiet=TRUE))
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_defense.Rmd", quiet=TRUE))
 ```
 
 # Create ggpredict objects (lmers)

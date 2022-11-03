@@ -48,7 +48,7 @@ herbivores <- read.csv(here::here("./Joined_annual_data/herbivores.csv")) %>%
 
 ## Import final models
 ```{r}
-source(knitr::purl("Defense_trait_analyses/Model_diagnostics_herbivores.Rmd", quiet=TRUE))
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_herbivores.Rmd", quiet=TRUE))
 
 all_models <- list(
 monarch_mods          , 

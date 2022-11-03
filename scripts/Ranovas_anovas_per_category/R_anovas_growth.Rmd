@@ -8,7 +8,7 @@ source("functions.R")
 ## Import final models
 ### Create full list
 ```{r}
-source(knitr::purl("Growth_trait_analyses/Model_diagnostics_Growth.Rmd", quiet=TRUE))
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Growth.Rmd", quiet=TRUE))
 ```
 
 # Ranova

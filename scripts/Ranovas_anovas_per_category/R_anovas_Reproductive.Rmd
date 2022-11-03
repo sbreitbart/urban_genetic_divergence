@@ -7,7 +7,7 @@ source("functions.R")
 
 ## Import final models
 ```{r}
-source(knitr::purl("Reproductive_trait_analyses/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
 ```
 
 # Ranova

@@ -6,6 +6,7 @@ source("functions.R")
 library(mvabund)
 library(purrr)
 ```
+
 # First attempt- NOT accounting for pseudoreplication
 ```{r}
 # USED THIS DATASET WITH FIRST RUN-THROUGH

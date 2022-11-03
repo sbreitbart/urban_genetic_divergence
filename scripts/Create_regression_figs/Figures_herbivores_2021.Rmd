@@ -43,7 +43,7 @@ herbivores %<>%
 
 ## Import final models
 ```{r}
-source(knitr::purl("Defense_trait_analyses/Model_diagnostics_herbivores.Rmd", quiet=TRUE))
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_herbivores.Rmd", quiet=TRUE))
 
 all_models <- list(
 monarch_mods          , 
@@ -260,13 +260,13 @@ rep_geoms2 <- c(geom_smooth(
 
 ## Import herbivore images
 ```{r}
-monarch_img <- readPNG("Defense_trait_analyses/images/D_plexippus_phylopic.png") %>%
+monarch_img <- readPNG("scripts/Create_regression_figs/herbivore_images/D_plexippus_phylopic.png") %>%
   rasterGrob(., interpolate=TRUE)
 
-asclepiadis_img <- readPNG("Defense_trait_analyses/images/L_asclepiadis_phylopic.png") %>%
+asclepiadis_img <- readPNG("scripts/Create_regression_figs/herbivore_images/L_asclepiadis_phylopic.png") %>%
   rasterGrob(., interpolate=TRUE)
 
-clivicollis_img <- readPNG("Defense_trait_analyses/images/L_clivicollis_phylopic.png") %>%
+clivicollis_img <- readPNG("scripts/Create_regression_figs/herbivore_images/L_clivicollis_phylopic.png") %>%
   rasterGrob(., interpolate=TRUE)
 ```
 
