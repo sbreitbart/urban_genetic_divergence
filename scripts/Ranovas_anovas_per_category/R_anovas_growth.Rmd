@@ -990,7 +990,7 @@ mortality_mods_best_c    )
 
 anovas_best_c <- lapply(all_models_best_c, make_all_anovas_tidy_altmods)
 
-export_anovas(anovas_best_c, "./Growth_trait_analyses/Figures/ANOVA/Best_models/all_anova_growth_best_distance.docx")
+export_anovas(anovas_best_c, "./Figures_Tables/ANOVA_multi_yr/Growth/all_anova_growth_best_distance.docx")
 ```
 
 ### Distance / alt
@@ -1007,7 +1007,7 @@ mortality_mods_alt_c    )
 
 anovas_alt_c <- lapply(all_models_alt_c, make_all_anovas_tidy_altmods)
 
-export_anovas(anovas_alt_c, "./Growth_trait_analyses/Figures/ANOVA/Alt_models/all_anova_growth_alt_distance.docx")
+export_anovas(anovas_alt_c, "./Figures_Tables/ANOVA_multi_yr/Growth/all_anova_growth_alt_distance.docx")
 ```
 
 ### UrbScore / best
@@ -1024,7 +1024,7 @@ mortality_mods_best_u    )
 
 anovas_best_u <- lapply(all_models_best_u, make_all_anovas_tidy_altmods)
 
-export_anovas(anovas_best_u, "./Growth_trait_analyses/Figures/ANOVA/Best_models/all_anova_growth_best_urbscore.docx")
+export_anovas(anovas_best_u, "./Figures_Tables/ANOVA_multi_yr/Growth/all_anova_growth_best_urbscore.docx")
 ```
 
 ### UrbScore / alt
@@ -1041,7 +1041,7 @@ mortality_mods_alt_u    )
 
 anovas_alt_u <- lapply(all_models_alt_u, make_all_anovas_tidy_altmods)
 
-export_anovas(anovas_alt_u, "./Growth_trait_analyses/Figures/ANOVA/Alt_models/all_anova_growth_alt_urbscore.docx")
+export_anovas(anovas_alt_u, "./Figures_Tables/ANOVA_multi_yr/Growth/all_anova_growth_alt_urbscore.docx")
 
 ```
 
@@ -1057,7 +1057,7 @@ compare_anovas(
   heights,
   "2021",
   "Height before flowering",
-  "./Growth_trait_analyses/Tables/Comparing_ANOVA/heights_early.docx")
+  "./Figures_Tables/Comparing_ANOVA/Growth/heights_early.docx")
 
 # height after flowering-----
 compare_anovas(
@@ -1065,7 +1065,7 @@ compare_anovas(
   heights,
   "2021",
   "Height after flowering",
-  "./Growth_trait_analyses/Tables/Comparing_ANOVA/heights_late.docx")
+  "./Figures_Tables/Comparing_ANOVA/Growth/heights_late.docx")
 
 # relative growth rate-----
 compare_anovas(
@@ -1073,7 +1073,7 @@ compare_anovas(
   heights,
   "2021",
   "Relative growth rate",
-  "./Growth_trait_analyses/Tables/Comparing_ANOVA/rgr.docx")
+  "./Figures_Tables/Comparing_ANOVA/Growth/rgr.docx")
 
 # ramets before flowering-----
 compare_anovas(
@@ -1081,7 +1081,7 @@ compare_anovas(
   heights,
   "2021",
   "Ramets before flowering",
-  "./Growth_trait_analyses/Tables/Comparing_ANOVA/ramets_early.docx")
+  "./Figures_Tables/Comparing_ANOVA/Growth/ramets_early.docx")
 
 # ramets after flowering-----
 compare_anovas(
@@ -1089,7 +1089,7 @@ compare_anovas(
   heights,
   "2021",
   "Ramets after flowering",
-  "./Growth_trait_analyses/Tables/Comparing_ANOVA/ramets_late.docx")
+  "./Figures_Tables/Comparing_ANOVA/Growth/ramets_late.docx")
 
 # mortality-----
 compare_anovas(
@@ -1097,7 +1097,7 @@ compare_anovas(
   survival,
   "2022",
   "Mortality",
-  "./Growth_trait_analyses/Tables/Comparing_ANOVA/mortality.docx")
+  "./Figures_Tables/Comparing_ANOVA/Growth/mortality.docx")
 
 ```
 
@@ -1112,7 +1112,7 @@ compare_anovas_transects(
   heights,
   "2021",
   "Height before flowering",
-  "./Growth_trait_analyses/Tables/Comparing_ANOVA/heights_early_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Growth/heights_early_transects.docx")
 
 # height after flowering-----
 compare_anovas_transects(
@@ -1120,7 +1120,7 @@ compare_anovas_transects(
   heights,
   "2021",
   "Height after flowering",
-  "./Growth_trait_analyses/Tables/Comparing_ANOVA/heights_late_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Growth/heights_late_transects.docx")
 
 # relative growth rate-----
 compare_anovas_transects(
@@ -1128,7 +1128,7 @@ compare_anovas_transects(
   heights,
   "2021",
   "Relative growth rate",
-  "./Growth_trait_analyses/Tables/Comparing_ANOVA/rgr_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Growth/rgr_transects.docx")
 
 # ramets before flowering-----
 compare_anovas_transects(
@@ -1136,7 +1136,7 @@ compare_anovas_transects(
   heights,
   "2021",
   "Ramets before flowering",
-  "./Growth_trait_analyses/Tables/Comparing_ANOVA/ramets_early_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Growth/ramets_early_transects.docx")
 
 # ramets after flowering-----
 compare_anovas_transects(
@@ -1144,7 +1144,7 @@ compare_anovas_transects(
   heights,
   "2021",
   "Ramets after flowering",
-  "./Growth_trait_analyses/Tables/Comparing_ANOVA/ramets_late_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Growth/ramets_late_transects.docx")
 
 # mortality-----
 compare_anovas_transects(
@@ -1152,6 +1152,6 @@ compare_anovas_transects(
   survival,
   "2022",
   "Mortality",
-  "./Growth_trait_analyses/Tables/Comparing_ANOVA/mortality_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Growth/mortality_transects.docx")
 
 ```

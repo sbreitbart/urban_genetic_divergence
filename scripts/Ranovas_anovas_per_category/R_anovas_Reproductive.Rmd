@@ -1317,7 +1317,7 @@ peduncles_mods_best_c   ) # peduncles (inflorescences)
 
 anovas_best_c <- lapply(all_models_best_c, make_all_anovas_tidy_altmods)
 
-export_anovas(anovas_best_c, "./Reproductive_trait_analyses/Figures/ANOVA/Best_models/all_anova_repro_best_distance.docx")
+export_anovas(anovas_best_c, "./Figures_Tables/ANOVA_multi_yr/Reproduction/all_anova_repro_best_distance.docx")
 ```
 
 ### Distance / alt
@@ -1334,7 +1334,7 @@ peduncles_mods_alt_c   ) # peduncles (inflorescences)
 
 anovas_alt_c <- lapply(all_models_alt_c, make_all_anovas_tidy_altmods)
 
-export_anovas(anovas_alt_c, "./Reproductive_trait_analyses/Figures/ANOVA/alt_models/all_anova_repro_alt_distance.docx")
+export_anovas(anovas_alt_c, "./Figures_Tables/ANOVA_multi_yr/Reproduction/all_anova_repro_alt_distance.docx")
 ```
 
 ### UrbScore / best
@@ -1351,7 +1351,7 @@ peduncles_mods_best_u   ) # peduncles (inflorescences)
 
 anovas_best_u <- lapply(all_models_best_u, make_all_anovas_tidy_altmods)
 
-export_anovas(anovas_best_u, "./Reproductive_trait_analyses/Figures/ANOVA/Best_models/all_anova_repro_best_urbscore.docx")
+export_anovas(anovas_best_u, "./Figures_Tables/ANOVA_multi_yr/Reproduction/all_anova_repro_best_urbscore.docx")
 ```
 
 ### UrbScore / alt
@@ -1368,7 +1368,7 @@ flstart_mods_alt_u )     # flowering start
 
 anovas_alt_u <- lapply(all_models_alt_u, make_all_anovas_tidy_altmods)
 
-export_anovas(anovas_alt_u, "./Reproductive_trait_analyses/Figures/ANOVA/alt_models/all_anova_repro_alt_urbscore.docx")
+export_anovas(anovas_alt_u, "./Figures_Tables/ANOVA_multi_yr/Reproduction/all_anova_repro_alt_urbscore.docx")
 
 ```
 
@@ -1381,7 +1381,7 @@ compare_anovas(
   reproduc,
   "2022",
   "Flowering success",
-  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/flsucc.docx")
+  "./Figures_Tables/Comparing_ANOVA/Reproduction/flsucc.docx")
 
 # Mean flowers/inflors-----
 compare_anovas(
@@ -1389,7 +1389,7 @@ compare_anovas(
   flowering,
   "2022",
   "Flowers per inflorescences",
-  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/flowers.docx")
+  "./Figures_Tables/Comparing_ANOVA/Reproduction/flowers.docx")
 
 
 # Flower size-----
@@ -1398,7 +1398,7 @@ compare_anovas(
   flowering,
   "2022",
   "Flower size",
-  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/flsize.docx")
+  "./Figures_Tables/Comparing_ANOVA/Reproduction/flsize.docx")
 
 
 # Flowering time-----
@@ -1407,7 +1407,7 @@ compare_anovas(
   flowering,
   "2022",
   "Flowering duration",
-  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/fltime.docx")
+  "./Figures_Tables/Comparing_ANOVA/Reproduction/fltime.docx")
 
 
 # Flowering start-----
@@ -1416,7 +1416,7 @@ compare_anovas(
   flowering,
   "2022",
   "Date of first flower",
-  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/flstart.docx")
+  "./Figures_Tables/Comparing_ANOVA/Reproduction/flstart.docx")
 
 # Pods-----
 compare_anovas(
@@ -1424,7 +1424,7 @@ compare_anovas(
   flowering,
   "2022",
   "Follicles",
-  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/pods.docx")
+  "./Figures_Tables/Comparing_ANOVA/Reproduction/pods.docx")
 
 
 # Date of first pod-----
@@ -1434,7 +1434,7 @@ compare_anovas(
   flowering,
   "2022",
   "Date of first follicle",
-  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/firstpod.docx")
+  "./Figures_Tables/Comparing_ANOVA/Reproduction/firstpod.docx")
 
 
 # Peduncles-----
@@ -1443,7 +1443,7 @@ compare_anovas(
   flowering,
   "2022",
   "Inflorescences",
-  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/peduncles.docx")
+  "./Figures_Tables/Comparing_ANOVA/Reproduction/peduncles.docx")
 ```
 
 ### Q2
@@ -1454,7 +1454,7 @@ compare_anovas_transects(
   reproduc,
   "2022",
   "Flowering success",
-  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/flsucc_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Reproduction/flsucc_transects.docx")
 
 # Mean flowers/inflors-----
 compare_anovas_transects(
@@ -1462,7 +1462,7 @@ compare_anovas_transects(
   flowering,
   "2022",
   "Flowers per inflorescences",
-  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/flowers_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Reproduction/flowers_transects.docx")
 
 
 # Flower size-----
@@ -1471,7 +1471,7 @@ compare_anovas_transects(
   flowering,
   "2022",
   "Flower size",
-  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/flsize_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Reproduction/flsize_transects.docx")
 
 
 # Flowering time-----
@@ -1480,7 +1480,7 @@ compare_anovas_transects(
   flowering,
   "2022",
   "Flowering duration",
-  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/fltime_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Reproduction/fltime_transects.docx")
 
 
 # Flowering start-----
@@ -1489,7 +1489,7 @@ compare_anovas_transects(
   flowering,
   "2022",
   "Date of first flower",
-  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/flstart_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Reproduction/flstart_transects.docx")
 
 # Pods-----
 compare_anovas_transects(
@@ -1497,7 +1497,7 @@ compare_anovas_transects(
   flowering,
   "2022",
   "Follicles",
-  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/pods_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Reproduction/pods_transects.docx")
 
 
 # Date of first pod-----
@@ -1506,7 +1506,7 @@ compare_anovas_transects(
   flowering,
   "2022",
   "Date of first follicle",
-  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/firstpod_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Reproduction/firstpod_transects.docx")
 
 
 # Peduncles-----
@@ -1515,6 +1515,6 @@ compare_anovas_transects(
   flowering,
   "2022",
   "Inflorescences",
-  "./Reproductive_trait_analyses/Tables/Comparing_ANOVA/peduncles_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Reproduction/peduncles_transects.docx")
 ```
 

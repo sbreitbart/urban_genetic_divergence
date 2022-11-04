@@ -429,7 +429,7 @@ clivicollis_mods_best_c       )
 
 anovas_best_c <- lapply(all_models_best_c, make_all_anovas_tidy_altmods)
 
-export_anovas(anovas_best_c, "./Defense_trait_analyses/Figures/ANOVA/Herbivores/Best_models/all_anova_herbivores_best_distance.docx")
+export_anovas(anovas_best_c, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_herbivores_best_distance.docx")
 ```
 
 ### Distance / alt
@@ -441,7 +441,7 @@ clivicollis_mods_alt_c      )
 
 anovas_alt_c <- lapply(all_models_alt_c, make_all_anovas_tidy_altmods)
 
-export_anovas(anovas_alt_c, "./Defense_trait_analyses/Figures/ANOVA/Herbivores/Alt_models/all_anova_herbivores_alt_distance.docx")
+export_anovas(anovas_alt_c, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_herbivores_alt_distance.docx")
 ```
 
 ### UrbScore / best
@@ -453,7 +453,7 @@ clivicollis_mods_best_u     )
 
 anovas_best_u <- lapply(all_models_best_u, make_all_anovas_tidy_altmods)
 
-export_anovas(anovas_best_u, "./Defense_trait_analyses/Figures/ANOVA/Herbivores/Best_models/all_anova_herbivores_best_urbscore.docx")
+export_anovas(anovas_best_u, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_herbivores_best_urbscore.docx")
 ```
 
 ### UrbScore / alt
@@ -465,7 +465,7 @@ clivicollis_mods_alt_u        )
 
 anovas_alt_u <- lapply(all_models_alt_u, make_all_anovas_tidy_altmods)
 
-export_anovas(anovas_alt_u, "./Defense_trait_analyses/Figures/ANOVA/Herbivores/Alt_models/all_anova_herbivores_alt_urbscore.docx")
+export_anovas(anovas_alt_u, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_herbivores_alt_urbscore.docx")
 
 ```
 
@@ -478,7 +478,7 @@ compare_anovas(
   herbivores,
   "2021",
   "Danaus plexippus abundance",
-  "./Defense_trait_analyses/Tables/Comparing_ANOVA/monarch.docx")
+  "./Figures_Tables/Comparing_ANOVA/Defense/monarch.docx")
 
 # L. asclepiadis-----
 compare_anovas(
@@ -486,13 +486,13 @@ compare_anovas(
   herbivores,
   "2021",
   "Liriomyza asclepiadis abundance",
-  "./Defense_trait_analyses/Tables/Comparing_ANOVA/asclepiadis.docx")
+  "./Figures_Tables/Comparing_ANOVA/Defense/asclepiadis.docx")
 
 # L. clivicollis-----
 ## doing this manually b/c I need to filter the dataset to exclude values > 9
 
 var_name <- "Labidomera clivicollis abundance"
-filepath <- "./Defense_trait_analyses/Tables/Comparing_ANOVA/clivicollis.docx"
+filepath <- "./Figures_Tables/Comparing_ANOVA/Defense/clivicollis.docx"
 last_year <- "2021"
 
   # city_dist
@@ -588,7 +588,7 @@ compare_anovas_transects(
   herbivores,
   "2021",
   "Danaus plexippus abundance",
-  "./Defense_trait_analyses/Tables/Comparing_ANOVA/monarch_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Defense/monarch_transects.docx")
 
 # L. asclepiadis-----
 compare_anovas_transects(
@@ -596,13 +596,13 @@ compare_anovas_transects(
   herbivores,
   "2021",
   "Liriomyza asclepiadis abundance",
-  "./Defense_trait_analyses/Tables/Comparing_ANOVA/asclepiadis_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Defense/asclepiadis_transects.docx")
 
 # L. clivicollis-----
 ## doing this manually b/c I need to filter the dataset to exclude values > 20
 
 var_name <- "Labidomera clivicollis abundance"
-filepath <- "./Defense_trait_analyses/Tables/Comparing_ANOVA/clivicollis_transects.docx"
+filepath <- "./Figures_Tables/Comparing_ANOVA/Defense/clivicollis_transects.docx"
 last_year <- "2021"
 
   # City_dist*Transect_ID

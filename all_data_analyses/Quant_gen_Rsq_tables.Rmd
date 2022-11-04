@@ -718,7 +718,7 @@ names(all_models_reml_T) <- c(
 all_rsq <- lapply(all_models_reml_T, lapply, r.squaredGLMM) %>%
   unlist(recursive = FALSE)
 
-sink(here::here("./Reproductive_trait_analyses/Tables/Rsquared.txt"))
+sink(here::here("./Figures_Tables/Rsquared/Multi_yr_mods/Reproduction/Rsquared.txt"))
 print(all_rsq)
 sink()
 
@@ -820,7 +820,7 @@ flsize_r2,
           "Flowering success",
           "Flowers per inflorescence", 
           "Flower size",
-          "./Reproductive_trait_analyses/Tables/R2_Reproduction1.docx")
+          "./Figures_Tables/Rsquared/Multi_yr_mods/Reproduction/R2_Reproduction1.docx")
 
 # table 2
 export_r2(
@@ -830,7 +830,7 @@ pods_r2 ,
           "Flowering time",
           "Date of first flower", 
           "Follicles",
-          "./Reproductive_trait_analyses/Tables/R2_Reproduction2.docx")
+          "./Figures_Tables/Rsquared/Multi_yr_mods/Reproduction/R2_Reproduction2.docx")
 
 # table 3: will just use code from function
   word_export <- read_docx()
@@ -846,7 +846,7 @@ pods_r2 ,
   body_add_flextable(word_export, peduncles_r2)
   
   word_export <- body_end_section_landscape(word_export)
-  print(word_export, here::here("./Reproductive_trait_analyses/Tables/R2_Reproduction3.docx"))
+  print(word_export, here::here("./Figures_Tables/Rsquared/Multi_yr_mods/Reproduction/R2_Reproduction3.docx"))
 ```
 
 ## Defense
@@ -882,7 +882,7 @@ names(all_models_reml_T) <- c(
 # export to csv
 all_rsq <- lapply(all_models_reml_T, lapply, r.squaredGLMM) %>%
   unlist(recursive = FALSE) %T>%
-  write.csv(here::here("./Defense_trait_analyses/Tables/Rsquare.csv"))
+  write.csv(here::here("./Figures_Tables/Rsquared/Multi_yr_mods/Defense/Rsquare.csv"))
 
 
 # export as nice tables in word doc
@@ -1046,7 +1046,7 @@ herb_e_quant_r2,
           "Latex",
           "Herbivory before flowering (binary)", 
           "Herbivory before flowering (quantitative)",
-          "./Defense_trait_analyses/Tables/R2_Defense1.docx")
+          "./Figures_Tables/Rsquared/Multi_yr_mods/Defense/R2_Defense1.docx")
 
 # table 2
 export_r2(
@@ -1056,7 +1056,7 @@ weevil_bin_r2 ,
           "Herbivory after flowering (binary)",
           "Herbivory after flowering (quantitative)", 
           "Weevil damage (binary)",
-          "./Defense_trait_analyses/Tables/R2_Defense2.docx")
+          "./Figures_Tables/Rsquared/Multi_yr_mods/Defense/R2_Defense2.docx")
 
 # table 3: will just use code from function
   word_export <- read_docx()
@@ -1066,7 +1066,7 @@ weevil_bin_r2 ,
   body_add_flextable(word_export, weevil_quant_r2)
   
   word_export <- body_end_section_landscape(word_export)
-  print(word_export, here::here("./Defense_trait_analyses/Tables/R2_Defense3.docx"))
+  print(word_export, here::here("./Figures_Tables/Rsquared/Multi_yr_mods/Defense/R2_Defense3.docx"))
 ```
 
 ### lms (cardenolides)
@@ -1117,7 +1117,7 @@ lapply(flatten(all_card_models), make_card_rsq_table) %>%
                      value = as_paragraph("R", as_sup("2"), as_sub("adj"))) %>%
   padding(padding = 3) %>%
     flextable::save_as_docx(.,
-                          path = here::here("./Defense_trait_analyses/Tables/R2_cardenolides.docx"))
+                          path = here::here("./Figures_Tables/Rsquared/Multi_yr_mods/Defense/R2_cardenolides.docx"))
 ```
 
 
@@ -1141,7 +1141,7 @@ names(all_models_reml_T) <- c(
 # export to csv
 all_rsq <- lapply(all_models_reml_T, lapply, r.squaredGLMM) %>%
   unlist(recursive = FALSE) %T>%
-  write.csv(here::here("./Defense_trait_analyses/Tables/Rsquare_herbivores.csv"))
+  write.csv(here::here("./Figures_Tables/Rsquared/Multi_yr_mods/Defense/Rsquare_herbivores.csv"))
 
 
 # export as nice tables in word doc
@@ -1153,7 +1153,7 @@ export_r2(mon_r2, ascl_r2, clivi_r2,
           "Danaus plexippus",
           "Liriomyza asclepiadis", 
           "Labidomera clivicollis",
-          "./Defense_trait_analyses/Tables/R2_herbivores.docx")
+          "./Figures_Tables/Rsquared/Multi_yr_mods/Defense/R2_herbivores.docx")
 ```
 
 
@@ -1192,7 +1192,7 @@ names(all_models_reml_T) <- c(
 # export to csv
 all_rsq <- lapply(all_models_reml_T, lapply, r.squaredGLMM) %>%
   unlist(recursive = FALSE) %T>%
-  write.csv(here::here("./Growth_trait_analyses/Tables/Rsquare.csv"))
+  write.csv(here::here("./Figures_Tables/Rsquared/Multi_yr_mods/Growth/Rsquare.csv"))
 
 
 
@@ -1214,7 +1214,7 @@ heights_e_r2,
           "LDMC",
           "SLA", 
           "Height before flowering",
-          "./Growth_trait_analyses/Tables/R2_growth1.docx")
+          "./Figures_Tables/Rsquared/Multi_yr_mods/Growth/R2_growth1.docx")
 # table 2
 export_r2(
 heights_l_r2,
@@ -1223,7 +1223,7 @@ ramets_e_r2 ,
           "Height after flowering",
           "Relative growth rate", 
           "Ramets before flowering",
-          "./Growth_trait_analyses/Tables/R2_growth2.docx")
+          "./Figures_Tables/Rsquared/Multi_yr_mods/Growth/R2_growth2.docx")
 
 # table 3: will just use code from function
   word_export <- read_docx()
@@ -1239,7 +1239,7 @@ ramets_e_r2 ,
   body_add_flextable(word_export, morality_r2)
   
   word_export <- body_end_section_landscape(word_export)
-  print(word_export, here::here("./Growth_trait_analyses/Tables/R2_growth3.docx"))
+  print(word_export, here::here("./Figures_Tables/Rsquared/Multi_yr_mods/Growth/R2_growth3.docx"))
 ```
 
 ## Export all Rsq tables into one docx

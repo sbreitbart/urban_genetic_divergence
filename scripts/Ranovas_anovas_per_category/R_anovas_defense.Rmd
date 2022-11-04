@@ -731,7 +731,7 @@ weev_quant_mods_best_c   )
 
 anovas_best_c <- lapply(all_models_best_c, make_all_anovas_tidy_altmods)
 
-export_anovas(anovas_best_c, "./Defense_trait_analyses/Figures/ANOVA/Best_models/all_anova_Defense_best_distance.docx")
+export_anovas(anovas_best_c, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_Defense_best_distance.docx")
 ```
 
 ### Distance / alt
@@ -747,7 +747,7 @@ weev_quant_mods_alt_c)
 
 anovas_alt_c <- lapply(all_models_alt_c, make_all_anovas_tidy_altmods)
 
-export_anovas(anovas_alt_c, "./Defense_trait_analyses/Figures/ANOVA/Alt_models/all_anova_Defense_alt_distance.docx")
+export_anovas(anovas_alt_c, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_Defense_alt_distance.docx")
 ```
 
 ### UrbScore / best
@@ -764,7 +764,7 @@ mortality_mods_best_u    )
 
 anovas_best_u <- lapply(all_models_best_u, make_all_anovas_tidy_altmods)
 
-export_anovas(anovas_best_u, "./Defense_trait_analyses/Figures/ANOVA/Best_models/all_anova_Defense_best_urbscore.docx")
+export_anovas(anovas_best_u, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_Defense_best_urbscore.docx")
 ```
 
 ### UrbScore / alt
@@ -781,7 +781,7 @@ mortality_mods_alt_u    )
 
 anovas_alt_u <- lapply(all_models_alt_u, make_all_anovas_tidy_altmods)
 
-export_anovas(anovas_alt_u, "./Defense_trait_analyses/Figures/ANOVA/Alt_models/all_anova_Defense_alt_urbscore.docx")
+export_anovas(anovas_alt_u, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_Defense_alt_urbscore.docx")
 
 ```
 
@@ -803,13 +803,13 @@ compare_anovas(
   herbivory,
   "2021",
   "Herbivory before flowering (binary)",
-  "./Defense_trait_analyses/Tables/Comparing_ANOVA/herbivory_early_binary.docx")
+  "./Figures_Tables/Comparing_ANOVA/Defense/herbivory_early_binary.docx")
 
 # herbivory before flowering (quantitative)-----
 ## doing this and other quant mods manually b/c I need to filter the dataset to exclude zeroes
 
 var_name <- "Herbivory before flowering (quantitative)"
-filepath <- "./Defense_trait_analyses/Tables/Comparing_ANOVA/herbivory_early_quant.docx"
+filepath <- "./Figures_Tables/Comparing_ANOVA/Defense/herbivory_early_quant.docx"
 last_year <- "2021"
 
   # city_dist
@@ -901,12 +901,12 @@ compare_anovas(
   herbivory,
   "2021",
   "Herbivory after flowering (binary)",
-  "./Defense_trait_analyses/Tables/Comparing_ANOVA/herbivory_late_binary.docx")
+  "./Figures_Tables/Comparing_ANOVA/Defense/herbivory_late_binary.docx")
 
 # herbivory after flowering (quantitative)-----
 
 var_name <- "Herbivory after flowering (quantitative)"
-filepath <- "./Defense_trait_analyses/Tables/Comparing_ANOVA/herbivory_late_quant.docx"
+filepath <- "./Figures_Tables/Comparing_ANOVA/Defense/herbivory_late_quant.docx"
 last_year <- "2021"
 
   # city_dist
@@ -999,12 +999,12 @@ compare_anovas(
   weevil,
   "2021",
   "Weevil damage (binary)",
-  "./Defense_trait_analyses/Tables/Comparing_ANOVA/Weevil_damage_binary.docx")
+  "./Figures_Tables/Comparing_ANOVA/Defense/Weevil_damage_binary.docx")
 
 # weevil damage (quantitative)-----
 
 var_name <- "Weevil damage (quantitative)"
-filepath <- "./Defense_trait_analyses/Tables/Comparing_ANOVA/Weevil_damage_quant.docx"
+filepath <- "./Figures_Tables/Comparing_ANOVA/Defense/Weevil_damage_quant.docx"
 last_year <- "2021"
 
   # city_dist
@@ -1107,13 +1107,13 @@ compare_anovas_transects(
   herbivory,
   "2021",
   "Herbivory before flowering (binary)",
-  "./Defense_trait_analyses/Tables/Comparing_ANOVA/herbivory_early_binary_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Defense/herbivory_early_binary_transects.docx")
 
 # herbivory before flowering (quantitative)-----
 ## doing this and other quant mods manually b/c I need to filter the dataset to exclude zeroes
 
 var_name <- "Herbivory before flowering (quantitative)"
-filepath <- "./Defense_trait_analyses/Tables/Comparing_ANOVA/herbivory_early_quant_transects.docx"
+filepath <- "./Figures_Tables/Comparing_ANOVA/Defense/herbivory_early_quant_transects.docx"
 last_year <- "2021"
 
   # City_dist*Transect_ID
@@ -1207,12 +1207,12 @@ compare_anovas_transects(
   herbivory,
   "2021",
   "Herbivory after flowering (binary)",
-  "./Defense_trait_analyses/Tables/Comparing_ANOVA/herbivory_late_binary_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Defense/herbivory_late_binary_transects.docx")
 
 # herbivory after flowering (quantitative)-----
 
 var_name <- "Herbivory after flowering (quantitative)"
-filepath <- "./Defense_trait_analyses/Tables/Comparing_ANOVA/herbivory_late_quant_transects.docx"
+filepath <- "./Figures_Tables/Comparing_ANOVA/Defense/herbivory_late_quant_transects.docx"
 last_year <- "2021"
 
   # City_dist*Transect_ID
@@ -1307,12 +1307,12 @@ compare_anovas_transects(
   weevil,
   "2021",
   "Weevil damage (binary)",
-  "./Defense_trait_analyses/Tables/Comparing_ANOVA/Weevil_damage_binary_transects.docx")
+  "./Figures_Tables/Comparing_ANOVA/Defense/Weevil_damage_binary_transects.docx")
 
 # weevil damage (quantitative)-----
 
 var_name <- "Weevil damage (quantitative)"
-filepath <- "./Defense_trait_analyses/Tables/Comparing_ANOVA/Weevil_damage_quant_transects.docx"
+filepath <- "./Figures_Tables/Comparing_ANOVA/Defense/Weevil_damage_quant_transects.docx"
 last_year <- "2021"
 
   # City_dist*Transect_ID
