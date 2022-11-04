@@ -1143,7 +1143,7 @@ gradient_citydist_plots <- ggarrange(
           legend = "top") %T>%
   plot
 
-dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q1_grad_citydist_Defense.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Defense/Q1_grad_citydist_Defense.pdf"),
              width = 14, height = 7.5)
 ```
 
@@ -1168,7 +1168,7 @@ gradient_urbscore_plots <- ggarrange(
           legend = "top") %T>%
   plot
 
-dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q1_grad_urbscore_Defense.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Defense/Q1_grad_urbscore_Defense.pdf"),
              width = 14, height = 7.5)
 ```
 
@@ -1192,7 +1192,7 @@ urbsubs_citydist_plots <- ggarrange(
           legend = "top") %T>%
   plot
 
-dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q2_urbsubs_citydist_Defense.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Defense/Q2_urbsubs_citydist_Defense.pdf"),
              width = 14.5, height = 8)
 ```
 
@@ -1217,7 +1217,7 @@ urbsubs_urbscore_plots <- ggarrange(
           legend = "top") %T>%
   plot
 
-dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q2_urbsubs_urbscore_Defense.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Defense/Q2_urbsubs_urbscore_Defense.pdf"),
              width = 14.5, height = 8)
 ```
 
@@ -1315,7 +1315,7 @@ cards_citydist_plots <- ggarrange(cd_total,
           legend = "top") %T>%
   plot
 
-dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q1_citydist_Cardenolides.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Defense/Q1_citydist_Cardenolides.pdf"),
              width = 8, height = 6)
 
 ```
@@ -1410,7 +1410,7 @@ cards_urbscore_plots <- ggarrange(us_total, us_66, us_15, us_176 +
           legend = "top") %T>%
   plot
 
-dev.copy2pdf(file = here::here("./Defense_trait_analyses/Figures/Q1_urbscore_Cardenolides.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Defense/Q1_urbscore_Cardenolides.pdf"),
              width = 8, height = 6)
 ```
 

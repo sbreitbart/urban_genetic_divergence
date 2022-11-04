@@ -1212,7 +1212,7 @@ ggpred_Q1.citydist_peduncles +
           legend = "top") %T>%
   plot
 
-dev.copy2pdf(file = here::here("./Reproductive_trait_analyses/Figures/Q1_grad_citydist_Reproduction.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Reproduction/Q1_grad_citydist_Reproduction.pdf"),
              width = 14, height = 7.5)
 ```
 
@@ -1238,7 +1238,7 @@ ggpred_Q1.urbscore_peduncles  +
           legend = "top") %T>%
   plot
 
-dev.copy2pdf(file = here::here("./Reproductive_trait_analyses/Figures/Q1_grad_urbscore_Reproduction.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Reproduction/Q1_grad_urbscore_Reproduction.pdf"),
              width = 14, height = 7.5)
 ```
 
@@ -1263,7 +1263,7 @@ urbsubs_citydist_plots <- ggarrange(
           legend = "top") %T>%
   plot
 
-dev.copy2pdf(file = here::here("./Reproductive_trait_analyses/Figures/Q2_urbsubs_citydist_Reproduction.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Reproduction/Q2_urbsubs_citydist_Reproduction.pdf"),
              width = 14.5, height = 8)
 ```
 
@@ -1290,7 +1290,7 @@ ggpred_Q2.urbsubs_peduncles +
   plot
 
 
-dev.copy2pdf(file = here::here("./Reproductive_trait_analyses/Figures/Q2_urbsubs_urbscore_Reproduction.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Reproduction/Q2_urbsubs_urbscore_Reproduction.pdf"),
              width = 14.5, height = 8)
 ```
 

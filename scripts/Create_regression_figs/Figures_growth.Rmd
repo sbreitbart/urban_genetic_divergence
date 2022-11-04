@@ -1213,7 +1213,7 @@ ggpred_Q1.citydist_mortality +
   plot
 
 
-dev.copy2pdf(file = here::here("./Growth_trait_analyses/Figures/Q1_grad_citydist_Growth.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Growth/Q1_grad_citydist_Growth.pdf"),
              width = 15, height = 7.5)
 ```
 
@@ -1239,7 +1239,7 @@ ggpred_Q1.urbscore_mortality +
           legend = "top") %T>%
   plot
 
-dev.copy2pdf(file = here::here("./Growth_trait_analyses/Figures/Q1_grad_urbscore_Growth.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Growth/Q1_grad_urbscore_Growth.pdf"),
              width = 15, height = 7.5)
 ```
 
@@ -1264,7 +1264,7 @@ urbsubs_citydist_plots <- ggarrange(
           legend = "top") %T>%
   plot
 
-dev.copy2pdf(file = here::here("./Growth_trait_analyses/Figures/Q2_urbsubs_citydist_Growth.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Growth/Q2_urbsubs_citydist_Growth.pdf"),
              width = 15, height = 8)
 ```
 
@@ -1290,7 +1290,7 @@ urbsubs_urbscore_plots <- ggarrange(
           legend = "top") %T>%
   plot
 
-dev.copy2pdf(file = here::here("./Growth_trait_analyses/Figures/Q2_urbsubs_urbscore_Growth.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Growth/Q2_urbsubs_urbscore_Growth.pdf"),
              width = 15, height = 8)
 ```
 
