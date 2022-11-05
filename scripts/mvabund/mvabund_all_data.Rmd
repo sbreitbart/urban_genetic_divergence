@@ -697,6 +697,6 @@ word_export <- read_docx()
     body_add_par(word_export, value = "Urbanization = Urbanization Score", style = "heading 1")
   body_add_flextable(word_export, urb_sc_tables)
 
-  print(word_export, here::here("./All_data_analyses/mvabund_anovas_allyears.docx"))
+  print(word_export, here::here("./Figures_Tables/mvabund/mvabund_anovas_allyears.docx"))
 ```
 

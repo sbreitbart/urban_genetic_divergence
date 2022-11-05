@@ -472,7 +472,7 @@ FDR_tab4 <- make_FDR_table(all_pvalues_Q2_u)
   body_add_par(word_export, value = "Urban populations & Urbanization = Urbanization Score", style = "heading 1")
   body_add_flextable(word_export, (FDR_tab4))
 
-  print(word_export, here::here("./All_data_analyses/FDR_p_all.docx"))
+  print(word_export, here::here("./Figures_Tables/False_discovery_rate/FDR_p_all.docx"))
 ```
 
 # Perform binomial expansion test
@@ -1081,7 +1081,7 @@ binomial_results <- rbind(binomial_results_q1,
 binomial_results$p[binomial_results$p == 0] <- "<0.001"
 
 write.csv(binomial_results,
-          here::here("./All_data_analyses/binomialtest_results.csv"))
+          here::here("./Figures_Tables/Binomial_Exp_Test/binomialtest_results.csv"))
 
 binomial_results %>%
   flextable() %>%
@@ -1102,5 +1102,5 @@ binomial_results %>%
   autofit() %>% 
   width(., j = 2, width = 2.5, unit = "in") %>%
   fix_border_issues() %>%
-  save_as_docx(path =  here::here("./All_data_analyses/binomialtest_results.docx"))
+  save_as_docx(path =  here::here("./Figures_Tables/Binomial_Exp_Test/binomialtest_results.docx"))
 ```
