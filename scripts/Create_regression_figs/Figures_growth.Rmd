@@ -56,7 +56,7 @@ sla_mods_best_c[1] # log(SLA + 1) transformed
 sla_gradient_01_pred <- ggeffects::ggpredict(sla_mods_best_c[[1]],
                                    terms = c("City_dist"),
                                    type = "fe") %>%
-  as.data.frame() 
+  as.data.frame()
 
 # urb_score
 sla_mods_best_u[1] # log(SLA + 1) transformed
@@ -391,7 +391,7 @@ ggpred_Q1.citydist_sla <- ggplot(sla_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
        y = expression("Specific leaf area (SLA) "(cm^2/g))) +
-#  ylim(NA, 2.76) +
+  ylim(NA, 20) +
   theme_1() +
 #   # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
@@ -403,13 +403,12 @@ size = 4.5)
 ggpred_Q1.citydist_sla
 
 
-
 # Height, before flowering-----
 ggpred_Q1.citydist_height_e <- ggplot(heights_early_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
        y = expression("Height (before flowering) (cm)" ^{1/3})) +
-  # ylim(18, 26) +
+   ylim(0.4, 1.2) +
   theme_1() +
 #   # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.15, npcy = 0.08,
@@ -426,7 +425,7 @@ ggpred_Q1.citydist_height_l <- ggplot(heights_late_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
        y = expression("Height (after flowering) (cm)" ^{1/3})) +
-  ylim(1.8,2.6) +
+  ylim(1.5, 2.75) +
   theme_1() +
 #   # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.15, npcy = 0.08,
@@ -444,7 +443,7 @@ ggpred_Q1.citydist_rgr <- ggplot(rgr_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
        y = expression("Relative growth rate " ^{1/3})) +
-  ylim(0.198, 0.212) +
+  ylim(0.19, 0.22) +
   theme_1() +
 #   # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
@@ -461,7 +460,7 @@ ggpred_Q1.citydist_ramets_e <- ggplot(ramets_early_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
        y = "Ramets (before flowering)") +
-  ylim(1.4, NA) +
+  ylim(1,2) +
   theme_1() +
    # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.1, npcy = 0.08,
@@ -479,7 +478,7 @@ ggpred_Q1.citydist_ramets_l <- ggplot(ramets_late_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
        y = "Ramets (after flowering)") +
-  # ylim(NA, 1.95) +
+   ylim(1.4,2.2) +
   theme_1() +
    # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.15, npcy = 0.08,
@@ -498,7 +497,7 @@ ggplot(mortality_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
        y = "Probability of death at\n end of growing season") +
- ylim(NA, 0.4) +
+ ylim(0, 0.1) +
   theme_1() +
   
 # adding stats from ANOVA
@@ -520,7 +519,7 @@ ggplot(ldmc_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
        y = "Leaf dry matter content (LDMC)") +
- ylim(0.165, NA) +
+ ylim(0.16, 0.19) +
     xlim(4, -4) +
   theme_1() +
   
@@ -539,7 +538,7 @@ ggpred_Q1.urbscore_sla <- ggplot(sla_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
        y = expression("Specific leaf area (SLA) "(cm^2/g))) +
- # ylim(NA, 2.76) +
+  ylim(16,20) +
     xlim(4, -4) +
 theme_1() +
 #   # adding stats from ANOVA
@@ -558,11 +557,11 @@ ggpred_Q1.urbscore_height_e <- ggplot(heights_early_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
        y = expression("Height (before flowering) (cm)" ^{1/3})) +
-  # ylim(18, 26) +
+ #  ylim(18, 26) +
     xlim(4, -4) +
 theme_1() +
 #   # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.15, npcy = 0.08,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.95,
                     label = paste0(" Urb. Score: p = ", tidy_anova(heights_early_mods_best_u[[1]])%>%
 dplyr::filter(Predictor == "Urbanization Score") %>%
 dplyr::select(p))),
@@ -577,7 +576,7 @@ ggpred_Q1.urbscore_height_l <- ggplot(heights_late_gradient_02_pred) +
     xlim(4, -4) +
 labs(x = "Urbanization Score",
        y = expression("Height (after flowering) (cm)" ^{1/3})) +
- # ylim(1.8,2.6) +
+  ylim(1.7,2.5) +
   theme_1() +
 #   # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.15, npcy = 0.08,
@@ -596,7 +595,7 @@ ggpred_Q1.urbscore_rgr <- ggplot(rgr_gradient_02_pred) +
     xlim(4, -4) +
 labs(x = "Urbanization Score",
        y = expression("Relative growth rate " ^{1/3})) +
-  ylim(0.198, 0.212) +
+  ylim(0.19, 0.22) +
   theme_1() +
 #   # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
@@ -614,7 +613,7 @@ ggpred_Q1.urbscore_ramets_e <- ggplot(ramets_early_gradient_02_pred) +
   labs(x = "Urbanization Score",
        y = "Ramets (before flowering)") +
     xlim(4, -4) +
-  ylim(1.45, NA) +
+  ylim(1.3, 1.8) +
   theme_1() +
    # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.1, npcy = 0.08,
@@ -632,7 +631,7 @@ ggpred_Q1.urbscore_ramets_l <- ggplot(ramets_late_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
        y = "Ramets (after flowering)") +
-  # ylim(NA, 1.95) +
+   ylim(1.5, 2) +
     xlim(4, -4) +
 theme_1() +
    # adding stats from ANOVA
@@ -652,7 +651,7 @@ ggplot(mortality_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
        y = "Probability of death at\n end of growing season") +
-  ylim(-0.3, NA) +
+  ylim(0, 0.1) +
     xlim(4, -4) +
 theme_1() +
   
@@ -718,7 +717,7 @@ ggplot(sla_urbsubs_01_pred) +
        y = expression("Specific leaf area (SLA) "(cm^2/g)),
        color = "Transect",
        fill = "Transect") +
-#  ylim(NA, 22) +
+  ylim(NA, 22) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -750,7 +749,7 @@ ggplot(heights_early_urbsubs_01_pred) +
        y = expression("Height (before flowering) (cm)" ^{1/3}), 
        color = "Transect",
        fill = "Transect") +
-#  ylim(NA, 22) +
+  ylim(0, 1.2) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -781,7 +780,7 @@ ggplot(heights_late_urbsubs_01_pred) +
        y = expression("Height (after flowering) (cm)" ^{1/3}), 
        color = "Transect",
        fill = "Transect") +
-#  ylim(NA, 22) +
+  ylim(1, 3) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -813,7 +812,7 @@ ggplot(rgr_urbsubs_01_pred) +
        y = expression("Relative growth rate "^{1/3}),
        color = "Transect",
        fill = "Transect") +
-  ylim(0.2, 0.22) +
+  ylim(0.18, 0.24) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -877,7 +876,7 @@ ggplot(ramets_late_urbsubs_01_pred) +
        y = expression("Ramets (after flowering) (cm)" ^{1/3}), 
        color = "Transect",
        fill = "Transect") +
-#  ylim(NA, 22) +
+  ylim(1.25, 2.25) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -911,7 +910,7 @@ ggplot(mortality_urbsubs_01_pred) +
        y = "Probability of death at\n end of growing season",
        color = "Transect",
        fill = "Transect") +
-  ylim(NA, 1) +
+  ylim(0, 0.25) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -947,7 +946,7 @@ ggplot(ldmc_urbsubs_02_pred) +
        y = "Leaf dry matter content (LDMC)",
        color = "Transect",
        fill = "Transect") +
-  ylim(NA, 0.24) +
+  ylim(0.15, 0.2) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
@@ -979,7 +978,7 @@ ggplot(sla_urbsubs_02_pred) +
        y = expression("Specific leaf area (SLA) "(cm^2/g)),
        color = "Transect",
        fill = "Transect") +
-  ylim(16,20) +
+  ylim(14,24) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
@@ -1011,7 +1010,7 @@ ggplot(heights_early_urbsubs_02_pred) +
        y = expression("Height (before flowering) (cm)" ^{1/3}), 
        color = "Transect",
        fill = "Transect") +
-  ylim(0.5, 1) +
+  ylim(0.25, 1.25) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
@@ -1042,7 +1041,7 @@ ggplot(heights_late_urbsubs_02_pred) +
        y = expression("Height (after flowering) (cm)" ^{1/3}), 
        color = "Transect",
        fill = "Transect") +
-  ylim(NA, 2.6) +
+  ylim(1.5, 3) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
@@ -1074,7 +1073,7 @@ ggplot(rgr_urbsubs_02_pred) +
        y = expression("Relative growth rate "^{1/3}),
        color = "Transect",
        fill = "Transect") +
-  ylim(NA, 0.225) +
+  ylim(0.19, 0.23) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
@@ -1107,7 +1106,7 @@ ggplot(ramets_early_urbsubs_02_pred) +
        y = expression("Ramets (before flowering) (cm)" ^{1/3}), 
        color = "Transect",
        fill = "Transect") +
-#  ylim(NA, 22) +
+  ylim(1, 2.2) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
@@ -1138,7 +1137,7 @@ ggplot(ramets_late_urbsubs_02_pred) +
        y = expression("Ramets (after flowering) (cm)" ^{1/3}), 
        color = "Transect",
        fill = "Transect") +
-  ylim(1.5, 2) +
+  ylim(1.25, 2.25) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
@@ -1169,7 +1168,7 @@ ggplot(mortality_urbsubs_02_pred) +
        y = "Probability of death at\n end of growing season",
        color = "Transect",
        fill = "Transect") +
-  ylim(NA, 1) +
+  ylim(0, 0.25) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
