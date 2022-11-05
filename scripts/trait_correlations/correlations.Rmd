@@ -6,7 +6,7 @@ source("libraries.R")
 # Import data
 ## Reproductive traits
 ```{r}
-source(knitr::purl("Reproductive_trait_analyses/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
 
 # save list of models as reprod_models
 reprod_models <- all_models
@@ -14,7 +14,7 @@ reprod_models <- all_models
 
 ## Defense traits
 ```{r}
-source(knitr::purl("Defense_trait_analyses/Model_diagnostics_Defense.Rmd", quiet=TRUE))
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Defense.Rmd", quiet=TRUE))
 
 # save list of models as defense_models
 defense_models <- all_models
@@ -22,7 +22,7 @@ defense_models <- all_models
 
 ## Growth traits
 ```{r}
-source(knitr::purl("Growth_trait_analyses/Model_diagnostics_Growth.Rmd", quiet=TRUE))
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Growth.Rmd", quiet=TRUE))
 
 # save list of models as growth_models
 growth_models <- all_models
@@ -213,7 +213,7 @@ correlations2.r <- as.matrix(all_blups[,c(-1, -22)]) %>%
 correlations2.r %>%
   tibble::rownames_to_column(" ") %>%
    flextable() %>%
-  save_as_html(., path = here::here("./correlations/r_values.html"))
+  save_as_html(., path = here::here("./Figures_Tables/correlations/r_values.html"))
 
 # same with p values
 correlations2.p <- as.matrix(all_blups[,c(-1, -22)]) %>%
@@ -226,7 +226,7 @@ correlations2.p <- as.matrix(all_blups[,c(-1, -22)]) %>%
 correlations2.p %>%
   tibble::rownames_to_column(" ") %>%
    flextable() %>%
-  save_as_html(., path = here::here("./correlations/p_values.html"))
+  save_as_html(., path = here::here("./Figures_Tables/correlations/p_values.html"))
 
 ```
 
@@ -239,7 +239,7 @@ correlations2.r[correlations2.r == 1] <- NA # replace all perfect correlations (
 library(GGally)
 ggpairs(correlations2.r) 
 
-dev.copy2pdf(file = here::here("./correlations/scatterplot_matrix_longnames.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/correlations/scatterplot_matrix_longnames.pdf"),
              width = 30, height = 30)
 
 ```
@@ -251,7 +251,7 @@ chart.Correlation(correlations2.r,
                   histogram = TRUE,
                   method = "pearson")
 
-dev.copy2pdf(file = here::here("./correlations/loess_scatterplot_matrix.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/correlations/loess_scatterplot_matrix.pdf"),
              width = 20, height = 20)
 ```
 
@@ -285,7 +285,7 @@ corrplot(
   # insig = 'p-value',
   sig.level = -1)
 
-dev.copy2pdf(file = here::here("./correlations/heatmap_with_p_original_new palette.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/correlations/heatmap_with_p_original_new palette.pdf"),
              width = 20, height = 20)
 
 # show with p value asterisks
@@ -307,7 +307,7 @@ corrplot(
    insig = 'label_sig',
    pch.col = 'grey20')
 
-dev.copy2pdf(file = here::here("./correlations/heatmap_with_p_asterisks_original.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/correlations/heatmap_with_p_asterisks_original.pdf"),
              width = 20, height = 20)
 
 
@@ -327,7 +327,7 @@ corrplot(
   type = "upper")
 
 
-dev.copy2pdf(file = here::here("./correlations/heatmap_with_r_original.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/correlations/heatmap_with_r_original.pdf"),
              width = 20, height = 20)
 ```
 
@@ -369,7 +369,7 @@ heatmap_rcorr <- blup_list(all) %>%
 ggcorr(as.matrix(heatmap_rcorr),
        method = c("everything", "pearson"))
 
-dev.copy2pdf(file = here::here("./correlations/heatmap.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/correlations/heatmap.pdf"),
              width = 14, height = 14)
 ```
 
