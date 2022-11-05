@@ -1,5 +1,5 @@
 # Import data
-sched <- read.csv(here::here("./Phenotyping_schedule/Schedule_for_R.csv"))%>%
+sched <- read.csv(here::here("./Figures_Tables/Phenotyping_schedule/Schedule_for_R.csv"))%>%
   dplyr::rename("Trait" = 1) %>%
   dplyr::select(1:3) 
 
@@ -53,12 +53,12 @@ p <- ggplot(sched,
 p
 
 # save it
-png(here::here("./Phenotyping_schedule/Phenotyping_schedule.png"),
+png(here::here("./Figures_Tables/Phenotyping_schedule/Phenotyping_schedule.png"),
     width = 18, height = 16,
     units = "cm",
     res = 500)
 print(p)
 dev.off()
-ggsave(here::here("./Phenotyping_schedule/Phenotyping_schedule.pdf"),
+ggsave(here::here("./Figures_Tables/Phenotyping_schedule/Phenotyping_schedule.pdf"),
                   width = 7, height = 7)
        
