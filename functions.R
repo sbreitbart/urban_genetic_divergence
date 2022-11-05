@@ -1100,8 +1100,8 @@ rep_geoms <- c(geom_smooth(aes(x = x,
                            size = 1,
                            se = F),
                geom_ribbon(aes(x = x,
-                               ymin = predicted - std.error,
-                               ymax = predicted + std.error),
+                               ymin = conf.low,
+                               ymax = conf.high),
                            fill = "#66a182",
                            alpha = 0.3))
 
@@ -1115,8 +1115,8 @@ rep_geoms2 <- c(geom_smooth(
   se = F),
   geom_ribbon(aes(
     x = x,
-    ymin = predicted - std.error,
-    ymax = predicted + std.error,
+    ymin = conf.low,
+    ymax = conf.high,
     fill = group),
     alpha = 0.3),
   scale_colour_brewer(labels = c("Corridor",
