@@ -1,23 +1,3 @@
----
-title: "KSR 2020 Herbivore Analysis"
-author: "Sophie Breitbart"
-output:
-  html_document:
-    number_sections: true
-    df_print: paged
-    toc: yes
-    toc_depth: 6
-    toc_float:
-      collapsed: yes
-  pdf_document:
-    toc: yes
-    toc_depth: '4'
-editor_options: 
-  chunk_output_type: console
----
-
-*Background information:*
-
 * Herbivore surveys were done twice: Once in July, once in August.
 * The species observed are in the column names. The only species with two columns was the Monarch butterfly:
     + one column for Monarchs that had been on the plant in the past ("mean_Monarch_Quantity_Past") and which refers to empty chrysalis, empty eggs, and chrysalis with a dead butterfly inside, and
