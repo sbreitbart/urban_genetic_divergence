@@ -209,6 +209,33 @@ export_anovas <- function(anova_list, filepath){
     invisible()
 }
 
+
+
+
+# Make function that makes multi-year model --> one-year model
+# Q1
+make_1yrmod <- function(orig_mod, last_year, mod_allyrs_df){
+  return(
+    update(orig_mod,
+           .~. - Year,
+           data = mod_allyrs_df %>%
+             dplyr::filter(Year == last_year))
+  )
+}
+
+# Q2
+make_1yrmod_transects <- function(orig_mod, last_year, mod_allyrs_df){
+  return(
+    update(orig_mod,
+           .~. - Year,
+           data = mod_allyrs_df %>%
+             dplyr::filter(Year == last_year &
+                             Transect_ID != "Rural"))
+  )
+}
+
+
+
 ############################################################
 ########## Do linear regression on multiple models #########
 ############# (for cardenolide analysis)####################

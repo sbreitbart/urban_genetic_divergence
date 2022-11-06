@@ -15,13 +15,12 @@ pop_vars <- read.csv(here::here("./Joined_annual_data/weevil.csv")) %>%
   dplyr::select(1:6, 11:20)
 
 
-source(knitr::purl("Growth_trait_analyses/Model_diagnostics_Growth.Rmd", quiet=TRUE))
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Growth.Rmd", quiet=TRUE))
 
-source(knitr::purl("Defense_trait_analyses/Model_diagnostics_defense.Rmd", quiet=TRUE))
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_defense.Rmd", quiet=TRUE))
 
-source(knitr::purl("Reproductive_trait_analyses/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
 
-source(knitr::purl("Defense_trait_analyses/Analysis_cardenolides.Rmd", quiet=TRUE))
 ```
 
 ## Create BLUP vectors for each trait

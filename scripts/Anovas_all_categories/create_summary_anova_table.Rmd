@@ -1,182 +1,28 @@
-# Load libraries
+# Load libraries & functions
 ```{r}
 source("libraries.R")
+source("functions.R")
 ```
 
 # Import data
-## Reproductive traits
 ```{r}
-source(knitr::purl("Reproductive_trait_analyses/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_1yr_mods.Rmd", quiet=TRUE))
 
 ```
-
-## Defense traits (including cardenolides)
-```{r}
-source(knitr::purl("Defense_trait_analyses/Model_diagnostics_Defense.Rmd", quiet=TRUE))
-
-```
-
-## Growth traits
-```{r}
-source(knitr::purl("Growth_trait_analyses/Model_diagnostics_Growth.Rmd", quiet=TRUE))
-# I don't know why but this Rmd usually doesn't fully run with this line of code, so instead, just open the Rmd and run it all manually
-```
-
-# Make function that makes multi-year model --> one-year model
-```{r}
-# Q1
-make_1yrmod <- function(orig_mod, last_year, mod_allyrs_df){
-  return(
-    update(orig_mod,
-                    .~. - Year,
-                    data = mod_allyrs_df %>%
-                      dplyr::filter(Year == last_year))
-  )
-}
-
-# Q2
-make_1yrmod_transects <- function(orig_mod, last_year, mod_allyrs_df){
-  return(
-    update(orig_mod,
-                    .~. - Year,
-                    data = mod_allyrs_df %>%
-                      dplyr::filter(Year == last_year &
-                                      Transect_ID != "Rural"))
-  )
-}
-```
-
 
 # Create tables with ANOVA results from all one-year models (lmers)
 ## Q1
 ### City_dist
-#### Make lists of models
-##### Defense
-```{r}
-latex_mods_best_c[[1]]
-
-def.m1 <- make_1yrmod(herb_e_bin_mods_best_c[[1]], "2021", herbivory)
-
-def.m2 <- update(herb_e_quant_mods_best_c[[1]],
-                 .~. - Year,
-                 data = herbivory %>%
-                   dplyr::filter(Year == "2021" &
-                                   Herbivory_mean_early_binary == 1))
-
-def.m3 <- make_1yrmod(herb_l_bin_mods_best_c[[1]], "2021", herbivory)
-
-def.m4 <- update(herb_l_quant_mods_best_c[[1]],
-                 .~. - Year,
-                 data = herbivory %>%
-                   dplyr::filter(Year == "2021" &
-                                   Herbivory_mean_late_binary == 1))
-
-def.m5 <- make_1yrmod(weev_bin_mods_best_c[[1]], "2021", weevil)
-
-def.m6 <- update(weev_quant_mods_best_c[[1]],
-                 .~. - Year,
-                 data = weevil %>%
-                   dplyr::filter(Year == "2021" &
-                                   Scar_length_cm > 0))
-```
-
-##### Reproduction
-```{r}
-repr.m1 <- make_1yrmod(flsucc_mods_best_c[[1]], "2022", reproduc)
-
-repr.m2 <- make_1yrmod(flowers_mods_best_c[[1]], "2022", flowering)
-
-repr.m3 <- make_1yrmod(flsize_mods_best_c[[1]], "2022", flowering)
-
-repr.m4 <- make_1yrmod(fltime_mods_best_c[[1]], "2022", flowering)
-
-repr.m5 <- make_1yrmod(flstart_mods_best_c[[1]], "2022", flowering)
-
-repr.m6 <- make_1yrmod(pods_mods_best_c[[1]], "2022", flowering)
-
-repr.m7 <- make_1yrmod(first_pods_mods_best_c[[1]], "2022", flowering)
-
-repr.m8 <- make_1yrmod(peduncles_mods_best_c[[1]], "2022", flowering)
-```
-
-##### Herbivores
-```{r}
-herb.m1 <- make_1yrmod(monarch_mods_best_c[[1]], "2021", herbivores)
-
-herb.m2 <- make_1yrmod(asclepiadis_mods_best_c[[1]], "2021", herbivores)
-
-herb.m3 <- make_1yrmod(clivicollis_mods_best_c[[1]], "2021", herbivores)
-```
-
-##### Growth
-```{r}
-grow.m1 <- ldmc_mods_best_c[[1]]
-
-grow.m2 <- sla_mods_best_c[[1]]
-
-grow.m3 <- make_1yrmod(heights_early_mods_best_c[[1]], "2021", heights)
-
-grow.m4 <- make_1yrmod(heights_late_mods_best_c[[1]], "2021", heights)
-
-grow.m5 <- make_1yrmod(rgr_mods_best_c[[1]], "2021", heights)
-
-grow.m6 <- make_1yrmod(ramets_early_mods_best_c[[1]], "2021", heights)
-
-grow.m7 <- make_1yrmod(ramets_late_mods_best_c[[1]], "2021", heights)
-
-grow.m8 <- make_1yrmod(mortality_mods_best_c[[1]], "2022", survival)
-```
-
-##### All
-```{r}
-all_1yr_mods <- list(
-  
-  # defense
-  latex_mods_best_c[[1]],
-  def.m1,
-  def.m2,
-  def.m3,
-  def.m4,
-  def.m5,
-  def.m6,
-  
-  # reproduction
-  repr.m1,
-  repr.m2,
-  repr.m3,
-  repr.m4,
-  repr.m5,
-  repr.m6,
-  repr.m7,
-  repr.m8,
-  
-  # Herbivores
-  herb.m1,
-  herb.m2,
-  herb.m3,
-  
-  # growth
-  grow.m1,
-  grow.m2,
-  grow.m3,
-  grow.m4,
-  grow.m5,
-  grow.m6,
-  grow.m7,
-  grow.m8
-  )
-```
-
 #### Create 1-yr ANOVA table
 ```{r}
-# STEP 3: perform tidy_anova on all list items (i.e., models)
+# perform tidy_anova on all list items (i.e., models)
 all_1yr_mods %>% 
   lapply(., tidy_anova) %>%
 
-# STEP 4: merge all items
+# merge all items
   reduce(full_join, all = T) %>%
 
-# STEP 5: make flextable
+# make flextable
   dplyr::rename(Variable = 1) %>%
   dplyr::select(-Sites) %>%
   dplyr::mutate(Variable = case_when(
@@ -254,139 +100,19 @@ all_1yr_mods %>%
   padding(padding = 3) %>%
   autofit() %T>%
   
-# STEP 6: Export
+# Export
   flextable::save_as_docx(.,
                           path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_Citydist.docx"))
 ```
 
 ### Urb_score
-#### Make lists of models
-##### Defense
-```{r}
-latex_mods_best_u[[1]]
-
-def.m1_u <- make_1yrmod(herb_e_bin_mods_best_u[[1]], "2021", herbivory)
-
-def.m2_u <- update(herb_e_quant_mods_best_u[[1]],
-                 .~. - Year,
-                 data = herbivory %>%
-                   dplyr::filter(Year == "2021" &
-                                   Herbivory_mean_early_binary == 1))
-
-def.m3_u <- make_1yrmod(herb_l_bin_mods_best_u[[1]], "2021", herbivory)
-
-def.m4_u <- update(herb_l_quant_mods_best_u[[1]],
-                 .~. - Year,
-                 data = herbivory %>%
-                   dplyr::filter(Year == "2021" &
-                                   Herbivory_mean_late_binary == 1))
-
-def.m5_u <- make_1yrmod(weev_bin_mods_best_u[[1]], "2021", weevil)
-
-def.m6_u <- update(weev_quant_mods_best_u[[1]],
-                 .~. - Year,
-                 data = weevil %>%
-                   dplyr::filter(Year == "2021" &
-                                   Scar_length_cm > 0))
-```
-
-##### Reproduction
-```{r}
-repr.m1_u <- make_1yrmod(flsucc_mods_best_u[[1]], "2022", reproduc)
-
-repr.m2_u <- make_1yrmod(flowers_mods_best_u[[1]], "2022", flowering)
-
-repr.m3_u <- make_1yrmod(flsize_mods_best_u[[1]], "2022", flowering)
-
-repr.m4_u <- make_1yrmod(fltime_mods_best_u[[1]], "2022", flowering)
-
-repr.m5_u <- make_1yrmod(flstart_mods_best_u[[1]], "2022", flowering)
-
-repr.m6_u <- make_1yrmod(pods_mods_best_u[[1]], "2022", flowering)
-
-repr.m7_u <- make_1yrmod(first_pods_mods_best_u[[1]], "2022", flowering)
-
-repr.m8_u <- make_1yrmod(peduncles_mods_best_u[[1]], "2022", flowering)
-```
-
-##### Herbivores
-```{r}
-herb.m1_u <- make_1yrmod(monarch_mods_best_u[[1]], "2021", herbivores)
-
-herb.m2_u <- make_1yrmod(asclepiadis_mods_best_u[[1]], "2021", herbivores)
-
-herb.m3_u <- make_1yrmod(clivicollis_mods_best_u[[1]], "2021", herbivores)
-```
-
-##### Growth
-```{r}
-grow.m1_u <- ldmc_mods_best_u[[1]]
-
-grow.m2_u <- sla_mods_best_u[[1]]
-
-grow.m3_u <- make_1yrmod(heights_early_mods_best_u[[1]], "2021", heights)
-
-grow.m4_u <- make_1yrmod(heights_late_mods_best_u[[1]], "2021", heights)
-
-grow.m5_u <- make_1yrmod(rgr_mods_best_u[[1]], "2021", heights)
-
-grow.m6_u <- make_1yrmod(ramets_early_mods_best_u[[1]], "2021", heights)
-
-grow.m7_u <- make_1yrmod(ramets_late_mods_best_u[[1]], "2021", heights)
-
-grow.m8_u <- make_1yrmod(mortality_mods_best_u[[1]], "2022", survival)
-```
-
-##### All
-```{r}
-all_1yr_mods.u <- list(
-  
-  # defense
-  latex_mods_best_u[[1]],
-  def.m1_u,
-  def.m2_u,
-  def.m3_u,
-  def.m4_u,
-  def.m5_u,
-  def.m6_u,
-  
-  # reproduction
-  repr.m1_u,
-  repr.m2_u,
-  repr.m3_u,
-  repr.m4_u,
-  repr.m5_u,
-  repr.m6_u,
-  repr.m7_u,
-  repr.m8_u,
-  
-  # Herbivores
-  herb.m1_u,
-  herb.m2_u,
-  herb.m3_u,
-  
-  # growth
-  grow.m1_u,
-  grow.m2_u,
-  grow.m3_u,
-  grow.m4_u,
-  grow.m5_u,
-  grow.m6_u,
-  grow.m7_u,
-  grow.m8_u
-  )
-```
-
 #### Create 1-yr ANOVA table
 ```{r}
-# STEP 3: perform tidy_anova on all list items (i.e., models)
 all_1yr_mods.u %>% 
   lapply(., tidy_anova) %>%
 
-# STEP 4: merge all items
   reduce(full_join, all = T) %>%
 
-# STEP 5: make flextable
   dplyr::rename(Variable = 1) %>%
   dplyr::select(-Sites) %>%
   dplyr::mutate(Variable = case_when(
@@ -464,133 +190,12 @@ all_1yr_mods.u %>%
   padding(padding = 3) %>%
   autofit() %T>%
   
-# STEP 6: Export
   flextable::save_as_docx(.,
                           path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_Urbscore.docx"))
 ```
 
 ## Q2
 ### City_dist
-#### Make lists of models
-##### Defense
-```{r}
-latex_mods_best_c[[2]]
-
-def.tr.m1 <- make_1yrmod_transects(herb_e_bin_mods_best_c[[2]], "2021", herbivory)
-
-def.tr.m2 <- update(herb_e_quant_mods_best_c[[2]],
-                 .~. - Year,
-                 data = herbivory %>%
-                   dplyr::filter(Transect_ID != "Rural" &
-                                   Year == "2021" &
-                                   Herbivory_mean_early_binary == 1))
-
-def.tr.m3 <- make_1yrmod_transects(herb_l_bin_mods_best_c[[2]], "2021", herbivory)
-
-def.tr.m4 <- update(herb_l_quant_mods_best_c[[2]],
-                 .~. - Year,
-                 data = herbivory %>%
-                   dplyr::filter(Transect_ID != "Rural" &
-                                   Year == "2021" &
-                                   Herbivory_mean_late_binary == 1))
-
-def.tr.m5 <- make_1yrmod_transects(weev_bin_mods_best_c[[2]], "2021", weevil)
-
-def.tr.m6 <- update(weev_quant_mods_best_c[[2]],
-                 .~. - Year,
-                 data = weevil %>%
-                   dplyr::filter(Transect_ID != "Rural" &
-                                   Year == "2021" &
-                                   Scar_length_cm > 0))
-```
-
-##### Reproduction
-```{r}
-repr.tr.m1 <- make_1yrmod_transects(flsucc_mods_best_c[[2]], "2022", reproduc)
-
-repr.tr.m2 <- make_1yrmod_transects(flowers_mods_best_c[[2]], "2022", flowering)
-
-repr.tr.m3 <- make_1yrmod_transects(flsize_mods_best_c[[2]], "2022", flowering)
-
-repr.tr.m4 <- make_1yrmod_transects(fltime_mods_best_c[[2]], "2022", flowering)
-
-repr.tr.m5 <- make_1yrmod_transects(flstart_mods_best_c[[2]], "2022", flowering)
-
-repr.tr.m6 <- make_1yrmod_transects(pods_mods_best_c[[2]], "2022", flowering)
-
-repr.tr.m7 <- make_1yrmod_transects(first_pods_mods_best_c[[2]], "2022", flowering)
-
-repr.tr.m8 <- make_1yrmod_transects(peduncles_mods_best_c[[2]], "2022", flowering)
-```
-
-##### Herbivores
-```{r}
-herb.tr.m1 <- make_1yrmod_transects(monarch_mods_best_c[[2]], "2021", herbivores)
-
-herb.tr.m2 <- make_1yrmod_transects(asclepiadis_mods_best_c[[2]], "2021", herbivores)
-
-herb.tr.m3 <- make_1yrmod_transects(clivicollis_mods_best_c[[2]], "2021", herbivores)
-```
-
-##### Growth
-```{r}
-grow.tr.m1 <- ldmc_mods_best_c[[2]]
-
-grow.tr.m2 <- sla_mods_best_c[[2]]
-
-grow.tr.m3 <- make_1yrmod_transects(heights_early_mods_best_c[[2]], "2021", heights)
-
-grow.tr.m4 <- make_1yrmod_transects(heights_late_mods_best_c[[2]], "2021", heights)
-
-grow.tr.m5 <- make_1yrmod_transects(rgr_mods_best_c[[2]], "2021", heights)
-
-grow.tr.m6 <- make_1yrmod_transects(ramets_early_mods_best_c[[2]], "2021", heights)
-
-grow.tr.m7 <- make_1yrmod_transects(ramets_late_mods_best_c[[2]], "2021", heights)
-
-grow.tr.m8 <- make_1yrmod_transects(mortality_mods_best_c[[2]], "2022", survival)
-```
-
-##### All
-```{r}
-all_1yr_mods_tr <- list(
-  
-  # defense
-  latex_mods_best_c[[2]],
-  def.tr.m1,
-  def.tr.m2,
-  def.tr.m3,
-  def.tr.m4,
-  def.tr.m5,
-  def.tr.m6,
-  
-  # reproduction
-  repr.tr.m1,
-  repr.tr.m2,
-  repr.tr.m3,
-  repr.tr.m4,
-  repr.tr.m5,
-  repr.tr.m6,
-  repr.tr.m7,
-  repr.tr.m8,
-  
-  # Herbivores
-  herb.tr.m1,
-  herb.tr.m2,
-  herb.tr.m3,
-  
-  # growth
-  grow.tr.m1,
-  grow.tr.m2,
-  grow.tr.m3,
-  grow.tr.m4,
-  grow.tr.m5,
-  grow.tr.m6,
-  grow.tr.m7,
-  grow.tr.m8
-  )
-```
-
 #### Create 1-yr ANOVA table
 ```{r}
 # STEP 3: perform tidy_anova on all list items (i.e., models)
@@ -684,126 +289,6 @@ all_1yr_mods_tr %>%
 ```
 
 ### Urb_score
-#### Make lists of models
-##### Defense
-```{r}
-latex_mods_best_u[[2]]
-
-def.tr.m1_u <- make_1yrmod_transects(herb_e_bin_mods_best_u[[2]], "2021", herbivory)
-
-def.tr.m2_u <- update(herb_e_quant_mods_best_u[[2]],
-                 .~. - Year,
-                 data = herbivory %>%
-                   dplyr::filter(Transect_ID != "Rural" &
-                                   Year == "2021" &
-                                   Herbivory_mean_early_binary == 1))
-
-def.tr.m3_u <- make_1yrmod_transects(herb_l_bin_mods_best_u[[2]], "2021", herbivory)
-
-def.tr.m4_u <- update(herb_l_quant_mods_best_u[[2]],
-                 .~. - Year,
-                 data = herbivory %>%
-                   dplyr::filter(Transect_ID != "Rural" &
-                                   Year == "2021" &
-                                   Herbivory_mean_late_binary == 1))
-
-def.tr.m5_u <- make_1yrmod_transects(weev_bin_mods_best_u[[2]], "2021", weevil)
-
-def.tr.m6_u <- update(weev_quant_mods_best_u[[2]],
-                 .~. - Year,
-                 data = weevil %>%
-                   dplyr::filter(Transect_ID != "Rural" &
-                                   Year == "2021" &
-                                   Scar_length_cm > 0))
-```
-
-##### Reproduction
-```{r}
-repr.tr.m1_u <- make_1yrmod_transects(flsucc_mods_best_u[[2]], "2022", reproduc)
-
-repr.tr.m2_u <- make_1yrmod_transects(flowers_mods_best_u[[2]], "2022", flowering)
-
-repr.tr.m3_u <- make_1yrmod_transects(flsize_mods_best_u[[2]], "2022", flowering)
-
-repr.tr.m4_u <- make_1yrmod_transects(fltime_mods_best_u[[2]], "2022", flowering)
-
-repr.tr.m5_u <- make_1yrmod_transects(flstart_mods_best_u[[2]], "2022", flowering)
-
-repr.tr.m6_u <- make_1yrmod_transects(pods_mods_best_u[[2]], "2022", flowering)
-
-repr.tr.m7_u <- make_1yrmod_transects(first_pods_mods_best_u[[2]], "2022", flowering)
-
-repr.tr.m8_u <- make_1yrmod_transects(peduncles_mods_best_u[[2]], "2022", flowering)
-```
-
-##### Herbivores
-```{r}
-herb.tr.m1_u <- make_1yrmod_transects(monarch_mods_best_u[[2]], "2021", herbivores)
-
-herb.tr.m2_u <- make_1yrmod_transects(asclepiadis_mods_best_u[[2]], "2021", herbivores)
-
-herb.tr.m3_u <- make_1yrmod_transects(clivicollis_mods_best_u[[2]], "2021", herbivores)
-```
-
-##### Growth
-```{r}
-grow.tr.m1_u <- ldmc_mods_best_u[[2]]
-
-grow.tr.m2_u <- sla_mods_best_u[[2]]
-
-grow.tr.m3_u <- make_1yrmod_transects(heights_early_mods_best_u[[2]], "2021", heights)
-
-grow.tr.m4_u <- make_1yrmod_transects(heights_late_mods_best_u[[2]], "2021", heights)
-
-grow.tr.m5_u <- make_1yrmod_transects(rgr_mods_best_u[[2]], "2021", heights)
-
-grow.tr.m6_u <- make_1yrmod_transects(ramets_early_mods_best_u[[2]], "2021", heights)
-
-grow.tr.m7_u <- make_1yrmod_transects(ramets_late_mods_best_u[[2]], "2021", heights)
-
-grow.tr.m8_u <- make_1yrmod_transects(mortality_mods_best_u[[2]], "2022", survival)
-```
-
-##### All
-```{r}
-all_1yr_mods.u_tr <- list(
-  
-  # defense
-  latex_mods_best_u[[2]],
-  def.tr.m1_u,
-  def.tr.m2_u,
-  def.tr.m3_u,
-  def.tr.m4_u,
-  def.tr.m5_u,
-  def.tr.m6_u,
-  
-  # reproduction
-  repr.tr.m1_u,
-  repr.tr.m2_u,
-  repr.tr.m3_u,
-  repr.tr.m4_u,
-  repr.tr.m5_u,
-  repr.tr.m6_u,
-  repr.tr.m7_u,
-  repr.tr.m8_u,
-  
-  # Herbivores
-  herb.tr.m1_u,
-  herb.tr.m2_u,
-  herb.tr.m3_u,
-  
-  # growth
-  grow.tr.m1_u,
-  grow.tr.m2_u,
-  grow.tr.m3_u,
-  grow.tr.m4_u,
-  grow.tr.m5_u,
-  grow.tr.m6_u,
-  grow.tr.m7_u,
-  grow.tr.m8_u
-  )
-```
-
 #### Create 1-yr ANOVA table
 ```{r}
 # STEP 3: perform tidy_anova on all list items (i.e., models)
