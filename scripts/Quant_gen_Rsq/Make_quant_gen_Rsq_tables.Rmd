@@ -21,6 +21,157 @@ h2 represents the average heritability across populations after removing the gen
 
 -not possible for cardenolides because there are no families within pops (were pooled by population)
 ## Multi-year models
+### Defense
+```{r}
+# Latex-----
+update(
+    latex_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+latex_mean <- latex %>%
+  dplyr::summarize(Mean = mean(Latex_weight_mg,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_latex <- calc_quantgenvars( 0.086644,
+                   0.079411,
+                   0.387388,
+                   latex_mean,
+                   "Latex exudation")
+
+
+# Herbivory, before flowering: Binomial-----
+
+update(
+    herb_e_bin_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+# residual variance:
+resid_var <- update(
+    herb_e_bin_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+herb_e_bin_mean <- herbivory %>%
+  dplyr::summarize(Mean = mean(Herbivory_mean_early_binary,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_herb_e_bin <- calc_quantgenvars(  1.8027e-04,
+                    2.1094e-05,
+                   resid_var,
+                   herb_e_bin_mean,
+                   "Herbivory before flowering (binary)")
+
+
+# Herbivory, before flowering: quantitative-----
+
+update(
+    herb_e_quant_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+herb_e_quant_mean <- herbivory %>% dplyr::filter(Herbivory_mean_early_binary == 1) %>%
+  dplyr::summarize(Mean = mean(Herbivory_mean_early,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_herb_e_quant <- calc_quantgenvars( 0.076138  ,
+                    0.068185  ,
+                   1.230037 ,
+                   herb_e_quant_mean,
+                   "Herbivory before flowering (quantitative)")
+
+# Herbivory, after flowering: Binomial-----
+
+update(
+    herb_l_bin_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+# residual variance:
+resid_var <- update(
+    herb_l_bin_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+herb_l_bin_mean <- herbivory %>%
+  dplyr::summarize(Mean = mean(Herbivory_mean_late_binary,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_herb_l_bin <- calc_quantgenvars(2.3267e-01,
+                   6.1084e-05,
+                   resid_var,
+                   herb_l_bin_mean,
+                   "Herbivory after flowering (binary)")
+
+
+
+# Herbivory, after flowering: quantitative-----
+
+update(
+    herb_l_quant_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+herb_l_quant_mean <- herbivory %>% dplyr::filter(Herbivory_mean_late_binary == 1) %>%
+  dplyr::summarize(Mean = mean(Herbivory_mean_late,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_herb_l_quant <- calc_quantgenvars( 1.5181e-01 ,
+                   8.5992e-05,
+                  1.2381e+00,
+                   herb_l_quant_mean,
+                   "Herbivory after flowering (quantitative)")
+
+
+# Weevil: Binomial-----
+
+update(
+    weev_bin_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+# residual variance:
+resid_var <- update(
+    weev_bin_mods_best_c[[1]], REML = T) %>%
+    sigma()
+
+weev_bin_mean <- weevil %>%
+  dplyr::summarize(Mean = mean(Scar_binary ,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_weev_bin <- calc_quantgenvars(0.54935944  ,
+                     0.00015261,
+                   resid_var,
+                   weev_bin_mean,
+                   "Weevil damage (binary)")
+
+
+# Weevil damage: quantitative-----
+
+update(
+    weev_quant_mods_best_c[[1]], 
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+weev_quant_mean <- weevil %>%
+  dplyr::filter(Scar_length_cm > 0) %>%
+  dplyr::summarize(Mean = mean(Scar_length_cm,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_weev_quant <- calc_quantgenvars( 0.20088 ,
+                  0.10085 ,
+                 1.05936 ,
+                   weev_quant_mean,
+                   "Weevil damage (quantitative)")
+
+```
+
 ### Reproduction
 ```{r}
 # Flowering success-----
@@ -43,7 +194,7 @@ qg_flsucc <- calc_quantgenvars( 0.70759 ,
                    0.54422 ,
                    resid_var,
                    NA,
-                   "Flowering Success")
+                   "Flowering success")
 
 
 # Mean flowers/inflor -----
@@ -66,7 +217,7 @@ qg_flowers <- calc_quantgenvars(0.085598,
                    0.129033,
                    resid_var,
                    flowers_mean,
-                   "Mean flowers/inflor")
+                   "Flowers per inflorescence")
 
 
 # Mean flower size/inflorescence -----
@@ -108,7 +259,7 @@ qg_fltime <- calc_quantgenvars( 4.8319e-05,
                    1.7015e-01,
                    resid_var,
                    fltime_mean,
-                   "Flowering Duration")
+                   "Flowering duration")
 
 
 # Flowering start -----
@@ -132,7 +283,7 @@ qg_flstart <- calc_quantgenvars(0.148087,
                    0.074724,
                    resid_var,
                    flstart_mean,
-                   "Flowering Start")
+                   "Date of first flower")
 
 
 # Pods -----
@@ -180,7 +331,7 @@ qg_first_pods <- calc_quantgenvars( 0.038666,
                    0.035260,
                    resid_var,
                    first_pods_mean,
-                   "Date of first follicle 2 in")
+                   "Date of first follicle")
 
 
 # Peduncles -----
@@ -204,163 +355,12 @@ qg_peduncles <- calc_quantgenvars( 0.19237 ,
                    0.25009 ,
                    resid_var,
                    peduncles_mean,
-                   "Peduncles (Inflorescences)")
+                   "Inflorescences")
 
 
 ```
 
-### Defense
-```{r}
-# Latex-----
-update(
-    latex_mods_best_c[[1]], 
-    .~. -City_dist, # omitting city_dist
-    REML = T) %>% VarCorr()
-
-latex_mean <- latex %>%
-  dplyr::summarize(Mean = mean(Latex_weight_mg,
-                               na.rm = T)) %>%
-  as.numeric()
-
-qg_latex <- calc_quantgenvars( 0.086644,
-                   0.079411,
-                   0.387388,
-                   latex_mean,
-                   "Latex")
-
-
-# Herbivory, before flowering: Binomial-----
-
-update(
-    herb_e_bin_mods_best_c[[1]], 
-    .~. -City_dist, # omitting city_dist
-    REML = T) %>% VarCorr()
-
-# residual variance:
-resid_var <- update(
-    herb_e_bin_mods_best_c[[1]], REML = T) %>%
-    sigma()
-
-herb_e_bin_mean <- herbivory %>%
-  dplyr::summarize(Mean = mean(Herbivory_mean_early_binary,
-                               na.rm = T)) %>%
-  as.numeric()
-
-qg_herb_e_bin <- calc_quantgenvars(  1.8027e-04,
-                    2.1094e-05,
-                   resid_var,
-                   herb_e_bin_mean,
-                   "Chance of herbivory (before flowering)")
-
-
-# Herbivory, before flowering: quantitative-----
-
-update(
-    herb_e_quant_mods_best_c[[1]], 
-    .~. -City_dist, # omitting city_dist
-    REML = T) %>% VarCorr()
-
-herb_e_quant_mean <- herbivory %>% dplyr::filter(Herbivory_mean_early_binary == 1) %>%
-  dplyr::summarize(Mean = mean(Herbivory_mean_early,
-                               na.rm = T)) %>%
-  as.numeric()
-
-qg_herb_e_quant <- calc_quantgenvars( 0.076138  ,
-                    0.068185  ,
-                   1.230037 ,
-                   herb_e_quant_mean,
-                   "Herbivory (before flowering)")
-
-# Herbivory, after flowering: Binomial-----
-
-update(
-    herb_l_bin_mods_best_c[[1]], 
-    .~. -City_dist, # omitting city_dist
-    REML = T) %>% VarCorr()
-
-# residual variance:
-resid_var <- update(
-    herb_l_bin_mods_best_c[[1]], REML = T) %>%
-    sigma()
-
-herb_l_bin_mean <- herbivory %>%
-  dplyr::summarize(Mean = mean(Herbivory_mean_late_binary,
-                               na.rm = T)) %>%
-  as.numeric()
-
-qg_herb_l_bin <- calc_quantgenvars(2.3267e-01,
-                   6.1084e-05,
-                   resid_var,
-                   herb_l_bin_mean,
-                   "Chance of herbivory (after flowering)")
-
-
-
-# Herbivory, after flowering: quantitative-----
-
-update(
-    herb_l_quant_mods_best_c[[1]], 
-    .~. -City_dist, # omitting city_dist
-    REML = T) %>% VarCorr()
-
-herb_l_quant_mean <- herbivory %>% dplyr::filter(Herbivory_mean_late_binary == 1) %>%
-  dplyr::summarize(Mean = mean(Herbivory_mean_late,
-                               na.rm = T)) %>%
-  as.numeric()
-
-qg_herb_l_quant <- calc_quantgenvars( 1.5181e-01 ,
-                   8.5992e-05,
-                  1.2381e+00,
-                   herb_l_quant_mean,
-                   "Herbivory (after flowering)")
-
-
-# Weevil: Binomial-----
-
-update(
-    weev_bin_mods_best_c[[1]], 
-    .~. -City_dist, # omitting city_dist
-    REML = T) %>% VarCorr()
-
-# residual variance:
-resid_var <- update(
-    weev_bin_mods_best_c[[1]], REML = T) %>%
-    sigma()
-
-weev_bin_mean <- weevil %>%
-  dplyr::summarize(Mean = mean(Scar_binary ,
-                               na.rm = T)) %>%
-  as.numeric()
-
-qg_weev_bin <- calc_quantgenvars(0.54935944  ,
-                     0.00015261,
-                   resid_var,
-                   weev_bin_mean,
-                   "Chance of weevil damage")
-
-
-# Weevil damage: quantitative-----
-
-update(
-    weev_quant_mods_best_c[[1]], 
-    .~. -City_dist, # omitting city_dist
-    REML = T) %>% VarCorr()
-
-weev_quant_mean <- weevil %>%
-  dplyr::filter(Scar_length_cm > 0) %>%
-  dplyr::summarize(Mean = mean(Scar_length_cm,
-                               na.rm = T)) %>%
-  as.numeric()
-
-qg_weev_quant <- calc_quantgenvars( 0.20088 ,
-                  0.10085 ,
-                 1.05936 ,
-                   weev_quant_mean,
-                   "Weevil scar length")
-
-```
-
-### 2021 Herbivores
+### Herbivores
 ```{r}
 # Monarchs-----
 VarCorr(
@@ -372,10 +372,6 @@ resid_var <- update(
     monarch_mods_best_c[[1]], REML = T) %>%
     sigma()
 
-Calc_h2_qst(0.146429,
-            0.069211,
-            resid_var)
-
 monarch_mean <- herbivores %>%
   dplyr::summarize(Mean = mean(Monarch_Quantity_Observed,
                                na.rm = T)) %>%
@@ -385,7 +381,7 @@ qg_monarch <- calc_quantgenvars(0.146429,
                                 0.069211,
                                 resid_var,
                                 monarch_mean,
-                                "D. plexippus")
+                                "D. plexippus abundance")
 
 
 # L. asclepiadis-----
@@ -398,9 +394,6 @@ resid_var <- update(
     asclepiadis_mods_best_c[[1]], REML = T) %>%
     sigma()
 
-Calc_h2_qst(0.31796 ,
-            0.14935 ,
-            resid_var)
 
 lascelp_mean <- herbivores %>%
   dplyr::summarize(Mean = mean(Liriomyza_asclepiadis ,
@@ -411,7 +404,7 @@ qg_lasclep <- calc_quantgenvars(0.31796 ,
             0.14935 ,
             resid_var,
             lascelp_mean,
-            "L. asclepiadis")
+            "L. asclepiadis abundance")
 
 
 # L. clivicollis-----
@@ -424,12 +417,9 @@ resid_var <- update(
     clivicollis_mods_best_c[[1]], REML = T) %>%
     sigma()
 
-Calc_h2_qst(0.00011488,
-            0.30719353,
-            resid_var)
 
-
-clivicoll_mean <- herbivores %>% dplyr::filter(Labidomera_clivicollis < 9) %>% # as in model
+clivicoll_mean <- herbivores %>% 
+  dplyr::filter(Labidomera_clivicollis < 9) %>% # as in model
   dplyr::summarize(Mean = mean(Labidomera_clivicollis  ,
                                na.rm = T)) %>%
   as.numeric()
@@ -438,7 +428,7 @@ qg_clivicoll <- calc_quantgenvars(0.00011488,
             0.30719353,
             resid_var,
             clivicoll_mean,
-            "L. clivicollis")
+            "L. clivicollis abundance")
 ```
 
 ### Growth
@@ -496,7 +486,7 @@ qg_heights_e <- calc_quantgenvars(0.36591,
                                   0.15034 ,
                                   1.12547 ,
                    heights_e_mean,
-                   "Height (before flowering)")
+                   "Height before flowering")
 
 
 # heights, late-----
@@ -515,7 +505,7 @@ qg_heights_l <- calc_quantgenvars(0.49420 ,
                                   0.22338  ,
                                   1.56537  ,
                    heights_l_mean,
-                   "Height (after flowering)")
+                   "Height after flowering")
 
 # RGR-----
 update(
@@ -554,7 +544,7 @@ qg_ramets_e <- calc_quantgenvars( 0.247111,
                              0.080902,
                             resid_var,
                    ramets_e_mean,
-                   "Ramets (before flowering)")
+                   "Ramets before flowering")
 
 # Ramets, late-----
 update(
@@ -576,7 +566,7 @@ qg_ramets_l <- calc_quantgenvars( 0.187996,
                              0.052465,
                             resid_var,
                    ramets_l_mean,
-                   "Ramets (after flowering)")
+                   "Ramets after flowering")
 
 
 # Survival-----
@@ -587,7 +577,7 @@ update(
 
 surv_mean <- survival %>%
   as.data.frame %>%
-  dplyr::summarize(Mean = mean(Dead ,
+  dplyr::summarize(Mean = mean(as.numeric(Dead),
                                na.rm = T)) %>%
   as.numeric()
 
@@ -599,14 +589,23 @@ resid_var <- update(
 qg_survival <- calc_quantgenvars(6.6969e-08,
                    1.3094e-05,
                    resid_var ,
-                   NA, # can't calculate this because it involves dividing by zero
+                   surv_mean,
                    "Mortality")
 ```
 
 ### Combine values into one table and export
 ```{r}
 list(
-  
+
+  # Defense
+  qg_latex,
+  qg_herb_e_bin,
+  qg_herb_e_quant,
+  qg_herb_l_bin,
+  qg_herb_l_quant,
+  qg_weev_bin,
+  qg_weev_quant,
+    
   # Reproduction
   qg_flsucc,
   qg_flowers,
@@ -616,15 +615,6 @@ list(
   qg_pods,
   qg_first_pods,
   qg_peduncles,
-  
-  # Defense
-  qg_latex,
-  qg_herb_e_bin,
-  qg_herb_e_quant,
-  qg_herb_l_bin,
-  qg_herb_l_quant,
-  qg_weev_bin,
-  qg_weev_quant,
   
   # Herbivores
   qg_monarch,
@@ -657,84 +647,257 @@ list(
   theme_box() %>%
   flextable::align(j = 2:4, align = "center", part = "all") %>%
   autofit() %>%
-  save_as_docx(path = here::here("./Figures_Tables/Quant_gen/Quant_gen.docx"))
+  save_as_docx(path = here::here("./Figures_Tables/Quant_gen/Quant_gen_multi_yr_mods.docx"))
 
 ```
 
 ## 1-year models
-### Reproduction
+I have to add in data because 1yr mods imported save formula without actual df names and filtered year, like this: 
+data = mod_allyrs_df %>% dplyr::filter(Year == last_year)
+### Defense
 ```{r}
-# Flowering success-----
+# Latex-----
+# same as multi-yr mods
+
+# Herbivory, before flowering: Binomial-----
+
 update(
-    flsucc_mods_best_c[[1]],
+    def.m2, 
     .~. -City_dist, # omitting city_dist
+    data = herbivory %>% dplyr::filter(Year == 2021),
     REML = T) %>% VarCorr()
 
 # residual variance:
 resid_var <- update(
-     flsucc_mods_best_c[[1]], REML = T) %>%
+    def.m2,
+    data = herbivory %>% dplyr::filter(Year == 2021),
+    REML = T) %>%
     sigma()
 
+herb_e_bin_mean <- herbivory %>%
+  dplyr::filter(Year == 2021) %>%
+  dplyr::summarize(Mean = mean(Herbivory_mean_early_binary,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_1yr_herb_e_bin <- calc_quantgenvars(0.10383492,
+                   0.00025825,
+                   resid_var,
+                   herb_e_bin_mean,
+                   "Herbivory before flowering (binary)")
+
+
+# Herbivory, before flowering: quantitative-----
+
+update(
+    def.m3,
+    .~. -City_dist, # omitting city_dist
+    data = herbivory %>%
+      dplyr::filter(Year == "2021" &
+                      Herbivory_mean_early_binary == 1),
+    REML = T) %>% VarCorr()
+
+herb_e_quant_mean <- herbivory %>%
+  dplyr::filter(Year == "2021" & Herbivory_mean_early_binary == 1) %>%
+  dplyr::summarize(Mean = mean(Herbivory_mean_early,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_1yr_herb_e_quant <- calc_quantgenvars(3.3249e-09,
+                   2.5094e-04,
+                   1.3468e+00 ,
+                   herb_e_quant_mean,
+                   "Herbivory before flowering (quantitative)")
+
+# Herbivory, after flowering: Binomial-----
+
+update(
+    def.m4, 
+    .~. -City_dist, # omitting city_dist
+    data = herbivory %>% dplyr::filter(Year == "2021"),
+    REML = T) %>% VarCorr()
+
+# residual variance:
+resid_var <- update(
+    def.m4,
+    data = herbivory %>% dplyr::filter(Year == "2021"),
+    REML = T) %>%
+    sigma()
+
+herb_l_bin_mean <- herbivory %>%
+  dplyr::filter(Year == "2021") %>%
+  dplyr::summarize(Mean = mean(Herbivory_mean_late_binary,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_1yr_herb_l_bin <- calc_quantgenvars(
+                   0.64569141,
+                   0.00011296,
+                   resid_var,
+                   herb_l_bin_mean,
+                   "Herbivory after flowering (binary)")
+
+
+# Herbivory, after flowering: quantitative-----
+
+update(
+    def.m5,
+    .~. -City_dist, # omitting city_dist
+    data = herbivory %>%
+      dplyr::filter(Year == "2021" &
+                      Herbivory_mean_late_binary == 1),
+    REML = T) %>% VarCorr()
+
+herb_l_quant_mean <- herbivory %>% 
+  dplyr::filter(Year == "2021" & Herbivory_mean_late_binary == 1) %>%
+  dplyr::summarize(Mean = mean(Herbivory_mean_late,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_1yr_herb_l_quant <- calc_quantgenvars(1.7105e-01 ,
+                  6.8415e-05,
+                  1.1502e+00,
+                   herb_l_quant_mean,
+                   "Herbivory after flowering (quantitative)")
+
+
+# Weevil: Binomial-----
+
+update(
+    def.m6, 
+    .~. -City_dist, # omitting city_dist
+    data = weevil %>% dplyr::filter(Year == 2021),
+    REML = T) %>% VarCorr()
+
+# residual variance:
+resid_var <- update(
+    def.m6, 
+    data = weevil %>% dplyr::filter(Year == 2021),
+    REML = T) %>%
+    sigma()
+
+weev_bin_mean <- weevil %>%
+  dplyr::filter(Year == 2021) %>%
+  dplyr::summarize(Mean = mean(Scar_binary ,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_1yr_weev_bin <- calc_quantgenvars(0.5139583  ,
+                   0.0001328,
+                   resid_var,
+                   weev_bin_mean,
+                   "Weevil damage (binary)")
+
+
+# Weevil damage: quantitative-----
+
+update(
+    def.m7, 
+    .~. -City_dist, # omitting city_dist
+    data = weevil %>% dplyr::filter(Year == "2021" &
+                                   Scar_length_cm > 0),
+    REML = T) %>% VarCorr()
+
+weev_quant_mean <- weevil %>%
+  dplyr::filter(Year == "2021" & Scar_length_cm > 0) %>%
+  dplyr::summarize(Mean = mean(Scar_length_cm,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_1yr_weev_quant <- calc_quantgenvars( 0.20666  ,
+                  0.15005,
+                  1.00045,
+                   weev_quant_mean,
+                   "Weevil damage (quantitative)")
+
+```
+
+### Reproduction
+```{r}
+# Flowering success-----
+update(
+    repr.m1,
+    .~. -City_dist, # omitting city_dist
+    data = reproduc %>% dplyr::filter(Year == 2022),
+    REML = T) %>% VarCorr()
+
+# residual variance:
+resid_var <- update(
+    repr.m1,
+    data = reproduc %>% dplyr::filter(Year == 2022),
+    REML = T) %>% sigma()
+
 flsucc_mean <- reproduc %>%
+  dplyr::filter(Year == 2022) %>%
   dplyr::summarize(Mean = mean(Flowered ,
                                na.rm = T)) %>%
   as.numeric() # can't calculate this because it's 0s x 1s... will be 0
 
-qg_flsucc <- calc_quantgenvars( 0.70759 ,
-                   0.54422 ,
+qg_1yr_flsucc <- calc_quantgenvars(
+                   0.25975  ,
+                   0.51146  ,
                    resid_var,
                    NA,
-                   "Flowering Success")
+                   "Flowering success")
 
 
 # Mean flowers/inflor -----
 update(
-    flowers_mods_best_c[[1]],
+    repr.m2,
     .~. -City_dist, # omitting city_dist
+    data = flowering %>% dplyr::filter(Year == 2022),
     REML = T) %>% VarCorr()
 
 flowers_mean <- flowering %>%
+  dplyr::filter(Year == 2022) %>%
   dplyr::summarize(Mean = mean(mean_flower_count ,
                                na.rm = T)) %>%
   as.numeric()
 
 # residual variance:
 resid_var <- update(
-     flowers_mods_best_c[[1]], REML = T) %>%
+    repr.m2,
+    data = flowering %>% dplyr::filter(Year == 2022),
+    REML = T) %>%
     sigma()
 
-qg_flowers <- calc_quantgenvars(0.085598,
-                   0.129033,
+qg_1yr_flowers <- calc_quantgenvars(
+                   5.1344e-05,
+                   1.3615e-01,
                    resid_var,
                    flowers_mean,
-                   "Mean flowers/inflor")
+                   "Flowers per Inflorescence")
 
 
 # Mean flower size/inflorescence -----
 update(
-    flsize_mods_best_c[[1]],
+    repr.m3,
     .~. -City_dist, # omitting city_dist
+    data = flowering %>% dplyr::filter(Year == 2022),
     REML = T) %>% VarCorr()
 
 flsize_mean <- flowering %>%
+  dplyr::filter(Year == 2022) %>%
   dplyr::summarize(Mean = mean(Overall_mean ,
                                na.rm = T)) %>%
   as.numeric()
 
-qg_flsize <- calc_quantgenvars( 2.1742  ,
-                   1.7583  ,
-                   4.6466  ,
+qg_1yr_flsize <- calc_quantgenvars( 1.0523    ,
+                   1.3941    ,
+                   4.8971    ,
                    flsize_mean,
                    "Flower size")
 
 
 # Flowering time -----
 update(
-    fltime_mods_best_c[[1]],
+    repr.m4,
     .~. -City_dist, # omitting city_dist
+    data = flowering %>% dplyr::filter(Year == 2022),
     REML = T) %>% VarCorr()
 
 fltime_mean <- flowering %>%
+  dplyr::filter(Year == 2022) %>%
   dplyr::summarize(Mean = mean(flowering_time_num ,
                                na.rm = T)) %>%
   as.numeric()
@@ -742,23 +905,28 @@ fltime_mean <- flowering %>%
 
 # residual variance:
 resid_var <- update(
-     fltime_mods_best_c[[1]], REML = T) %>%
+    repr.m4,
+    data = flowering %>% dplyr::filter(Year == 2022),
+    REML = T) %>%
     sigma()
 
-qg_fltime <- calc_quantgenvars( 4.8319e-05,
-                   1.7015e-01,
+qg_1yr_fltime <- calc_quantgenvars(
+                   2.1588e-05,
+                   4.8254e-05,
                    resid_var,
                    fltime_mean,
-                   "Flowering Duration")
+                   "Flowering duration")
 
 
 # Flowering start -----
 update(
-    flstart_mods_best_c[[1]],
+    repr.m5,
     .~. -City_dist, # omitting city_dist
+    data = flowering %>% dplyr::filter(Year == 2022),
     REML = T) %>% VarCorr()
 
 flstart_mean <- flowering %>%
+  dplyr::filter(Year == 2022) %>%
   dplyr::summarize(Mean = mean(Julian_oldest_inflor ,
                                na.rm = T)) %>%
   as.numeric()
@@ -766,23 +934,27 @@ flstart_mean <- flowering %>%
 
 # residual variance:
 resid_var <- update(
-     flstart_mods_best_c[[1]], REML = T) %>%
+    repr.m5, 
+    data = flowering %>% dplyr::filter(Year == 2022),
+    REML = T) %>%
     sigma()
 
-qg_flstart <- calc_quantgenvars(0.148087,
-                   0.074724,
+qg_1yr_flstart <- calc_quantgenvars(1.4040e-01,
+                   2.5568e-05,
                    resid_var,
                    flstart_mean,
-                   "Flowering Start")
+                   "Date of first flower")
 
 
 # Pods -----
 update(
-    pods_mods_best_c[[1]],
+    repr.m6,
     .~. -City_dist, # omitting city_dist
+    data = flowering %>% dplyr::filter(Year == 2022),
     REML = T) %>% VarCorr()
 
 pods_mean <- flowering %>%
+  dplyr::filter(Year == 2022) %>%
   dplyr::summarize(Mean = mean(Pods,
                                na.rm = T)) %>%
   as.numeric()
@@ -790,11 +962,13 @@ pods_mean <- flowering %>%
 
 # residual variance:
 resid_var <- update(
-     pods_mods_best_c[[1]], REML = T) %>%
+    repr.m6,
+    data = flowering %>% dplyr::filter(Year == 2022),
+    REML = T) %>%
     sigma()
 
-qg_pods <- calc_quantgenvars( 0.18623 ,
-                   0.13145 ,
+qg_1yr_pods <- calc_quantgenvars(5.1750e-05,
+                   6.5619e-05 ,
                    resid_var,
                    pods_mean,
                    "Follicles")
@@ -802,11 +976,13 @@ qg_pods <- calc_quantgenvars( 0.18623 ,
 
 # Date of first mature pod -----
 update(
-    first_pods_mods_best_c[[1]],
+    repr.m7,
     .~. -City_dist, # omitting city_dist
+    data = flowering %>% dplyr::filter(Year == 2022),
     REML = T) %>% VarCorr()
 
 first_pods_mean <- flowering %>%
+  dplyr::filter(Year == 2022) %>%
   dplyr::summarize(Mean = mean(Julian_first_follicle,
                                na.rm = T)) %>%
   as.numeric()
@@ -814,23 +990,27 @@ first_pods_mean <- flowering %>%
 
 # residual variance:
 resid_var <- update(
-     first_pods_mods_best_c[[1]], REML = T) %>%
+    repr.m7,
+    data = flowering %>% dplyr::filter(Year == 2022),
+    REML = T) %>%
     sigma()
 
-qg_first_pods <- calc_quantgenvars( 0.038666,
-                   0.035260,
+qg_1yr_first_pods <- calc_quantgenvars( 0.01910748,
+                   0.00002707,
                    resid_var,
                    first_pods_mean,
-                   "Date of first follicle 2 in")
+                   "Date of first follicle")
 
 
 # Peduncles -----
 update(
-    peduncles_mods_best_c[[1]],
+    repr.m8,
     .~. -City_dist, # omitting city_dist
+    data = flowering %>% dplyr::filter(Year == 2022),
     REML = T) %>% VarCorr()
 
 peduncles_mean <- flowering %>%
+  dplyr::filter(Year == 2022) %>%
   dplyr::summarize(Mean = mean(Peduncles,
                                na.rm = T)) %>%
   as.numeric()
@@ -838,329 +1018,255 @@ peduncles_mean <- flowering %>%
 
 # residual variance:
 resid_var <- update(
-     peduncles_mods_best_c[[1]], REML = T) %>%
+    repr.m8,
+    data = flowering %>% dplyr::filter(Year == 2022),
+    REML = T) %>%
     sigma()
 
-qg_peduncles <- calc_quantgenvars( 0.19237 ,
-                   0.25009 ,
+qg_1yr_peduncles <- calc_quantgenvars(6.5948e-05,
+                   2.2317e-01 ,
                    resid_var,
                    peduncles_mean,
-                   "Peduncles (Inflorescences)")
+                   "Inflorescences")
 
 
 ```
 
-### Defense
+### Herbivores
 ```{r}
-# Latex-----
-update(
-    latex_mods_best_c[[1]], 
-    .~. -City_dist, # omitting city_dist
-    REML = T) %>% VarCorr()
-
-latex_mean <- latex %>%
-  dplyr::summarize(Mean = mean(Latex_weight_mg,
-                               na.rm = T)) %>%
-  as.numeric()
-
-qg_latex <- calc_quantgenvars( 0.086644,
-                   0.079411,
-                   0.387388,
-                   latex_mean,
-                   "Latex")
-
-
-# Herbivory, before flowering: Binomial-----
-
-update(
-    herb_e_bin_mods_best_c[[1]], 
-    .~. -City_dist, # omitting city_dist
-    REML = T) %>% VarCorr()
+# Monarchs-----
+VarCorr(
+  update(
+    herb.m1, 
+     .~. -City_dist, # omitting city_dist
+    data = herbivores %>% dplyr::filter(Year == 2021),
+    REML = T))
 
 # residual variance:
 resid_var <- update(
-    herb_e_bin_mods_best_c[[1]], REML = T) %>%
+    herb.m1,
+    data = herbivores %>% dplyr::filter(Year == 2021),
+    REML = T) %>%
     sigma()
 
-herb_e_bin_mean <- herbivory %>%
-  dplyr::summarize(Mean = mean(Herbivory_mean_early_binary,
+monarch_mean <- herbivores %>% 
+  dplyr::filter(Year == 2021) %>%
+  dplyr::summarize(Mean = mean(Monarch_Quantity_Observed,
                                na.rm = T)) %>%
   as.numeric()
 
-qg_herb_e_bin <- calc_quantgenvars(  1.8027e-04,
-                    2.1094e-05,
-                   resid_var,
-                   herb_e_bin_mean,
-                   "Chance of herbivory (before flowering)")
+qg_1yr_monarch <- calc_quantgenvars(0.17212 ,
+                                0.16350 ,
+                                resid_var,
+                                monarch_mean,
+                                "D. plexippus abundance")
 
 
-# Herbivory, before flowering: quantitative-----
-
-update(
-    herb_e_quant_mods_best_c[[1]], 
-    .~. -City_dist, # omitting city_dist
-    REML = T) %>% VarCorr()
-
-herb_e_quant_mean <- herbivory %>% dplyr::filter(Herbivory_mean_early_binary == 1) %>%
-  dplyr::summarize(Mean = mean(Herbivory_mean_early,
-                               na.rm = T)) %>%
-  as.numeric()
-
-qg_herb_e_quant <- calc_quantgenvars( 0.076138  ,
-                    0.068185  ,
-                   1.230037 ,
-                   herb_e_quant_mean,
-                   "Herbivory (before flowering)")
-
-# Herbivory, after flowering: Binomial-----
-
-update(
-    herb_l_bin_mods_best_c[[1]], 
-    .~. -City_dist, # omitting city_dist
-    REML = T) %>% VarCorr()
+# L. asclepiadis-----
+VarCorr(
+  update(
+    herb.m2, 
+     .~. -City_dist, # omitting city_dist
+    data = herbivores %>% dplyr::filter(Year == 2021),
+    REML = T))
 
 # residual variance:
 resid_var <- update(
-    herb_l_bin_mods_best_c[[1]], REML = T) %>%
+    herb.m2,
+    data = herbivores %>% dplyr::filter(Year == 2021),
+    REML = T) %>%
     sigma()
 
-herb_l_bin_mean <- herbivory %>%
-  dplyr::summarize(Mean = mean(Herbivory_mean_late_binary,
+
+lascelp_mean <- herbivores %>% 
+  dplyr::filter(Year == 2021) %>%
+  dplyr::summarize(Mean = mean(Liriomyza_asclepiadis ,
                                na.rm = T)) %>%
   as.numeric()
 
-qg_herb_l_bin <- calc_quantgenvars(2.3267e-01,
-                   6.1084e-05,
-                   resid_var,
-                   herb_l_bin_mean,
-                   "Chance of herbivory (after flowering)")
+qg_1yr_lasclep <- calc_quantgenvars(0.31791  ,
+            0.18936  ,
+            resid_var,
+            lascelp_mean,
+            "L. asclepiadis abundance")
 
 
-
-# Herbivory, after flowering: quantitative-----
-
-update(
-    herb_l_quant_mods_best_c[[1]], 
-    .~. -City_dist, # omitting city_dist
-    REML = T) %>% VarCorr()
-
-herb_l_quant_mean <- herbivory %>% dplyr::filter(Herbivory_mean_late_binary == 1) %>%
-  dplyr::summarize(Mean = mean(Herbivory_mean_late,
-                               na.rm = T)) %>%
-  as.numeric()
-
-qg_herb_l_quant <- calc_quantgenvars( 1.5181e-01 ,
-                   8.5992e-05,
-                  1.2381e+00,
-                   herb_l_quant_mean,
-                   "Herbivory (after flowering)")
-
-
-# Weevil: Binomial-----
-
-update(
-    weev_bin_mods_best_c[[1]], 
-    .~. -City_dist, # omitting city_dist
-    REML = T) %>% VarCorr()
+# L. clivicollis-----
+VarCorr(
+  update(
+    herb.m3, 
+     .~. -City_dist, # omitting city_dist
+    data = herbivores %>% dplyr::filter(Year == 2021),
+    REML = T))
 
 # residual variance:
 resid_var <- update(
-    weev_bin_mods_best_c[[1]], REML = T) %>%
+    herb.m3,
+    data = herbivores %>% dplyr::filter(Year == 2021),
+    REML = T) %>%
     sigma()
 
-weev_bin_mean <- weevil %>%
-  dplyr::summarize(Mean = mean(Scar_binary ,
+
+clivicoll_mean <- herbivores %>% 
+  dplyr::filter(Year == 2021 & Labidomera_clivicollis < 9) %>%
+  dplyr::summarize(Mean = mean(Labidomera_clivicollis  ,
                                na.rm = T)) %>%
   as.numeric()
 
-qg_weev_bin <- calc_quantgenvars(0.54935944  ,
-                     0.00015261,
-                   resid_var,
-                   weev_bin_mean,
-                   "Chance of weevil damage")
-
-
-# Weevil damage: quantitative-----
-
-update(
-    weev_quant_mods_best_c[[1]], 
-    .~. -City_dist, # omitting city_dist
-    REML = T) %>% VarCorr()
-
-weev_quant_mean <- weevil %>%
-  dplyr::filter(Scar_length_cm > 0) %>%
-  dplyr::summarize(Mean = mean(Scar_length_cm,
-                               na.rm = T)) %>%
-  as.numeric()
-
-qg_weev_quant <- calc_quantgenvars( 0.20088 ,
-                  0.10085 ,
-                 1.05936 ,
-                   weev_quant_mean,
-                   "Weevil scar length")
-
+qg_1yr_clivicoll <- calc_quantgenvars(9.7757e-05,
+            4.1090e-01,
+            resid_var,
+            clivicoll_mean,
+            "L. clivicollis abundance")
 ```
 
-### 2021 Herbivores (same as multi-year mods so leaving empty)
+
 ### Growth
 ```{r}
 # LDMC-----
-update(
-    ldmc_mods_best_c[[1]], 
-    .~. -City_dist, # omitting city_dist
-    REML = T) %>% VarCorr()
-
-ldmc_mean <- sla_ldmc %>%
-  dplyr::filter(LDMC < 1) %>% # as done in model
-  dplyr::summarize(Mean = mean(LDMC,
-                               na.rm = T)) %>%
-  as.numeric()
-
-qg_ldmc <- calc_quantgenvars( 9.4956e-06,
-                   2.2071e-05,
-                   0.387388,
-                   5.8581e-02,
-                   "LDMC")
+# same as multi-yr mods (only 1 year)
 
 
 # SLA-----
-update(
-    sla_mods_best_c[[1]], 
-    .~. -City_dist, # omitting city_dist
-    REML = T) %>% VarCorr()
-
-sla_mean <- sla_ldmc %>%
-  dplyr::summarize(Mean = mean(SLA,
-                               na.rm = T)) %>%
-  as.numeric()
-
-qg_sla <- calc_quantgenvars(4.5386e-06,
-                   9.5195e-06,
-                    4.0241e-01,
-                   sla_mean,
-                   "SLA")
-
+# same as multi-yr mods (only 1 year)
 
 # heights, early-----
 
 update(
-    heights_early_mods_best_c[[1]], 
+    grow.m3, 
     .~. -City_dist, # omitting city_dist
+    data = heights %>% dplyr::filter(Year == 2021),
     REML = T) %>% VarCorr()
 
 heights_e_mean <- heights %>%
+  dplyr::filter(Year == 2021) %>%
   dplyr::summarize(Mean = mean(Total_Height_early,
                                na.rm = T)) %>%
   as.numeric()
 
-qg_heights_e <- calc_quantgenvars(0.36591,
-                                  0.15034 ,
-                                  1.12547 ,
+qg_1yr_heights_e <- calc_quantgenvars(0.51437 ,
+                                  0.18437  ,
+                                  1.60275  ,
                    heights_e_mean,
-                   "Height (before flowering)")
+                   "Height before flowering")
 
 
 # heights, late-----
 
 update(
-    heights_late_mods_best_c[[1]], 
+    grow.m4, 
     .~. -City_dist, # omitting city_dist
+    data = heights %>% dplyr::filter(Year == 2021),
     REML = T) %>% VarCorr()
 
-heights_l_mean <- heights %>%
+heights_l_mean <- heights %>% 
+  dplyr::filter(Year == 2021) %>%
   dplyr::summarize(Mean = mean(Total_Height_late,
                                na.rm = T)) %>%
   as.numeric()
 
-qg_heights_l <- calc_quantgenvars(0.49420 ,
-                                  0.22338  ,
-                                  1.56537  ,
+qg_1yr_heights_l <- calc_quantgenvars(0.55987  ,
+                                  0.26137   ,
+                                  2.08706   ,
                    heights_l_mean,
-                   "Height (after flowering)")
+                   "Height after flowering")
 
 # RGR-----
 update(
-    rgr_mods_best_c[[1]], 
+   grow.m5, 
     .~. -City_dist, # omitting city_dist
+    data = heights %>% dplyr::filter(Year == 2021),
     REML = T) %>% VarCorr()
 
-rgr_mean <- heights %>%
+rgr_mean <- heights %>% 
+  dplyr::filter(Year == 2021) %>%
   dplyr::summarize(Mean = mean(rel_growth_rate,
                                na.rm = T)) %>%
   as.numeric()
  
-qg_rgr <- calc_quantgenvars( 3.8967e-06 ,
-                             2.6174e-03 ,
-                            5.5405e-02,
+qg_1yr_rgr <- calc_quantgenvars(6.2247e-03,
+                             4.4362e-06 ,
+                            6.0391e-02,
                    rgr_mean,
                    "Relative growth rate")
 
 # Ramets, early-----
 update(
-    ramets_early_mods_best_c[[1]], 
+    grow.m6, 
     .~. -City_dist, # omitting city_dist
+    data = heights %>% dplyr::filter(Year == 2021),
     REML = T) %>% VarCorr()
 
-ramets_e_mean <- heights %>%
+ramets_e_mean <- heights %>% 
+  dplyr::filter(Year == 2021) %>%
   dplyr::summarize(Mean = mean(Ramets_early,
                                na.rm = T)) %>%
   as.numeric()
 
 # residual variance:
 resid_var <- update(
-    ramets_early_mods_best_c[[1]], REML = T) %>%
+    grow.m6,
+    data = heights %>% dplyr::filter(Year == 2021),
+    REML = T) %>%
     sigma()
  
-qg_ramets_e <- calc_quantgenvars( 0.247111,
-                             0.080902,
+qg_1yr_ramets_e <- calc_quantgenvars( 0.296370,
+                             0.055885,
                             resid_var,
                    ramets_e_mean,
-                   "Ramets (before flowering)")
+                   "Ramets before flowering")
 
 # Ramets, late-----
 update(
-    ramets_late_mods_best_c[[1]], 
-    .~. -City_dist, # omitting city_dist
-    REML = T) %>% VarCorr()
+  grow.m7,
+  .~. -City_dist, # omitting city_dist
+  data = heights %>% dplyr::filter(Year == 2021),
+  REML = T) %>% VarCorr()
 
-ramets_l_mean <- heights %>%
+ramets_l_mean <- heights %>% 
+  dplyr::filter(Year == 2021) %>%
   dplyr::summarize(Mean = mean(Ramets_late,
                                na.rm = T)) %>%
   as.numeric()
 
 # residual variance:
 resid_var <- update(
-    ramets_late_mods_best_c[[1]], REML = T) %>%
+    grow.m7,
+    data = heights %>% dplyr::filter(Year == 2021),
+    REML = T) %>%
     sigma()
  
-qg_ramets_l <- calc_quantgenvars( 0.187996,
-                             0.052465,
+qg_1yr_ramets_l <- calc_quantgenvars( 0.272657,
+                             0.072276,
                             resid_var,
                    ramets_l_mean,
-                   "Ramets (after flowering)")
+                   "Ramets after flowering")
 
 
 # Survival-----
 update(
-    mortality_mods_best_c[[1]], 
+    grow.m8, 
     .~. -City_dist, # omitting city_dist
+    data = survival %>% dplyr::filter(Year == 2022),
     REML = T) %>% VarCorr()
 
 surv_mean <- survival %>%
-  as.data.frame %>%
-  dplyr::summarize(Mean = mean(Dead ,
+  dplyr::filter(Year == 2022) %>%
+  dplyr::summarize(Mean = mean(as.numeric(Dead),
                                na.rm = T)) %>%
   as.numeric()
 
 # residual variance:
 resid_var <- update(
-     mortality_mods_best_c[[1]], REML = T) %>%
+     grow.m8,
+     data = survival %>% dplyr::filter(Year == 2022),
+     REML = T) %>%
     sigma()
 
-qg_survival <- calc_quantgenvars(6.6969e-08,
-                   1.3094e-05,
+qg_1yr_survival <- calc_quantgenvars(0.32267 ,
+                   0.25963,
                    resid_var ,
-                   NA, # can't calculate this because it involves dividing by zero
+                   surv_mean,
                    "Mortality")
 ```
 
@@ -1168,39 +1274,39 @@ qg_survival <- calc_quantgenvars(6.6969e-08,
 ```{r}
 list(
   
-  # Reproduction
-  qg_flsucc,
-  qg_flowers,
-  qg_flsize,
-  qg_fltime,
-  qg_flstart,
-  qg_pods,
-  qg_first_pods,
-  qg_peduncles,
-  
   # Defense
-  qg_latex,
-  qg_herb_e_bin,
-  qg_herb_e_quant,
-  qg_herb_l_bin,
-  qg_herb_l_quant,
-  qg_weev_bin,
-  qg_weev_quant,
+  qg_latex, # same as multi-yr mods (only 1 year)
+  qg_1yr_herb_e_bin,
+  qg_1yr_herb_e_quant,
+  qg_1yr_herb_l_bin,
+  qg_1yr_herb_l_quant,
+  qg_1yr_weev_bin,
+  qg_1yr_weev_quant,
+  
+  # Reproduction
+  qg_1yr_flsucc,
+  qg_1yr_flowers,
+  qg_1yr_flsize,
+  qg_1yr_fltime,
+  qg_1yr_flstart,
+  qg_1yr_pods,
+  qg_1yr_first_pods,
+  qg_1yr_peduncles,
   
   # Herbivores
-  qg_monarch,
-  qg_lasclep,
-  qg_clivicoll,
+  qg_1yr_monarch, 
+  qg_1yr_lasclep, 
+  qg_1yr_clivicoll,
   
   # Growth
-  qg_ldmc,
-  qg_sla,
-  qg_heights_e,
-  qg_heights_l,
-  qg_rgr,
-  qg_ramets_e,
-  qg_ramets_l,
-  qg_survival
+  qg_ldmc, # same as multi-yr mods (only 1 year)
+  qg_sla, # same as multi-yr mods (only 1 year)
+  qg_1yr_heights_e,
+  qg_1yr_heights_l,
+  qg_1yr_rgr,
+  qg_1yr_ramets_e,
+  qg_1yr_ramets_l,
+  qg_1yr_survival
                   ) %>% 
   bind_rows() %>%
   dplyr::mutate_at(2:4, round, 3) %>%
@@ -1218,7 +1324,7 @@ list(
   theme_box() %>%
   flextable::align(j = 2:4, align = "center", part = "all") %>%
   autofit() %>%
-  save_as_docx(path = here::here("./Figures_Tables/Quant_gen/Quant_gen.docx"))
+  save_as_docx(path = here::here("./Figures_Tables/Quant_gen/Quant_gen_1yrmods.docx"))
 
 ```
 
