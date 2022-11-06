@@ -222,42 +222,6 @@ clivicollis_urbsubs_02_pred <- ggeffects::ggpredict(clivicollis_mods_best_u[[2]]
 ```
 
 # Create plots
-## first, create variable associated with replicated aesthetics of figs
-```{r}
-# Gradient figs
-rep_geoms <- c(geom_smooth(aes(x = x,
-                    y = predicted),
-                color = "#66a182",
-                size = 1,
-                se = F),
-    geom_ribbon(aes(x = x,
-                    ymin = predicted - std.error,
-                    ymax = predicted + std.error),
-                fill = "#66a182",
-                alpha = 0.3))
-
-# Transect figs
-rep_geoms2 <- c(geom_smooth(
-  aes(
-    x = x,
-    y = predicted,
-    color = group),
-  size = 1,
-  se = F),
-  geom_ribbon(aes(
-    x = x,
-    ymin = predicted - std.error,
-    ymax = predicted + std.error,
-    fill = group),
-    alpha = 0.3),
-  scale_colour_brewer(labels = c("Corridor",
-                                 "Non-Corridor"),
-                      palette = "Set2"),
-  scale_fill_brewer(labels = c("Corridor",
-                               "Non-Corridor"),
-                    palette = "Set2"))
-```
-
 ## Import herbivore images
 ```{r}
 monarch_img <- readPNG("scripts/Create_regression_figs/herbivore_images/D_plexippus_phylopic.png") %>%
@@ -278,11 +242,11 @@ ggpred_Q1.citydist_monarch <-
 ggplot(monarch_gradient_01_pred) +
   annotation_custom(monarch_img,
                     xmin=60, xmax=70,
-                    ymin=0.7, ymax=0.9) +
+                    ymin=0.73, ymax=0.8) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
        y = expression(paste(italic(" Danaus plexippus"), " Abundance"))) +
-  ylim(NA, 0.85) +
+  ylim(NA, 0.8) +
   theme_1() +
   
 # adding stats from ANOVA
@@ -302,11 +266,11 @@ ggpred_Q1.citydist_asclepiadis <-
 ggplot(asclepiadis_gradient_01_pred) +
   annotation_custom(asclepiadis_img,
                     xmin=60, xmax=70,
-                    ymin=8.6, ymax=9) +
+                    ymin=10.3, ymax=11) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
        y = expression(paste(italic(" Liriomyza asclepiadis"), "Abundance "))) +
-  ylim(7,9) +
+  ylim(6,11) +
   theme_1() +
   
 # adding stats from ANOVA
@@ -326,11 +290,11 @@ ggpred_Q1.citydist_clivicollis <-
 ggplot(clivicollis_gradient_01_pred) +
   annotation_custom(clivicollis_img,
                     xmin=60, xmax=70,
-                    ymin=0.7, ymax=1) +
+                    ymin=0.085, ymax=0.1) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
        y = expression(paste(italic(" Liriomyza clivicollis"), "Abundance "))) +
-   ylim(-1, 1) +
+   ylim(0, 0.1) +
   theme_1() +
   
 # adding stats from ANOVA
@@ -351,11 +315,11 @@ ggpred_Q1.usc_monarch <-
 ggplot(monarch_gradient_02_pred) +
   annotation_custom(monarch_img,
                     xmin=3, xmax=4,
-                    ymin=0.8, ymax=1) +
+                    ymin=0.68, ymax=0.75) +
   rep_geoms +
   labs(x = "Urbanization Score",
        y = expression(paste(italic(" Danaus plexippus"), " Abundance"))) +
-  ylim(0,1) +
+  ylim(NA, 0.75) +
   xlim(4, -4) +
   theme_1() +
   
@@ -376,16 +340,16 @@ ggpred_Q1.usc_asclepiadis <-
 ggplot(asclepiadis_gradient_02_pred) +
   annotation_custom(asclepiadis_img,
                     xmin=3, xmax=4,
-                    ymin=8.2, ymax=8.5) +
+                    ymin=9.6, ymax=10.2) +
   rep_geoms +
   labs(x = "Urbanization Score",
        y = expression(paste(italic(" Liriomyza asclepiadis"), "Abundance "))) +
-  ylim(7,8.5) +
+  ylim(6,10.2) +
     xlim(4, -4) +
   theme_1() +
   
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.07,
                     label = paste0(" Urb. Score: p = ", tidy_anova(asclepiadis_mods_best_u[[1]]) %>%
 dplyr::filter(Predictor == "Urbanization Score") %>%
 dplyr::select(p))),
@@ -400,11 +364,11 @@ ggpred_Q1.usc_clivicollis <-
 ggplot(clivicollis_gradient_02_pred) +
   annotation_custom(clivicollis_img,
                     xmin=3, xmax=4,
-                    ymin=0.7, ymax=1) +
+                    ymin=0.085, ymax=0.1) +
   rep_geoms +
   labs(x = "Urbanization Score",
        y = expression(paste(italic(" Liriomyza clivicollis"), "Abundance "))) +
-  ylim(-1, 1) +
+  ylim(0, 0.1) +
     xlim(4, -4) +
   theme_1() +
   
@@ -433,12 +397,12 @@ ggpred_Q2.citydist_monarch <-
 ggplot(monarch_urbsubs_01_pred) +
     annotation_custom(monarch_img,
                     xmin=28, xmax=32,
-                    ymin=0.8, ymax=1) +
+                    ymin=0.9, ymax=1) +
   labs(x = "Distance to Urban Center (km)",
        y = expression(paste(italic(" Danaus plexippus"), " Abundance")),
        color = "Transect",
        fill = "Transect") +
-  ylim(0, 1) +
+  ylim(NA, 1) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -470,12 +434,12 @@ ggpred_Q2.citydist_asclepiadis <-
 ggplot(asclepiadis_urbsubs_01_pred) +
     annotation_custom(asclepiadis_img,
                     xmin=28, xmax=32,
-                    ymin=8.7, ymax=9) +
+                    ymin=11, ymax=12) +
   labs(x = "Distance to Urban Center (km)",
               y = expression(atop(paste(italic("Liriomyza asclepiadis")), "Abundance ")),
        color = "Transect",
        fill = "Transect") +
-  ylim(6,9) +
+  ylim(5,12) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -507,12 +471,12 @@ ggpred_Q2.citydist_clivicollis <-
 ggplot(clivicollis_urbsubs_01_pred) +
       annotation_custom(clivicollis_img,
                     xmin=28, xmax=32,
-                    ymin=0.8, ymax=1) +
+                    ymin=0.22, ymax=0.25) +
   labs(x = "Distance to Urban Center (km)",
        y = expression(atop(paste(italic("Labidomera clivicollis "), "Presence"))),
        color = "Transect",
        fill = "Transect") +
-  ylim(-1,1) +
+  ylim(NA,0.25) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -545,12 +509,12 @@ ggpred_Q2.usc_monarch <-
 ggplot(monarch_urbsubs_02_pred) +
     annotation_custom(monarch_img,
                     xmin=1, xmax=2,
-                    ymin=0.8, ymax=1) +
+                    ymin=0.9, ymax=1) +
   labs(x = "Urbanization Score",
        y = expression(paste(italic(" Danaus plexippus"), " Abundance")),
        color = "Transect",
        fill = "Transect") +
-  ylim(0, 1) +
+  ylim(NA, 1) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
@@ -582,12 +546,12 @@ ggpred_Q2.usc_asclepiadis <-
 ggplot(asclepiadis_urbsubs_02_pred) +
     annotation_custom(asclepiadis_img,
                     xmin=1, xmax=2,
-                    ymin=8.7, ymax=9) +
+                    ymin=11, ymax=12) +
   labs(x = "Urbanization Score",
               y = expression(atop(paste(italic("Liriomyza asclepiadis")), "Abundance ")),
        color = "Transect",
        fill = "Transect") +
-  ylim(6,9) +
+  ylim(5,12) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
@@ -618,13 +582,13 @@ ggpred_Q2.usc_clivicollis <-
 ggplot(clivicollis_urbsubs_02_pred) +
       annotation_custom(clivicollis_img,
                     xmin=1, xmax=2,
-                    ymin=0.8, ymax=1) +
+                    ymin=0.17, ymax=0.2) +
   rep_geoms2 +
   labs(x = "Urbanization Score",
        y = expression(atop(paste(italic("Labidomera clivicollis "), "Presence"))),
        color = "Transect",
        fill = "Transect") +
-  ylim(-1,1) +
+  ylim(0,0.2) +
   xlim(4, -2) +
   theme_1() +
 
@@ -669,9 +633,9 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Defen
 ### Gradient / Urbanization Score
 ```{r}
 gradient_urbscore_plots <- ggarrange(
-  ggpred_Q2.usc_monarch,
-  ggpred_Q2.usc_asclepiadis,
-  ggpred_Q2.usc_clivicollis + 
+  ggpred_Q1.usc_monarch,
+  ggpred_Q1.usc_asclepiadis,
+  ggpred_Q1.usc_clivicollis + 
             font("x.text"),
           ncol = 3,
           nrow = 1,
