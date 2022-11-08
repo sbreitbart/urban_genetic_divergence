@@ -1073,21 +1073,16 @@ ggplot(flstart_urbsubs_02_pred) +
   theme(legend.position = "none") +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.22,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.15,
                     label = paste0(" Urb. Score: p = ", tidy_anova(repr.tr.m5_u) %>%
 dplyr::filter(Predictor == "Urbanization Score") %>%
 dplyr::select(p))),
 size = 4.5)  +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.15,
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.07,
                     label = paste0(" Transect: p = ", tidy_anova(repr.tr.m5_u) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
-size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
-                    label = paste0(" U x S: p = ", tidy_anova(repr.tr.m5_u) %>%
-dplyr::filter(Predictor == "Urbanization Score x Subtransect") %>%
-dplyr::select(p))),
-size = 4.5)
+size = 4.5) 
 
 ggpred_Q2.urbsubs_flstart
 

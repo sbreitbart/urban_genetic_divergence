@@ -5,7 +5,6 @@ source("functions.R")
 ```
 
 # Import data
-OPEN VIEWPORT
 ```{r}
 source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_1yr_mods.Rmd", quiet=TRUE))
 

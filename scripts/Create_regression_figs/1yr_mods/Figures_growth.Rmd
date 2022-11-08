@@ -1,13 +1,11 @@
 # Set up notebook
 ## Load libraries and add functions
-
 ```{r}
 source("libraries.R")
 source("functions.R")
 ```
 
 ## Import data
-
 ```{r}
 source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_1yr_mods.Rmd", quiet=TRUE))
 ```
@@ -935,12 +933,7 @@ size = 4.5) +
                     label = paste0(" Transect: p = ", tidy_anova(grow.tr.m8) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
-size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.8,
-                    label = paste0(" D x T: p = ", tidy_anova(grow.tr.m8) %>%
-dplyr::filter(Predictor == "Distance to City Center x Subtransect") %>%
-dplyr::select(p))),
-size = 4.5)
+size = 4.5) 
 
 ggpred_Q2.citydist_mortality
 

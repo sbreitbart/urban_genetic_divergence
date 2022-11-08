@@ -682,12 +682,7 @@ dplyr::select(p))),
                     label = paste0(" Transect: p = ", tidy_anova(def.tr.m2) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
-                    label = paste0(" D x T: p = ", tidy_anova(def.tr.m2) %>%
-dplyr::filter(Predictor == "Distance to City Center x Subtransect") %>%
-dplyr::select(p))),
-                size = 4.5)
+                size = 4.5) 
 
 ggpred_Q2.citydist_herb_e_bin
 
@@ -719,11 +714,6 @@ dplyr::select(p))),
   ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.87,
                     label = paste0(" Transect: p = ", tidy_anova(def.tr.m3) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
-dplyr::select(p))),
-                size = 4.5)+
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.8,
-                    label = paste0(" D x T: p = ", tidy_anova(def.tr.m3) %>%
-dplyr::filter(Predictor == "Distance to City Center x Subtransect") %>%
 dplyr::select(p))),
                 size = 4.5)
 
@@ -977,11 +967,6 @@ dplyr::select(p))),
   ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(def.tr.m3_u) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
-dplyr::select(p))),
-                size = 4.5)+
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.81,
-                    label = paste0(" U x T: p = ", tidy_anova(def.tr.m3_u) %>%
-dplyr::filter(Predictor == "Urbanization Score x Subtransect") %>%
 dplyr::select(p))),
                 size = 4.5)
 
