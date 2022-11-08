@@ -656,17 +656,17 @@ fl_time_urbsubs_city1_ME <- glmmTMB(flowering_time_num ~
 # AIC(fl_time_urbsubs_city1, fl_time_urbsubs_city1_ME) # ME model best but <2 AIC from full
 
 
-# test for gxe
-gxe_test_fltime3 <- glmmTMB(flowering_time_num ~
-                                          Block*City_dist +
-                                          Transect_ID*City_dist +
-                                          Year +
-                              (1|Population/Family),
-                                         data = flowering %>%
-                               dplyr::filter(Transect_ID != "Rural"),
-                            family = nbinom2)
-
-test_gxe(fl_time_urbsubs_city1, gxe_test_fltime3) # reg mod best
+# # test for gxe
+# gxe_test_fltime3 <- glmmTMB(flowering_time_num ~
+#                                           Block*City_dist +
+#                                           Transect_ID*City_dist +
+#                                           Year +
+#                               (1|Population/Family),
+#                                          data = flowering %>%
+#                                dplyr::filter(Transect_ID != "Rural"),
+#                             family = nbinom2)
+# 
+# test_gxe(fl_time_urbsubs_city1, gxe_test_fltime3) # reg mod best
 ```
 
 #### Urb_score

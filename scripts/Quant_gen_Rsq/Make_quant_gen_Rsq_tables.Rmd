@@ -1773,7 +1773,7 @@ lapply(flatten(all_card_models), make_card_rsq_table) %>%
 ```
 
 
-### 2021 Herbivores
+### Herbivores
 ```{r}
 # change REML to T
 monarch_mods_reml_T <- reml_to_true(monarch_mods)
@@ -2127,7 +2127,7 @@ make_full_R2_table(
 
 
 ## 1-year models
-Not doing for cardenolides or 2021 herbivores because same as multi-year mods
+Not doing for cardenolides because same as multi-year mods
 ### Reproduction
 ```{r}
 
@@ -2172,130 +2172,6 @@ print(all_rsq)
 sink()
 
 
-# export as nice tables in word doc
-flsucc_r2      <- make_r2_table( flsucc_mods_reml_T    ) 
-flowers_r2       <- make_r2_table(flowers_mods_reml_T      )
-flsize_r2 <- make_r2_table(flsize_mods_reml_T) 
-flstart_r2  <- make_r2_table(flstart_mods_reml_T )
-
-
-## these models don't have an alternative model for urb score/ urbsubs and will use this table format
-make_r2_table_modif1 <- function(mods_reml_T){
-  
-  return(
-    lapply(mods_reml_T, r.squaredGLMM) %>%
-      as.data.frame()%>%
-      rownames_to_column() %>%
-      dplyr::mutate_at(2:length(.), round, 3) %>%
-      data.table::as.data.table() %>%
-      data.table::melt(.,
-           measure = patterns("City_gr.R2m",           "Usc_gr.R2m",
-                              "City_urbsubs_best.R2m", "City_urbsubs_alt.R2m",
-                              "Usc_urbsubs_best.R2m",
-                              "City_gr.R2c",           "Usc_gr.R2c",
-                              "City_urbsubs_best.R2c", "City_urbsubs_alt.R2c",
-                              "Usc_urbsubs_best.R2c"),
-           value.name = c("Distance_Q1.R2m",      "UrbScore_Q1.R2m",
-                          "Distance_Q2_best.R2m", "Distance_Q2_alt.R2m",
-                          "UrbScore_Q2_best.R2m",
-                          "Distance_Q1.R2c",      "UrbScore_Q1.R2c",
-                          "Distance_Q2_best.R2c", "Distance_Q2_alt.R2c",
-                          "UrbScore_Q2_best.R2c")) %>%
-      as.data.frame() %>%
-      dplyr::select(rowname,
-                    
-                    Distance_Q1.R2m,
-                    Distance_Q1.R2c,
-                    Distance_Q2_best.R2m,
-                    Distance_Q2_best.R2c,
-                    Distance_Q2_alt.R2m,
-                    Distance_Q2_alt.R2c,
-                    
-                    UrbScore_Q1.R2m,
-                    UrbScore_Q1.R2c,
-                    UrbScore_Q2_best.R2m,
-                    UrbScore_Q2_best.R2c) %>%
-      dplyr::rename("Type" = 1) %>%
-      flextable() %>%
-      add_header_row(
-        values = c("",
-                   "Model 1",
-                   "Model 2",
-                   "Model 3",
-                   "Model 4",
-                   "Model 5"),
-        colwidths = c(1,2,2,2,2,2))  %>%
-      add_header_row(
-        values = c("",
-                   "All Populations", "Urban Populations",
-                   "All Populations", "Urban Populations"),
-        colwidths = c(1,2,4,2,2))%>%
-      add_header_row(
-        values = c("",
-                   "Best Models", "Alternative Models",
-                   "Best Models"),
-        colwidths = c(1,4,2,4)) %>%
-      add_header_row(
-        values = c("",
-                   "Distance to City Center", "Urbanization Score"),
-        colwidths = c(1,6,4)) %>%
-      theme_box() %>%
-      align(align = "center",
-            part = "all") %>%
-      flextable::compose(part = "header",
-                         j = c(2,4,6,8,10), i = 5,
-                         value = as_paragraph("R", as_sup("2"), "m")
-      ) %>%
-      flextable::compose(part = "header",
-                         j = c(3,5,7,9,11), i = 5,
-                         value = as_paragraph("R", as_sup("2"), "c")
-      ) %>%
-      autofit() %>%
-      width(j = 1, width = 1, unit = "in")
-  )
-}
-
-fltime_r2 <- make_r2_table_modif1(fltime_mods_reml_T)
-pods_r2  <- make_r2_table_modif1(pods_mods_reml_T)
-first_pods_r2  <- make_r2_table_modif1(first_pods_mods_reml_T )
-peduncles_r2  <- make_r2_table_modif1(peduncles_mods_reml_T )
-
-
-# will do this in 3 docs b/c function accepts 3 tables at a time (something to try tweaking in the future)
-# table 1
-export_r2(flsucc_r2,
-flowers_r2,
-flsize_r2,
-          "Flowering success",
-          "Flowers per inflorescence", 
-          "Flower size",
-          "./Figures_Tables/Rsquared/Multi_yr_mods/Reproduction/R2_Reproduction1.docx")
-
-# table 2
-export_r2(
-fltime_r2,
-flstart_r2      ,
-pods_r2 ,
-          "Flowering time",
-          "Date of first flower", 
-          "Follicles",
-          "./Figures_Tables/Rsquared/Multi_yr_mods/Reproduction/R2_Reproduction2.docx")
-
-# table 3: will just use code from function
-  word_export <- read_docx()
-  
-  body_add_par(word_export, value = paste("R-squared estimates for",  "Date of first follicle", "Models"), style = "heading 1")
-  body_add_par(word_export, value = "")
-  body_add_flextable(word_export, first_pods_r2)
-  
-  body_add_break(word_export)
-
-  body_add_par(word_export, value = paste("R-squared estimates for",  "Inflorescences", "Models"), style = "heading 1")
-  body_add_par(word_export, value = "")
-  body_add_flextable(word_export, peduncles_r2)
-  
-  word_export <- body_end_section_landscape(word_export)
-  print(word_export, here::here("./Figures_Tables/Rsquared/Multi_yr_mods/Reproduction/R2_Reproduction3.docx"))
 ```
 
 ### Defense
@@ -2333,188 +2209,30 @@ all_rsq <- lapply(all_models_reml_T, lapply, r.squaredGLMM) %>%
   write.csv(here::here("./Figures_Tables/Rsquared/Multi_yr_mods/Defense/Rsquare.csv"))
 
 
-# export as nice tables in word doc
-# these first two throw errors because there's no alt model for urb subs, so I'll manually edit function to suit them
-# latex_r2      <- make_r2_table( latex_mods_reml_T    ) 
-# herb_e_bin_r2       <- make_r2_table(herb_e_bin_mods_reml_T      ) 
+```
 
-latex_r2 <- lapply(latex_mods_reml_T, r.squaredGLMM) %>%
-      as.data.frame()%>%
-      rownames_to_column() %>%
-      dplyr::mutate_at(2:length(.), round, 3) %>%
-      as.data.table() %>%
-      melt(.,
-           measure = patterns("City_gr.R2m",           "Usc_gr.R2m",
-                              "City_urbsubs_best.R2m", "City_urbsubs_alt.R2m",
-                              "Usc_urbsubs.R2m",
-                              "City_gr.R2c",           "Usc_gr.R2c",
-                              "City_urbsubs_best.R2c", "City_urbsubs_alt.R2c",
-                              "Usc_urbsubs.R2c"),
-           value.name = c("Distance_Q1.R2m",      "UrbScore_Q1.R2m",
-                          "Distance_Q2_best.R2m", "Distance_Q2_alt.R2m",
-                          "UrbScore_Q2_best.R2m",
-                          "Distance_Q1.R2c",      "UrbScore_Q1.R2c",
-                          "Distance_Q2_best.R2c", "Distance_Q2_alt.R2c",
-                          "UrbScore_Q2_best.R2c")) %>%
-      as.data.frame() %>%
-      dplyr::select(rowname,
-                    
-                    Distance_Q1.R2m,
-                    Distance_Q1.R2c,
-                    Distance_Q2_best.R2m,
-                    Distance_Q2_best.R2c,
-                    Distance_Q2_alt.R2m,
-                    Distance_Q2_alt.R2c,
-                    
-                    UrbScore_Q1.R2m,
-                    UrbScore_Q1.R2c,
-                    UrbScore_Q2_best.R2m,
-                    UrbScore_Q2_best.R2c) %>%
-      dplyr::rename("Type" = 1) %>%
-      flextable() %>%
-      add_header_row(
-        values = c("",
-                   "Model 1",
-                   "Model 2",
-                   "Model 3",
-                   "Model 4",
-                   "Model 5"),
-        colwidths = c(1,2,2,2,2,2))  %>%
-      add_header_row(
-        values = c("",
-                   "All Populations", "Urban Populations",
-                   "All Populations", "Urban Populations"),
-        colwidths = c(1,2,4,2,2))%>%
-      add_header_row(
-        values = c("",
-                   "Best Models", "Alternative Models",
-                   "Best Models"),
-        colwidths = c(1,4,2,4)) %>%
-      add_header_row(
-        values = c("",
-                   "Distance to City Center", "Urbanization Score"),
-        colwidths = c(1,6,4)) %>%
-      theme_box() %>%
-      align(align = "center",
-            part = "all") %>%
-      flextable::compose(part = "header",
-                         j = c(2,4,6,8,10), i = 5,
-                         value = as_paragraph("R", as_sup("2"), "m")
-      ) %>%
-      flextable::compose(part = "header",
-                         j = c(3,5,7,9,11), i = 5,
-                         value = as_paragraph("R", as_sup("2"), "c")
-      ) %>%
-      autofit() %>%
-      width(j = 1, width = 1, unit = "in")
+### 2021 Herbivores
+```{r}
+# change REML to T
+monarch_mods_reml_T <- reml_to_true(monarch_mods)
+asclepiadis_mods_reml_T <- reml_to_true(asclepiadis_mods)
+clivicollis_mods_reml_T <- reml_to_true(clivicollis_mods)
 
+all_models_reml_T <- list(
+monarch_mods_reml_T          , 
+asclepiadis_mods_reml_T           , 
+clivicollis_mods_reml_T)
 
-herb_e_bin_r2 <- lapply(herb_e_bin_mods_reml_T, r.squaredGLMM) %>%
-      as.data.frame()%>%
-      rownames_to_column() %>%
-      dplyr::mutate_at(2:length(.), round, 3) %>%
-      as.data.table() %>%
-        melt(.,
-           measure = patterns("City_gr.R2m",           "Usc_gr.R2m",
-                              "City_urbsubs_best.R2m",
-                              "Usc_urbsubs_best.R2m",  "Usc_urbsubs_alt.R2m",
-                              "City_gr.R2c",           "Usc_gr.R2c",
-                              "City_urbsubs_best.R2c",
-                              "Usc_urbsubs_best.R2c",  "Usc_urbsubs_alt.R2c"),
-           value.name = c("Distance_Q1.R2m",      "UrbScore_Q1.R2m",
-                          "Distance_Q2_best.R2m",
-                          "UrbScore_Q2_best.R2m", "UrbScore_Q2_alt.R2m",
-                          "Distance_Q1.R2c",      "UrbScore_Q1.R2c",
-                          "Distance_Q2_best.R2c",
-                          "UrbScore_Q2_best.R2c", "UrbScore_Q2_alt.R2c")) %>%
-      as.data.frame() %>%
-      dplyr::select(rowname,
-                    
-                    Distance_Q1.R2m,
-                    Distance_Q1.R2c,
-                    Distance_Q2_best.R2m,
-                    Distance_Q2_best.R2c,
-                    
-                    UrbScore_Q1.R2m,
-                    UrbScore_Q1.R2c,
-                    UrbScore_Q2_best.R2m,
-                    UrbScore_Q2_best.R2c,
-                    UrbScore_Q2_alt.R2m,
-                    UrbScore_Q2_alt.R2c) %>%
-      dplyr::rename("Type" = 1) %>%
-      flextable() %>%
-      add_header_row(
-        values = c("",
-                   "Model 1",
-                   "Model 2",
-                   "Model 3",
-                   "Model 4",
-                   "Model 5"),
-        colwidths = c(1,2,2,2,2,2))  %>%
-      add_header_row(
-        values = c("",
-                   "All Populations", "Urban Populations",
-                   "All Populations", "Urban Populations"),
-        colwidths = c(1,2,2,2,4)) %>%
-      add_header_row(
-        values = c("",
-                   "Best Models", 
-                   "Best Models", "Alternative Models"),
-        colwidths = c(1,4,4,2)) %>%
-      add_header_row(
-        values = c("",
-                   "Distance to City Center", "Urbanization Score"),
-        colwidths = c(1,4,6)) %>%
-      theme_box() %>%
-      align(align = "center",
-            part = "all") %>%
-      flextable::compose(part = "header",
-                         j = c(2,4,6,8,10), i = 5,
-                         value = as_paragraph("R", as_sup("2"), "m")
-      ) %>%
-      flextable::compose(part = "header",
-                         j = c(3,5,7,9,11), i = 5,
-                         value = as_paragraph("R", as_sup("2"), "c")
-      ) %>%
-      autofit() %>%
-      width(j = 1, width = 1, unit = "in")
-  
+names(all_models_reml_T) <- c(
+"monarch_mods"          ,
+"asclepiadis_mods"           ,
+"clivicollis_mods"         )
 
-herb_e_quant_r2 <- make_r2_table(herb_e_quant_mods_reml_T) 
-herb_l_bin_r2 <- make_r2_table( herb_l_bin_mods_reml_T) 
-herb_l_quant_r2       <- make_r2_table(herb_l_quant_mods_reml_T      ) 
-weevil_bin_r2  <- make_r2_table(weevil_bin_mods_reml_T) 
-weevil_quant_r2  <- make_r2_table( weevil_quant_mods_reml_T ) 
+# export to csv
+all_rsq <- lapply(all_models_reml_T, lapply, r.squaredGLMM) %>%
+  unlist(recursive = FALSE) %T>%
+  write.csv(here::here("./Figures_Tables/Rsquared/Multi_yr_mods/Defense/Rsquare_herbivores.csv"))
 
-# will do this in 3 docs b/c function accepts 3 tables at a time (something to try tweaking in the future)
-# table 1
-export_r2(latex_r2    , 
-herb_e_bin_r2      ,
-herb_e_quant_r2,
-          "Latex",
-          "Herbivory before flowering (binary)", 
-          "Herbivory before flowering (quantitative)",
-          "./Figures_Tables/Rsquared/Multi_yr_mods/Defense/R2_Defense1.docx")
-
-# table 2
-export_r2(
-herb_l_bin_r2,
-herb_l_quant_r2      ,
-weevil_bin_r2 ,
-          "Herbivory after flowering (binary)",
-          "Herbivory after flowering (quantitative)", 
-          "Weevil damage (binary)",
-          "./Figures_Tables/Rsquared/Multi_yr_mods/Defense/R2_Defense2.docx")
-
-# table 3: will just use code from function
-  word_export <- read_docx()
-  
-  body_add_par(word_export, value = paste("R-squared estimates for",  "Weevil damage (quantitative)", "Models"), style = "heading 1")
-  body_add_par(word_export, value = "")
-  body_add_flextable(word_export, weevil_quant_r2)
-  
-  word_export <- body_end_section_landscape(word_export)
-  print(word_export, here::here("./Figures_Tables/Rsquared/Multi_yr_mods/Defense/R2_Defense3.docx"))
 ```
 
 ### Growth
@@ -2554,52 +2272,6 @@ all_rsq <- lapply(all_models_reml_T, lapply, r.squaredGLMM) %>%
   unlist(recursive = FALSE) %T>%
   write.csv(here::here("./Figures_Tables/Rsquared/Multi_yr_mods/Growth/Rsquare.csv"))
 
-
-
-# export as nice tables in word doc
-ldmc_r2      <- make_r2_table( ldmc_mods_reml_T    ) 
-sla_r2       <- make_r2_table(sla_mods_reml_T      ) 
-heights_e_r2 <- make_r2_table(heights_e_mods_reml_T) 
-heights_l_r2 <- make_r2_table( heights_l_mods_reml_T) 
-rgr_r2       <- make_r2_table(rgr_mods_reml_T      ) 
-ramets_e_r2  <- make_r2_table(ramets_e_mods_reml_T) 
-ramets_l_r2  <- make_r2_table( ramets_l_mods_reml_T ) 
-morality_r2  <- make_r2_table( mortality_mods_reml_T) 
-
-# will do this in 3 docs b/c function accepts 3 tables at a time (something to try tweaking in the future)
-# table 1
-export_r2(ldmc_r2    , 
-sla_r2      ,
-heights_e_r2,
-          "LDMC",
-          "SLA", 
-          "Height before flowering",
-          "./Figures_Tables/Rsquared/Multi_yr_mods/Growth/R2_growth1.docx")
-# table 2
-export_r2(
-heights_l_r2,
-rgr_r2      ,
-ramets_e_r2 ,
-          "Height after flowering",
-          "Relative growth rate", 
-          "Ramets before flowering",
-          "./Figures_Tables/Rsquared/Multi_yr_mods/Growth/R2_growth2.docx")
-
-# table 3: will just use code from function
-  word_export <- read_docx()
-  
-  body_add_par(word_export, value = paste("R-squared estimates for",  "Ramets, after flowering", "Models"), style = "heading 1")
-  body_add_par(word_export, value = "")
-  body_add_flextable(word_export, ramets_l_r2)
-  
-  body_add_break(word_export)
-  
-  body_add_par(word_export, value = paste("R-squared estimates for",  "Mortality", "Models"), style = "heading 1")
-  body_add_par(word_export, value = "")
-  body_add_flextable(word_export, morality_r2)
-  
-  word_export <- body_end_section_landscape(word_export)
-  print(word_export, here::here("./Figures_Tables/Rsquared/Multi_yr_mods/Growth/R2_growth3.docx"))
 ```
 
 ### Export all Rsq tables into one docx

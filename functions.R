@@ -252,10 +252,10 @@ DoLinearReg <- function(response_var, predictor_var, input_data){
   
   # input string into lm
   my_model <- lm(formula_str, data = input_data) 
-  performance::check_model(my_model) %T>%
-    print()
-  performance::model_performance(my_model) %T>%
-    print()
+  # performance::check_model(my_model) %T>%
+  #   print()
+  # performance::model_performance(my_model) %T>%
+  #   print()
   my_anova <- car::Anova(my_model)
   my_list <<- list(my_model, my_anova)
 }
