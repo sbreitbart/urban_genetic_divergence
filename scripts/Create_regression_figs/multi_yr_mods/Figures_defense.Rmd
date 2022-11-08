@@ -354,7 +354,7 @@ ggpred_Q1.citydist_herb_e_quant <- ggplot(herb_e_quant_gradient_01_pred) +
   rep_geoms +
   ylim(0, 0.05) +
   labs(x = "Distance to Urban Center (km)",
-       y = "log(Herbivory after flowering)") +
+       y = "log(Herbivory before flowering)") +
   theme_1() +
 #   # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.15, npcy = 0.08,
@@ -506,7 +506,7 @@ ggpred_Q1.urbscore_herb_e_quant <- ggplot(herb_e_quant_gradient_02_pred) +
       xlim(4, -4) +
   ylim(0, 0.04) +
   labs(x = "Urbanization Score",
-       y = "log(Herbivory after flowering)") +
+       y = "log(Herbivory before flowering)") +
   theme_1() +
 #   # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.15, npcy = 0.08,

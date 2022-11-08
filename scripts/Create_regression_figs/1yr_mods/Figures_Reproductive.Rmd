@@ -1314,74 +1314,38 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Reproducti
 # Find estimated marginal means at terminii
 ## Urban Subtransects
 ### City_dist
-#### Flower count
+#### Flowers/inflor
 ```{r}
-Calc_percent_change_urbsubs(flowers_urbsubs_01_pred)
-# "Percent change, from suburban to urban terminus: 91.9%"
+Calc_percent_change_transects(flowers_urbsubs_01_pred)
+# Percent change from non-corridor to corridor subtransect: -21.1%"
+
 ```
 
-#### Flower size
-```{r}
-# PERCENT difference, interaxn:
-Calc_percent_change_urbsubs_intxn(flsize_urbsubs_01_pred)
-# "Percent change from suburban to urban terminus along corridor subtransect: 19.2%"
-# "Percent change from suburban to urban terminus along non-corridor subtransect: -9.9%"
-```
-
-#### Flowering duration
-```{r}
-# PERCENT difference, transects:
-Calc_percent_change_transects(fltime_urbsubs_01_pred)
-# Percent change from non-corridor to corridor subtransect: 57.6%
-
-# percent change, along gradient:
-Calc_percent_change_urbsubs(fltime_urbsubs_01_pred)
-# "Percent change, from suburban to urban terminus: 171.6%"
-```
-
-#### Date of first flower
+#### First follicle
 ```{r}
 # percent change, along gradient:
-Calc_percent_change_urbsubs(flstart_urbsubs_01_pred)
-# "Percent change, from suburban to urban terminus: -6.8%"
-# BUT URBAN PLANTS FLOWERED ~14 DAYS EARLIER!
-```
-
-#### Follicles
-```{r}
-# percent change, along gradient:
-Calc_percent_change_urbsubs(pods_urbsubs_01_pred)
-# "Percent change, from suburban to urban terminus: 771%"
-
-```
-
-#### Inflorescences
-```{r}
-# percent change, along gradient:
-Calc_percent_change_urbsubs(peduncles_urbsubs_01_pred)
-# "Percent change, from suburban to urban terminus: 645.8%"
+Calc_percent_change_urbsubs(firstpods_urbsubs_01_pred)
+# Percent change, from suburban to urban terminus: -33.6%"
 
 ```
 
 ### Urbanization score
-#### Flower size
+#### Flowers/inflor
 ```{r}
-# redo once I make a function for urb_score models?
+Calc_percent_change_transects(flowers_urbsubs_02_pred)
+# Percent change from non-corridor to corridor subtransect: -29.7%"
+
 ```
 
-#### Flowering duration
+#### First follicle
 ```{r}
-# PERCENT difference, transects:
-Calc_percent_change_transects(fltime_urbsubs_02_pred)
-# Percent change from non-corridor to corridor subtransect: 44.5%
+
 ```
 
 #### Follicles
 ```{r}
-# redo once I make a function for urb_score models?
 ```
 
 #### Inflorescences
 ```{r}
-# redo once I make a function for urb_score models?
 ```
