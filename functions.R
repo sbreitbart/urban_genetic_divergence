@@ -260,6 +260,26 @@ DoLinearReg <- function(response_var, predictor_var, input_data){
   my_list <<- list(my_model, my_anova)
 }
 
+# Export anova table from mvabund blups
+anova_blup_table <- function(anova_blup){
+  
+  return(
+    
+    anova_blup$table %>%
+      as.matrix() %>%
+      as.data.frame() %>%
+      tibble::rownames_to_column() %>%
+      dplyr::rename("Urbanization" = 1,
+                    "df" = 2,
+                    "diff(df)" = 3,
+                    "F" = 4,
+                    "p" = 5) %>%
+      dplyr::mutate_at(c(4,5), round, 3)
+    
+  )
+  
+}
+
 ############################################################
 ##################### RANOVAS ##############################
 ############################################################

@@ -14,13 +14,8 @@ pop_vars <- read.csv(here::here("./Joined_annual_data/weevil.csv")) %>%
   dplyr::select(1:6, 11:20)
 
 
-source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Growth.Rmd", quiet=TRUE))
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_1yr_mods.Rmd", quiet=TRUE))
 
-source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_defense.Rmd", quiet=TRUE))
-
-source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
-
-source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_herbivores.Rmd", quiet=TRUE))
 ```
 
 
@@ -30,25 +25,25 @@ source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_herbivores.Rmd",
 #### City_dist
 ```{r}
 # Create BLUP dfs for each trait
-latex_BLUP <- create_BLUP(latex_mods[[1]]) %>%
+latex_BLUP <- create_BLUP(def.m1) %>%
   dplyr::rename(latex = 2)
 
-herb_e_bin_BLUP <- create_BLUP(herb_early_mods_binomial[[1]]) %>%
+herb_e_bin_BLUP <- create_BLUP(def.m2) %>%
   dplyr::rename(herb_e_bin = 2)
 
-herb_e_quant_BLUP <- create_BLUP(herb_early_mods_quant[[1]]) %>%
+herb_e_quant_BLUP <- create_BLUP(def.m3) %>%
   dplyr::rename(herb_e_quant = 2)
 
-herb_l_bin_BLUP <- create_BLUP(herb_late_mods_binomial[[1]]) %>%
+herb_l_bin_BLUP <- create_BLUP(def.m4) %>%
   dplyr::rename(herb_l_bin = 2)
 
-herb_l_quant_BLUP <- create_BLUP(herb_late_mods_quant[[1]]) %>%
+herb_l_quant_BLUP <- create_BLUP(def.m5) %>%
   dplyr::rename(herb_l_quant = 2)
 
-weev_bin_BLUP <- create_BLUP(weev_mods_binomial[[1]]) %>%
+weev_bin_BLUP <- create_BLUP(def.m6) %>%
   dplyr::rename(weev_mods_bin = 2)
 
-weev_quant_BLUP <- create_BLUP(weev_mods_quant[[1]]) %>%
+weev_quant_BLUP <- create_BLUP(def.m7) %>%
   dplyr::rename(weev_mods_quant = 2)
 
 
@@ -57,85 +52,84 @@ weev_quant_BLUP <- create_BLUP(weev_mods_quant[[1]]) %>%
 #### Urb_score
 ```{r}
 # Create BLUP dfs for each trait
-latex_BLUP_u <- create_BLUP(latex_mods[[2]]) %>%
+latex_BLUP_u <- create_BLUP(def.m1_u) %>%
   dplyr::rename(latex = 2)
 
-herb_e_bin_BLUP_u <- create_BLUP(herb_early_mods_binomial[[2]]) %>%
+herb_e_bin_BLUP_u <- create_BLUP(def.m2_u) %>%
   dplyr::rename(herb_e_bin = 2)
 
-herb_e_quant_BLUP_u <- create_BLUP(herb_early_mods_quant[[2]]) %>%
+herb_e_quant_BLUP_u <- create_BLUP(def.m3_u) %>%
   dplyr::rename(herb_e_quant = 2)
 
-herb_l_bin_BLUP_u <- create_BLUP(herb_late_mods_binomial[[2]]) %>%
+herb_l_bin_BLUP_u <- create_BLUP(def.m4_u) %>%
   dplyr::rename(herb_l_bin = 2)
 
-herb_l_quant_BLUP_u <- create_BLUP(herb_late_mods_quant[[2]]) %>%
+herb_l_quant_BLUP_u <- create_BLUP(def.m5_u) %>%
   dplyr::rename(herb_l_quant = 2)
 
-weev_bin_BLUP_u <- create_BLUP(weev_mods_binomial[[2]]) %>%
+weev_bin_BLUP_u <- create_BLUP(def.m6_u) %>%
   dplyr::rename(weev_mods_bin = 2)
 
-weev_quant_BLUP_u <- create_BLUP(weev_mods_quant[[2]]) %>%
+weev_quant_BLUP_u <- create_BLUP(def.m7_u) %>%
   dplyr::rename(weev_mods_quant = 2)
 
 
 ```
 
-
 ### Growth
 #### City_dist
 ```{r}
 # Create BLUP dfs for each trait
-ldmc_BLUP <- create_BLUP(ldmc_mods[[1]]) %>%
+ldmc_BLUP <- create_BLUP(grow.m1) %>%
   dplyr::rename(ldmc = 2)
 
-sla_BLUP <- create_BLUP(sla_mods[[1]]) %>%
+sla_BLUP <- create_BLUP(grow.m2) %>%
   dplyr::rename(sla = 2)
 
-heights_early_BLUP <- create_BLUP(heights_early_mods[[1]]) %>%
+heights_early_BLUP <- create_BLUP(grow.m3) %>%
   dplyr::rename(heights_early = 2)
 
-heights_late_BLUP <- create_BLUP(heights_late_mods[[1]]) %>%
+heights_late_BLUP <- create_BLUP(grow.m4) %>%
   dplyr::rename(heights_late = 2)
 
-rgr_BLUP <- create_BLUP(rgr_mods[[1]]) %>%
+rgr_BLUP <- create_BLUP(grow.m5) %>%
   dplyr::rename(rgr = 2)
 
-ramets_early_BLUP <- create_BLUP(ramets_early_mods[[1]]) %>%
+ramets_early_BLUP <- create_BLUP(grow.m6) %>%
   dplyr::rename(ramets_early = 2)
 
-ramets_late_BLUP <- create_BLUP(ramets_late_mods[[1]]) %>%
+ramets_late_BLUP <- create_BLUP(grow.m7) %>%
   dplyr::rename(ramets_late = 2)
 
-mortality_BLUP <- create_BLUP(mortality_mods[[1]]) %>%
+mortality_BLUP <- create_BLUP(grow.m8) %>%
   dplyr::rename(mortality = 2)
 ```
 
 #### Urb_score
 ```{r}
 # Create BLUP dfs for each trait
-ldmc_BLUP_u <- create_BLUP(ldmc_mods[[2]]) %>%
+ldmc_BLUP_u <- create_BLUP(grow.m1_u) %>%
   dplyr::rename(ldmc = 2)
 
-sla_BLUP_u <- create_BLUP(sla_mods[[2]]) %>%
+sla_BLUP_u <- create_BLUP(grow.m2_u) %>%
   dplyr::rename(sla = 2)
 
-heights_early_BLUP_u <- create_BLUP(heights_early_mods[[2]]) %>%
+heights_early_BLUP_u <- create_BLUP(grow.m3_u) %>%
   dplyr::rename(heights_early = 2)
 
-heights_late_BLUP_u <- create_BLUP(heights_late_mods[[2]]) %>%
+heights_late_BLUP_u <- create_BLUP(grow.m4_u) %>%
   dplyr::rename(heights_late = 2)
 
-rgr_BLUP_u <- create_BLUP(rgr_mods[[2]]) %>%
+rgr_BLUP_u <- create_BLUP(grow.m5_u) %>%
   dplyr::rename(rgr = 2)
 
-ramets_early_BLUP_u <- create_BLUP(ramets_early_mods[[2]]) %>%
+ramets_early_BLUP_u <- create_BLUP(grow.m6_u) %>%
   dplyr::rename(ramets_early = 2)
 
-ramets_late_BLUP_u <- create_BLUP(ramets_late_mods[[2]]) %>%
+ramets_late_BLUP_u <- create_BLUP(grow.m7_u) %>%
   dplyr::rename(ramets_late = 2)
 
-mortality_BLUP_u <- create_BLUP(mortality_mods[[2]]) %>%
+mortality_BLUP_u <- create_BLUP(grow.m8_u) %>%
   dplyr::rename(mortality = 2)
 ```
 
@@ -143,28 +137,27 @@ mortality_BLUP_u <- create_BLUP(mortality_mods[[2]]) %>%
 #### City_dist
 ```{r}
 # Create BLUP dfs for each trait
-monarch_BLUP <- create_BLUP(monarch_mods[[1]]) %>%
+monarch_BLUP <- create_BLUP(herb.m1) %>%
   dplyr::rename(monarch = 2)
 
-asclepiadis_BLUP <- create_BLUP(asclepiadis_mods[[1]]) %>%
+asclepiadis_BLUP <- create_BLUP(herb.m2) %>%
   dplyr::rename(asclepiadis = 2)
 
-clivicollis_BLUP <- create_BLUP(clivicollis_mods[[1]]) %>%
+clivicollis_BLUP <- create_BLUP(herb.m3) %>%
   dplyr::rename(clivicollis = 2)
-
 
 ```
 
 #### Urb_score
 ```{r}
 # Create BLUP dfs for each trait
-monarch_BLUP_u <- create_BLUP(monarch_mods[[2]]) %>%
+monarch_BLUP_u <- create_BLUP(herb.m1_u) %>%
   dplyr::rename(monarch = 2)
 
-asclepiadis_BLUP_u <- create_BLUP(asclepiadis_mods[[2]]) %>%
+asclepiadis_BLUP_u <- create_BLUP(herb.m2_u) %>%
   dplyr::rename(asclepiadis = 2)
 
-clivicollis_BLUP_u <- create_BLUP(clivicollis_mods[[2]]) %>%
+clivicollis_BLUP_u <- create_BLUP(herb.m3_u) %>%
   dplyr::rename(clivicollis = 2)
 
 ```
@@ -174,56 +167,56 @@ clivicollis_BLUP_u <- create_BLUP(clivicollis_mods[[2]]) %>%
 #### City_dist
 ```{r}
 # Create BLUP dfs for each trait
-flsucc_BLUP <- create_BLUP(flsucc_mods[[1]]) %>%
+flsucc_BLUP <- create_BLUP(repr.m1) %>%
   dplyr::rename(flsucc = 2)
 
-flowers_BLUP <- create_BLUP(flowers_mods[[1]]) %>%
+flowers_BLUP <- create_BLUP(repr.m2) %>%
   dplyr::rename(flowers = 2)
 
-flsize_BLUP <- create_BLUP(flsize_mods[[1]]) %>%
+flsize_BLUP <- create_BLUP(repr.m3) %>%
   dplyr::rename(flsize = 2)
 
-fltime_BLUP <- create_BLUP(fltime_mods[[1]]) %>%
+fltime_BLUP <- create_BLUP(repr.m4) %>%
   dplyr::rename(fltime = 2)
 
-flstart_BLUP <- create_BLUP(flstart_mods[[1]]) %>%
+flstart_BLUP <- create_BLUP(repr.m5) %>%
   dplyr::rename(flstart = 2)
 
-pods_BLUP <- create_BLUP(pods_mods[[1]]) %>%
+pods_BLUP <- create_BLUP(repr.m6) %>%
   dplyr::rename(pods = 2)
 
-firstpods_BLUP <- create_BLUP(first_pods_mods[[1]]) %>%
+firstpods_BLUP <- create_BLUP(repr.m7) %>%
   dplyr::rename(firstpods = 2)
 
-peduncles_BLUP <- create_BLUP(peduncles_mods[[1]]) %>%
+peduncles_BLUP <- create_BLUP(repr.m8) %>%
   dplyr::rename(peduncles = 2)
 ```
 
 #### Urb_score
 ```{r}
 # Create BLUP dfs for each trait
-flsucc_BLUP_u <- create_BLUP(flsucc_mods[[2]]) %>%
+flsucc_BLUP_u <- create_BLUP(repr.m1_u) %>%
   dplyr::rename(flsucc = 2)
 
-flowers_BLUP_u <- create_BLUP(flowers_mods[[2]]) %>%
+flowers_BLUP_u <- create_BLUP(repr.m2_u) %>%
   dplyr::rename(flowers = 2)
 
-flsize_BLUP_u <- create_BLUP(flsize_mods[[2]]) %>%
+flsize_BLUP_u <- create_BLUP(repr.m3_u) %>%
   dplyr::rename(flsize = 2)
 
-fltime_BLUP_u <- create_BLUP(fltime_mods[[2]]) %>%
+fltime_BLUP_u <- create_BLUP(repr.m4_u) %>%
   dplyr::rename(fltime = 2)
 
-flstart_BLUP_u <- create_BLUP(flstart_mods[[2]]) %>%
+flstart_BLUP_u <- create_BLUP(repr.m5_u) %>%
   dplyr::rename(flstart = 2)
 
-pods_BLUP_u <- create_BLUP(pods_mods[[2]]) %>%
+pods_BLUP_u <- create_BLUP(repr.m6_u) %>%
   dplyr::rename(pods = 2)
 
-firstpods_BLUP_u <- create_BLUP(first_pods_mods[[2]]) %>%
+firstpods_BLUP_u <- create_BLUP(repr.m7_u) %>%
   dplyr::rename(firstpods = 2)
 
-peduncles_BLUP_u <- create_BLUP(peduncles_mods[[2]]) %>%
+peduncles_BLUP_u <- create_BLUP(repr.m8_u) %>%
   dplyr::rename(peduncles = 2)
 ```
 
@@ -265,8 +258,8 @@ all_traits <- purrr::reduce(
      flsize_BLUP,    
      fltime_BLUP,    
      flstart_BLUP,   
-     pods_BLUP,      
-     firstpods_BLUP,      
+     pods_BLUP,   
+     firstpods_BLUP,
      peduncles_BLUP, 
     
     # cardenolides
@@ -319,8 +312,8 @@ all_traits_u <- purrr::reduce(
      flsize_BLUP_u,    
      fltime_BLUP_u,    
      flstart_BLUP_u,   
-     pods_BLUP_u,      
-     firstpods_BLUP,      
+     pods_BLUP_u,   
+     firstpods_BLUP_u,
      peduncles_BLUP_u, 
     
     # cardenolides
@@ -361,40 +354,30 @@ boxplot(all_traits[, c(2, 6:30)],
         las = 2,
         main = "Abundance")
 
-# It looks like some traits are much more variable than others. It’s probably a good idea to check our mean-variance relationship then! We can do this using the meanvar.plot function:
 meanvar.plot(mvab_all)
 
-# the species with high means (on the x axis) also have high variances (y axis).
-# We can deal with this relationship by choosing a family of GLMs with an appropriate mean-variance assumption. The default family used by mvabund when fitting multivariate GLMs is negative binomial which assumes a quadratic mean-variance relationship and a log-linear relationship between the response variables and any continuous variables. In [the site's] example, we only have categorical variables so that one’s not too important. If you are unsure of these relationships, don’t worry, we can check our model fit later. [I have quantitative variables too]
-
-# There is a ‘quick and dirty’ built-in plotting function in the mvabund package that allows us to contrast transformed abundances to the predictor variables of our choice. To contrast abundances against urban-rural habitat, we would use:
+# contrast multivariate phenotype against urban-rural habitat
 
 plot(mvab_all ~ as.factor(all_traits$Urb_Rur),
      cex.axis = 0.8,
      cex = 0.8)
 # THIS DOESN'T WORK B/C OF NEGATIVE VALUES
 
-# Let’s now contrast the species composition across urb/rural habitat type to see if the models support our observations.
-
+# contrast the multivariate phenotype across urb/rural habitat 
 mod1 <- manylm(mvab_all ~ Urb_Rur,
               data = all_traits)
 
-# Before we examine the output, we need to check our model assumptions. We can use the plot function to generate a plot of residuals.
-
 plot(mod1)
-# We can test the multivariate hypothesis of whether species composition varied across the habitats by using the anova function. This gives an analysis of deviance table where we use likelihood ratio tests and resampled p values to look for a significant effect of Habitat on the community data.
+
+# test if multivariate phenotype varied across the habitats by using the anova function
 
 anova(mod1)
 
-# We can see from this table that there is NOT an effect of Urban vs. rural habitat, meaning that the overall phenotype does not differ between the urban/rural classification of population they were sourced from.
-# 
-# To examine this further, and see which traits are more likely to diverge re: habitat type, we can run univariate tests for each species separately.
-# 
-# This is done by using the p.uni="adjusted" argument in the anova function. The “adjusted” part of the argument refers to the resampling method used to compute the p values, taking into account the correlation between the response variables. This correlation is often found in ecological systems where different species will interact with each other, competing with or facilitating each others’ resource use.
+# No effect of Urban vs. rural habitat, meaning that the overall phenotype does not differ between the urban/rural classification of population they were sourced from.
 
+# run univariate tests for each trait separately.
 anova_blup <- anova(mod1, p.uni = "adjusted") %T>%
   print()
-
 # after adjusting for multiple testing, there are still no effects of habitat on any specific trait.
 
 
@@ -403,10 +386,8 @@ anova_blup2 <- manylm(mvab_all ~ City_dist,
                data = all_traits) %>%
   anova() %T>%
   print()
-
 # Still no effect of urbanization on herbivore abundance.
 ```
-
 
 ### Urb_score
 ```{r}
@@ -424,60 +405,47 @@ boxplot(all_traits_u[, c(2, 6:30)],
         las = 2,
         main = "Abundance")
 
-# It looks like some traits are much more variable than others. It’s probably a good idea to check our mean-variance relationship then! We can do this using the meanvar.plot function:
+
 meanvar.plot(mvab_all_u)
 
-# the species with high means (on the x axis) also have high variances (y axis).
-# We can deal with this relationship by choosing a family of GLMs with an appropriate mean-variance assumption. The default family used by mvabund when fitting multivariate GLMs is negative binomial which assumes a quadratic mean-variance relationship and a log-linear relationship between the response variables and any continuous variables. In [the site's] example, we only have categorical variables so that one’s not too important. If you are unsure of these relationships, don’t worry, we can check our model fit later. [I have quantitative variables too]
-
-# There is a ‘quick and dirty’ built-in plotting function in the mvabund package that allows us to contrast transformed abundances to the predictor variables of our choice. To contrast abundances against urban-rural habitat, we would use:
+# contrast multivariate phenotype against urban-rural habitat
 
 plot(mvab_all_u ~ as.factor(all_traits_u$Urb_Rur),
      cex.axis = 0.8,
      cex = 0.8)
 # THIS DOESN'T WORK B/C OF NEGATIVE VALUES
 
-# Let’s now contrast the species composition across urb/rural habitat type to see if the models support our observations.
-# The model syntax below fits our response variable (the mvabund object Herb_spp with the counts of 9 species) to the predictor variable Habitat (urban/rural classification).
-
+# contrast the multivariate phenotype across urb/rural habitat 
 mod1_u <- manylm(mvab_all_u ~ Urb_Rur,
-               data = all_traits_u)
-
-# Before we examine the output, we need to check our model assumptions. We can use the plot function to generate a plot of residuals.
+              data = all_traits_u)
 
 plot(mod1_u)
 
-# We can test the multivariate hypothesis of whether species composition varied across the habitats by using the anova function. This gives an analysis of deviance table where we use likelihood ratio tests and resampled p values to look for a significant effect of Habitat on the community data.
+# test if multivariate phenotype varied across the habitats by using the anova function
 
 anova(mod1_u)
 
-# We can see from this table that there is NOT an effect of Urban vs. rural habitat, meaning that the overall phenotype does not differ between the urban/rural classification of population they were sourced from.
-# 
-# To examine this further, and see which traits are more likely to diverge re: habitat type, we can run univariate tests for each species separately.
-# 
-# This is done by using the p.uni="adjusted" argument in the anova function. The “adjusted” part of the argument refers to the resampling method used to compute the p values, taking into account the correlation between the response variables. This correlation is often found in ecological systems where different species will interact with each other, competing with or facilitating each others’ resource use.
+# No effect of Urban vs. rural habitat, meaning that the overall phenotype does not differ between the urban/rural classification of population they were sourced from.
 
-anova_blup_u <- anova(mod1_u,
-                      p.uni = "adjusted") %T>%
+# run univariate tests for each trait separately.
+anova_blup_u <- anova(mod1_u, p.uni = "adjusted") %T>%
   print()
-
 # after adjusting for multiple testing, there are still no effects of habitat on any specific trait.
 
 
-# use urb_score as habitat descriptor
+# use urbscore as habitat descriptor
 anova_blup2_u <- manylm(mvab_all_u ~ Urb_score,
                data = all_traits_u) %>%
   anova() %T>%
   print()
-
-# Still no effect of urbanization on traits.
+# Still no effect of urbanization on herbivore abundance.
 ```
 
 
 ### Export
 #### City_dist models
 ```{r}
-tab1 <- anova_blup_table(anova_blup) %>%
+tab1 <- anova_blup_table(anova_blup)  %>%
   dplyr::mutate("Urbanization" = ifelse(row_number() == 2,
                            "Urban/Rural (Distance)",
                            "Intercept")) %>%
@@ -533,9 +501,8 @@ word_export <- read_docx()
     body_add_par(word_export, value = "Urbanization = Urbanization Score", style = "heading 1")
   body_add_flextable(word_export, urb_sc_tables)
 
-  print(word_export, here::here("./Figures_Tables/mvabund/mvabund_anovas_allyears_Q1.docx"))
+  print(word_export, here::here("./Figures_Tables/mvabund/mvabund_anovas_1yr_Q1.docx"))
 ```
-
 
 # Q2
 ## Create BLUP vectors for each trait
@@ -543,26 +510,26 @@ word_export <- read_docx()
 #### City_dist
 ```{r}
 # Create BLUP dfs for each trait
-latex_BLUP <- create_BLUP(latex_mods_best_c[[2]]) %>%
+latex_BLUP <- create_BLUP(def.tr.m1) %>%
   dplyr::rename(latex = 2)
 
-herb_e_bin_BLUP <- create_BLUP(herb_e_bin_mods_best_c[[2]]) %>%
+herb_e_bin_BLUP <- create_BLUP(def.tr.m2) %>%
   dplyr::rename(herb_e_bin = 2)
 
-herb_e_quant_BLUP <- create_BLUP(herb_e_quant_mods_best_c[[2]]) %>%
+herb_e_quant_BLUP <- create_BLUP(def.tr.m3) %>%
   dplyr::rename(herb_e_quant = 2)
 
-herb_l_bin_BLUP <- create_BLUP(herb_l_bin_mods_best_c[[2]]) %>%
+herb_l_bin_BLUP <- create_BLUP(def.tr.m4) %>%
   dplyr::rename(herb_l_bin = 2)
 
-herb_l_quant_BLUP <- create_BLUP(herb_l_quant_mods_best_c[[2]]) %>%
+herb_l_quant_BLUP <- create_BLUP(def.tr.m5) %>%
   dplyr::rename(herb_l_quant = 2)
 
-weev_bin_BLUP <- create_BLUP(weev_bin_mods_best_c[[2]]) %>%
-  dplyr::rename(weev_mods_best_c_bin = 2)
+weev_bin_BLUP <- create_BLUP(def.tr.m6) %>%
+  dplyr::rename(weev_mods_bin = 2)
 
-weev_quant_BLUP <- create_BLUP(weev_quant_mods_best_c[[2]]) %>%
-  dplyr::rename(weev_quant_mods_best_c = 2)
+weev_quant_BLUP <- create_BLUP(def.tr.m7) %>%
+  dplyr::rename(weev_mods_quant = 2)
 
 
 ```
@@ -570,85 +537,84 @@ weev_quant_BLUP <- create_BLUP(weev_quant_mods_best_c[[2]]) %>%
 #### Urb_score
 ```{r}
 # Create BLUP dfs for each trait
-latex_BLUP_u <- create_BLUP(latex_mods_best_u[[2]]) %>%
+latex_BLUP_u <- create_BLUP(def.tr.m1_u) %>%
   dplyr::rename(latex = 2)
 
-herb_e_bin_BLUP_u <- create_BLUP(herb_e_bin_mods_best_u[[2]]) %>%
+herb_e_bin_BLUP_u <- create_BLUP(def.tr.m2_u) %>%
   dplyr::rename(herb_e_bin = 2)
 
-herb_e_quant_BLUP_u <- create_BLUP(herb_e_quant_mods_best_u[[2]]) %>%
+herb_e_quant_BLUP_u <- create_BLUP(def.tr.m3_u) %>%
   dplyr::rename(herb_e_quant = 2)
 
-herb_l_bin_BLUP_u <- create_BLUP(herb_l_bin_mods_best_u[[2]]) %>%
+herb_l_bin_BLUP_u <- create_BLUP(def.tr.m4_u) %>%
   dplyr::rename(herb_l_bin = 2)
 
-herb_l_quant_BLUP_u <- create_BLUP(herb_l_quant_mods_best_u[[2]]) %>%
+herb_l_quant_BLUP_u <- create_BLUP(def.tr.m5_u) %>%
   dplyr::rename(herb_l_quant = 2)
 
-weev_bin_BLUP_u <- create_BLUP(weev_bin_mods_best_u[[2]]) %>%
-  dplyr::rename(weev_mods_best_u_bin = 2)
+weev_bin_BLUP_u <- create_BLUP(def.tr.m6_u) %>%
+  dplyr::rename(weev_mods_bin = 2)
 
-weev_quant_BLUP_u <- create_BLUP(weev_quant_mods_best_u[[2]]) %>%
-  dplyr::rename(weev_quant_mods_best_u = 2)
+weev_quant_BLUP_u <- create_BLUP(def.tr.m7_u) %>%
+  dplyr::rename(weev_mods_quant = 2)
 
 
 ```
-
 
 ### Growth
 #### City_dist
 ```{r}
 # Create BLUP dfs for each trait
-ldmc_BLUP <- create_BLUP(ldmc_mods_best_c[[2]]) %>%
+ldmc_BLUP <- create_BLUP(grow.tr.m1) %>%
   dplyr::rename(ldmc = 2)
 
-sla_BLUP <- create_BLUP(sla_mods_best_c[[2]]) %>%
+sla_BLUP <- create_BLUP(grow.tr.m2) %>%
   dplyr::rename(sla = 2)
 
-heights_early_BLUP <- create_BLUP(heights_early_mods_best_c[[2]]) %>%
+heights_early_BLUP <- create_BLUP(grow.tr.m3) %>%
   dplyr::rename(heights_early = 2)
 
-heights_late_BLUP <- create_BLUP(heights_late_mods_best_c[[2]]) %>%
+heights_late_BLUP <- create_BLUP(grow.tr.m4) %>%
   dplyr::rename(heights_late = 2)
 
-rgr_BLUP <- create_BLUP(rgr_mods_best_c[[2]]) %>%
+rgr_BLUP <- create_BLUP(grow.tr.m5) %>%
   dplyr::rename(rgr = 2)
 
-ramets_early_BLUP <- create_BLUP(ramets_early_mods_best_c[[2]]) %>%
+ramets_early_BLUP <- create_BLUP(grow.tr.m6) %>%
   dplyr::rename(ramets_early = 2)
 
-ramets_late_BLUP <- create_BLUP(ramets_late_mods_best_c[[2]]) %>%
+ramets_late_BLUP <- create_BLUP(grow.tr.m7) %>%
   dplyr::rename(ramets_late = 2)
 
-mortality_BLUP <- create_BLUP(mortality_mods_best_c[[2]]) %>%
+mortality_BLUP <- create_BLUP(grow.tr.m8) %>%
   dplyr::rename(mortality = 2)
 ```
 
 #### Urb_score
 ```{r}
 # Create BLUP dfs for each trait
-ldmc_BLUP_u <- create_BLUP(ldmc_mods_best_u[[2]]) %>%
+ldmc_BLUP_u <- create_BLUP(grow.tr.m1_u) %>%
   dplyr::rename(ldmc = 2)
 
-sla_BLUP_u <- create_BLUP(sla_mods_best_u[[2]]) %>%
+sla_BLUP_u <- create_BLUP(grow.tr.m2_u) %>%
   dplyr::rename(sla = 2)
 
-heights_early_BLUP_u <- create_BLUP(heights_early_mods_best_u[[2]]) %>%
+heights_early_BLUP_u <- create_BLUP(grow.tr.m3_u) %>%
   dplyr::rename(heights_early = 2)
 
-heights_late_BLUP_u <- create_BLUP(heights_late_mods_best_u[[2]]) %>%
+heights_late_BLUP_u <- create_BLUP(grow.tr.m4_u) %>%
   dplyr::rename(heights_late = 2)
 
-rgr_BLUP_u <- create_BLUP(rgr_mods_best_u[[2]]) %>%
+rgr_BLUP_u <- create_BLUP(grow.tr.m5_u) %>%
   dplyr::rename(rgr = 2)
 
-ramets_early_BLUP_u <- create_BLUP(ramets_early_mods_best_u[[2]]) %>%
+ramets_early_BLUP_u <- create_BLUP(grow.tr.m6_u) %>%
   dplyr::rename(ramets_early = 2)
 
-ramets_late_BLUP_u <- create_BLUP(ramets_late_mods_best_u[[2]]) %>%
+ramets_late_BLUP_u <- create_BLUP(grow.tr.m7_u) %>%
   dplyr::rename(ramets_late = 2)
 
-mortality_BLUP_u <- create_BLUP(mortality_mods_best_u[[2]]) %>%
+mortality_BLUP_u <- create_BLUP(grow.tr.m8_u) %>%
   dplyr::rename(mortality = 2)
 ```
 
@@ -656,28 +622,27 @@ mortality_BLUP_u <- create_BLUP(mortality_mods_best_u[[2]]) %>%
 #### City_dist
 ```{r}
 # Create BLUP dfs for each trait
-monarch_BLUP <- create_BLUP(monarch_mods_best_c[[2]]) %>%
+monarch_BLUP <- create_BLUP(herb.tr.m1) %>%
   dplyr::rename(monarch = 2)
 
-asclepiadis_BLUP <- create_BLUP(asclepiadis_mods_best_c[[2]]) %>%
+asclepiadis_BLUP <- create_BLUP(herb.tr.m2) %>%
   dplyr::rename(asclepiadis = 2)
 
-clivicollis_BLUP <- create_BLUP(clivicollis_mods_best_c[[2]]) %>%
+clivicollis_BLUP <- create_BLUP(herb.tr.m3) %>%
   dplyr::rename(clivicollis = 2)
-
 
 ```
 
 #### Urb_score
 ```{r}
 # Create BLUP dfs for each trait
-monarch_BLUP_u <- create_BLUP(monarch_mods_best_u[[2]]) %>%
+monarch_BLUP_u <- create_BLUP(herb.tr.m1_u) %>%
   dplyr::rename(monarch = 2)
 
-asclepiadis_BLUP_u <- create_BLUP(asclepiadis_mods_best_u[[2]]) %>%
+asclepiadis_BLUP_u <- create_BLUP(herb.tr.m2_u) %>%
   dplyr::rename(asclepiadis = 2)
 
-clivicollis_BLUP_u <- create_BLUP(clivicollis_mods_best_u[[2]]) %>%
+clivicollis_BLUP_u <- create_BLUP(herb.tr.m3_u) %>%
   dplyr::rename(clivicollis = 2)
 
 ```
@@ -687,50 +652,56 @@ clivicollis_BLUP_u <- create_BLUP(clivicollis_mods_best_u[[2]]) %>%
 #### City_dist
 ```{r}
 # Create BLUP dfs for each trait
-flsucc_BLUP <- create_BLUP(flsucc_mods_best_c[[2]]) %>%
+flsucc_BLUP <- create_BLUP(repr.tr.m1) %>%
   dplyr::rename(flsucc = 2)
 
-flowers_BLUP <- create_BLUP(flowers_mods_best_c[[2]]) %>%
+flowers_BLUP <- create_BLUP(repr.tr.m2) %>%
   dplyr::rename(flowers = 2)
 
-flsize_BLUP <- create_BLUP(flsize_mods_best_c[[2]]) %>%
+flsize_BLUP <- create_BLUP(repr.tr.m3) %>%
   dplyr::rename(flsize = 2)
 
-fltime_BLUP <- create_BLUP(fltime_mods_best_c[[2]]) %>%
+fltime_BLUP <- create_BLUP(repr.tr.m4) %>%
   dplyr::rename(fltime = 2)
 
-flstart_BLUP <- create_BLUP(flstart_mods_best_c[[2]]) %>%
+flstart_BLUP <- create_BLUP(repr.tr.m5) %>%
   dplyr::rename(flstart = 2)
 
-pods_BLUP <- create_BLUP(pods_mods_best_c[[2]]) %>%
+pods_BLUP <- create_BLUP(repr.tr.m6) %>%
   dplyr::rename(pods = 2)
 
-peduncles_BLUP <- create_BLUP(peduncles_mods_best_c[[2]]) %>%
+firstpods_BLUP <- create_BLUP(repr.tr.m7) %>%
+  dplyr::rename(firstpods = 2)
+
+peduncles_BLUP <- create_BLUP(repr.tr.m8) %>%
   dplyr::rename(peduncles = 2)
 ```
 
 #### Urb_score
 ```{r}
 # Create BLUP dfs for each trait
-flsucc_BLUP_u <- create_BLUP(flsucc_mods_best_u[[2]]) %>%
+flsucc_BLUP_u <- create_BLUP(repr.tr.m1_u) %>%
   dplyr::rename(flsucc = 2)
 
-flowers_BLUP_u <- create_BLUP(flowers_mods_best_u[[2]]) %>%
+flowers_BLUP_u <- create_BLUP(repr.tr.m2_u) %>%
   dplyr::rename(flowers = 2)
 
-flsize_BLUP_u <- create_BLUP(flsize_mods_best_u[[2]]) %>%
+flsize_BLUP_u <- create_BLUP(repr.tr.m3_u) %>%
   dplyr::rename(flsize = 2)
 
-fltime_BLUP_u <- create_BLUP(fltime_mods_best_u[[2]]) %>%
+fltime_BLUP_u <- create_BLUP(repr.tr.m4_u) %>%
   dplyr::rename(fltime = 2)
 
-flstart_BLUP_u <- create_BLUP(flstart_mods_best_u[[2]]) %>%
+flstart_BLUP_u <- create_BLUP(repr.tr.m5_u) %>%
   dplyr::rename(flstart = 2)
 
-pods_BLUP_u <- create_BLUP(pods_mods_best_u[[2]]) %>%
+pods_BLUP_u <- create_BLUP(repr.tr.m6_u) %>%
   dplyr::rename(pods = 2)
 
-peduncles_BLUP_u <- create_BLUP(peduncles_mods_best_u[[2]]) %>%
+firstpods_BLUP_u <- create_BLUP(repr.tr.m7_u) %>%
+  dplyr::rename(firstpods = 2)
+
+peduncles_BLUP_u <- create_BLUP(repr.tr.m8_u) %>%
   dplyr::rename(peduncles = 2)
 ```
 
@@ -766,7 +737,8 @@ all_traits <- purrr::reduce(
      flsize_BLUP,    
      fltime_BLUP,    
      flstart_BLUP,   
-     pods_BLUP,      
+     pods_BLUP,    
+     firstpods_BLUP,
      peduncles_BLUP, 
     
     # herbivores
@@ -816,7 +788,8 @@ all_traits_u <- purrr::reduce(
      flsize_BLUP_u,    
      fltime_BLUP_u,    
      flstart_BLUP_u,   
-     pods_BLUP_u,      
+     pods_BLUP_u,   
+     firstpods_BLUP_u,
      peduncles_BLUP_u, 
     
 
@@ -859,6 +832,11 @@ boxplot(all_traits[, c(2, 6:29)],
 # It looks like some traits are much more variable than others. It’s probably a good idea to check our mean-variance relationship then! We can do this using the meanvar.plot function:
 meanvar.plot(mvab_all)
 
+# the species with high means (on the x axis) also have high variances (y axis).
+# We can deal with this relationship by choosing a family of GLMs with an appropriate mean-variance assumption. The default family used by mvabund when fitting multivariate GLMs is negative binomial which assumes a quadratic mean-variance relationship and a log-linear relationship between the response variables and any continuous variables. In [the site's] example, we only have categorical variables so that one’s not too important. If you are unsure of these relationships, don’t worry, we can check our model fit later. [I have quantitative variables too]
+
+# There is a ‘quick and dirty’ built-in plotting function in the mvabund package that allows us to contrast transformed abundances to the predictor variables of our choice. To contrast abundances against urban-rural habitat, we would use:
+
 plot(mvab_all ~ as.factor(all_traits$Urb_Rur),
      cex.axis = 0.8,
      cex = 0.8)
@@ -867,8 +845,10 @@ plot(mvab_all ~ as.factor(all_traits$Urb_Rur),
 mod1 <- manylm(mvab_all ~ City_dist*Transect_ID,
               data = all_traits)
 
+# Before we examine the output, we need to check our model assumptions. We can use the plot function to generate a plot of residuals.
 
 plot(mod1)
+# We can test the multivariate hypothesis of whether species composition varied across the habitats by using the anova function. This gives an analysis of deviance table where we use likelihood ratio tests and resampled p values to look for a significant effect of Habitat on the community data.
 
 anova(mod1)
 
@@ -904,12 +884,15 @@ plot(mvab_all_u ~ as.factor(all_traits_u$Urb_Rur),
 # THIS DOESN'T WORK B/C OF NEGATIVE VALUES
 
 
+
+
 mod1_u <- manylm(mvab_all_u ~ Urb_score*Transect_ID,
               data = all_traits_u)
 
 # Before we examine the output, we need to check our model assumptions. We can use the plot function to generate a plot of residuals.
 
 plot(mod1_u)
+# We can test the multivariate hypothesis of whether species composition varied across the habitats by using the anova function. This gives an analysis of deviance table where we use likelihood ratio tests and resampled p values to look for a significant effect of Habitat on the community data.
 
 anova(mod1_u)
 
@@ -968,6 +951,6 @@ word_export <- read_docx()
     body_add_par(word_export, value = "Urbanization = Urbanization Score", style = "heading 1")
   body_add_flextable(word_export, urb_sc_table)
 
-  print(word_export, here::here("./Figures_Tables/mvabund/mvabund_anovas_allyears_Q2.docx"))
+  print(word_export, here::here("./Figures_Tables/mvabund/mvabund_anovas_1yr_Q2.docx"))
 ```
 
