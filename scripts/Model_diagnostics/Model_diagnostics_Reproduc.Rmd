@@ -202,6 +202,18 @@ flowers_gr_city1 <- glmmTMB(mean_flower_count ~
 #                             family = nbinom2)
 # 
 # test_gxe(flowers_gr_city1, gxe_test_flowers) # reg mod best
+
+
+# # explore Gaussian model too
+# test <- glmmTMB(mean_flower_count ~
+#                                           Block +
+#                                           Year +
+#                                           (1|Population/Family) +
+#                                           City_dist, 
+#                                         data = flowering)
+# 
+# plot(DHARMa::simulateResiduals(test)) # slightly worse than neg binom
+# AIC(flowers_gr_city1, test) # AIC for ng binom model 30 criteria lower than Gaussian. I'll stick with neg binom
 ```
 
 #### Urb_score
@@ -520,7 +532,7 @@ flsize_urbsubs_city1_ME <- glmmTMB(Overall_mean ~
 #                                         City_dist * Transect_ID,
 #                               data = flowering %>%
 #                              dplyr::filter(Transect_ID != "Rural" & Year == "2022"),
-#                                REML = F))
+#             df                   REML = F))
 # # p(Population) = 0.4185. p(Family) = 0.5764
 # #
 # # p-values for both mods nearly identical, so I'll keep using regular model. This is also true when year is added.
