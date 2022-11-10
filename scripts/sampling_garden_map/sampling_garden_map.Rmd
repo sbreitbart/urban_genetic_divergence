@@ -1,12 +1,6 @@
 # Load libraries
 ```{r}
-library(cowplot)
-library(magick)
-
-
-
-devtools::install_github('oswaldosantos/ggsn')
-
+source(libraries.R)
 ```
 
 # Import data
@@ -27,7 +21,7 @@ sites %<>%
 
 ```
 
-# Make map
+# Make large map
 ```{r}
 # Make basemap of sampling sites-----
 mylocation <- c(-80.19, 43.2, -79.2, 43.81)
@@ -130,7 +124,7 @@ map1_wider <- base_map_full +
                      breaks = c("North", "South", "Rural"),
                      labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
                      name = "Sample Site Subtransect") 
-# map1_wider
+ #map1_wider
 
 
 ggsn::north2(map1_wider, x = .29, y = .8,
@@ -138,71 +132,136 @@ ggsn::north2(map1_wider, x = .29, y = .8,
 
 
 # Export
-dev.copy2pdf(file = here::here("./Figures_Tables/map/map.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/map/map_noinset.pdf"),
              width = 7, height = 5)
 ```
 
 # Create inset of point in North America
 ```{r}
 
-# # install.packages("maps")
-# library(maps)
-# 
-# us = map_data("state")
-# ca = map_data("world", "Canada")
-# 
-# xlim = c(-110,-100)
-# ylim = c(40,60)
-# dat_grid = expand.grid(x = xlim[1]:xlim[2], y = ylim[1]:ylim[2])
-# 
-# ggplot(aes(x=x,
-#            y=y),
-#            data=dat_grid) +
-#   geom_polygon(data=us,
-#                aes(x=long, y=lat, group=group), colour="black", fill="lightgrey") + 
-#   geom_polygon(data=ca,
-#                aes(x=long, y=lat, group=group), colour="black", fill="lightgrey") +
-#   theme_pubclean()
-
-
-
-
-mylocation_inset <- c(-95, 30, -60, 50)
+mylocation_inset <- c(-87, 40, -72, 47)
 base_map_inset <- ggmap(get_map(location = mylocation_inset,
-                          maptype = 'toner-lite',
+                          maptype = 'toner-background',
                           source = 'stamen',
-                          color = "bw"))
+                          color = "bw"),
+                        darken = c(0.75, "white"))
 
 
 map1_inset <- base_map_inset +
   
   # Add KSR point
-  geom_star(data = KSR_point, 
-             mapping = aes(x = lat, y = long),
-             color = "black", fill = "orangered",
-             size = 7 ) +
+  # geom_star(data = KSR_point, 
+  #            mapping = aes(x = lat, y = long),
+  #            color = "black", fill = "orangered",
+  #            size = 7 ) +
+  
+  # Add rectangle of area
+    geom_rect(aes(xmin = -80.3, xmax = -79.1,
+                  ymin = 43.2, ymax = 44.1),
+              color = "red", fill = NA)  +
 
   labs(x = 'Longitude', y = 'Latitude') +
 
   theme(legend.position = "none",
         axis.text=element_text(size=12),
         axis.title=element_text(size=12)) +
-    theme_void()
+    theme_void() +
+  theme(panel.border = element_rect(color = "black",
+                                    fill = NA,
+                                    size = 1))
 map1_inset
 
 
 ```
 
-# Add inset to first map
+# Add inset to larger map
 ```{r}
+# First, move scale bar and north arrow from larger map
+map1_large <- base_map_full +
+  geom_point(data = sites,
+             mapping = aes(x = Longitude, y = Latitude,
+                           fill=Transect, shape=Transect),
+             color = "black", size=3) + 
+  
+  # Add KSR point
+  geom_text_repel(data = KSR_point,
+    aes(lat, long),
+    label = "Koffler Scientific\n Reserve",
+     nudge_x = 0.22,
+     nudge_y = -0.02,
+    size = 4 ,
+    color = "gray18",
+    fontface = "bold",
+    segment.color = 'gray'
+   ) +
+  
+    geom_star(data = KSR_point, 
+             mapping = aes(x = lat, y = long),
+             color = "gray26", fill = "forestgreen",
+             size = 6.5) +
+  
+  # geom_point(data = KSR_point, 
+  #            mapping = aes(x = lat, y = long),
+  #            color = "black", fill = "dodgerblue",
+  #            shape = 21,
+  #            size = 6 ) +
+  
+  # # add extra "X" on top of point
+  #   geom_point(data = KSR_point, 
+  #            mapping = aes(x = lat, y = long),
+  #            color = "black",
+  #            shape = 8,
+  #            size = 4 ) +
 
-map1_wider +
+  labs(x = 'Longitude', y = 'Latitude') +
+
+  ggsn::scalebar(x.min = -80.2, x.max = -79.8,
+           y.min = 43.24, y.max = 43.28,
+           height = 0.4, st.dist= 0.5,
+           dist = 15, dist_unit = "km",
+           st.bottom = TRUE, st.color = "black",
+           st.size = 4,
+           transform = TRUE, model = 'WGS84'
+           ) +
+  theme(#legend.position = c(0.32, 0.65),
+        legend.position = c(0.75, 0.15),
+        legend.background = element_rect(fill = "white",
+                                         colour = "grey30",
+                                         size = 0.15),
+        legend.box.margin = margin(4,4,4,4),
+        legend.text = element_text(size=11),
+        legend.title = element_text(size = 12),
+        axis.text=element_text(size=12),
+        axis.title=element_text(size=12)) +
+  scale_fill_manual(values = cols1,
+                    breaks = c("North", "South", "Rural"),
+                    labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
+                    name = "Sample Site Subtransect") +
+  scale_shape_manual(values = c(23,24,21),
+                     breaks = c("North", "South", "Rural"),
+                     labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
+                     name = "Sample Site Subtransect") 
+
+map1_large
+
+# then add inset to larger map
+full <- map1_large +
     inset(ggplotGrob(map1_inset),
-        xmin = -80,
+        xmin = -79.75,
         xmax = -80.25,
         ymin = 43.8,
-        ymax = 44
-    )
+        ymax = 44.1
+    ) 
+
+ggsn::north2(full, 
+         #    x = .29, y = .25,
+             x = .26, y = .15,
+       scale = 0.09, symbol = 3)
+
+
+
+# Export
+dev.copy2pdf(file = here::here("./Figures_Tables/map/map_inset.pdf"),
+             width = 7, height = 5)
 
 ```
-
