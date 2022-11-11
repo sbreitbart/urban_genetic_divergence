@@ -1454,7 +1454,6 @@ Calc_percent_change(herb_l_bin_gradient_01_pred) # -2%
 
 ```
 
-### Urbanization Score
 ## Urban Subtransects
 ### City_dist
 #### Herbivory: Before flowering- Binary
@@ -1498,7 +1497,6 @@ Calc_percent_change_transects(herb_l_quant_urbsubs_01_pred)
 Calc_percent_change_transects(weev_quant_urbsubs_01_pred) # "Percent change from non-corridor to corridor subtransect: 20.9%"
 ```
 
-### Urbanization Score- not done
 # Find estimated marginal means at terminii (lms for cardenolides)
 ```{r}
 # total cards

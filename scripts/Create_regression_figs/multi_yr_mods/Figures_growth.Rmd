@@ -1310,14 +1310,12 @@ ggplot(heights %>%
 ## Urban Subtransects
 ### City_dist
 #### Ramets, after flowering
-
 ```{r}
 # PERCENT CHANGE, suburban to urban terminus:
 Calc_percent_change_urbsubs(ramets_late_urbsubs_01_pred) # -15.5%
 ```
 
 #### Height, before flowering
-
 ```{r}
 Calc_percent_change_transects(heights_early_urbsubs_01_pred) # 10.9%
 ```
@@ -1331,6 +1329,5 @@ Calc_percent_change_transects(heights_late_urbsubs_01_pred) # 4.7%
 ### Urbanization score
 #### SLA
 ```{r}
-# PERCENT CHANGE, suburban to urban terminus:
-Calc_percent_change_urbsubs(sla_urbsubs_02_pred) # 3.7%
+
 ```

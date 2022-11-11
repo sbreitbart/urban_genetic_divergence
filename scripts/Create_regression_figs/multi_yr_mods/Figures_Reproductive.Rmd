@@ -1349,7 +1349,7 @@ Calc_percent_change_urbsubs(peduncles_urbsubs_01_pred)
 ### Urbanization score
 #### Flower size
 ```{r}
-# redo once I make a function for urb_score models?
+
 ```
 
 #### Flowering duration
@@ -1361,10 +1361,10 @@ Calc_percent_change_transects(fltime_urbsubs_02_pred)
 
 #### Follicles
 ```{r}
-# redo once I make a function for urb_score models?
+
 ```
 
 #### Inflorescences
 ```{r}
-# redo once I make a function for urb_score models?
+
 ```

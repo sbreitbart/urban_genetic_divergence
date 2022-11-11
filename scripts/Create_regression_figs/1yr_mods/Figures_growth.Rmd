@@ -1329,6 +1329,5 @@ Calc_percent_change_urbsubs(ramets_late_urbsubs_01_pred) # Percent change, from 
 ### Urbanization score
 #### SLA
 ```{r}
-# PERCENT CHANGE, suburban to urban terminus:
-Calc_percent_change_urbsubs(sla_urbsubs_02_pred) # 10.7%
+
 ```

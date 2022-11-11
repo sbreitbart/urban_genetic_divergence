@@ -1230,7 +1230,6 @@ Calc_percent_change(herb_l_quant_gradient_01_pred) # 23.3%
 
 ```
 
-### Urbanization Score
 ## Urban Subtransects
 ### City_dist
 #### Weevil damage: Binary
