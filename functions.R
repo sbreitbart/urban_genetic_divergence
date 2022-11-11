@@ -1,6 +1,5 @@
-# Functions
+# test for genotype x environment interactions ----------------------------
 
-# test for genotype x environment interactions
 test_gxe <- function(regular_mod, gxe_mod){
   
   plot(DHARMa::simulateResiduals(gxe_mod))
@@ -9,21 +8,15 @@ test_gxe <- function(regular_mod, gxe_mod){
 }
 
 
+# create tidy ANOVA tables ------------------------------------------------
+# GOALS:
+# 1. Perform car::Anova() on each model in list
+#   -if it's got an interaction, do type III first
+#     -if interaxn p-val < 0.1, retain that result
+#     -else, move on to type II
+# 2. Save anova table w/appropriate SS type as new item in trait's sublist
 
-############################################################
-######################## ANOVA #############################
-############################################################
-
-## Create tidy anova tables-----
-### GOALS:
-### 1. Perform car::Anova() on each model in list
-###   -if it's got an interaction, do type III first
-###     -if interaxn p-val < 0.1, retain that result
-###     -else, move on to type II
-### 2. Save anova table w/appropriate SS type as new item in trait's sublist
-
-### function that IDs if there is >= 1 sig interaction in
-### the type III anova
+## function that IDs if there is >= 1 sig interaction in the type III anova
 ID_intxn <- function(model){
   model.df <- broom.mixed::tidy(car::Anova(model, type = "III"))
   intxn.df <- model.df[grep(":", model.df$term), "p.value"]
@@ -31,7 +24,7 @@ ID_intxn <- function(model){
   return(sig.intxns)
 }
 
-### Tidy up anova into table
+# Tidy up anova into table
 tidy_anova <- function(model){
   type.choice <- ifelse(ID_intxn(model) > 0,
                         3,
@@ -86,7 +79,8 @@ tidy_anova <- function(model){
                        replacement = c("Urbanization Score x Year"))
   )}
 
-# create function that basically does tidy_anova but with lms vs lmers
+# create function that basically does tidy_anova but with lms
+# (for cardenolides) vs lmers
 tidy_anova_cards <- function(model){
   
   return(
@@ -131,8 +125,7 @@ tidy_anova_cards <- function(model){
   )
 }
 
-### Next, create best and alt models for individual lists
-### of traits
+# Next, create best and alt models for individual lists of traits
 make_all_anovas_tidy <- function(anova_list){
   return(
     lapply(anova_list, tidy_anova) %>%
@@ -163,10 +156,10 @@ make_all_anovas_tidy <- function(anova_list){
   )
 }
 
-### For only one model (e.g., alt models), use this slightly
-### altered function that doesn't include horizontal bar
-### *Can also be used for models that include other fixed effects
-### like year, block, sample
+# For only one model (e.g., alt models), use this slightly
+# altered function that doesn't include horizontal bar
+# *Can also be used for models that include other fixed effects
+# like year, block, sample
 make_all_anovas_tidy_altmods <- function(anova_list){
   return(
     lapply(anova_list, tidy_anova) %>%
@@ -194,7 +187,6 @@ make_all_anovas_tidy_altmods <- function(anova_list){
   )
 }
 
-
 # export all anovas into word doc
 export_anovas <- function(anova_list, filepath){
   
@@ -210,9 +202,7 @@ export_anovas <- function(anova_list, filepath){
 }
 
 
-
-
-# Make function that makes multi-year model --> one-year model
+# Make function that fits 1-year model from multi-year model --------------
 # Q1
 make_1yrmod <- function(orig_mod, last_year, mod_allyrs_df){
   return(
@@ -235,11 +225,7 @@ make_1yrmod_transects <- function(orig_mod, last_year, mod_allyrs_df){
 }
 
 
-
-############################################################
-########## Do linear regression on multiple models #########
-############# (for cardenolide analysis)####################
-############################################################
+# Do linear regression on multiple lms (for cardenolide models) -----------
 
 DoLinearReg <- function(response_var, predictor_var, input_data){
   
@@ -260,7 +246,26 @@ DoLinearReg <- function(response_var, predictor_var, input_data){
   my_list <<- list(my_model, my_anova)
 }
 
-# Export anova table from mvabund blups
+# Generate BLUP from lmer for mvabund (multivariate) analysis --------
+create_BLUP <- function(linear_mixed_mod){
+  ranef(
+    linear_mixed_mod
+  )$cond$Population %>%
+    tibble::rownames_to_column("Population") %>%
+    dplyr::rename(estimate = 2) %>%
+    left_join(., pop_vars %>% # add city_dist and other variables
+                dplyr::select(c(Population,
+                                Transect_ID,
+                                City_dist,
+                                Urb_score)
+                ) %>%
+                dplyr::group_by(Population) %>%
+                dplyr::summarise(Population  = first(Population),
+                                 Transect_ID = first(Transect_ID),
+                                 City_dist   = first(City_dist),
+                                 Urb_score   = first(Urb_score)))
+}
+# Export anova table from mvabund (multivariate) analysis -----------------
 anova_blup_table <- function(anova_blup){
   
   return(
@@ -280,15 +285,14 @@ anova_blup_table <- function(anova_blup){
   
 }
 
-############################################################
-##################### RANOVAS ##############################
-############################################################
+# Ranovas (test for heritable gen var among pops & fams) ---------
+## Create tidy ranova table for Gaussian (lmer) models-----------
 
-## Create tidy ranova table-----
-### assessing if variation among pops/fams varies with urbanization
-#### for regular g/lmer models:
-# filepath should look something like this:
-# "./Defense_trait_analyses/Tables/Ranova/latex.html"
+### filepath should look like this b/c using "here" function:
+### "./Defense_trait_analyses/Tables/Ranova/latex.html"
+
+### Q1
+#### Return 1 table
 ranova_1step <- function(lmer_model, var_name){
   
   m1.ranova <- ranova(lmer_model) %>%
@@ -346,6 +350,8 @@ ranova_1step <- function(lmer_model, var_name){
   return(tab1)
   
 }
+
+#### Return multiple tables (run ranova_1step multiple)
 ranova_2step <- function(lmer_model1, var_name, filepath){
   
   # make table 1
@@ -432,7 +438,10 @@ ranova_2step <- function(lmer_model1, var_name, filepath){
   print(word_export, here::here(filepath))
   
 }
-ranova_transect <- function(lmer_model_without_urb, var_name, filepath){
+
+### Q2 (2-step process as well)
+ranova_transect <- function(lmer_model_without_urb, var_name,
+                            filepath){
   
   # make table 1
   lmer_model2 <- update(lmer_model_without_urb, . ~ . + Transect_ID*City_dist)
@@ -508,14 +517,50 @@ ranova_transect <- function(lmer_model_without_urb, var_name, filepath){
   print(word_export, here::here(filepath))
 }
 
-#### for boostrapping models:
-##### all 4 of these intermediary functions needed for pb_ranova_2step
-CreateRanovaOutput_bootstrap <- function(ranova_fam,
-                                         ranova_pop,
-                                         var_name ,
-                                         PVE_pop,
-                                         PVE_fam,
-                                         variance_pop,
+
+## Create tidy ranova table for non-Gaussian (glmer) models-------
+## These require parametric boostrapping (pb)
+
+### Test if model is singular
+PVE_testing <- function(ranova_obj){
+  if (isTRUE(performance::check_singularity(ranova_obj)) |
+      isTRUE(as.numeric(length(get_pve(ranova_obj))) == 0)) {
+    return("NA")
+  }
+  else {
+    return((get_pve(ranova_obj)))}
+}
+
+### If not, get variance explained
+get_variance <- function(ranova_obj){
+  if (isTRUE(performance::check_singularity(ranova_obj)) |
+      isTRUE(as.numeric(length(get_pve(ranova_obj))) == 0)) {
+    return("NA")
+  }
+  else {
+    return(as.numeric(insight::get_variance_random(ranova_obj)) %>%
+             round(digits = 3))
+  }
+}
+
+### and percent variance explained
+### calculating it as random / random + resid var
+get_pve <- function(full_model){
+  random_var <- as.numeric(insight::get_variance_random(full_model))
+  resid_var <- as.numeric(insight::get_variance_residual(full_model))
+  PVE <- round(
+    (random_var*100 /
+       ( random_var + resid_var)),
+    3)
+  return(PVE)
+}
+
+
+### Tidy ranova tables for pop and family (have to test each 
+### separately w/bootstrapping), then merge into one table
+CreateRanovaOutput_bootstrap <- function(ranova_fam, ranova_pop,
+                                         var_name,PVE_pop,
+                                         PVE_fam, variance_pop,
                                          variance_fam
                                          ){
   
@@ -557,26 +602,9 @@ CreateRanovaOutput_bootstrap <- function(ranova_fam,
   return(tab1)
   }
 
-PVE_testing <- function(ranova_obj){
-  if (isTRUE(performance::check_singularity(ranova_obj)) |
-      isTRUE(as.numeric(length(get_pve(ranova_obj))) == 0)) {
-    return("NA")
-  }
-  else {
-    return((get_pve(ranova_obj)))}
-}
 
-get_variance <- function(ranova_obj){
-  if (isTRUE(performance::check_singularity(ranova_obj)) |
-      isTRUE(as.numeric(length(get_pve(ranova_obj))) == 0)) {
-    return("NA")
-  }
-  else {
-    return(as.numeric(insight::get_variance_random(ranova_obj)) %>%
-              round(digits = 3))
-           }
-}
-
+### Perform ranova on one model & output table w/
+### Variance, PVE, Chi^2,	df,	p for family & population
 pb_ranova_1step <- function(full_model_forstep, trait_name){
   
   test_pop <- update(full_model_forstep, .~. - (1|Population))
@@ -611,6 +639,9 @@ pb_ranova_1step <- function(full_model_forstep, trait_name){
   return(table1)
   
 }
+
+### Quantify variance explained by urbanization (anova)
+### Table 3: Urb = distance to city center. Table 5: Urb = Urb Score
 make_tables3_5 <- function(glmer_mod, trait_name){
   
   table3_5 <- tidy_anova(glmer_mod) %>%
@@ -627,19 +658,8 @@ make_tables3_5 <- function(glmer_mod, trait_name){
   return(table3_5)
 }
 
-####### get percent variance explained for bootstrapped models
-####### calculating it as random / random + resid var
-get_pve <- function(full_model){
-  random_var <- as.numeric(insight::get_variance_random(full_model))
-  resid_var <- as.numeric(insight::get_variance_residual(full_model))
-  PVE <- round(
-    (random_var*100 /
-       ( random_var + resid_var)),
-    3)
-  return(PVE)
-}
 
-##### perform ranova for Q1 (all sites included)
+### Scale up: perform ranova & anova for Q1
 pb_ranova_2step <- function(full_model, trait_name, filepath){
   
   # CREATE TABLE 1
@@ -710,8 +730,9 @@ pb_ranova_2step <- function(full_model, trait_name, filepath){
   print(word_export, here::here(filepath))
 }
 
-##### perform ranova for Q2 (only urban sites included)
-pb_ranova_transects <- function(glmer_model_without_urb, trait_name, filepath){
+### Scale up: perform ranova & anova for Q1
+pb_ranova_transects <- function(glmer_model_without_urb, trait_name,
+                                filepath){
   
   # CREATE TABLE 1
   glmer_model2 <- update(glmer_model_without_urb, . ~ . + Transect_ID*City_dist)
@@ -766,7 +787,16 @@ pb_ranova_transects <- function(glmer_model_without_urb, trait_name, filepath){
   print(word_export, here::here(filepath))
 }
 
-## get PVE for non-Gaussian models using lmer
+## Recalculate PVE for non-Gaussian models using lmer
+## As far as we know, there isn't a solid way to calculate percent
+## variance explained for variables with a non-Gaussian distribution.
+## The way that we handled this was to refit our non-Gaussian models
+## (generalized linear mixed models) to general linear mixed models,
+## then extract PVE for the last year of data collection.
+## These new PVEs will be estimates. This is *not* a perfect solution
+## but it will help us approximate PVE for these variables.
+
+### Get pve from lm
 PVE_lm <- function(lmer){
   
   table1 <- lme4::VarCorr(lmer,
@@ -785,6 +815,8 @@ PVE_lm <- function(lmer){
   return(table1)
   
 }
+
+### Merge multiple models' pve into one table
 pve_table_recalc <- function(pve_var1, pve_var2, pve_var3,
                              var1_name, var2_name, var3_name){
   return(
@@ -812,6 +844,8 @@ pve_table_recalc <- function(pve_var1, pve_var2, pve_var3,
       autofit() 
   )
 }
+
+### Export the multiple model pve table
 export_recalc <- function(table1, table2, table3, filepath){
   
   word_export <- read_docx()
@@ -841,11 +875,8 @@ export_recalc <- function(table1, table2, table3, filepath){
   print(word_export, here::here(filepath))
 }
 
-
-############################################################
-## compare anovas from ranovas (1 year) w/initial anovas
-## (all years)
-############################################################
+# compare 1-yr anovas (from ranovas) w/initial anovas (all years) ---------
+## Make flextable of anova output
 make_flxtable <- function(tidy_anova_obj, var_name){
   
   return(
@@ -863,6 +894,7 @@ make_flxtable <- function(tidy_anova_obj, var_name){
   )
 }
 
+## compare, export Q1 anovas
 compare_anovas <- function(mod_allyrs_nourban, 
                            mod_allyrs_df,
                            last_year,
@@ -949,6 +981,7 @@ compare_anovas <- function(mod_allyrs_nourban,
   print(word_export, here::here(filepath))
 }
 
+## compare, export Q2 anovas
 compare_anovas_transects <- function(mod_allyrs_nourban, 
                            mod_allyrs_df,
                            last_year,
@@ -1037,10 +1070,7 @@ compare_anovas_transects <- function(mod_allyrs_nourban,
   print(word_export, here::here(filepath))
 }
 
-############################################################
-##################### HERITABILITY & QST ###################
-############################################################
-
+# Calculate quantitative genetic parameters -------------------------------
 ## Calculate heritability
 Calc_narrow_sense_h <- function(fam_var, pop_var, resid_var){
   add_var <- 2*(fam_var^2)
@@ -1060,9 +1090,7 @@ Calc_qst <- function(fam_var, pop_var){
 }
 
 ## Calculate h2 and Qst in same function
-Calc_h2_qst <- function(fam_var,
-                                               pop_var,
-                                               resid_var){
+Calc_h2_qst <- function(fam_var, pop_var, resid_var){
   add_var <- 2*(fam_var^2)
   total_wp_var <- (fam_var^2) + # family
     (pop_var^2) + # population
@@ -1077,6 +1105,7 @@ Calc_h2_qst <- function(fam_var,
   print(paste0("Qst: ", qst))
 }
 
+## Calculate CVA
 CVA <- function(fam_var,
                 pop_var,
                 resid_var,
@@ -1091,6 +1120,7 @@ CVA <- function(fam_var,
   return(cva)
 }
 
+## Calculate h2, Qst, and CVA at once
 calc_quantgenvars <-  function(fam_var,
                                pop_var,
                                resid_var,
@@ -1118,10 +1148,7 @@ return(data.frame(trait = variable_name,
                   cva = cva))
 }
 
-###########################################################
-##################### FIGURES #############################
-###########################################################
-
+# Figures -----------------------------------------------------------------
 ## Create theme for figures
 theme_1 <- function(){ 
   
@@ -1140,7 +1167,7 @@ theme_1 <- function(){
 }
 
 ## Create variable associated with replicated aesthetics
-# Gradient figs
+### Gradient figs
 rep_geoms <- c(geom_smooth(aes(x = x,
                                y = predicted),
                            color = "#66a182",
@@ -1152,7 +1179,7 @@ rep_geoms <- c(geom_smooth(aes(x = x,
                            fill = "#66a182",
                            alpha = 0.3))
 
-# Transect figs
+### Transect figs
 rep_geoms2 <- c(geom_smooth(
   aes(
     x = x,
@@ -1175,10 +1202,9 @@ rep_geoms2 <- c(geom_smooth(
 
 
 
-###########################################################
-################## PERCENT CHANGE #########################
-###########################################################
-### Gradient/city_dist models
+# Percent change between populations ------------------------------------
+## Q1/city_dist models
+### % change among urban/rural terminii
 Calc_percent_change <- function(ggpredict_object){
   baseline_numbers <- ggpredict_object %>%
     dplyr::filter(., x == 0 | x == 70) %>%
@@ -1193,7 +1219,8 @@ Calc_percent_change <- function(ggpredict_object){
   return(paste0("Percent change, from rural to urban terminus: ", round(percent_change, 1), "%"))
 }
 
-### Urban subtransects/city_dist models
+## Q2/city_dist models
+### % change among urban/rural terminii
 Calc_percent_change_urbsubs <- function(ggpredict_object){
   baseline_numbers <- ggpredict_object %>%
     dplyr::group_by(x) %>%
@@ -1210,6 +1237,34 @@ Calc_percent_change_urbsubs <- function(ggpredict_object){
                 round(percent_change, 1), "%"))
   
 }
+### % change among subtransects
+Calc_percent_change_transects <- function(ggpredict_object){
+  baseline <- ggpredict_object %>%
+    dplyr::group_by(group) %>%
+    dplyr::summarise(mean = mean(predicted))
+  
+  corridor_mean <- baseline %>%
+    dplyr::filter(group == "South") %>%
+    dplyr::select("mean") %>%
+    as.numeric()
+  
+  noncorridor_mean <- baseline %>%
+    dplyr::filter(group == "North") %>%
+    dplyr::select("mean") %>%
+    as.numeric()
+  
+  PC_noncorrTOcorridor <- round(
+    (((corridor_mean - noncorridor_mean) /
+        noncorridor_mean) * 100),
+    1)
+  
+  print(baseline)
+  print(paste0("Percent change from non-corridor to corridor subtransect: ",
+               PC_noncorrTOcorridor, "%"))
+  
+}
+### % change among urban/suburban terminii & subtransects for
+### models with interactions
 Calc_percent_change_urbsubs_intxn <- function(ggpredict_object){
   baseline <- ggpredict_object %>%
     dplyr::filter(., x == max(x) | x == min(x)) %>%
@@ -1253,37 +1308,8 @@ Calc_percent_change_urbsubs_intxn <- function(ggpredict_object){
   print(paste0("Percent change from suburban to urban terminus along corridor subtransect: ", PC_corr_suburbanTOurban, "%"))
   print(paste0("Percent change from suburban to urban terminus along non-corridor subtransect: ", PC_noncorr_suburbanTOurban, "%"))
 }
-Calc_percent_change_transects <- function(ggpredict_object){
-  baseline <- ggpredict_object %>%
-    dplyr::group_by(group) %>%
-    dplyr::summarise(mean = mean(predicted))
-  
-  corridor_mean <- baseline %>%
-    dplyr::filter(group == "South") %>%
-    dplyr::select("mean") %>%
-    as.numeric()
-  
-  noncorridor_mean <- baseline %>%
-    dplyr::filter(group == "North") %>%
-    dplyr::select("mean") %>%
-    as.numeric()
-  
-  PC_noncorrTOcorridor <- round(
-    (((corridor_mean - noncorridor_mean) /
-        noncorridor_mean) * 100),
-    1)
-  
-  print(baseline)
-  print(paste0("Percent change from non-corridor to corridor subtransect: ",
-               PC_noncorrTOcorridor, "%"))
-  
-}
 
-
-########################################################
-## Change all models from REML = F to REML = T #########
-########################################################
-
+# Change list of models from REML = F to REML = T -------------------------
 reml_to_true <- function(mod_list){
   
   new_mod_list <- mod_list
@@ -1295,10 +1321,7 @@ reml_to_true <- function(mod_list){
   return(new_mod_list)
 }
 
-########################################################
-### Export r-squared values for list of models #########
-########################################################
-
+# Export r-squared values for list of models ------------------------------
 make_r2_table <- function(reml_T_modlist) {
   
   return(
@@ -1403,28 +1426,4 @@ export_r2 <- function(table1, table2, table3,
   
   word_export <- body_end_section_landscape(word_export)
   print(word_export, here::here(filepath))
-}
-
-
-########################################################
-### Generate BLUP df from linear mixed model #########
-########################################################
-
-create_BLUP <- function(linear_mixed_mod){
-  ranef(
-    linear_mixed_mod
-  )$cond$Population %>%
-    tibble::rownames_to_column("Population") %>%
-    dplyr::rename(estimate = 2) %>%
-    left_join(., pop_vars %>% # add city_dist and other variables
-                dplyr::select(c(Population,
-                                Transect_ID,
-                                City_dist,
-                                Urb_score)
-                ) %>%
-                dplyr::group_by(Population) %>%
-                dplyr::summarise(Population  = first(Population),
-                                 Transect_ID = first(Transect_ID),
-                                 City_dist   = first(City_dist),
-                                 Urb_score   = first(Urb_score)))
 }
