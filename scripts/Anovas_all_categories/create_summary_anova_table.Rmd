@@ -198,31 +198,46 @@ anova_table_usc %>%
 ### Combine city_dist and Urb_score, remove block
 ```{r}
 full_join(
-  
   anova_table_city %>%
-  dplyr::filter(Predictor == "Distance to City Center") %>%
-  dplyr::mutate(ID = row_number()+(row_number()*1)-1),
-  
-  anova_table_usc %>%
-  dplyr::filter(Predictor == "Urbanization Score") %>%
-  dplyr::mutate(ID =  row_number()+(row_number()*1))
+  dplyr::filter(Predictor == "Distance to City Center"),
 
-  ) %>%
-  arrange(ID) %>%
-  dplyr::select(-ID) %>%
+  anova_table_usc %>%
+  dplyr::filter(Predictor == "Urbanization Score")) %>%
+  
+  dplyr::rename("Chisq" = "Chi_sq") %>%
+  
+  pivot_wider(names_from = "Predictor", 
+              values_from = c(Chisq, p)) %>%
+  
+  dplyr::rename("Chisq_Dist" = 2,
+                "Chisq_Usc" = 3,
+                "p_Dist" = 4,
+                "p_Usc" = 5
+                ) %>%
+  dplyr::select(1,2,4,3,5) %>%
   flextable() %>%
   theme_box() %>%
+  flextable::bold(i = ~ p_Dist <= 0.05, j = 3) %>%
+  flextable::bold(i = ~ p_Usc <= 0.05, j = 5) %>%
+  ftExtra::separate_header() %>%
   merge_v(j = ~Variable) %>% 
-  align(j = 3:4, align = "center", part = "all") %>%
-  hline(j = ~Variable, border = NULL, part = "body") %>%
-  flextable::compose(i = 1, j = 3, part = "header",
+  align(j = 2:5, align = "center", part = "all") %>%
+  hline(border = NULL, part = "body") %>%
+  flextable::compose(i = 1, j = c(2,4), part = "header",
                      value = as_paragraph("χ", as_sup("2"))) %>%
-  bold(i = ~ p <= 0.05, j = 4) %>%
+  merge_h(i = 2, part = "header") %>%
+  flextable::compose(i = 2, j = 2, part = "header",
+                     value = as_paragraph("Distance to City Center")) %>%
+  flextable::compose(i = 2, j = 4, part = "header",
+                     value = as_paragraph("Urbanization Score")) %>%
+  flextable::compose(i = 1, j = 1, part = "header",
+                     value = as_paragraph(" ")) %>%
   padding(padding = 3) %>%
+  fix_border_issues(part = "all") %>%
   autofit() %T>%
   
   flextable::save_as_docx(.,
-                          path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_DistAndUrbsc.docx"))
+                          path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_DistAndUrbsc_Q1.docx"))
 
 ```
 
@@ -417,55 +432,67 @@ anova_table_usc2 %>%
                           path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_Urbscore_transects.docx"))
 ```
 
-### Combine city_dist and Urb_score, remove block
+### Remove block & make tables in same style as for Q1 but separate city_dist and urb_score tables because they're larger now
 ```{r}
-# get IDs used to order variables
-orders <- anova_table_city2 %>%
-  dplyr::filter(Predictor == "Subtransect") %>%
-  dplyr::mutate(ID = row_number()) %>%
-  dplyr::group_by(Variable) %>%
-  dplyr::summarise(Variable = first(Variable),
-                   ID = first(ID),
-                   ID2 = row_number()) %>%
-  dplyr::filter(ID2 == 1) %>%
-  dplyr::select(-ID2) %>%
-  arrange(ID)
-
-anova_table_city2 %<>%
-  left_join(.,
-          orders)
-
-anova_table_usc2 %<>%
-  left_join(.,
-          orders)
-
-
-
 full_join(
-  
   anova_table_city2 %>%
   dplyr::filter(Predictor != "Block" &
                 Predictor != "(Intercept)" &
-                Predictor != "Sample") %>%
-  dplyr::mutate(ID2 = case_when(
-    Predictor == "Distance to City Center" ~ 1,
-    Predictor == "Subtransect" ~ 2,
-    Predictor == "Distance to City Center x Subtransect" ~ 3,
-    TRUE ~ 10)),
-  
+                Predictor != "Sample"),
+
+
   anova_table_usc2 %>%
   dplyr::filter(Predictor != "Block" &
                 Predictor != "(Intercept)" &
                 Predictor != "Sample") %>%
-  dplyr::mutate(ID2 = case_when(
-    Predictor == "Urbanization Score" ~ 4,
-    Predictor == "Subtransect" ~ 5,
-    Predictor == "Urbanization Score x Subtransect" ~ 6,
-    TRUE ~ 10))
+    dplyr::mutate(Predictor = replace(Predictor,
+                                      Predictor == "Subtransect",
+                                      "Subtransect_u"))) %>%
+  
+  dplyr::rename("Chisq" = "Chi_sq") %>%
 
-  ) %>%
-  arrange(ID, ID2) %>%
-  dplyr::select(-ID, -ID2) %>%
+  pivot_wider(names_from = "Predictor", 
+              values_from = c(Chisq, p)) %>%
+  
+  dplyr::rename("Chisq_Dist_d" = 2,
+                "Chisq_Sub_d" = 3,
+                "Chisq_intx_d" = 4,
+                "Chisq_Usc_u" = 5,
+                "Chisq_Sub_u" = 6,
+                "Chisq_intx_u" = 7,
+                "p_Dist_d" = 8,
+                "p_Sub_d" = 9,
+                "p_intx_d" = 10,
+                "p_Usc_u" = 11,
+                "p_Sub_u" = 12,
+                "p_intx_u" = 13
+                ) %>%
+  dplyr::select(1,2,8,3,9,4,10,5,11,6,12,7,13) %>%
+  flextable() %>%
+  theme_box() %>%
+  flextable::bold(i = ~ p_Dist <= 0.05, j = 3) %>%
+  flextable::bold(i = ~ p_Usc <= 0.05, j = 5) #%>%
+  ftExtra::separate_header() %>%
+  merge_v(j = ~Variable) %>% 
+  align(j = 2:5, align = "center", part = "all") %>%
+  hline(border = NULL, part = "body") %>%
+  flextable::compose(i = 1, j = c(2,4), part = "header",
+                     value = as_paragraph("χ", as_sup("2"))) %>%
+  merge_h(i = 2, part = "header") %>%
+  flextable::compose(i = 2, j = 2, part = "header",
+                     value = as_paragraph("Distance to City Center")) %>%
+  flextable::compose(i = 2, j = 4, part = "header",
+                     value = as_paragraph("Urbanization Score")) %>%
+  flextable::compose(i = 1, j = 1, part = "header",
+                     value = as_paragraph(" ")) %>%
+  padding(padding = 3) %>%
+  fix_border_issues(part = "all") %>%
+  autofit() %T>%
+  
+  flextable::save_as_docx(.,
+                          path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_DistAndUrbsc_Q1.docx"))
+
+
   flextable() %>%
   theme_box() %>%
   merge_v(j = ~Variable) %>% 
