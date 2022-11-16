@@ -16,7 +16,7 @@ source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_1yr_mods.Rmd", q
 #### Create 1-yr ANOVA table
 ```{r}
 # perform tidy_anova on all list items (i.e., models)
-all_1yr_mods %>% 
+anova_table_city <- all_1yr_mods %>% 
   lapply(., tidy_anova) %>%
 
 # merge all items
@@ -33,11 +33,11 @@ all_1yr_mods %>%
     str_detect(Variable, "Herbivory_mean_early_binary") ~
       "Herbivory before flowering (binary)",
     str_detect(Variable, "(Herbivory_mean_early)") ~
-                 "Herbivory before flowering (quantitative)",
+      "Herbivory before flowering (quantitative)",
     str_detect(Variable, "Herbivory_mean_late_binary")~
       "Herbivory after flowering (binary)",
     str_detect(Variable, "(Herbivory_mean_late)")~
-      "Herbivory before flowering (quantitative)",
+      "Herbivory after flowering (quantitative)",
     str_detect(Variable, "Scar_binary")~
       "Weevil damage (binary)",
     str_detect(Variable, "Scar_length_cm")~
@@ -88,7 +88,9 @@ all_1yr_mods %>%
       "Mortality"
     
     
-    )) %>%
+    )) 
+
+anova_table_city %>%
   flextable() %>%
   theme_box() %>%
   merge_v(j = ~Variable) %>% 
@@ -108,7 +110,7 @@ all_1yr_mods %>%
 ### Urb_score
 #### Create 1-yr ANOVA table
 ```{r}
-all_1yr_mods.u %>% 
+anova_table_usc <- all_1yr_mods.u %>% 
   lapply(., tidy_anova) %>%
 
   reduce(full_join, all = T) %>%
@@ -127,7 +129,7 @@ all_1yr_mods.u %>%
     str_detect(Variable, "Herbivory_mean_late_binary")~
       "Herbivory after flowering (binary)",
     str_detect(Variable, "(Herbivory_mean_late)")~
-      "Herbivory before flowering (quantitative)",
+      "Herbivory after flowering (quantitative)",
     str_detect(Variable, "Scar_binary")~
       "Weevil damage (binary)",
     str_detect(Variable, "Scar_length_cm")~
@@ -175,10 +177,9 @@ all_1yr_mods.u %>%
     str_detect(Variable, "Ramets_late")~
       "Ramets after flowering",
     str_detect(Variable, "Dead")~
-      "Mortality"
-    
-    
-    )) %>%
+      "Mortality" ))
+
+anova_table_usc %>%
   flextable() %>%
   theme_box() %>%
   merge_v(j = ~Variable) %>% 
@@ -194,12 +195,43 @@ all_1yr_mods.u %>%
                           path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_Urbscore.docx"))
 ```
 
+### Combine city_dist and Urb_score, remove block
+```{r}
+full_join(
+  
+  anova_table_city %>%
+  dplyr::filter(Predictor == "Distance to City Center") %>%
+  dplyr::mutate(ID = row_number()+(row_number()*1)-1),
+  
+  anova_table_usc %>%
+  dplyr::filter(Predictor == "Urbanization Score") %>%
+  dplyr::mutate(ID =  row_number()+(row_number()*1))
+
+  ) %>%
+  arrange(ID) %>%
+  dplyr::select(-ID) %>%
+  flextable() %>%
+  theme_box() %>%
+  merge_v(j = ~Variable) %>% 
+  align(j = 3:4, align = "center", part = "all") %>%
+  hline(j = ~Variable, border = NULL, part = "body") %>%
+  flextable::compose(i = 1, j = 3, part = "header",
+                     value = as_paragraph("χ", as_sup("2"))) %>%
+  bold(i = ~ p <= 0.05, j = 4) %>%
+  padding(padding = 3) %>%
+  autofit() %T>%
+  
+  flextable::save_as_docx(.,
+                          path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_DistAndUrbsc.docx"))
+
+```
+
 ## Q2
 ### City_dist
 #### Create 1-yr ANOVA table
 ```{r}
 # STEP 3: perform tidy_anova on all list items (i.e., models)
-all_1yr_mods_tr %>% 
+anova_table_city2 <- all_1yr_mods_tr %>% 
   lapply(., tidy_anova) %>%
 
 # STEP 4: merge all items
@@ -220,7 +252,7 @@ all_1yr_mods_tr %>%
     str_detect(Variable, "Herbivory_mean_late_binary")~
       "Herbivory after flowering (binary)",
     str_detect(Variable, "(Herbivory_mean_late)")~
-      "Herbivory before flowering (quantitative)",
+      "Herbivory after flowering (quantitative)",
     str_detect(Variable, "Scar_binary")~
       "Weevil damage (binary)",
     str_detect(Variable, "Scar_length_cm")~
@@ -271,7 +303,9 @@ all_1yr_mods_tr %>%
       "Mortality"
     
     
-    )) %>%
+    ))
+
+anova_table_city2 %>%
   flextable() %>%
   theme_box() %>%
   merge_v(j = ~Variable) %>% 
@@ -292,7 +326,7 @@ all_1yr_mods_tr %>%
 #### Create 1-yr ANOVA table
 ```{r}
 # STEP 3: perform tidy_anova on all list items (i.e., models)
-all_1yr_mods.u_tr %>% 
+anova_table_usc2 <- all_1yr_mods.u_tr %>% 
   lapply(., tidy_anova) %>%
 
 # STEP 4: merge all items
@@ -313,7 +347,7 @@ all_1yr_mods.u_tr %>%
     str_detect(Variable, "Herbivory_mean_late_binary")~
       "Herbivory after flowering (binary)",
     str_detect(Variable, "(Herbivory_mean_late)")~
-      "Herbivory before flowering (quantitative)",
+      "Herbivory after flowering (quantitative)",
     str_detect(Variable, "Scar_binary")~
       "Weevil damage (binary)",
     str_detect(Variable, "Scar_length_cm")~
@@ -364,7 +398,9 @@ all_1yr_mods.u_tr %>%
       "Mortality"
     
     
-    )) %>%
+    ))
+
+anova_table_usc2 %>%
   flextable() %>%
   theme_box() %>%
   merge_v(j = ~Variable) %>% 
@@ -381,6 +417,70 @@ all_1yr_mods.u_tr %>%
                           path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_Urbscore_transects.docx"))
 ```
 
+### Combine city_dist and Urb_score, remove block
+```{r}
+# get IDs used to order variables
+orders <- anova_table_city2 %>%
+  dplyr::filter(Predictor == "Subtransect") %>%
+  dplyr::mutate(ID = row_number()) %>%
+  dplyr::group_by(Variable) %>%
+  dplyr::summarise(Variable = first(Variable),
+                   ID = first(ID),
+                   ID2 = row_number()) %>%
+  dplyr::filter(ID2 == 1) %>%
+  dplyr::select(-ID2) %>%
+  arrange(ID)
+
+anova_table_city2 %<>%
+  left_join(.,
+          orders)
+
+anova_table_usc2 %<>%
+  left_join(.,
+          orders)
+
+
+
+full_join(
+  
+  anova_table_city2 %>%
+  dplyr::filter(Predictor != "Block" &
+                Predictor != "(Intercept)" &
+                Predictor != "Sample") %>%
+  dplyr::mutate(ID2 = case_when(
+    Predictor == "Distance to City Center" ~ 1,
+    Predictor == "Subtransect" ~ 2,
+    Predictor == "Distance to City Center x Subtransect" ~ 3,
+    TRUE ~ 10)),
+  
+  anova_table_usc2 %>%
+  dplyr::filter(Predictor != "Block" &
+                Predictor != "(Intercept)" &
+                Predictor != "Sample") %>%
+  dplyr::mutate(ID2 = case_when(
+    Predictor == "Urbanization Score" ~ 4,
+    Predictor == "Subtransect" ~ 5,
+    Predictor == "Urbanization Score x Subtransect" ~ 6,
+    TRUE ~ 10))
+
+  ) %>%
+  arrange(ID, ID2) %>%
+  dplyr::select(-ID, -ID2) %>%
+  flextable() %>%
+  theme_box() %>%
+  merge_v(j = ~Variable) %>% 
+  align(j = 3:4, align = "center", part = "all") %>%
+  hline(j = ~Variable, border = NULL, part = "body") %>%
+  flextable::compose(i = 1, j = 3, part = "header",
+                     value = as_paragraph("χ", as_sup("2"))) %>%
+  bold(i = ~ p <= 0.05, j = 4) %>%
+  padding(padding = 3) %>%
+  autofit()# %T>%
+  
+  flextable::save_as_docx(.,
+                          path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_DistAndUrbsc_Q2.docx"))
+
+```
 
 # Create tables with ANOVA results from cardenolide models (lms)
 ## Q1, City_dist & Urb_score
