@@ -323,7 +323,15 @@ repr.tr.m5 <- make_1yrmod_transects(flstart_mods_best_c[[2]], "2022", flowering)
 
 repr.tr.m6 <- make_1yrmod_transects(pods_mods_best_c[[2]], "2022", flowering)
 
-repr.tr.m7 <- make_1yrmod_transects(first_pods_mods_best_c[[2]], "2022", flowering)
+# won't converge if I take the multi-yr mod and alter it- has to be above x - 170, so I chose to increase it by a month to 200 days
+repr.tr.m7 <- glmmTMB(Julian_first_follicle-200 ~
+                               Block +
+                               (1|Population/Family) +
+                               City_dist+Transect_ID, 
+                             data = flowering %>%
+          dplyr::filter(Year == 2022 &
+                          Transect_ID != "Rural"),
+                             family = poisson) 
 
 repr.tr.m8 <- make_1yrmod_transects(peduncles_mods_best_c[[2]], "2022", flowering)
 ```
