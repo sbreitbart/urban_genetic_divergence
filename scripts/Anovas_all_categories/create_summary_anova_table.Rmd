@@ -241,6 +241,52 @@ full_join(
 
 ```
 
+### Export block effects separately
+```{r}
+full_join(
+  anova_table_city %>%
+  dplyr::filter(Predictor == "Block") %>%
+    dplyr::mutate("Block" = "BlockD"),
+
+  anova_table_usc %>%
+  dplyr::filter(Predictor == "Block") %>%
+    dplyr::mutate("Block" = "BlockU")) %>%
+  
+  dplyr::select(-Predictor)%>%
+
+  dplyr::rename("Chisq" = "Chi_sq") %>%
+  
+  pivot_wider(names_from = "Block", 
+              values_from = c(Chisq, p)) %>%
+
+  dplyr::select(1,2,4,3,5) %>%
+  flextable() %>%
+  theme_box() %>%
+  flextable::bold(i = ~ p_BlockD <= 0.05, j = 3) %>%
+  flextable::bold(i = ~ p_BlockU <= 0.05, j = 5) %>%
+  ftExtra::separate_header() %>%
+  merge_v(j = ~Variable) %>% 
+  align(j = 2:5, align = "center", part = "all") %>%
+  hline(border = NULL, part = "body") %>%
+  flextable::compose(i = 1, j = c(2,4), part = "header",
+                     value = as_paragraph("χ", as_sup("2"))) %>%
+  merge_h(i = 2, part = "header") %>%
+  flextable::compose(i = 2, j = 2, part = "header",
+                     value = as_paragraph("Distance to City Center")) %>%
+  flextable::compose(i = 2, j = 4, part = "header",
+                     value = as_paragraph("Urbanization Score")) %>%
+  flextable::compose(i = 1, j = 1, part = "header",
+                     value = as_paragraph(" ")) %>%
+  padding(padding = 3) %>%
+  fix_border_issues(part = "all") %>%
+  autofit() %T>%
+  
+  flextable::save_as_docx(.,
+                          path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_Block_Q1.docx"))
+
+```
+
+
 ## Q2
 ### City_dist
 #### Create 1-yr ANOVA table
@@ -529,6 +575,51 @@ anova_table_usc2_simpler %>%
   
   flextable::save_as_docx(.,
                           path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_Urbsc_Q2.docx"))
+
+```
+
+### Export block effects separately
+```{r}
+full_join(
+  anova_table_city2 %>%
+  dplyr::filter(Predictor == "Block") %>%
+    dplyr::mutate("Block" = "BlockD"),
+
+  anova_table_usc2 %>%
+  dplyr::filter(Predictor == "Block") %>%
+    dplyr::mutate("Block" = "BlockU")) %>%
+  
+  dplyr::select(-Predictor)%>%
+
+  dplyr::rename("Chisq" = "Chi_sq") %>%
+  
+  pivot_wider(names_from = "Block", 
+              values_from = c(Chisq, p)) %>%
+
+  dplyr::select(1,2,4,3,5) %>%
+  flextable() %>%
+  theme_box() %>%
+  flextable::bold(i = ~ p_BlockD <= 0.05, j = 3) %>%
+  flextable::bold(i = ~ p_BlockU <= 0.05, j = 5) %>%
+  ftExtra::separate_header() %>%
+  merge_v(j = ~Variable) %>% 
+  align(j = 2:5, align = "center", part = "all") %>%
+  hline(border = NULL, part = "body") %>%
+  flextable::compose(i = 1, j = c(2,4), part = "header",
+                     value = as_paragraph("χ", as_sup("2"))) %>%
+  merge_h(i = 2, part = "header") %>%
+  flextable::compose(i = 2, j = 2, part = "header",
+                     value = as_paragraph("Distance to City Center")) %>%
+  flextable::compose(i = 2, j = 4, part = "header",
+                     value = as_paragraph("Urbanization Score")) %>%
+  flextable::compose(i = 1, j = 1, part = "header",
+                     value = as_paragraph(" ")) %>%
+  padding(padding = 3) %>%
+  fix_border_issues(part = "all") %>%
+  autofit() %T>%
+  
+  flextable::save_as_docx(.,
+                          path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_Block_Q2.docx"))
 
 ```
 
