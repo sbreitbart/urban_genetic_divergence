@@ -1,0 +1,162 @@
+# Set up notebook
+## Load libraries and add functions
+```{r}
+source("libraries.R")
+source("functions.R")
+```
+
+## Import ranova tables
+these values were generated in:
+-scripts/Ranovas_anovas_per_category/R_anovas_growth.Rmd (etc. for rest of similarly-named files)...
+
+manually extracted, then organized into these word docs:
+-Figures_Tables\ranova_PVE\ranovas_allyears.docx
+-Figures_Tables\ranova_PVE\ranovas_allyears_transects.docx
+
+...then placed into csvs for import into R and manipulation: 
+
+### Q1
+```{r}
+ran1 <- read.csv(here::here("./Figures_Tables/ranova_PVE/ranovas_allyears_Table1.csv"),
+                 blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::rename("Variable" = 1)
+
+
+ran2 <- read.csv(here::here("./Figures_Tables/ranova_PVE/ranovas_allyears_Table2.csv"),
+                 blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::rename("Variable" = 1)
+```
+
+### Q2
+```{r}
+ran3 <- read.csv(here::here("./Figures_Tables/ranova_PVE/ranovas_allyears_transects_Table1.csv"),
+                 blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::rename("Variable" = 1) %>%
+  dplyr::select(Variable:Urbanization)
+
+```
+
+## Reshape tables
+### Q1, table 1
+```{r}
+ran1 %<>%
+  pivot_wider(names_from = "Group",
+              values_from = c("Chisq", "p", "PVE")) %>%
+  dplyr::select(1,2,4,6,3,5,7) 
+```
+
+### Q1, table 2
+```{r}
+ran2 %<>%
+  pivot_wider(names_from = c("Group", "Urbanization"),
+              values_from = c("Chisq", "p", "PVE")) %>%
+  dplyr::select(1,2,6,10,3,7,11,4,8,12,5,9,13)
+```
+
+### Q2, table 1
+```{r}
+ran3 %<>%
+  pivot_wider(names_from = c("Group", "Urbanization"),
+              values_from = c("Chisq", "p", "PVE")) %>%
+  dplyr::select(1,2,6,10,3,7,11,4,8,12,5,9,13)
+```
+
+## Make nice tables & export
+### Q1, table 1
+```{r}
+ran1 %>%
+  flextable() %>%
+  theme_box() %>%
+  flextable::bold(i = ~ p_Population <= 0.05, j = 3) %>%
+  flextable::bold(i = ~ p_Family <= 0.05, j = 5) %>%
+  ftExtra::separate_header() %>%
+  merge_v(j = ~Variable) %>% 
+  align(j = 2:5, align = "center", part = "all") %>%
+  hline(border = NULL, part = "body") %>%
+  flextable::compose(i = 1, j = c(2,5), part = "header",
+                     value = as_paragraph("χ", as_sup("2"))) %>%
+  merge_h(i = 2, part = "header") %>%
+  flextable::compose(i = 2, j = 2, part = "header",
+                     value = as_paragraph("Population")) %>%
+  flextable::compose(i = 2, j = 5, part = "header",
+                     value = as_paragraph("Family")) %>%
+  flextable::compose(i = 1, j = 1, part = "header",
+                     value = as_paragraph(" ")) %>%
+  padding(padding = 3) %>%
+  fix_border_issues(part = "all") %>%
+  autofit() %>%
+  save_as_docx(path = here::here("./Figures_Tables/ranova_PVE/ranovas_allyears_Table1_reproducible.docx"))
+```
+
+
+### Q1, table 2
+```{r}
+ran2 %>%
+  flextable() %>%
+  theme_box() %>%
+  flextable::bold(i = ~ p_Population_Distance <= 0.05, j = 3) %>%
+  flextable::bold(i = ~ p_Family_Distance <= 0.05, j = 6) %>%  
+  flextable::bold(i = ~ p_Population_UrbScore <= 0.05, j = 9) %>%
+  flextable::bold(i = ~ p_Family_UrbScore <= 0.05, j = 12) %>%
+  ftExtra::separate_header() %>%
+  merge_v(j = ~Variable) %>% 
+  align(j = 2:12, align = "center", part = "all") %>%
+  hline(border = NULL, part = "body") %>%
+  flextable::compose(i = 1, j = c(2,5,8,11), part = "header",
+                     value = as_paragraph("χ", as_sup("2"))) %>%
+  merge_h(i = 2, part = "header") %>%
+  merge_h(i = 3, part = "header") %>%
+  flextable::compose(i = 3, j = 8, part = "header",
+                     value = as_paragraph("Urbanization Score")) %>%
+  flextable::compose(i = 1, j = 1, part = "header",
+                     value = as_paragraph(" ")) %>%
+  padding(padding = 3) %>%
+  fix_border_issues(part = "all") %>%
+  autofit() %>%
+  save_as_docx(path = here::here("./Figures_Tables/ranova_PVE/ranovas_allyears_Table2_reproducible.docx"),
+               pr_section = prop_section(
+  page_size = page_size(
+    orient = "landscape",
+    width = 14, height = 11
+  ),
+  type = "continuous",
+  page_margins = page_mar()
+))
+```
+
+
+### Q1, table 3
+```{r}
+ran3 %>%
+  flextable() %>%
+  theme_box() %>%
+  flextable::bold(i = ~ p_Population_Distance <= 0.05, j = 3) %>%
+  flextable::bold(i = ~ p_Family_Distance <= 0.05, j = 6) %>%  
+  flextable::bold(i = ~ p_Population_UrbScore <= 0.05, j = 9) %>%
+  flextable::bold(i = ~ p_Family_UrbScore <= 0.05, j = 12) %>%
+  ftExtra::separate_header() %>%
+  merge_v(j = ~Variable) %>% 
+  align(j = 2:12, align = "center", part = "all") %>%
+  hline(border = NULL, part = "body") %>%
+  flextable::compose(i = 1, j = c(2,5,8,11), part = "header",
+                     value = as_paragraph("χ", as_sup("2"))) %>%
+  merge_h(i = 2, part = "header") %>%
+  merge_h(i = 3, part = "header") %>%
+  flextable::compose(i = 3, j = 8, part = "header",
+                     value = as_paragraph("Urbanization Score")) %>%
+  flextable::compose(i = 1, j = 1, part = "header",
+                     value = as_paragraph(" ")) %>%
+  padding(padding = 3) %>%
+  fix_border_issues(part = "all") %>%
+  autofit() %>%
+  save_as_docx(path = here::here("./Figures_Tables/ranova_PVE/ranovas_allyears_transects_Table1_reproducible.docx"),
+               pr_section = prop_section(
+  page_size = page_size(
+    orient = "landscape",
+    width =13, height = 11
+  ),
+  type = "continuous",
+  page_margins = page_mar()
+))
+```
+

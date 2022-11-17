@@ -1,0 +1,105 @@
+﻿Variable,Chisq,p,PVE,Group,Urbanization
+Height before flowering,0,0.5,0,Population,Distance
+Height after flowering,0,0.5,0,Population,Distance
+LDMC,0.05,0.4115,0.413,Population,Distance
+Mortality,0,0.5,1.067,Population,Distance
+Ramets before flowering,0,0.5,0.165,Population,Distance
+Ramets after flowering,0,0.5,0,Population,Distance
+Relative growth rate,0.483,0.2435,1.389,Population,Distance
+SLA,0,0.5,0,Population,Distance
+D. plexippus abundance,0,0.5,0,Population,Distance
+L. clivicollis abundance,0,0.5,0.373,Population,Distance
+L. asclepiadis abundance,0.007,0.4566,0.957,Population,Distance
+Herbivory before flowering (binary),0,0.5,0,Population,Distance
+Herbivory before flowering (quantitative),0,0.5,0,Population,Distance
+Herbivory after flowering (binary),0.001,0.4895,0,Population,Distance
+Herbivory after flowering (quantitative),0,0.5,0,Population,Distance
+Latex exudation,2,0.055,3.946,Population,Distance
+Weevil damage (binary),0,0.5,0,Population,Distance
+Weevil damage (quantitative),2.144,0.0715,4.356,Population,Distance
+Date of first flower,0,0.5,0,Population,Distance
+Date of first follicle,0,0.5,0,Population,Distance
+Flower size,1.331,0.1245,10.569,Population,Distance
+Flowering duration,0,0.5,0.769,Population,Distance
+Flowering success,0.115,0.3675,2.045,Population,Distance
+Follicles,0,0.5,14.43,Population,Distance
+Inflorescences,1.325,0.125,12.878,Population,Distance
+Flowers per inflorescence,0.359,0.2745,11.915,Population,Distance
+Height before flowering,7.886,0.0025,10.055,Family,Distance
+Height after flowering,7.154,0.0035,9.027,Family,Distance
+LDMC,0.011,0.459,0.439,Family,Distance
+Mortality,3.952,0.0235,7.163,Family,Distance
+Ramets before flowering,52.455,<0.001,7.884,Family,Distance
+Ramets after flowering,22.59,<0.001,5.826,Family,Distance
+Relative growth rate,0,0.5,0,Family,Distance
+SLA,0,0.5,0,Family,Distance
+D. plexippus abundance,0,0.5,0,Family,Distance
+L. clivicollis abundance,0,0.5,0,Family,Distance
+L. asclepiadis abundance,5.651,0.0085,3.385,Family,Distance
+Herbivory before flowering (binary),0,0.5,0,Family,Distance
+Herbivory before flowering (quantitative),0,0.5,0,Family,Distance
+Herbivory after flowering (binary),0.315,0.2875,3.729,Family,Distance
+Herbivory after flowering (quantitative),1.076,0.1495,4.41,Family,Distance
+Latex exudation,3.074,0.04,7.114,Family,Distance
+Weevil damage (binary),2.741,0.049,6.715,Family,Distance
+Weevil damage (quantitative),3.595,0.029,8.479,Family,Distance
+Date of first flower,0,0.5,12.682,Family,Distance
+Date of first follicle,29.669,<0.001,0,Family,Distance
+Flower size,0.319,0.286,8.428,Family,Distance
+Flowering duration,0,0.5,0,Family,Distance
+Flowering success,2.696,0.0505,5.187,Family,Distance
+Follicles,0,0.5,11.954,Family,Distance
+Inflorescences,9.892,0.001,0,Family,Distance
+Flowers per inflorescence,0,0.5,1.85,Family,Distance
+Height before flowering,0.102,0.375,0.7,Population,UrbScore
+Height after flowering,0.05,0.411,0.485,Population,UrbScore
+LDMC,0.211,0.323,0.888,Population,UrbScore
+Mortality,0,0.5,0.923,Population,UrbScore
+Ramets before flowering,0,0.5,0.473,Population,UrbScore
+Ramets after flowering,0,0.5,0,Population,UrbScore
+Relative growth rate,0.237,0.3135,0.973,Population,UrbScore
+SLA,0,0.5,0,Population,UrbScore
+D. plexippus abundance,0,0.5,0,Population,UrbScore
+L. clivicollis abundance,0,0.5,0,Population,UrbScore
+L. asclepiadis abundance,0.024,0.4385,0.904,Population,UrbScore
+Herbivory before flowering (binary),0,0.5,0,Population,UrbScore
+Herbivory before flowering (quantitative),0,0.5,0,Population,UrbScore
+Herbivory after flowering (binary),0.001,0.4885,0,Population,UrbScore
+Herbivory after flowering (quantitative),0,0.5,0,Population,UrbScore
+Latex exudation,0.504,0.239,1.722,Population,UrbScore
+Weevil damage (binary),0,0.5,0,Population,UrbScore
+Weevil damage (quantitative),1.603,0.1025,3.912,Population,UrbScore
+Date of first flower,0,0.5,0,Population,UrbScore
+Date of first follicle,0,0.5,0,Population,UrbScore
+Flower size,0.845,0.179,9.03,Population,UrbScore
+Flowering duration,0,0.5,0,Population,UrbScore
+Flowering success,0.025,0.437,1.459,Population,UrbScore
+Follicles,0,0.5,5.764,Population,UrbScore
+Inflorescences,0.93,0.1675,7.011,Population,UrbScore
+Flowers per inflorescence,0,0.5,9.792,Population,UrbScore
+Height before flowering,7.619,0.003,10.179,Family,UrbScore
+Height after flowering,7.029,0.004,9.265,Family,UrbScore
+LDMC,0.013,0.454,0.492,Family,UrbScore
+Mortality,3.965,0.023,7.079,Family,UrbScore
+Ramets before flowering,52.334,<0.001,7.827,Family,UrbScore
+Ramets after flowering,22.903,<0.001,5.999,Family,UrbScore
+Relative growth rate,0,0.5,0,Family,UrbScore
+SLA,0,0.5,0,Family,UrbScore
+D. plexippus abundance,0,0.5,0,Family,UrbScore
+L. clivicollis abundance,0,0.5,0,Family,UrbScore
+L. asclepiadis abundance,5.397,0.01,3.368,Family,UrbScore
+Herbivory before flowering (binary),0,0.5,0,Family,UrbScore
+Herbivory before flowering (quantitative),0,0.5,0,Family,UrbScore
+Herbivory after flowering (binary),0.28,0.2985,3.809,Family,UrbScore
+Herbivory after flowering (quantitative),0.743,0.1945,3.628,Family,UrbScore
+Latex exudation,3.228,0.036,7.465,Family,UrbScore
+Weevil damage (binary),2.614,0.053,6.614,Family,UrbScore
+Weevil damage (quantitative),3.715,0.027,8.672,Family,UrbScore
+Date of first flower,0,0.5,10.791,Family,UrbScore
+Date of first follicle,30.383,<0.001,0,Family,UrbScore
+Flower size,0.414,0.26,9.935,Family,UrbScore
+Flowering duration,0,0.5,0,Family,UrbScore
+Flowering success,2.814,0.0465,5.308,Family,UrbScore
+Follicles,0,0.5,11.434,Family,UrbScore
+Inflorescences,9.238,0.001,0,Family,UrbScore
+Flowers per inflorescence,0,0.5,1.128,Family,UrbScore

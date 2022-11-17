@@ -11,11 +11,6 @@ source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_1yr_mods.Rmd", q
 ```
 
 # Calculate heritability, Qst, and CVA (Quantitative genetic parameters)
-
-h2 represents the average heritability across populations after removing the genetic effects due to population differences.
-
-"[CVA, or additive genetic coefficient of variation] provides a measure of genetic variation standardized by the mean, allowing to qualitatively comparing genetic variation among different traits"
-
 -not possible for cardenolides because there are no families within pops (were pooled by population)
 ## Multi-year models
 ### Defense
@@ -592,7 +587,7 @@ qg_survival <- calc_quantgenvars(6.6969e-08,
 
 ### Combine values into one table and export
 ```{r}
-list(
+qgen_list1_multi <- list(
 
   # Defense
   qg_latex,
@@ -627,7 +622,9 @@ list(
   qg_ramets_e,
   qg_ramets_l,
   qg_survival
-                  ) %>% 
+                  ) 
+
+qgen_list1_multi %>% 
   bind_rows() %>%
   dplyr::mutate_at(2:4, round, 3) %>%
   dplyr::rename(Variable = 1) %>%
@@ -925,7 +922,7 @@ update(
 
 flstart_mean <- flowering %>%
   dplyr::filter(Year == 2022) %>%
-  dplyr::summarize(Mean = mean(Julian_oldest_inflor ,
+  dplyr::summarize(Mean = mean(Julian_oldest_inflor -170,
                                na.rm = T)) %>%
   as.numeric()
 
@@ -981,7 +978,7 @@ update(
 
 first_pods_mean <- flowering %>%
   dplyr::filter(Year == 2022) %>%
-  dplyr::summarize(Mean = mean(Julian_first_follicle,
+  dplyr::summarize(Mean = mean(Julian_first_follicle - 200,
                                na.rm = T)) %>%
   as.numeric()
 
@@ -993,8 +990,8 @@ resid_var <- update(
     REML = T) %>%
     sigma()
 
-qg_1yr_first_pods <- calc_quantgenvars( 0.01910748,
-                   0.00002707,
+qg_1yr_first_pods <- calc_quantgenvars( 0.364919,
+                   0.035549,
                    resid_var,
                    first_pods_mean,
                    "Date of first follicle")
@@ -1270,7 +1267,7 @@ qg_1yr_survival <- calc_quantgenvars(0.32267 ,
 
 #### Combine values into one table and export
 ```{r}
-list(
+qgen_list1 <- list(
   
   # Defense
   qg_latex, # same as multi-yr mods (only 1 year)
@@ -1305,7 +1302,10 @@ list(
   qg_1yr_ramets_e,
   qg_1yr_ramets_l,
   qg_1yr_survival
-                  ) %>% 
+                  )
+
+
+qgen_list1 %>% 
   bind_rows() %>%
   dplyr::mutate_at(2:4, round, 3) %>%
   dplyr::rename(Variable = 1) %>%
@@ -1326,6 +1326,46 @@ list(
 
 ```
 
+
+#### Take p-values from ranova and append to qgen table
+```{r}
+# keep only p-values for distance
+qgen_ranova1 <- ran2 %>%
+  dplyr::select(1, p_Population_Distance, p_Family_Distance) 
+
+qgen_list1 %>% 
+  bind_rows() %>%
+  dplyr::rename(Variable = trait) %>%
+  dplyr::mutate(Variable = str_replace(Variable,
+                                       "Flowers per Inflorescence",
+                                       "Flowers per inflorescence")) %>%
+  full_join(., qgen_ranova1) %>%
+  dplyr::mutate_at(2:4, round, 3) %>%
+  dplyr::select(Variable,
+                h2, cva, p_Family_Distance,
+                qst, p_Population_Distance) %>%
+  flextable() %>%
+  hline(border = NULL, part = "body") %>%
+  flextable::bold(i = ~ p_Family_Distance <= 0.05, j = 4) %>%
+  flextable::bold(i = ~ p_Population_Distance <= 0.05, j = 6) %>%
+  flextable::compose(part = "header", i = 1, j = 2,
+         value = as_paragraph("h",
+                              as_sup("2"))) %>%
+  flextable::compose(part = "header", i = 1, j = 5,
+         value = as_paragraph("Q",
+                              as_sub("ST"))) %>%
+  flextable::compose(part = "header", i = 1, j = 3,
+         value = as_paragraph("CV",
+                              as_sub("A"))) %>%
+  flextable::compose(part = "header", i = 1, j = 4,
+         value = as_paragraph("p (Family)")) %>%
+  flextable::compose(part = "header", i = 1, j = 6,
+         value = as_paragraph("p (Population)")) %>%
+  flextable::align(j = 2:6, align = "center", part = "all") %>%
+  autofit() %>%
+    padding(padding = 3) %>%
+  save_as_docx(path = here::here("./Figures_Tables/Quant_gen/Quant_gen_1yrmods_Q1_withAnova.docx"))
+```
 
 ### Q2
 #### Defense
@@ -1615,7 +1655,7 @@ update(
 
 flstart_mean <- flowering %>%
   dplyr::filter(Transect_ID != "Rural" & Year == 2022) %>%
-  dplyr::summarize(Mean = mean(Julian_oldest_inflor ,
+  dplyr::summarize(Mean = mean(Julian_oldest_inflor -170,
                                na.rm = T)) %>%
   as.numeric()
 
@@ -1671,7 +1711,7 @@ update(
 
 first_pods_mean <- flowering %>%
   dplyr::filter(Transect_ID != "Rural" & Year == 2022) %>%
-  dplyr::summarize(Mean = mean(Julian_first_follicle,
+  dplyr::summarize(Mean = mean(Julian_first_follicle - 200,
                                na.rm = T)) %>%
   as.numeric()
 
