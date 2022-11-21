@@ -1201,6 +1201,38 @@ rep_geoms2 <- c(geom_smooth(
                     palette = "Set2"))
 
 
+## Add colored border to figures to signify trait suites-----------------
+addborder <- function(figure, trait_suite){
+  
+  if(trait_suite == "defense"){
+    
+    return(
+      figure + theme(panel.border = element_rect(
+        colour = "#404788FF", fill=NA, size=2))
+    )}
+  
+  else if (trait_suite == "reproduction"){
+    return(
+      figure + theme(panel.border = element_rect(
+        colour = "#238A8DFF", fill=NA, size=2))
+    )
+  } 
+  
+  else if (trait_suite == "herbivores"){
+    return(
+      figure + theme(panel.border = element_rect(
+        colour = "#55C667FF", fill=NA, size=2))
+    )
+  } 
+  
+  else {
+    return(
+      figure + theme(panel.border = element_rect(
+        colour = "#FDE725FF", fill=NA, size=2))
+    ) 
+  }
+  
+}
 
 # Percent change between populations ------------------------------------
 ## Q1/city_dist models

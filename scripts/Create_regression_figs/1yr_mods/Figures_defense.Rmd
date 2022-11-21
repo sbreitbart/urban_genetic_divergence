@@ -323,6 +323,7 @@ ggpred_Q1.citydist_latex <- ggplot(latex_gradient_01_pred) +
                     ),
                 size = 4.5)
 
+
 ggpred_Q1.citydist_latex
 
 
@@ -359,7 +360,7 @@ ggpred_Q1.citydist_herb_e_quant <- ggplot(herb_e_quant_gradient_01_pred) +
        y = "log(Herbivory before flowering)") +
   theme_1() +
 #   # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.15, npcy = 0.08,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
                     label = paste0(" Distance: p = ", tidy_anova(def.m3) %>%
                                      dplyr::filter(Predictor == "Distance to City Center") %>%
                                      dplyr::select(p)
@@ -446,7 +447,7 @@ ggpred_Q1.citydist_weev_quant <- ggplot(weev_q_gradient_01_pred) +
        y = "Weevil scar length (cm)") +
   theme_1() +
 #   # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.15, npcy = 0.08,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
                     label = paste0(" Distance: p = ", tidy_anova(def.m7) %>%
                                      dplyr::filter(Predictor == "Distance to City Center") %>%
                                      dplyr::select(p)
@@ -513,7 +514,7 @@ ggpred_Q1.urbscore_herb_e_quant <- ggplot(herb_e_quant_gradient_02_pred) +
        y = "log(Herbivory before flowering)") +
   theme_1() +
 #   # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.15, npcy = 0.08,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
                     label = paste0(" Urb. Score: p = ", tidy_anova(def.m3_u) %>%
                                      dplyr::filter(Predictor == "Urbanization Score") %>%
                                      dplyr::select(p)
@@ -631,7 +632,7 @@ ggplot(latex_urbsubs_01_pred) +
        y = expression("Latex exudation (g) "^{1/3}),
        color = "Transect",
        fill = "Transect") +
-  ylim(1.7, 2.2) +
+  ylim(NA, 2.2) +
     xlim(0, NA) +
   theme_1() +
 
@@ -666,19 +667,19 @@ ggplot(herb_e_bin_urbsubs_01_pred) +
   scale_y_continuous(labels = scales::percent_format(
     scale = 100,
     accuracy = 1),
-    limits = c(0, 0.8)
+    limits = c(0.28, 1)
    # breaks = c(0.5, .75, 1)
     ) +
   xlim(0, NA) +
   theme_1() +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.2,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
                     label = paste0(" Distance: p = ", tidy_anova(def.tr.m2) %>%
 dplyr::filter(Predictor == "Distance to City Center") %>%
 dplyr::select(p))),
                 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.13,
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(def.tr.m2) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
@@ -701,17 +702,17 @@ ggplot(herb_e_quant_urbsubs_01_pred) +
        y = ("log(Herbivory, before flowering)"),
        color = "Transect",
        fill = "Transect") +
-  ylim(0, 0.08) +
+  ylim(0, 0.06) +
   xlim(0, NA) +
   theme_1() +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.95,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
                     label = paste0(" Distance: p = ", tidy_anova(def.tr.m3) %>%
 dplyr::filter(Predictor == "Distance to City Center") %>%
 dplyr::select(p))),
                 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.87,
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(def.tr.m3) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
@@ -743,12 +744,12 @@ ggplot(herb_l_bin_urbsubs_01_pred) +
   theme_1() +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.15,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.6,
                     label = paste0(" Distance: p = ", tidy_anova(def.tr.m4) %>%
 dplyr::filter(Predictor == "Distance to City Center") %>%
 dplyr::select(p))),
                 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.51,
                     label = paste0(" Transect: p = ", tidy_anova(def.tr.m4_u) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
@@ -771,17 +772,17 @@ ggplot(herb_l_quant_urbsubs_01_pred) +
        y = ("log(Herbivory, after flowering)"),
        color = "Transect",
        fill = "Transect") +
-  ylim(0, NA) +
+  ylim(NA, 0.055) +
   xlim(0, NA) +
   theme_1() +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.14,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
                     label = paste0(" Distance: p = ", tidy_anova(def.tr.m5) %>%
 dplyr::filter(Predictor == "Distance to City Center") %>%
 dplyr::select(p))),
                 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(def.tr.m5) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
@@ -806,19 +807,19 @@ ggplot(weev_bin_urbsubs_01_pred) +
   scale_y_continuous(labels = scales::percent_format(
     scale = 100,
     accuracy = 1),
-    limits = c(0.36, NA),
-    breaks = c(0.4, 0.5, 0.6, 0.7, 0.8, 0.9)
+    limits = c(0.45, 1),
+    breaks = c(0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1)
     ) +
   xlim(0, NA) +
   theme_1() +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.15,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
                     label = paste0(" Distance: p = ", tidy_anova(def.tr.m6) %>%
 dplyr::filter(Predictor == "Distance to City Center") %>%
 dplyr::select(p))),
                 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(def.tr.m6) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
@@ -841,17 +842,17 @@ ggplot(weev_quant_urbsubs_01_pred) +
        y = "Weevil scar length (cm)",
        color = "Transect",
        fill = "Transect") +
-  ylim(NA, 11) +
+  ylim(NA, 10.8) +
   xlim(0, NA) +
   theme_1() +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.96,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
                     label = paste0(" Distance: p = ", tidy_anova(def.tr.m7) %>%
 dplyr::filter(Predictor == "Distance to City Center") %>%
 dplyr::select(p))),
                 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.89,
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(def.tr.m7) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
@@ -876,23 +877,22 @@ ggplot(latex_urbsubs_02_pred) +
        y = expression("Latex exudation (g) "^{1/3}),
        color = "Transect",
        fill = "Transect") +
-  ylim(1.2, NA) +
+  ylim(NA, 2.8) +
   xlim(4, -2) +
   theme_1() +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05,
-                                   npcy = 0.22,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
                     label = paste0(" Urb. Score: p = ", tidy_anova(latex_mods_best_u[[2]]) %>%
 dplyr::filter(Predictor == "Urbanization Score") %>%
 dplyr::select(p))),
                 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.15,
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(latex_mods_best_u[[2]]) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
                 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.79,
                     label = paste0(" U x T: p = ", tidy_anova(latex_mods_best_u[[2]]) %>%
 dplyr::filter(Predictor == "Urbanization Score x Subtransect") %>%
 dplyr::select(p))),
@@ -919,19 +919,19 @@ ggplot(herb_e_bin_urbsubs_02_pred) +
   scale_y_continuous(labels = scales::percent_format(
     scale = 100,
     accuracy = 1),
-     limits = c(0.2, 0.8),
+     limits = c(NA, 0.9),
     # breaks = c(0.7, 0.8, 0.9)
     ) +
   xlim(4, -2) +
   theme_1() +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.15,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
                     label = paste0(" Urb. Score: p = ", tidy_anova(def.tr.m2_u) %>%
 dplyr::filter(Predictor == "Urbanization Score") %>%
 dplyr::select(p))),
                 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(def.tr.m2_u) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
@@ -959,7 +959,7 @@ ggplot(herb_e_quant_urbsubs_02_pred) +
   theme_1() +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.95,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
                     label = paste0(" Urb. Score: p = ", tidy_anova(def.tr.m3_u) %>%
 dplyr::filter(Predictor == "Urbanization Score") %>%
 dplyr::select(p))),
@@ -996,12 +996,12 @@ ggplot(herb_l_bin_urbsubs_02_pred) +
   theme_1() +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.12,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.15,
                     label = paste0(" Urb. Score: p = ", tidy_anova(def.tr.m4_u) %>%
 dplyr::filter(Predictor == "Urbanization Score") %>%
 dplyr::select(p))),
                 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.05,
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
                     label = paste0(" Transect: p = ", tidy_anova(def.tr.m4_u) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
@@ -1024,17 +1024,17 @@ ggplot(herb_l_quant_urbsubs_02_pred) +
        y = ("log(Herbivory, after flowering)"),
        color = "Transect",
        fill = "Transect") +
-  ylim(0, NA) +
+  ylim(NA, 0.05) +
   xlim(4, -2) +
   theme_1() +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.14,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
                     label = paste0(" Urb. Score: p = ", tidy_anova(def.tr.m5_u) %>%
 dplyr::filter(Predictor == "Urbanization Score") %>%
 dplyr::select(p))),
                 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(def.tr.m5_u) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
@@ -1059,19 +1059,19 @@ ggplot(weev_bin_urbsubs_02_pred) +
   scale_y_continuous(labels = scales::percent_format(
     scale = 100,
     accuracy = 1),
-    limits = c(0.5, 0.9),
+    limits = c(NA, 0.92),
     breaks = c(0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)
     ) +
   xlim(4, -2) +
   theme_1() +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.12,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
                     label = paste0(" Urb. Score: p = ", tidy_anova(def.tr.m6_u) %>%
 dplyr::filter(Predictor == "Urbanization Score") %>%
 dplyr::select(p))),
                 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.05,
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(def.tr.m6_u) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
@@ -1094,17 +1094,17 @@ ggplot(weev_quant_urbsubs_02_pred) +
        y = "Weevil scar length (cm)",
        color = "Transect",
        fill = "Transect") +
-  ylim(2, 10) +
+  ylim(NA, 10.8) +
   xlim(4, -2) +
   theme_1() +
 
 # adding stats from ANOVA
-           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.17,
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
                     label = paste0(" Urb. Score: p = ", tidy_anova(def.tr.m7_u) %>%
 dplyr::filter(Predictor == "Urbanization Score") %>%
 dplyr::select(p))),
                 size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(def.tr.m7_u) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
@@ -1117,14 +1117,14 @@ ggpred_Q2.urbsubs_weev_quant
 ## Combine plots into one figure
 ### Gradient / City_dist
 ```{r}
-gradient_citydist_plots <- ggarrange(
-  ggpred_Q1.citydist_latex,
-  ggpred_Q1.citydist_herb_e_bin,
-  ggpred_Q1.citydist_herb_e_quant,
-  ggpred_Q1.citydist_herb_l_bin,
-  ggpred_Q1.citydist_herb_l_quant,
-  ggpred_Q1.citydist_weev_bin,
-  ggpred_Q1.citydist_weev_quant +
+ggarrange(
+  addborder(ggpred_Q1.citydist_latex, "defense"),
+  addborder(ggpred_Q1.citydist_herb_e_bin, "defense"),
+  addborder(ggpred_Q1.citydist_herb_e_quant, "defense"),
+  addborder(ggpred_Q1.citydist_herb_l_bin, "defense"),
+  addborder(ggpred_Q1.citydist_herb_l_quant, "defense"),
+  addborder(ggpred_Q1.citydist_weev_bin, "defense"),
+  addborder(ggpred_Q1.citydist_weev_quant, "defense") +
             font("x.text"),
           ncol = 4,
           nrow = 2,
@@ -1142,14 +1142,14 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Defense/Q1
 
 ### Gradient / Urbanization Score
 ```{r}
-gradient_urbscore_plots <- ggarrange(
-  ggpred_Q1.urbscore_latex,
-  ggpred_Q1.urbscore_herb_e_bin,
-  ggpred_Q1.urbscore_herb_e_quant,
-  ggpred_Q1.urbscore_herb_l_bin,
-  ggpred_Q1.urbscore_herb_l_quant,
-  ggpred_Q1.urbscore_weev_bin,
-  ggpred_Q1.urbscore_weev_quant +
+ggarrange(
+  addborder(ggpred_Q1.urbscore_latex, "defense"),
+  addborder(ggpred_Q1.urbscore_herb_e_bin, "defense"),
+  addborder(ggpred_Q1.urbscore_herb_e_quant, "defense"),
+  addborder(ggpred_Q1.urbscore_herb_l_bin, "defense"),
+  addborder(ggpred_Q1.urbscore_herb_l_quant, "defense"),
+  addborder(ggpred_Q1.urbscore_weev_bin, "defense"),
+  addborder(ggpred_Q1.urbscore_weev_quant, "defense") +
             font("x.text"),
           ncol = 4,
           nrow = 2,
@@ -1166,14 +1166,14 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Defense/Q1
 
 ### Urb Subtransects / City_dist
 ```{r}
-urbsubs_citydist_plots <- ggarrange(
-  ggpred_Q2.citydist_latex,
-  ggpred_Q2.citydist_herb_e_bin,
-  ggpred_Q2.citydist_herb_e_quant,
-  ggpred_Q2.citydist_herb_l_bin,
-  ggpred_Q2.citydist_herb_l_quant,
-  ggpred_Q2.citydist_weev_bin,
-  ggpred_Q2.citydist_weev_quant +
+ggarrange(
+  addborder(ggpred_Q2.citydist_latex, "defense"),
+  addborder(ggpred_Q2.citydist_herb_e_bin, "defense"),
+  addborder(ggpred_Q2.citydist_herb_e_quant, "defense"),
+  addborder(ggpred_Q2.citydist_herb_l_bin, "defense"),
+  addborder(ggpred_Q2.citydist_herb_l_quant, "defense"),
+  addborder(ggpred_Q2.citydist_weev_bin, "defense"),
+  addborder(ggpred_Q2.citydist_weev_quant, "defense") +
             font("x.text"),
           ncol = 4,
           nrow = 2,
@@ -1191,14 +1191,14 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Defense/Q2
 
 ### Urb Subtransects / Urbanization Score
 ```{r}
-urbsubs_urbscore_plots <- ggarrange(
-  ggpred_Q2.urbsubs_latex,
-  ggpred_Q2.urbsubs_herb_e_bin,
-  ggpred_Q2.urbsubs_herb_e_quant,
-  ggpred_Q2.urbsubs_herb_l_bin,
-  ggpred_Q2.urbsubs_herb_l_quant,
-  ggpred_Q2.urbsubs_weev_bin,
-  ggpred_Q2.urbsubs_weev_quant +
+ggarrange(
+  addborder(ggpred_Q2.urbsubs_latex, "defense"),
+  addborder(ggpred_Q2.urbsubs_herb_e_bin, "defense"),
+  addborder(ggpred_Q2.urbsubs_herb_e_quant, "defense"),
+  addborder(ggpred_Q2.urbsubs_herb_l_bin, "defense"),
+  addborder(ggpred_Q2.urbsubs_herb_l_quant, "defense"),
+  addborder(ggpred_Q2.urbsubs_weev_bin, "defense"),
+  addborder(ggpred_Q2.urbsubs_weev_quant, "defense") +
             font("x.text"),
           ncol = 4,
           nrow = 2,
