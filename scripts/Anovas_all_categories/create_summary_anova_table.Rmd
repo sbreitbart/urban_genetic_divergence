@@ -638,14 +638,15 @@ flatten(all_card_models) %>%
 
 # make flextable
   flextable() %>%
-  theme_box() %>%
+  #theme_box() %>%
   merge_v(j = ~Variable) %>% 
+  hline(i = c(2,4,6), part = "body" ) %>%
   align(j = 3:6, align = "center", part = "all") %>%
-  hline(j = ~Variable, border = NULL, part = "body") %>%
   flextable::compose(i = 1, j = 6, part = "header",
                          value = as_paragraph(as_i("p"))) %>%
   bold(i = ~ p <= 0.05, j = 6) %>%
   padding(padding = 3) %>%
+  fix_border_issues(part = "all") %>%
   autofit() %T>%
   
 # STEP 6: Export
