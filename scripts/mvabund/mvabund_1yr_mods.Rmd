@@ -447,7 +447,7 @@ anova_blup2_u <- manylm(mvab_all_u ~ Urb_score,
 ```{r}
 tab1 <- anova_blup_table(anova_blup)  %>%
   dplyr::mutate("Urbanization" = ifelse(row_number() == 2,
-                           "Urban/Rural (Distance)",
+                           "Urban/Rural",
                            "Intercept")) %>%
     dplyr::filter(Urbanization != "Intercept")
 
@@ -459,9 +459,10 @@ tab2 <- anova_blup_table(anova_blup2) %>%
 
 
 city_tables <- rbind(tab1, tab2) %>%
-  flextable() %>%
-  hline(i = 2 ) %>%
-  autofit() 
+  dplyr::rename("Predictor" = 1) %>%
+   dplyr::mutate("Urbanization" = "Distance to City Center") %>%
+  dplyr::select(Urbanization, Predictor, df:p) %T>%
+  print()
 
 ```
 
@@ -470,7 +471,7 @@ city_tables <- rbind(tab1, tab2) %>%
 
 tab1u <- anova_blup_table(anova_blup_u) %>%
   dplyr::mutate("Urbanization" = ifelse(row_number() == 2,
-                           "Urban/Rural (Urb. Score)",
+                           "Urban/Rural",
                            "Intercept")) %>%
     dplyr::filter(Urbanization != "Intercept")
 
@@ -482,26 +483,24 @@ tab2u <- anova_blup_table(anova_blup2_u) %>%
 
 
 urb_sc_tables <- rbind(tab1u, tab2u) %>%
-  flextable() %>%
-  hline(i = 2 ) %>%
-  autofit() 
+  dplyr::rename("Predictor" = 1) %>%
+   dplyr::mutate("Urbanization" = "Urbanization Score") %>%
+  dplyr::select(Urbanization, Predictor, df:p) %T>%
+  print()
 
 ```
 
-### Export all anovas in one table
+### Join and export all anovas in one table
 ```{r}
-word_export <- read_docx()
-  
-  body_add_par(word_export, value = "Urbanization = Distance to City Center", style = "heading 1")
-  body_add_flextable(word_export, city_tables)
-  
-  body_add_par(word_export, value = "")
-  body_add_par(word_export, value = "")
-  
-    body_add_par(word_export, value = "Urbanization = Urbanization Score", style = "heading 1")
-  body_add_flextable(word_export, urb_sc_tables)
 
-  print(word_export, here::here("./Figures_Tables/mvabund/mvabund_anovas_1yr_Q1.docx"))
+rbind(city_tables, urb_sc_tables) %>%
+  flextable() %>%
+    hline(border = NULL, part = "body") %>%
+  flextable::align(j = 3:6, align = "center", part = "all") %>%
+  autofit() %>%
+    padding(padding = 3) %>%
+  save_as_docx(path =
+ here::here("./Figures_Tables/mvabund/mvabund_anovas_1yr_Q1.docx"))
 ```
 
 # Q2
@@ -914,8 +913,10 @@ tab2 <- anova_blup_table(anova_blup) %>%
       "Subtransect"))
 
 city_table <- tab2 %>%
-  flextable() %>%
-  autofit() 
+  dplyr::rename("Predictor" = 1) %>%
+   dplyr::mutate("Urbanization" = "Distance to City Center") %>%
+  dplyr::select(Urbanization, Predictor, df:p) %T>%
+  print()
 
 ```
 
@@ -933,24 +934,23 @@ tab2u <- anova_blup_table(anova_blup_u) %>%
       "Subtransect"))
 
 urb_sc_table <- tab2u %>%
-  flextable() %>%
-  autofit() 
+  dplyr::rename("Predictor" = 1) %>%
+   dplyr::mutate("Urbanization" = "Urbanization Score") %>%
+  dplyr::select(Urbanization, Predictor, df:p) %T>%
+  print() 
 
 ```
 
-### Export all anovas in one table
+### Join and export all anovas in one table
 ```{r}
-word_export <- read_docx()
-  
-  body_add_par(word_export, value = "Urbanization = Distance to City Center", style = "heading 1")
-  body_add_flextable(word_export, city_table)
-  
-  body_add_par(word_export, value = "")
-  body_add_par(word_export, value = "")
-  
-    body_add_par(word_export, value = "Urbanization = Urbanization Score", style = "heading 1")
-  body_add_flextable(word_export, urb_sc_table)
 
-  print(word_export, here::here("./Figures_Tables/mvabund/mvabund_anovas_1yr_Q2.docx"))
+rbind(city_table, urb_sc_table) %>%
+  flextable() %>%
+    hline(border = NULL, part = "body") %>%
+  flextable::align(j = 3:6, align = "center", part = "all") %>%
+  autofit() %>%
+    padding(padding = 3) %>%
+  save_as_docx(path =
+ here::here("./Figures_Tables/mvabund/mvabund_anovas_1yr_Q2.docx"))
 ```
 

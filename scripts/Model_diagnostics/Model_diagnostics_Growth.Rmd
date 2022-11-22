@@ -2375,7 +2375,6 @@ names(all_models) <- c(
 
 ## Create separate lists of best vs. alt models for city_dist vs urb_score
 ### LDMC
-
 ```{r}
 ## Best
 ### City_dist

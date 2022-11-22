@@ -47,20 +47,6 @@ The methods BH (Benjamini–Hochberg, which is the same as FDR in R) and BY cont
 (From this site: https://rcompanion.org/rcompanion/f_01.html)
 ## Extract p values where predictor = city_dist, then put into df
 ```{r}
-# merge lists
-# city_dist
-all_best_mods <- do.call(c, list(best_growth_mods,
-                                 best_defense_mods,
-                                 best_repro_mods,
-                                 best_herbivore_mods))
-
-# urb_score
-all_best_mods_u <- do.call(c, list(best_growth_mods_u,
-                                 best_defense_mods_u,
-                                 best_repro_mods_u,
-                                 best_herbivore_mods_u))
-
-
 # Question 1-----
 extract_p_Q1 <- function(model){
  response_var <- tidy_anova(model) %>%
@@ -445,77 +431,34 @@ traits = c(
 ### Table 1
 #### Get data
 ```{r}
-# changing all instances of "p<0.001" to 0.001
+p_Q1 <- read.csv(here::here("./Figures_Tables/ranova_PVE/ranovas_allyears_Table1.csv"),
+                 blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::rename("Variable" = 1) %>%
+  # remove < from p-values (for p < 0.001)
+  dplyr::mutate(p = str_replace(
+    p,
+    "<",
+    "")) %>%
+  dplyr::mutate(p = as.numeric(p)) %>%
+  dplyr::select(-PVE, -Chisq)
+
+p_Q1.pop <- as.vector(p_Q1 %>%
+  dplyr::filter(Group == "Population")  %>%
+  dplyr::select(p) )
+
+p_Q1.fam <- as.vector(p_Q1 %>%
+  dplyr::filter(Group == "Family")  %>%
+  dplyr::select(p) )
+
 
 binom_t1 <- data.frame(
   
   trait = traits,
-  
-  p_pop = c(
-      # growth traits
-    0.257,
-    0.189 ,
-    0.3805,
-    0.186,
-    0.429,
-    0.364,
-    0.5,
-    0.5,
-    # Herbivore community
-    0.4765,
-    0.2665,
-    0.1255,
-    # Defense traits
-    0.5,
-    0.5,
-    0.4955,
-    0.5,
-    0.0165,
-    0.4995,
-    0.136,
-    # Reproductive traits
-    0.5,
-    0.5,
-    0.1345,
-    0.5,
-    0.014,
-    0.5,
-    0.035,
-    0.1805),
-  
-  p_fam = c(
-    # Growth traits
-    0.001,
-    0.009,
-    0.5,
-    0.189,
-    0.001,
-    0.001,
-    0.394,
-    0.5,
-    # Herbivore community
-    0.5,
-    0.5,
-    0.0395,
-    # Defense traits
-    0.49,
-    0.5,
-    0.004,
-    0.2605,
-    0.077,
-    0.0305,
-    0.138,
-    # Reproductive traits
-    0.5,
-    0.001,
-    0.37,
-    0.5,
-    0.3025,
-    0.5,
-    0.4965,
-    0.5
-    )
-  )
+  p_pop = p_Q1.pop,
+  p_fam = p_Q1.fam
+  ) %>%
+  dplyr::rename(p_pop = 2,
+                p_fam = 3)
 
 
 ```
@@ -548,78 +491,37 @@ t1_results_fam$estimate # probability of success: 0.3076923
 ### Table 2
 #### Get data
 ```{r}
-# changing all instances of "p<0.001" to 0.001
+
+p_Q1.2 <- read.csv(here::here("./Figures_Tables/ranova_PVE/ranovas_allyears_Table2.csv"),
+                 blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::rename("Variable" = 1) %>%
+  # remove < from p-values (for p < 0.001)
+  dplyr::mutate(p = str_replace(
+    p,
+    "<",
+    "")) %>%
+  dplyr::mutate(p = as.numeric(p)) %>%
+  dplyr::select(-PVE, -Chisq) %>%
+  dplyr::filter(Urbanization == "Distance")
+
+p_Q1.pop.2 <- as.vector(p_Q1.2 %>%
+  dplyr::filter(Group == "Population")  %>%
+  dplyr::select(p) )
+
+p_Q1.fam.2 <- as.vector(p_Q1.2 %>%
+  dplyr::filter(Group == "Family")  %>%
+  dplyr::select(p) )
+
 
 binom_t2 <- data.frame(
   
   trait = traits,
-  
-  p_pop = c(
-    # Growth traits
-    0.303,
-    0.205,
-    0.424,
-    0.185,
-    0.485,
-    0.437,
-    0.5,
-    0.5,
-    # Herbivore community
-    0.5,
-    0.2705,
-    0.1295,
-    # Defense traits
-    0.5,
-    0.5,
-    0.4945,
-    0.5,
-    0.0155,
-    0.5,
-    0.1335,
-    # Reproductive traits
-    0.5,
-    0.4765,
-    0.141,
-    0.5,
-    0.0145,
-    0.5,
-    0.035,
-    0.326
-),
-  
-  p_fam = c(
-    # Growth traits
-    0.001,
-    0.0085,
-    0.5,
-    0.1885,
-    0.001,
-    0.001,
-    0.377,
-    0.5,
-    # Herbivore community
-    0.5,
-    0.5,
-    0.038,
-    # Defense traits
-    0.5,
-    0.5,
-    0.008,
-    0.241,
-    0.076,
-    0.032,
-    0.153,
-    # Reproductive traits
-    0.5,
-    0.001,
-    0.374,
-    0.5,
-    0.3025,
-    0.5,
-    0.5,
-    0.5
-    )
-  )
+  p_pop = p_Q1.pop.2,
+  p_fam = p_Q1.fam.2
+  ) %>%
+  dplyr::rename(p_pop = 2,
+                p_fam = 3)
+
 ```
 
 #### Perform tests
@@ -650,79 +552,36 @@ t2_results_fam$estimate # probability of success: 0.3076923
 ### Table 3
 #### Get data
 ```{r}
-# changing all instances of "p<0.001" to 0.001
+
+p_Q1.3 <- read.csv(here::here("./Figures_Tables/ranova_PVE/ranovas_allyears_Table2.csv"),
+                 blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::rename("Variable" = 1) %>%
+  # remove < from p-values (for p < 0.001)
+  dplyr::mutate(p = str_replace(
+    p,
+    "<",
+    "")) %>%
+  dplyr::mutate(p = as.numeric(p)) %>%
+  dplyr::select(-PVE, -Chisq) %>%
+  dplyr::filter(Urbanization == "UrbScore")
+
+p_Q1.pop.3 <- as.vector(p_Q1.3 %>%
+  dplyr::filter(Group == "Population")  %>%
+  dplyr::select(p) )
+
+p_Q1.fam.3 <- as.vector(p_Q1.3 %>%
+  dplyr::filter(Group == "Family")  %>%
+  dplyr::select(p) )
+
 
 binom_t3 <- data.frame(
   
-   trait = traits,
-  
-  p_pop = c(
-    # Growth traits
-     0.2485,
-     0.175,
-     0.346,
-     0.1825,
-     0.427,
-     0.368,
-     0.5,
-     0.5,
-     # Herbivore community
-     0.5,
-     0.2745,
-     0.152,
-     # Defense traits
-     0.5,
-     0.5,
-     0.4865,
-     0.5,
-     0.0415,
-     0.5,
-     0.119,
-     # Reproductive traits
-     0.5,
-     0.5,
-     0.181,
-     0.5,
-     0.015,
-     0.5,
-     0.04,
-     0.403
-),
-  
-  p_fam = c(
-    # Growth traits
-    0.001,
-    0.009,
-    0.5,
-    0.192,
-    0.001,
-    0.001,
-    0.3755,
-    0.5,
-    # Herbivore community
-    0.5,
-    0.5,
-    0.0365,
-    # Defense traits
-    0.5,
-    0.5,
-    0.0085,
-    0.244,
-    0.0835,
-    0.0305,
-    0.1475,
-    # Reproductive traits
-    0.5,
-    0.001,
-    0.358,
-    0.5,
-    0.3005,
-    0.5,
-    0.5,
-    0.5
-    )
-  )
-
+  trait = traits,
+  p_pop = p_Q1.pop.3,
+  p_fam = p_Q1.fam.3
+  ) %>%
+  dplyr::rename(p_pop = 2,
+                p_fam = 3)
 ```
 
 #### Perform tests
@@ -754,79 +613,36 @@ t3_results_fam$estimate # probability of success: 0.3076923
 ### Table 1
 #### Get data
 ```{r}
-# changing all instances of "p<0.001" to 0.001
+
+p_Q2 <- read.csv(here::here("./Figures_Tables/ranova_PVE/ranovas_allyears_transects_Table1.csv"),
+                 blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::rename("Variable" = 1) %>%
+  # remove < from p-values (for p < 0.001)
+  dplyr::mutate(p = str_replace(
+    p,
+    "<",
+    "")) %>%
+  dplyr::mutate(p = as.numeric(p)) %>%
+  dplyr::select(-PVE, -Chisq) %>%
+  dplyr::filter(Urbanization == "Distance")
+
+p_Q2.pop <- as.vector(p_Q2 %>%
+  dplyr::filter(Group == "Population")  %>%
+  dplyr::select(p) )
+
+p_Q2.fam <- as.vector(p_Q2 %>%
+  dplyr::filter(Group == "Family")  %>%
+  dplyr::select(p) )
+
 
 binom_t1 <- data.frame(
   
   trait = traits,
-  
-  p_pop = c(
-      # Growth traits
-0.5,
-0.5,
-0.4115,
-0.5,
-0.5,
-0.5,
-0.2435,
-0.5,
-# Herbivore community
-0.5,
-0.5,
-0.4566,
-# Defense traits
-0.5,
-0.5,
-0.4895,
-0.5,
-0.055,
-0.5,
-0.0715,
-# Reproductive traits
-0.5,
-0.5,
-0.1245,
-0.5,
-0.3675,
-0.5,
-0.125,
-0.2745
-),
-  
-  p_fam = c(
-    # Growth traits
-    0.0025,
-0.0035,
-0.459,
-0.0235,
-0.001,
-0.001,
-0.5,
-0.5,
-# Herbivore community
-0.5,
-0.5,
-0.0085,
-# Defense traits
-0.5,
-0.5,
-0.2875,
-0.1495,
-0.04,
-0.049,
-0.029,
-# Reproductive traits
-0.5,
-0.001,
-0.286,
-0.5,
-0.0505,
-0.5,
-0.001,
-0.5
-    )
-  )
-
+  p_pop = p_Q2.pop,
+  p_fam = p_Q2.fam
+  ) %>%
+  dplyr::rename(p_pop = 2,
+                p_fam = 3)
 
 ```
 
@@ -858,79 +674,36 @@ t1_results_fam2$estimate # probability of success: 0.4230769
 ### Table 2
 #### Get data
 ```{r}
-# changing all instances of "p<0.001" to 0.001
+
+p_Q2.1 <- read.csv(here::here("./Figures_Tables/ranova_PVE/ranovas_allyears_transects_Table1.csv"),
+                 blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::rename("Variable" = 1) %>%
+  # remove < from p-values (for p < 0.001)
+  dplyr::mutate(p = str_replace(
+    p,
+    "<",
+    "")) %>%
+  dplyr::mutate(p = as.numeric(p)) %>%
+  dplyr::select(-PVE, -Chisq) %>%
+  dplyr::filter(Urbanization == "UrbScore")
+
+p_Q2.pop.1 <- as.vector(p_Q2.1 %>%
+  dplyr::filter(Group == "Population")  %>%
+  dplyr::select(p) )
+
+p_Q2.fam.1 <- as.vector(p_Q2.1 %>%
+  dplyr::filter(Group == "Family")  %>%
+  dplyr::select(p) )
+
 
 binom_t2 <- data.frame(
   
   trait = traits,
-  
-  p_pop = c(
-   # Growth traits
-0.375,
-0.411,
-0.323,
-0.5,
-0.5,
-0.5,
-0.3135,
-0.5,
-# Herbivore community
-0.5,
-0.5,
-0.4385,
-# Defense traits
-0.5,
-0.5,
-0.4885,
-0.5,
-0.239,
-0.5,
-0.1025,
-# Reproductive traits
-0.5,
-0.5,
-0.179,
-0.5,
-0.437,
-0.5,
-0.1675,
-0.5
-
-),
-  
-  p_fam = c(
-    # Growth traits
-0.003,
-0.004,
-0.454,
-0.023,
-0.001,
-0.001,
-0.5,
-0.5,
-# Herbivore community
-0.5,
-0.5,
-0.01,
-# Defense traits
-0.5,
-0.5,
-0.2985,
-0.1945,
-0.036,
-0.053,
-0.027,
-# Reproductive traits
-0.5,
-0.001,
-0.26,
-0.5,
-0.0465,
-0.5,
-0.001,
-0.5
-    )
-  )
+  p_pop = p_Q2.pop.1,
+  p_fam = p_Q2.fam.1
+  ) %>%
+  dplyr::rename(p_pop = 2,
+                p_fam = 3)
 ```
 
 #### Perform tests

@@ -148,7 +148,7 @@ anova_table_usc <- all_1yr_mods.u %>%
       "Date of first flower",
     str_detect(Variable, "Pods")~
       "Follicles",
-    str_detect(Variable, "Julian_first")~
+    str_detect(Variable, "first_foll")~
       "Date of first follicle",
     str_detect(Variable, "Peduncles")~
       "Inflorescences",

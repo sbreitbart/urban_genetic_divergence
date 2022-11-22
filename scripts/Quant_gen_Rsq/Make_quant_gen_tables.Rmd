@@ -5,8 +5,40 @@ source("functions.R")
 ```
 
 # Import data
+## Models
 ```{r}
 source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_1yr_mods.Rmd", quiet=TRUE))
+
+```
+
+## Ranova tables
+these values were generated in:
+-scripts/Ranovas_anovas_per_category/R_anovas_growth.Rmd (etc. for rest of similarly-named files)...
+
+manually extracted, then organized into these word docs:
+-Figures_Tables\ranova_PVE\ranovas_allyears.docx
+-Figures_Tables\ranova_PVE\ranovas_allyears_transects.docx
+
+...then placed into csvs for import into R and manipulation: 
+
+### Q1
+```{r}
+ran1 <- read.csv(here::here("./Figures_Tables/ranova_PVE/ranovas_allyears_Table1.csv"),
+                 blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::rename("Variable" = 1)
+
+
+ran2 <- read.csv(here::here("./Figures_Tables/ranova_PVE/ranovas_allyears_Table2.csv"),
+                 blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::rename("Variable" = 1)
+```
+
+### Q2
+```{r}
+ran3 <- read.csv(here::here("./Figures_Tables/ranova_PVE/ranovas_allyears_transects_Table1.csv"),
+                 blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::rename("Variable" = 1) %>%
+  dplyr::select(Variable:Urbanization)
 
 ```
 
@@ -2028,7 +2060,7 @@ qg_1yr_survival <- calc_quantgenvars(0.56265  ,
 
 #### Combine values into one table and export
 ```{r}
-list(
+qgen_list2 <- list(
   
   # Defense
   qg_1yr_latex,
@@ -2063,7 +2095,9 @@ list(
   qg_1yr_ramets_e,
   qg_1yr_ramets_l,
   qg_1yr_survival
-                  ) %>% 
+                  )
+
+qgen_list2 %>% 
   bind_rows() %>%
   dplyr::mutate_at(2:4, round, 3) %>%
   dplyr::rename(Variable = 1) %>%
@@ -2082,4 +2116,47 @@ list(
   autofit() %>%
   save_as_docx(path = here::here("./Figures_Tables/Quant_gen/Quant_gen_1yrmods_Q2.docx"))
 
+```
+
+#### Take p-values from ranova (Distance to CC ONLY- not urb score) and append to qgen table
+```{r}
+# keep only p-values for distance
+qgen_ranova2 <- ran3 %>%
+  dplyr::filter(Urbanization == "Distance") %>%
+  dplyr::select(1, p, Group) %>%
+  pivot_wider(names_from = c("Group"),
+              values_from = c("p"))
+
+qgen_list2 %>% 
+  bind_rows() %>%
+  dplyr::rename(Variable = trait) %>%
+  dplyr::mutate(Variable = str_replace(Variable,
+                                       "Flowers per Inflorescence",
+                                       "Flowers per inflorescence")) %>%
+  full_join(., qgen_ranova2) %>%
+  dplyr::mutate_at(2:4, round, 3) %>%
+  dplyr::select(Variable,
+                h2, cva, Family,
+                qst, Population) %>%
+  flextable() %>%
+  hline(border = NULL, part = "body") %>%
+  flextable::bold(i = ~ Family <= 0.05, j = 4) %>%
+  flextable::bold(i = ~ Population <= 0.05, j = 6) %>%
+  flextable::compose(part = "header", i = 1, j = 2,
+         value = as_paragraph("h",
+                              as_sup("2"))) %>%
+  flextable::compose(part = "header", i = 1, j = 5,
+         value = as_paragraph("Q",
+                              as_sub("ST"))) %>%
+  flextable::compose(part = "header", i = 1, j = 3,
+         value = as_paragraph("CV",
+                              as_sub("A"))) %>%
+  flextable::compose(part = "header", i = 1, j = 4,
+         value = as_paragraph("p (Family)")) %>%
+  flextable::compose(part = "header", i = 1, j = 6,
+         value = as_paragraph("p (Population)")) %>%
+  flextable::align(j = 2:6, align = "center", part = "all") %>%
+  autofit() %>%
+    padding(padding = 3) %>%
+  save_as_docx(path = here::here("./Figures_Tables/Quant_gen/Quant_gen_1yrmods_Q2_withAnova.docx"))
 ```

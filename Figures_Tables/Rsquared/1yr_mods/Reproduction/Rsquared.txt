@@ -150,9 +150,9 @@ trigamma  0.09202896 0.6986777
 
 $first_pods_mods4
                  R2m       R2c
-delta     0.09690574 0.7134545
-lognormal 0.09777038 0.7198203
-trigamma  0.09600152 0.7067974
+delta     0.06630771 0.7081509
+lognormal 0.06691039 0.7145874
+trigamma  0.06567766 0.7014221
 
 $peduncles_mods1
                    R2m          R2c

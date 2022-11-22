@@ -79,7 +79,7 @@ ggarrange(
           legend = "top") %T>%
   plot
 
-dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Q2_grad_urbscore_representative_panels.pdf"),
+dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Q2_urbsubs_citydist_representative_panels.pdf"),
              width = 10, height = 8)
 ```
 
