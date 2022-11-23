@@ -495,7 +495,8 @@ urb_sc_tables <- rbind(tab1u, tab2u) %>%
 
 rbind(city_tables, urb_sc_tables) %>%
   flextable() %>%
-    hline(border = NULL, part = "body") %>%
+  hline(border = NULL, part = "body") %>%
+  merge_v(j = ~Urbanization) %>%
   flextable::align(j = 3:6, align = "center", part = "all") %>%
   autofit() %>%
     padding(padding = 3) %>%
@@ -946,11 +947,11 @@ urb_sc_table <- tab2u %>%
 
 rbind(city_table, urb_sc_table) %>%
   flextable() %>%
-    hline(border = NULL, part = "body") %>%
+  hline(border = NULL, part = "body") %>%
+  merge_v(j = ~Urbanization) %>%
   flextable::align(j = 3:6, align = "center", part = "all") %>%
   autofit() %>%
     padding(padding = 3) %>%
   save_as_docx(path =
  here::here("./Figures_Tables/mvabund/mvabund_anovas_1yr_Q2.docx"))
 ```
-

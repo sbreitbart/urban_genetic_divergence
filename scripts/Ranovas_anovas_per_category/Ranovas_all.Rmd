@@ -68,7 +68,7 @@ ran1 %>%
   flextable() %>%
   theme_box() %>%
   flextable::bold(i = ~ p_Population <= 0.05, j = 3) %>%
-  flextable::bold(i = ~ p_Family <= 0.05, j = 5) %>%
+  flextable::bold(i = ~ p_Family <= 0.05, j = 6) %>%
   ftExtra::separate_header() %>%
   merge_v(j = ~Variable) %>% 
   align(j = 2:5, align = "center", part = "all") %>%

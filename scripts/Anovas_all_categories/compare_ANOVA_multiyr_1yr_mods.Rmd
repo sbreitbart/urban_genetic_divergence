@@ -1,0 +1,35 @@
+# Load libraries & functions
+```{r}
+source("libraries.R")
+source("functions.R")
+```
+
+# Create table comparing ANOVA results from multi-year models vs. one-year models (lmers)
+## Import pre-made table
+```{r}
+compar <- read.csv(here::here("./Figures_Tables/comparing_ANOVA/ANOVA_comparison_table.csv"),
+                 blank.lines.skip=TRUE, header=TRUE, sep=",")
+```
+
+## Export w/flextable
+```{r}
+compar %>%
+  flextable() %>%
+  align(j = c(1,2,6,7), align = "center", part = "all") %>%
+  hline(border = NULL, part = "body") %>%
+  vline(j = 1:2, part = "body") %>%
+  merge_v(j = 1) %>%
+  bold(i = ~ p_multiyr <= 0.05, j = 6) %>%
+  bold(i = ~ p_1yr <= 0.05, j = 7) %>%
+  flextable::compose(i = 1, j = 6, part = "header",
+                     value = as_paragraph("p (Multi-year model)")) %>%
+  flextable::compose(i = 1, j = 7, part = "header",
+                     value = as_paragraph("p (1-year model)")) %>%
+  padding(padding = 3) %>%
+  autofit() %T>%
+  
+# STEP 6: Export
+  flextable::save_as_docx(.,
+                          path = here::here("./Figures_Tables/Comparing_ANOVA/ANOVA_comparison_table_reproducible.docx"))
+```
+
