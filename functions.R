@@ -1084,7 +1084,7 @@ Calc_narrow_sense_h <- function(fam_var, pop_var, resid_var){
 ## Calculate Qst
 Calc_qst <- function(fam_var, pop_var){
   num_qst <- pop_var^2
-  dem_qst <- pop_var^2 + (2*(fam_var^2))
+  dem_qst <- pop_var^2 + 2*(2*(fam_var^2))
   qst <- num_qst/dem_qst
   return(qst)
 }
@@ -1098,7 +1098,7 @@ Calc_h2_qst <- function(fam_var, pop_var, resid_var){
   h2 <- add_var/total_wp_var
   
   num_qst <- pop_var^2
-  dem_qst <- pop_var^2 + (2*(fam_var^2))
+  dem_qst <- pop_var^2 + 2*(2*(fam_var^2))
   qst <- num_qst/dem_qst
   
   print(paste0("Narrow-sense heritability: ", h2))
@@ -1133,7 +1133,7 @@ calc_quantgenvars <-  function(fam_var,
   h2 <- add_var/total_wp_var
   
   num_qst <- pop_var^2
-  dem_qst <- pop_var^2 + (2*(fam_var^2))
+  dem_qst <- pop_var^2 + 2*(2*(fam_var^2))
   qst <- num_qst/dem_qst
   
   cva <- sqrt(add_var) / trait_mean
