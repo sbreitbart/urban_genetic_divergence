@@ -41,7 +41,8 @@ ran3 <- read.csv(here::here("./Figures_Tables/ranova_PVE/ranovas_allyears_transe
 ```{r}
 ran1 %<>%
   pivot_wider(names_from = "Group",
-              values_from = c("Chisq", "p", "PVE")) %>%
+              values_from = c("Chisq", "p", "PVE"),
+              names_glue = "{Group}_{.value}") %>%
   dplyr::select(1,2,4,6,3,5,7) 
 ```
 
@@ -49,7 +50,8 @@ ran1 %<>%
 ```{r}
 ran2 %<>%
   pivot_wider(names_from = c("Group", "Urbanization"),
-              values_from = c("Chisq", "p", "PVE")) %>%
+              values_from = c("Chisq", "p", "PVE"),
+                names_glue = "{Urbanization}_{Group}_{.value}") %>%
   dplyr::select(1,2,6,10,3,7,11,4,8,12,5,9,13)
 ```
 
@@ -57,7 +59,8 @@ ran2 %<>%
 ```{r}
 ran3 %<>%
   pivot_wider(names_from = c("Group", "Urbanization"),
-              values_from = c("Chisq", "p", "PVE")) %>%
+              values_from = c("Chisq", "p", "PVE"),
+                names_glue = "{Urbanization}_{Group}_{.value}") %>%
   dplyr::select(1,2,6,10,3,7,11,4,8,12,5,9,13)
 ```
 
@@ -66,19 +69,20 @@ ran3 %<>%
 ```{r}
 ran1 %>%
   flextable() %>%
-  theme_box() %>%
-  flextable::bold(i = ~ p_Population <= 0.05, j = 3) %>%
-  flextable::bold(i = ~ p_Family <= 0.05, j = 6) %>%
+  flextable::bold(i = ~ Population_p <= 0.05, j = 3) %>%
+  flextable::bold(i = ~ Family_p <= 0.05, j = 6) %>%
   ftExtra::separate_header() %>%
   merge_v(j = ~Variable) %>% 
-  align(j = 2:5, align = "center", part = "all") %>%
+  align(j = 2:7, align = "center", part = "body") %>%
+  merge_h(i = 1, part = "header") %>%
+  align(i = 2, align = "center", part = "header") %>%
   hline(border = NULL, part = "body") %>%
-  flextable::compose(i = 1, j = c(2,5), part = "header",
+  vline(j = 4, part = "all") %>%
+  flextable::compose(i = 2, j = c(2,5), part = "header",
                      value = as_paragraph("χ", as_sup("2"))) %>%
-  merge_h(i = 2, part = "header") %>%
-  flextable::compose(i = 2, j = 2, part = "header",
+  flextable::compose(i = 1, j = 2, part = "header",
                      value = as_paragraph("Population")) %>%
-  flextable::compose(i = 2, j = 5, part = "header",
+  flextable::compose(i = 1, j = 5, part = "header",
                      value = as_paragraph("Family")) %>%
   flextable::compose(i = 1, j = 1, part = "header",
                      value = as_paragraph(" ")) %>%
@@ -93,20 +97,21 @@ ran1 %>%
 ```{r}
 ran2 %>%
   flextable() %>%
-  theme_box() %>%
-  flextable::bold(i = ~ p_Population_Distance <= 0.05, j = 3) %>%
-  flextable::bold(i = ~ p_Family_Distance <= 0.05, j = 6) %>%  
-  flextable::bold(i = ~ p_Population_UrbScore <= 0.05, j = 9) %>%
-  flextable::bold(i = ~ p_Family_UrbScore <= 0.05, j = 12) %>%
+  flextable::bold(i = ~ Distance_Population_p <= 0.05, j = 3) %>%
+  flextable::bold(i = ~ Distance_Family_p <= 0.05, j = 6) %>%  
+  flextable::bold(i = ~ UrbScore_Population_p <= 0.05, j = 9) %>%
+  flextable::bold(i = ~ UrbScore_Family_p <= 0.05, j = 12) %>%
   ftExtra::separate_header() %>%
   merge_v(j = ~Variable) %>% 
   align(j = 2:12, align = "center", part = "all") %>%
+  align(i = 1:2, align = "left", part = "header") %>%
   hline(border = NULL, part = "body") %>%
-  flextable::compose(i = 1, j = c(2,5,8,11), part = "header",
+  vline(j = c(4,7,10), part = "all") %>%
+  flextable::compose(i = 3, j = c(2,5,8,11), part = "header",
                      value = as_paragraph("χ", as_sup("2"))) %>%
   merge_h(i = 2, part = "header") %>%
-  merge_h(i = 3, part = "header") %>%
-  flextable::compose(i = 3, j = 8, part = "header",
+  merge_h(i = 1, part = "header") %>%
+  flextable::compose(i = 1, j = 8, part = "header",
                      value = as_paragraph("Urbanization Score")) %>%
   flextable::compose(i = 1, j = 1, part = "header",
                      value = as_paragraph(" ")) %>%
@@ -125,24 +130,25 @@ ran2 %>%
 ```
 
 
-### Q1, table 3
+### Q2, table 1
 ```{r}
 ran3 %>%
   flextable() %>%
-  theme_box() %>%
-  flextable::bold(i = ~ p_Population_Distance <= 0.05, j = 3) %>%
-  flextable::bold(i = ~ p_Family_Distance <= 0.05, j = 6) %>%  
-  flextable::bold(i = ~ p_Population_UrbScore <= 0.05, j = 9) %>%
-  flextable::bold(i = ~ p_Family_UrbScore <= 0.05, j = 12) %>%
+  flextable::bold(i = ~ Distance_Population_p <= 0.05, j = 3) %>%
+  flextable::bold(i = ~ Distance_Family_p <= 0.05, j = 6) %>%  
+  flextable::bold(i = ~ UrbScore_Population_p <= 0.05, j = 9) %>%
+  flextable::bold(i = ~ UrbScore_Family_p <= 0.05, j = 12) %>%
   ftExtra::separate_header() %>%
   merge_v(j = ~Variable) %>% 
   align(j = 2:12, align = "center", part = "all") %>%
+  align(i = 1:2, align = "left", part = "header") %>%
   hline(border = NULL, part = "body") %>%
-  flextable::compose(i = 1, j = c(2,5,8,11), part = "header",
+  vline(j = c(4,7,10), part = "all") %>%
+  flextable::compose(i = 3, j = c(2,5,8,11), part = "header",
                      value = as_paragraph("χ", as_sup("2"))) %>%
   merge_h(i = 2, part = "header") %>%
-  merge_h(i = 3, part = "header") %>%
-  flextable::compose(i = 3, j = 8, part = "header",
+  merge_h(i = 1, part = "header") %>%
+  flextable::compose(i = 1, j = 8, part = "header",
                      value = as_paragraph("Urbanization Score")) %>%
   flextable::compose(i = 1, j = 1, part = "header",
                      value = as_paragraph(" ")) %>%
