@@ -209,26 +209,29 @@ full_join(
   pivot_wider(names_from = "Predictor", 
               values_from = c(Chisq, p)) %>%
   
-  dplyr::rename("Chisq_Dist" = 2,
-                "Chisq_Usc" = 3,
-                "p_Dist" = 4,
-                "p_Usc" = 5
+  dplyr::rename("Dist_Chisq" = 2,
+                "Usc_Chisq" = 3,
+                "Dist_p" = 4,
+                "Usc_p" = 5
                 ) %>%
   dplyr::select(1,2,4,3,5) %>%
   flextable() %>%
   theme_box() %>%
-  flextable::bold(i = ~ p_Dist <= 0.05, j = 3) %>%
-  flextable::bold(i = ~ p_Usc <= 0.05, j = 5) %>%
+  flextable::bold(i = ~ Dist_p <= 0.05, j = 3) %>%
+  flextable::bold(i = ~ Usc_p <= 0.05, j = 5) %>%
   ftExtra::separate_header() %>%
   merge_v(j = ~Variable) %>% 
-  align(j = 2:5, align = "center", part = "all") %>%
+  align(j = 2:5, align = "center", part = "body") %>%
+  merge_h(i = 1, part = "header") %>%
+  align(i = 2, align = "center", part = "header") %>%
+  align(i = 1, align = "left", part = "header") %>%
+  vline(j = 3, part = "all") %>%
   hline(border = NULL, part = "body") %>%
-  flextable::compose(i = 1, j = c(2,4), part = "header",
+  flextable::compose(i = 2, j = c(2,4), part = "header",
                      value = as_paragraph("χ", as_sup("2"))) %>%
-  merge_h(i = 2, part = "header") %>%
-  flextable::compose(i = 2, j = 2, part = "header",
-                     value = as_paragraph("Distance to City Center")) %>%
-  flextable::compose(i = 2, j = 4, part = "header",
+  flextable::compose(i = 1, j = 2, part = "header",
+                     value = as_paragraph("Distance")) %>%
+  flextable::compose(i = 1, j = 4, part = "header",
                      value = as_paragraph("Urbanization Score")) %>%
   flextable::compose(i = 1, j = 1, part = "header",
                      value = as_paragraph(" ")) %>%
@@ -272,7 +275,7 @@ full_join(
                      value = as_paragraph("χ", as_sup("2"))) %>%
   merge_h(i = 2, part = "header") %>%
   flextable::compose(i = 2, j = 2, part = "header",
-                     value = as_paragraph("Distance to City Center")) %>%
+                     value = as_paragraph("Distance")) %>%
   flextable::compose(i = 2, j = 4, part = "header",
                      value = as_paragraph("Urbanization Score")) %>%
   flextable::compose(i = 1, j = 1, part = "header",
@@ -498,30 +501,34 @@ anova_table_city2_simpler %>%
   pivot_wider(names_from = "Predictor", 
               values_from = c(Chisq, p)) %>%
   
-  dplyr::rename("Chisq_dist" = 2,
-                "Chisq_sub" = 3,
-                "Chisq_intx" = 4,
-                "p_dist" = 5,
-                "p_sub" = 6,
-                "p_intx" = 7
+  dplyr::rename("dist_chisq" = 2,
+                "sub_chisq" = 3,
+                "intx_chisq" = 4,
+                "dist_p" = 5,
+                "sub_p" = 6,
+                "intx_p" = 7
                 ) %>%
   dplyr::select(1,2,5,3,6,4,7) %>%
   flextable() %>%
   theme_box() %>%
-  flextable::bold(i = ~ p_dist <= 0.05, j = 3) %>%
-  flextable::bold(i = ~ p_sub <= 0.05, j = 5) %>%
-  flextable::bold(i = ~ p_intx <= 0.05, j = 7) %>%
+  flextable::bold(i = ~ dist_p <= 0.05, j = 3) %>%
+  flextable::bold(i = ~ sub_p <= 0.05, j = 5) %>%
+  flextable::bold(i = ~ intx_p <= 0.05, j = 7) %>%
   ftExtra::separate_header() %>%
   merge_v(j = ~Variable) %>% 
   align(j = 2:7, align = "center", part = "all") %>%
+  merge_h(i = 1, part = "header") %>%
+  align(i = 2, align = "center", part = "header") %>%
+  align(i = 1, align = "left", part = "header") %>%
+  vline(j = c(3, 5), part = "all") %>%
   hline(border = NULL, part = "body") %>%
-  flextable::compose(i = 1, j = c(2,4,6), part = "header",
+  flextable::compose(i = 2, j = c(2,4,6), part = "header",
                      value = as_paragraph("χ", as_sup("2"))) %>%
-  merge_h(i = 2, part = "header") %>%
-  flextable::compose(i = 2, j = 2, part = "header",
-                     value = as_paragraph("Distance to City Center")) %>%
-  flextable::compose(i = 2, j = 4, part = "header",
-                     value = as_paragraph("Subtransect")) %>%  flextable::compose(i = 2, j = 6, part = "header",
+  flextable::compose(i = 1, j = 2, part = "header",
+                     value = as_paragraph("Distance")) %>%
+  flextable::compose(i = 1, j = 4, part = "header",
+                     value = as_paragraph("Subtransect")) %>% 
+  flextable::compose(i = 1, j = 6, part = "header",
                      value = as_paragraph("D x S")) %>%
   flextable::compose(i = 1, j = 1, part = "header",
                      value = as_paragraph(" ")) %>%
@@ -542,30 +549,34 @@ anova_table_usc2_simpler %>%
   pivot_wider(names_from = "Predictor", 
               values_from = c(Chisq, p)) %>%
   
-  dplyr::rename("Chisq_dist" = 2,
-                "Chisq_sub" = 3,
-                "Chisq_intx" = 4,
-                "p_dist" = 5,
-                "p_sub" = 6,
-                "p_intx" = 7
+  dplyr::rename("usc_chisq" = 2,
+                "sub_chisq" = 3,
+                "intx_chisq" = 4,
+                "usc_p" = 5,
+                "sub_p" = 6,
+                "intx_p" = 7
                 ) %>%
   dplyr::select(1,2,5,3,6,4,7) %>%
   flextable() %>%
   theme_box() %>%
-  flextable::bold(i = ~ p_dist <= 0.05, j = 3) %>%
-  flextable::bold(i = ~ p_sub <= 0.05, j = 5) %>%
-  flextable::bold(i = ~ p_intx <= 0.05, j = 7) %>%
+  flextable::bold(i = ~ usc_p <= 0.05, j = 3) %>%
+  flextable::bold(i = ~ sub_p <= 0.05, j = 5) %>%
+  flextable::bold(i = ~ intx_p <= 0.05, j = 7) %>%
   ftExtra::separate_header() %>%
   merge_v(j = ~Variable) %>% 
   align(j = 2:7, align = "center", part = "all") %>%
+  merge_h(i = 1, part = "header") %>%
+  align(i = 2, align = "center", part = "header") %>%
+  align(i = 1, align = "left", part = "header") %>%
+  vline(j = c(3, 5), part = "all") %>%
   hline(border = NULL, part = "body") %>%
-  flextable::compose(i = 1, j = c(2,4,6), part = "header",
+  flextable::compose(i = 2, j = c(2,4,6), part = "header",
                      value = as_paragraph("χ", as_sup("2"))) %>%
-  merge_h(i = 2, part = "header") %>%
-  flextable::compose(i = 2, j = 2, part = "header",
+  flextable::compose(i = 1, j = 2, part = "header",
                      value = as_paragraph("Urbanization Score")) %>%
-  flextable::compose(i = 2, j = 4, part = "header",
-                     value = as_paragraph("Subtransect")) %>%  flextable::compose(i = 2, j = 6, part = "header",
+  flextable::compose(i = 1, j = 4, part = "header",
+                     value = as_paragraph("Subtransect")) %>% 
+  flextable::compose(i = 1, j = 6, part = "header",
                      value = as_paragraph("U x S")) %>%
   flextable::compose(i = 1, j = 1, part = "header",
                      value = as_paragraph(" ")) %>%
@@ -609,7 +620,7 @@ full_join(
                      value = as_paragraph("χ", as_sup("2"))) %>%
   merge_h(i = 2, part = "header") %>%
   flextable::compose(i = 2, j = 2, part = "header",
-                     value = as_paragraph("Distance to City Center")) %>%
+                     value = as_paragraph("Distance")) %>%
   flextable::compose(i = 2, j = 4, part = "header",
                      value = as_paragraph("Urbanization Score")) %>%
   flextable::compose(i = 1, j = 1, part = "header",
