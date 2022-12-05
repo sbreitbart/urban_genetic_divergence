@@ -6,25 +6,88 @@ source("functions.R")
 ```
 
 ## Import representative figures
+NOTE: specific chunks of code from the commented-out Rmds should be run manually. Otherwise, this takes a very long time since each Figures_x.Rmd file has to run the same Model_diagnostics_1yr_mods.Rmd listed below.
+
+1. Run the trait-specific section of the "Create ggpredict objects" chunk
+2. Run the trait-specific section of the "Create regression plots" chunk 
 ```{r}
-source(knitr::purl("scripts/Create_regression_figs/1yr_mods/Figures_growth.Rmd", quiet=TRUE))
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_1yr_mods.Rmd", quiet=TRUE))
 
-source(knitr::purl("scripts/Create_regression_figs/1yr_mods/Figures_defense.Rmd", quiet=TRUE))
-
-source(knitr::purl("scripts/Create_regression_figs/1yr_mods/Figures_Reproductive.Rmd", quiet=TRUE))
-
-source(knitr::purl("scripts/Create_regression_figs/1yr_mods/Figures_herbivores_2021.Rmd", quiet=TRUE))
+# source(knitr::purl("scripts/Create_regression_figs/1yr_mods/Figures_growth.Rmd", quiet=TRUE))
+# 
+# source(knitr::purl("scripts/Create_regression_figs/1yr_mods/Figures_defense.Rmd", quiet=TRUE))
+# 
+# source(knitr::purl("scripts/Create_regression_figs/1yr_mods/Figures_Reproductive.Rmd", quiet=TRUE))
+# 
+# source(knitr::purl("scripts/Create_regression_figs/1yr_mods/Figures_herbivores_2021.Rmd", quiet=TRUE))
 ```
 
 # Combine plots into one figure
 ## Gradient / City_dist
+### Add points (family means)
 ```{r}
+# Defense
+points_Q1.citydist_weev_bin <- ggpred_Q1.citydist_weev_bin +
+  geom_point(data = weevil %>%
+               dplyr::filter(Year == 2021) %>%
+               dplyr::group_by(Population, Family) %>%
+               dplyr::summarise(Scar_binary  = mean(Scar_binary,
+                                                na.rm = T),
+                                City_dist = first(City_dist)),
+             aes(x = City_dist,
+                 y = Scar_binary),
+    color = "#66a182") +
+  ylim(0, NA)
 
+# Reproduction
+points_Q1.citydist_firstpods <- ggpred_Q1.citydist_firstpods +
+  geom_point(data = flowering %>%
+               dplyr::filter(Year == 2022) %>%
+               dplyr::group_by(Population, Family) %>%
+               dplyr::summarise(foll_sum = mean(first_foll_minus200,
+                                                na.rm = T),
+                                City_dist = first(City_dist)),
+             aes(x = City_dist,
+                 y = foll_sum),
+    color = "#66a182") +
+  ylim(0, NA)
+
+# Herbivores
+points_Q1.citydist_asclepiadis <- ggpred_Q1.citydist_asclepiadis +
+  geom_point(data = herbivores %>%
+               dplyr::filter(Year == 2021) %>%
+               dplyr::group_by(Population, Family) %>%
+               dplyr::summarise(Liriomyza_asclepiadis = mean(Liriomyza_asclepiadis,
+                                                na.rm = T),
+                                City_dist = first(City_dist)),
+             aes(x = City_dist,
+                 y = Liriomyza_asclepiadis),
+    color = "#66a182") +
+  ylim(-1, NA)
+
+# Growth
+points_Q1.citydist_height_e <- ggpred_Q1.citydist_height_e +
+  geom_point(data = heights %>%
+               dplyr::filter(Year == 2021) %>%
+               dplyr::group_by(Population, Family) %>%
+               dplyr::summarise(Total_Height_early = mean(Total_Height_early,
+                                                na.rm = T),
+                                City_dist = first(City_dist)) %>%
+               dplyr::mutate(height_cubert = Total_Height_early^(1/3)),
+             aes(x = City_dist,
+                 y = height_cubert),
+    color = "#66a182") +
+  ylim(0, NA)
+
+```
+
+### Arrange, export
+```{r}
 ggarrange(
-  addborder(ggpred_Q1.citydist_weev_bin, "defense"),
-  addborder(ggpred_Q1.citydist_firstpods, "reproduction"),
-  addborder(ggpred_Q1.citydist_asclepiadis, "herbivores"),
-  addborder(ggpred_Q1.citydist_height_e, "growth") +
+  addborder(points_Q1.citydist_weev_bin, "defense"),
+  addborder(points_Q1.citydist_firstpods, "reproduction"),
+  addborder(points_Q1.citydist_asclepiadis, "herbivores"),
+  addborder(points_Q1.citydist_height_e, "growth") +
             font("x.text"),
           ncol = 2,
           nrow = 2,
@@ -41,6 +104,7 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Q1_grad_ci
 
 
 ## Gradient / Urbanization Score
+POINTS NOT ADDED
 ```{r}
 ggarrange(
   addborder(ggpred_Q1.urbscore_weev_bin, "defense"),
@@ -63,12 +127,91 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Q1_grad_ur
 ```
 
 ## Urb Subtransects / City_dist
+### Add points (family means)
+```{r}
+# Defense
+points_Q2.citydist_weev_bin <- ggpred_Q2.citydist_weev_bin +
+  geom_point(data = weevil %>%
+               dplyr::filter(Year == 2021) %>%
+               dplyr::filter(Transect_ID != "Rural") %>%
+               dplyr::group_by(Population, Family) %>%
+               dplyr::summarise(Scar_binary = mean(Scar_binary,
+                                                na.rm = T),
+                                City_dist = first(City_dist),
+                                Transect_ID = first(Transect_ID)),
+             aes(x = City_dist,
+                 y = Scar_binary,
+                 color = Transect_ID)) +
+  scale_y_continuous(limits = c(0, 1.2), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
+    scale_colour_brewer(labels = c("Corridor",
+                                 "Non-Corridor"),
+                      palette = "Set2")
+
+# Reproduction
+points_Q2.citydist_firstpods <- ggpred_Q2.citydist_firstpods +
+  geom_point(data = flowering %>%
+               dplyr::filter(Year == 2022) %>%
+               dplyr::filter(Transect_ID != "Rural") %>%
+               dplyr::group_by(Population, Family) %>%
+               dplyr::summarise(foll_sum = mean(first_foll_minus200,
+                                                na.rm = T),
+                                City_dist = first(City_dist),
+                                Transect_ID = first(Transect_ID)),
+             aes(x = City_dist,
+                 y = foll_sum,
+                 color = Transect_ID)) +
+  ylim(0, NA) +
+    scale_colour_brewer(labels = c("Corridor",
+                                 "Non-Corridor"),
+                      palette = "Set2")
+
+# Herbivores
+points_Q2.citydist_asclepiadis <- ggpred_Q2.citydist_asclepiadis +
+  geom_point(data = herbivores %>%
+               dplyr::filter(Year == 2021) %>%
+               dplyr::filter(Transect_ID != "Rural") %>%
+               dplyr::group_by(Population, Family) %>%
+               dplyr::summarise(Liriomyza_asclepiadis = mean(Liriomyza_asclepiadis,
+                                                na.rm = T),
+                                City_dist = first(City_dist),
+                                Transect_ID = first(Transect_ID)),
+             aes(x = City_dist,
+                 y = Liriomyza_asclepiadis,
+                 color = Transect_ID)) +
+  ylim(0, 7) +
+    scale_colour_brewer(labels = c("Corridor",
+                                 "Non-Corridor"),
+                      palette = "Set2")
+
+# Growth
+points_Q2.citydist_height_e <- ggpred_Q2.citydist_height_e +
+  geom_point(data = heights %>%
+               dplyr::filter(Year == 2021) %>%
+               dplyr::filter(Transect_ID != "Rural") %>%
+               dplyr::group_by(Population, Family) %>%
+               dplyr::summarise(Total_Height_early = mean(Total_Height_early,
+                                                na.rm = T),
+                                City_dist = first(City_dist),
+                                Transect_ID = first(Transect_ID)) %>%
+             dplyr::mutate(height_cubert = Total_Height_early^(1/3)),
+             aes(x = City_dist,
+                 y = height_cubert,
+                 color = Transect_ID)) +
+  ylim(0, 7) +
+    scale_colour_brewer(labels = c("Corridor",
+                                 "Non-Corridor"),
+                      palette = "Set2")
+
+```
+
+
+### Arrange, export
 ```{r}
 ggarrange(
-  addborder(ggpred_Q2.citydist_weev_bin, "defense"),
-  addborder(ggpred_Q2.citydist_firstpods, "reproduction"),
-  addborder(ggpred_Q2.citydist_asclepiadis, "herbivores"),
-  addborder(ggpred_Q2.citydist_height_e, "growth") +
+  addborder(points_Q2.citydist_weev_bin, "defense"),
+  addborder(points_Q2.citydist_firstpods, "reproduction"),
+  addborder(points_Q2.citydist_asclepiadis, "herbivores"),
+  addborder(points_Q2.citydist_height_e, "growth") +
             font("x.text"),
           ncol = 2,
           nrow = 2,
@@ -85,6 +228,7 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Q2_urbsubs
 
 
 ## Urb Subtransects / Urbanization Score
+POINTS NOT ADDED
 ```{r}
 ggarrange(
   addborder(ggpred_Q2.urbsubs_weev_bin, "defense"),
