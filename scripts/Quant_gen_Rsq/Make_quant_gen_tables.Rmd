@@ -1354,7 +1354,7 @@ qgen_list1 %>%
   theme_box() %>%
   flextable::align(j = 2:4, align = "center", part = "all") %>%
   autofit() %>%
-  save_as_docx(path = here::here("./Figures_Tables/Quant_gen/Quant_gen_1yrmods_Q1.docx"))
+  save_as_docx(path = here::here("./Figures_Tables/Quant_gen/Quant_gen_1yrmods.docx"))
 
 ```
 
@@ -1399,5 +1399,5 @@ qgen_list1 %>%
   flextable::align(j = 2:6, align = "center", part = "all") %>%
   autofit() %>%
     padding(padding = 3) %>%
-  save_as_docx(path = here::here("./Figures_Tables/Quant_gen/Quant_gen_1yrmods_Q1_withRanova.docx"))
+  save_as_docx(path = here::here("./Figures_Tables/Quant_gen/Quant_gen_1yrmods_withRanova.docx"))
 ```
