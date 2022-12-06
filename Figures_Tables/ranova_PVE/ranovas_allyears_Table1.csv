@@ -3,17 +3,17 @@ Height before flowering,0.427,0.257,1.186,Population
 Height after flowering,0.776,0.189,1.442,Population
 LDMC,0,0.3805,0.407,Population
 Mortality,0.795,0.186,1.41,Population
-"Ramets,, before flowering",0.032,0.429,0,Population
-"Ramets,, after flowering",0.121,0.364,0.324,Population
+Ramets before flowering,0.032,0.429,0,Population
+Ramets after flowering,0.121,0.364,0.324,Population
 Relative growth rate,0,0.5,0,Population
 SLA,0,0.5,0,Population
 D. plexippus abundance,0.004,0.4765,0,Population
 L. clivicollis abundance,0.389,0.2665,0.299,Population
 L. asclepiadis abundance,1.317,0.1255,1.28,Population
-"Herbivory, before flowering (binary)",0,0.5,0,Population
-"Herbivory, before flowering (quantitative)",0,0.5,0,Population
-"Herbivory, after flowering (binary)",0,0.4955,0,Population
-"Herbivory, after flowering (quantitative)",0,0.5,0,Population
+Herbivory before flowering (binary),0,0.5,0,Population
+Herbivory before flowering (quantitative),0,0.5,0,Population
+Herbivory after flowering (binary),0,0.4955,0,Population
+Herbivory after flowering (quantitative),0,0.5,0,Population
 Latex exudation,4.536,0.0165,4.045,Population
 Weevil damage (binary),0,0.4995,0,Population
 Weevil damage (quantitative),1.208,0.136,2.112,Population
@@ -29,17 +29,17 @@ Height before flowering,9.561,0.001,9.227,Family
 Height after flowering,5.626,0.009,6.616,Family
 LDMC,0,0.5,0,Family
 Mortality,0.778,0.189,2.746,Family
-"Ramets,, before flowering",68.887,<0.001,6.927,Family
-"Ramets,, after flowering",27.65,<0.001,5.643,Family
+Ramets before flowering,68.887,<0.001,6.927,Family
+Ramets after flowering,27.65,<0.001,5.643,Family
 Relative growth rate,0.073,0.394,1.051,Family
 SLA,0,0.5,0,Family
 D. plexippus abundance,0,0.5,0,Family
 L. clivicollis abundance,0,0.5,0,Family
 L. asclepiadis abundance,3.062,0.0395,2.727,Family
-"Herbivory, before flowering (binary)",0.001,0.49,0.317,Family
-"Herbivory, before flowering (quantitative)",0,0.5,0,Family
-"Herbivory, after flowering (binary)",7.092,0.004,1.948,Family
-"Herbivory, after flowering (quantitative)",0.413,0.2605,2.163,Family
+Herbivory before flowering (binary),0.001,0.49,0.317,Family
+Herbivory before flowering (quantitative),0,0.5,0,Family
+Herbivory after flowering (binary),7.092,0.004,1.948,Family
+Herbivory after flowering (quantitative),0.413,0.2605,2.163,Family
 Latex exudation,2.033,0.077,4.748,Family
 Weevil damage (binary),3.501,0.0305,5.624,Family
 Weevil damage (quantitative),1.189,0.138,4.006,Family
