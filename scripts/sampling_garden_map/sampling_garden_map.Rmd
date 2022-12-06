@@ -19,6 +19,21 @@ sites %<>%
                     urb_scores,
                     by = c("Pop_ID" = "Patch_ID")) 
 
+# add 2019 field data to extract populations whose seeds were actually planted
+data_2019 <- read.csv(here::here("./CommonGardenExperiment_2019Data/clean_data/clean_data_2019KSR.csv"), sep = ",", header = TRUE) %>%
+  dplyr::select(-X) 
+
+# find number of pops per subtransect
+data_2019 %>%
+  dplyr::group_by( Transect_ID) %>%
+  dplyr::summarise(pops = n_distinct(Population))
+
+# keep only pops in above data_2019 vs all 80
+sites %<>% 
+  left_join(data_2019 %>%
+             dplyr::group_by(Population) %>%
+             dplyr::summarise(),
+          .) %T>% view
 ```
 
 # Make large map
@@ -246,12 +261,12 @@ map1_large
 
 # then add inset to larger map
 full <- map1_large +
-    inset(ggplotGrob(map1_inset),
+    ggmap::inset(ggplotGrob(map1_inset),
         xmin = -79.75,
         xmax = -80.25,
         ymin = 43.8,
-        ymax = 44.1
-    ) 
+        ymax = 44.1 
+        ) 
 
 ggsn::north2(full, 
          #    x = .29, y = .25,
