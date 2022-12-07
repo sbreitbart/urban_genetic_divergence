@@ -1364,11 +1364,11 @@ make_full_R2_table <- function(list1, list2, list3,
       "LDMC",
     str_detect(Variable, "SLA")~
       "SLA",
-    str_detect(Variable, "heights_e_cuberoot")~
+    str_detect(Variable, "Total_Height_early")~
       "Height before flowering",
-    str_detect(Variable, "heights_l_cuberoot")~
+    str_detect(Variable, "Total_Height_late")~
       "Height after flowering",
-    str_detect(Variable, "rgr")~
+    str_detect(Variable, "rel_growth_rate")~
       "Relative growth rate",
     str_detect(Variable, "Ramets_early")~
       "Ramets before flowering",
