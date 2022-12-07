@@ -54,7 +54,7 @@ p
 
 # save it
 png(here::here("./Figures_Tables/Phenotyping_schedule/Phenotyping_schedule.png"),
-    width = 18, height = 16,
+    width = 18, height = 19,
     units = "cm",
     res = 500)
 print(p)
