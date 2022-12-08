@@ -72,6 +72,58 @@ performance::check_model(flsize_ranova_mod3)
 ranova_2step(flsize_ranova_mod3,
              "Flower size: 2022",
              "./Figures_Tables/ranova_PVE/Reproduction/flower_size_2022.docx")
+
+# pollinaria removed-----
+# 2020-----
+poll_ranova_mod1 <- lmer(sqrt(mean_poll) ~
+                             Block +
+                             (1|Population/Family), 
+                           data = flowering %>%
+                             dplyr::filter(Year == 2020),
+                           REML = T)
+
+# check diagnostics and transform if necessary
+performance::check_model(poll_ranova_mod1)
+
+# export
+ranova_2step(poll_ranova_mod1,
+             "Pollinaria removed: 2020",
+             "./Figures_Tables/ranova_PVE/Reproduction/poll_rem_2020.docx")
+
+
+# 2021-----
+poll_ranova_mod2 <- lmer(sqrt(mean_poll) ~
+                             Block +
+                             (1|Population/Family), 
+                           data = flowering %>%
+                             dplyr::filter(Year == 2021),
+                           REML = T)
+
+# check diagnostics and transform if necessary
+performance::check_model(poll_ranova_mod2)
+
+# export
+ranova_2step(poll_ranova_mod2,
+             "Pollinaria removed: 2021",
+             "./Figures_Tables/ranova_PVE/Reproduction/poll_rem_2021.docx")
+
+
+
+# 2022-----
+poll_ranova_mod3 <- lmer(sqrt(mean_poll) ~
+                             Block +
+                             (1|Population/Family), 
+                           data = flowering %>%
+                             dplyr::filter(Year == 2022),
+                           REML = T)
+
+# check diagnostics and transform if necessary
+performance::check_model(poll_ranova_mod3)
+
+# export
+ranova_2step(poll_ranova_mod3,
+             "Pollinaria removed: 2022",
+             "./Figures_Tables/ranova_PVE/Reproduction/poll_rem_2022.docx")
 ```
 
 ### Urban subtransects
@@ -130,6 +182,62 @@ performance::check_model(flsize_ranova_mod3)
 ranova_transect(flsize_ranova_mod3,
                 "Flower size: 2022",
                 "./Figures_Tables/ranova_PVE/Reproduction/flsize_transects_2022.docx")
+
+
+# mean Pollinaria removed-----
+# 2020-----
+poll_ranova_mod1 <- lmer(sqrt(mean_poll) ~
+                                   (1|Population/Family) +
+                                   Block,
+                             data = flowering %>%
+                      dplyr::filter(
+                          Transect_ID != "Rural" &
+                          Year == 2020),
+                           REML = T)
+
+# check diagnostics and transform if necessary
+performance::check_model(poll_ranova_mod1)
+
+ranova_transect(poll_ranova_mod1,
+                "Pollinaria removed: 2020",
+                "./Figures_Tables/ranova_PVE/Reproduction/poll_transects_2020.docx")
+
+
+
+# 2021-----
+poll_ranova_mod2 <- lmer(sqrt(mean_poll) ~
+                                   (1|Population/Family) +
+                                   Block,
+                             data = flowering %>%
+                      dplyr::filter(
+                          Transect_ID != "Rural" &
+                          Year == 2021),
+                           REML = T)
+
+# check diagnostics and transform if necessary
+performance::check_model(poll_ranova_mod2)
+
+ranova_transect(poll_ranova_mod2,
+                "Pollinaria removed: 2021",
+                "./Figures_Tables/ranova_PVE/Reproduction/poll_transects_2021.docx")
+
+
+# 2022-----
+poll_ranova_mod3 <- lmer(sqrt(mean_poll) ~
+                                   (1|Population/Family) +
+                                   Block,
+                             data = flowering %>%
+                      dplyr::filter(
+                          Transect_ID != "Rural" &
+                          Year == 2022),
+                           REML = T)
+
+# check diagnostics and transform if necessary
+performance::check_model(poll_ranova_mod3)
+
+ranova_transect(poll_ranova_mod3,
+                "Pollinaria removed: 2022",
+                "./Figures_Tables/ranova_PVE/Reproduction/poll_transects_2022.docx")
 
 ```
 
@@ -1310,6 +1418,7 @@ flowers_mods_best_c     , # mean flowers/inflor
 flsize_mods_best_c      , # mean flower size
 fltime_mods_best_c      , # flowering time
 flstart_mods_best_c     , # flowering start
+poll_mods_best_c        , # pollinaria removed
 pods_mods_best_c        , # pods (follicles)
 first_pods_mods_best_c  , # first pods (follicles)
 peduncles_mods_best_c   ) # peduncles (inflorescences)
@@ -1328,6 +1437,7 @@ flowers_mods_alt_c     , # mean flowers/inflor
 flsize_mods_alt_c      , # mean flower size
 fltime_mods_alt_c      , # flowering time
 flstart_mods_alt_c     , # flowering start
+poll_mods_alt_c        , # pollinaria removed
 pods_mods_alt_c        , # pods (follicles)
 first_pods_mods_alt_c   , # first pods (follicles)
 peduncles_mods_alt_c   ) # peduncles (inflorescences)
@@ -1345,6 +1455,7 @@ flowers_mods_best_u     , # mean flowers/inflor
 flsize_mods_best_u      , # mean flower size
 fltime_mods_best_u      , # flowering time
 flstart_mods_best_u     , # flowering start
+poll_mods_best_u        , # pollinaria removed
 pods_mods_best_u        , # pods (follicles)
 first_pods_mods_best_u  , # first pods (follicles)
 peduncles_mods_best_u   ) # peduncles (inflorescences)
@@ -1361,7 +1472,8 @@ flsucc_mods_alt_u      , # flowering success
 flowers_mods_alt_u     , # mean flowers/inflor
 flsize_mods_alt_u      , # mean flower size
 # fltime_mods_alt_u      , # flowering time - NONE
-flstart_mods_alt_u )     # flowering start
+flstart_mods_alt_u,     # flowering start
+poll_mods_alt_u )     # pollinaria removed
 # pods_mods_alt_u        , # pods (follicles) - NONE
 #first_pods_mods_alt_u ) # , # first pods (follicles) - NONE
 # peduncles_mods_alt_u   ) # peduncles (inflorescences) - NONE
@@ -1417,6 +1529,15 @@ compare_anovas(
   "2022",
   "Date of first flower",
   "./Figures_Tables/Comparing_ANOVA/Reproduction/flstart.docx")
+
+# Pollinaria removed-----
+compare_anovas(
+  update(poll_mods_best_c[[1]], .~. - City_dist),
+  flowering,
+  "2022",
+  "Pollinaria removed",
+  "./Figures_Tables/Comparing_ANOVA/Reproduction/pollinaria.docx")
+
 
 # Pods-----
 compare_anovas(
@@ -1493,6 +1614,15 @@ compare_anovas_transects(
 
 # Pods-----
 compare_anovas_transects(
+  update(poll_mods_best_c[[2]], .~. - City_dist*Transect_ID),
+  flowering,
+  "2022",
+  "Pollinaria removed",
+  "./Figures_Tables/Comparing_ANOVA/Reproduction/pollinaria_transects.docx")
+
+
+# Pods-----
+compare_anovas_transects(
   update(pods_mods_best_c[[2]], .~. - City_dist*Transect_ID),
   flowering,
   "2022",
@@ -1517,4 +1647,3 @@ compare_anovas_transects(
   "Inflorescences",
   "./Figures_Tables/Comparing_ANOVA/Reproduction/peduncles_transects.docx")
 ```
-
