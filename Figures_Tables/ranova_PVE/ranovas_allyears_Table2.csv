@@ -25,6 +25,7 @@ Flowering success,4.766,0.0145,3.593,Population,Distance
 Follicles,0,0.5,0.743,Population,Distance
 Inflorescences,3.283,0.035,8.156,Population,Distance
 Flowers per inflorescence,0.203,0.326,6.489,Population,Distance
+Pollinaria removed,0.103,0.3745,2.328,Population,Distance
 Height before flowering,9.628,0.001,9.283,Family,Distance
 Height after flowering,5.698,0.0085,6.666,Family,Distance
 LDMC,0,0.5,0,Family,Distance
@@ -51,6 +52,7 @@ Flowering success,0.268,0.3025,1.439,Family,Distance
 Follicles,0,0.5,0,Family,Distance
 Inflorescences,0,0.5,0,Family,Distance
 Flowers per inflorescence,0,0.5,1.507,Family,Distance
+Pollinaria removed,0.088,0.3835,2.174,Family,Distance
 Height before flowering,0.461,0.2485,1.242,Population,UrbScore
 Height after flowering,0.873,0.175,1.547,Population,UrbScore
 LDMC,0.157,0.346,0.537,Population,UrbScore
@@ -77,6 +79,7 @@ Flowering success,4.695,0.015,3.569,Population,UrbScore
 Follicles,0,0.5,0.813,Population,UrbScore
 Inflorescences,3.07,0.04,7.853,Population,UrbScore
 Flowers per inflorescence,0.06,0.403,6.237,Population,UrbScore
+Pollinaria removed,2.918,0.044,25.028,Population,UrbScore
 Height before flowering,9.578,0.001,9.225,Family,UrbScore
 Height after flowering,5.642,0.009,6.618,Family,UrbScore
 LDMC,0,0.5,0,Family,UrbScore
@@ -103,3 +106,4 @@ Flowering success,0.274,0.3005,1.453,Family,UrbScore
 Follicles,0,0.5,0,Family,UrbScore
 Inflorescences,0,0.5,0,Family,UrbScore
 Flowers per inflorescence,0,0.5,0.838,Family,UrbScore
+Pollinaria removed,22.722,0.0495,24.373,Family,UrbScore

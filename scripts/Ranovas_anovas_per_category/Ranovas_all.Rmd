@@ -165,4 +165,3 @@ ran3 %>%
   page_margins = page_mar()
 ))
 ```
-

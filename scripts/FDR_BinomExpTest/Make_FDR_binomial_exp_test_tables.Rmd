@@ -338,6 +338,8 @@ make_FDR_table <- function(p_val_df){
       "Flowering duration",
     str_detect(Variable, "Julian_oldest_inflor")~
       "Date of first flower",
+    str_detect(Variable, "poll")~
+      "Pollinaria removed",
     str_detect(Variable, "Pods")~
       "Follicles",
     str_detect(Variable, "Julian_first")~
@@ -424,7 +426,7 @@ traits = c(
   # Defense traits 1-7
   "D1",  "D2",   "D3",   "D4",   "D5",   "D6",   "D7",
   # Reproduction traits 1-8
-  "R1",  "R2",   "R3",   "R4",   "R5",   "R6",   "R7",   "R8")
+  "R1",  "R2",   "R3",   "R4",   "R5",   "R6",   "R7",   "R8",  "R9")
 ```
 
 ## Q1
@@ -472,8 +474,8 @@ prob_succ <- 0.05 # critical p-value
 
 t1_results_pop <- binom.test(t1_pop_succ, t1_pop_trials, prob_succ, "two.sided")
 
-t1_results_pop$p.value # p-value: 0.1386324
-t1_results_pop$estimate # probability of success: 0.1153846  
+t1_results_pop$p.value # p-value: 0.1504944
+t1_results_pop$estimate # probability of success: 0.1111111  
 ```
 
 ##### Family
@@ -484,8 +486,8 @@ prob_succ <- 0.05 # critical p-value
 
 t1_results_fam <- binom.test(t1_fam_succ, t1_fam_trials, prob_succ, "two.sided")
 
-t1_results_fam$p.value # p-value: 2.703918e-05 
-t1_results_fam$estimate # probability of success: 0.3076923 
+t1_results_fam$p.value # p-value: 4.010664e-06
+t1_results_fam$estimate # probability of success: 0.3333333  
 ```
 
 ### Table 2
@@ -533,8 +535,8 @@ prob_succ <- 0.05 # critical p-value
 
 t2_results_pop <- binom.test(t2_pop_succ, t2_pop_trials, prob_succ, "two.sided")
 
-t2_results_pop$p.value # p-value: 0.1386324 
-t2_results_pop$estimate # probability of success: 0.1153846  
+t2_results_pop$p.value # p-value: 0.1504944 
+t2_results_pop$estimate # probability of success: 0.1111111   
 ```
 
 ##### Family
@@ -545,8 +547,8 @@ prob_succ <- 0.05 # critical p-value
 
 t2_results_fam <- binom.test(t2_fam_succ, t2_fam_trials, prob_succ, "two.sided")
 
-t2_results_fam$p.value # p-value: 2.703918e-05 
-t2_results_fam$estimate # probability of success: 0.3076923 
+t2_results_fam$p.value # p-value: 3.67354e-05
+t2_results_fam$estimate # probability of success: 0.2962963  
 ```
 
 ### Table 3
@@ -593,8 +595,8 @@ prob_succ <- 0.05 # critical p-value
 
 t3_results_pop <- binom.test(t3_pop_succ, t3_pop_trials, prob_succ, "two.sided")
 
-t3_results_pop$p.value # p-value: 0.1386324 
-t3_results_pop$estimate # probability of success: 0.1153846  
+t3_results_pop$p.value # p-value: 0.04373595 
+t3_results_pop$estimate # probability of success: 0.1481481   
 ```
 
 ##### Family
@@ -605,8 +607,8 @@ prob_succ <- 0.05 # critical p-value
 
 t3_results_fam <- binom.test(t3_fam_succ, t3_fam_trials, prob_succ, "two.sided")
 
-t3_results_fam$p.value # p-value: 2.703918e-05 
-t3_results_fam$estimate # probability of success: 0.3076923 
+t3_results_fam$p.value # p-value: 4.010664e-06 
+t3_results_fam$estimate # probability of success: 0.3333333  
 ```
 
 ## Q2
@@ -655,7 +657,7 @@ prob_succ <- 0.05 # critical p-value
 
 t1_results_pop2 <- binom.test(t1_pop_succ, t1_pop_trials, prob_succ, "two.sided")
 
-t1_results_pop2$p.value # p-value: 0.6393936
+t1_results_pop2$p.value # p-value: 0.6442479
 t1_results_pop2$estimate # probability of success: 0
 ```
 
@@ -667,8 +669,8 @@ prob_succ <- 0.05 # critical p-value
 
 t1_results_fam2 <- binom.test(t1_fam_succ, t1_fam_trials, prob_succ, "two.sided")
 
-t1_results_fam2$p.value # p-value: 1.86962e-08
-t1_results_fam2$estimate # probability of success: 0.4230769 
+t1_results_fam2$p.value # p-value: 3.011142e-08
+t1_results_fam2$estimate # probability of success: 0.4074074  
 ```
 
 ### Table 2
@@ -715,7 +717,7 @@ prob_succ <- 0.05 # critical p-value
 
 t2_results_pop2 <- binom.test(t2_pop_succ, t2_pop_trials, prob_succ, "two.sided")
 
-t2_results_pop2$p.value # p-value: 0.6393936
+t2_results_pop2$p.value # p-value: 0.6442479
 t2_results_pop2$estimate # probability of success: 0
 ```
 
@@ -727,8 +729,8 @@ prob_succ <- 0.05 # critical p-value
 
 t2_results_fam2 <- binom.test(t2_fam_succ, t2_fam_trials, prob_succ, "two.sided")
 
-t2_results_fam2$p.value # p-value: 1.86962e-08
-t2_results_fam2$estimate # probability of success: 0.4230769 
+t2_results_fam2$p.value # p-value: 3.011142e-08
+t2_results_fam2$estimate # probability of success: 0.4074074  
 ```
 
 ## Export

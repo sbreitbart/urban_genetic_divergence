@@ -197,6 +197,9 @@ firstpods_BLUP <- create_BLUP(first_pods_mods[[1]]) %>%
 
 peduncles_BLUP <- create_BLUP(peduncles_mods[[1]]) %>%
   dplyr::rename(peduncles = 2)
+
+poll_BLUP <- create_BLUP(poll_mods[[1]]) %>%
+  dplyr::rename(poll = 2)
 ```
 
 #### Urb_score
@@ -225,6 +228,9 @@ firstpods_BLUP_u <- create_BLUP(first_pods_mods[[2]]) %>%
 
 peduncles_BLUP_u <- create_BLUP(peduncles_mods[[2]]) %>%
   dplyr::rename(peduncles = 2)
+
+poll_BLUP_u <- create_BLUP(poll_mods[[2]]) %>%
+  dplyr::rename(poll = 2)
 ```
 
 ### Cardenolides
@@ -268,6 +274,7 @@ all_traits <- purrr::reduce(
      pods_BLUP,      
      firstpods_BLUP,      
      peduncles_BLUP, 
+     poll_BLUP,
     
     # cardenolides
     cards_BLUPs,
@@ -322,6 +329,7 @@ all_traits_u <- purrr::reduce(
      pods_BLUP_u,      
      firstpods_BLUP,      
      peduncles_BLUP_u, 
+     poll_BLUP_u,
     
     # cardenolides
     cards_BLUPs,
@@ -352,11 +360,10 @@ all_traits_u <- purrr::reduce(
 all_traits %<>%
   na.omit()  # removing rows w/NAs
 
-mvab_all <- mvabund(all_traits[,c(2, 6:30)]) 
+mvab_all <- mvabund(all_traits[,c(2, 6:35)]) 
 
 # look at the spread of our data
-par(mar = c(2, 10, 2, 2)) # adjusts the margins
-boxplot(all_traits[, c(2, 6:30)],
+boxplot(all_traits[, c(2, 6:35)],
         horizontal = TRUE,
         las = 2,
         main = "Abundance")
@@ -415,11 +422,10 @@ all_traits_u %<>%
   na.omit()  # removing rows w/NAs
 
 # Use the just the trait data (in columns 5 to 11) and convert it to an mvabund object format used by the mvabund package.
-mvab_all_u <- mvabund(all_traits_u[, c(2, 6:30)]) 
+mvab_all_u <- mvabund(all_traits_u[, c(2, 6:35)]) 
 
 # look at the spread of our data
-par(mar = c(2, 10, 2, 2)) # adjusts the margins
-boxplot(all_traits_u[, c(2, 6:30)],
+boxplot(all_traits_u[, c(2, 6:35)],
         horizontal = TRUE,
         las = 2,
         main = "Abundance")
@@ -707,6 +713,9 @@ pods_BLUP <- create_BLUP(pods_mods_best_c[[2]]) %>%
 
 peduncles_BLUP <- create_BLUP(peduncles_mods_best_c[[2]]) %>%
   dplyr::rename(peduncles = 2)
+
+poll_BLUP <- create_BLUP(poll_mods_best_c[[2]]) %>%
+  dplyr::rename(poll = 2)
 ```
 
 #### Urb_score
@@ -732,6 +741,9 @@ pods_BLUP_u <- create_BLUP(pods_mods_best_u[[2]]) %>%
 
 peduncles_BLUP_u <- create_BLUP(peduncles_mods_best_u[[2]]) %>%
   dplyr::rename(peduncles = 2)
+
+poll_BLUP_u <- create_BLUP(poll_mods_best_u[[2]]) %>%
+  dplyr::rename(poll = 2)
 ```
 
 ### Cardenolides
@@ -768,6 +780,7 @@ all_traits <- purrr::reduce(
      flstart_BLUP,   
      pods_BLUP,      
      peduncles_BLUP, 
+     poll_BLUP,
     
     # herbivores
     monarch_BLUP,
@@ -818,6 +831,7 @@ all_traits_u <- purrr::reduce(
      flstart_BLUP_u,   
      pods_BLUP_u,      
      peduncles_BLUP_u, 
+     poll_BLUP_u,
     
 
     # herbivores
@@ -847,11 +861,10 @@ all_traits %<>%
   dplyr::filter(Transect_ID != "Rural") %<>% # remove rural pops
   na.omit()  # removing rows w/NAs
 
-mvab_all <- mvabund(all_traits[,c(2, 6:29)]) 
+mvab_all <- mvabund(all_traits[,c(2, 6:30)]) 
 
 # look at the spread of our data
-par(mar = c(2, 10, 2, 2)) # adjusts the margins
-boxplot(all_traits[, c(2, 6:29)],
+boxplot(all_traits[, c(2, 6:30)],
         horizontal = TRUE,
         las = 2,
         main = "Abundance")
@@ -885,11 +898,10 @@ all_traits_u %<>%
   na.omit()  # removing rows w/NAs
 
 # Use the just the trait data (in columns 5 to 11) and convert it to an mvabund object format used by the mvabund package.
-mvab_all_u <- mvabund(all_traits_u[, c(2, 6:29)]) 
+mvab_all_u <- mvabund(all_traits_u[, c(2, 6:30)]) 
 
 # look at the spread of our data
-par(mar = c(2, 10, 2, 2)) # adjusts the margins
-boxplot(all_traits_u[, c(2, 6:29)],
+boxplot(all_traits_u[, c(2, 6:30)],
         horizontal = TRUE,
         las = 2,
         main = "Abundance")

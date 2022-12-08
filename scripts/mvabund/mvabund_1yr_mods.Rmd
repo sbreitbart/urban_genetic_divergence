@@ -190,6 +190,9 @@ firstpods_BLUP <- create_BLUP(repr.m7) %>%
 
 peduncles_BLUP <- create_BLUP(repr.m8) %>%
   dplyr::rename(peduncles = 2)
+
+poll_BLUP <- create_BLUP(repr.m9) %>%
+  dplyr::rename(poll = 2)
 ```
 
 #### Urb_score
@@ -218,6 +221,9 @@ firstpods_BLUP_u <- create_BLUP(repr.m7_u) %>%
 
 peduncles_BLUP_u <- create_BLUP(repr.m8_u) %>%
   dplyr::rename(peduncles = 2)
+
+poll_BLUP_u <- create_BLUP(repr.m9_u) %>%
+  dplyr::rename(poll = 2)
 ```
 
 ### Cardenolides
@@ -261,6 +267,7 @@ all_traits <- purrr::reduce(
      pods_BLUP,   
      firstpods_BLUP,
      peduncles_BLUP, 
+     poll_BLUP,
     
     # cardenolides
     cards_BLUPs,
@@ -315,6 +322,7 @@ all_traits_u <- purrr::reduce(
      pods_BLUP_u,   
      firstpods_BLUP_u,
      peduncles_BLUP_u, 
+     poll_BLUP_u,
     
     # cardenolides
     cards_BLUPs,
@@ -340,16 +348,16 @@ all_traits_u <- purrr::reduce(
 ## Use mvabund with gaussian family
 ### City_dist
 ```{r}
-# Use the just the trait data (in columns 5 to 11) and convert it to an mvabund object format used by the mvabund package.
+# Use the just the trait data and convert it to an mvabund object format used by the mvabund package.
 # 
 all_traits %<>%
   na.omit()  # removing rows w/NAs
 
-mvab_all <- mvabund(all_traits[,c(2, 6:30)]) 
+mvab_all <- mvabund(all_traits[,c(2, 6:35)]) 
 
 # look at the spread of our data
 par(mar = c(2, 10, 2, 2)) # adjusts the margins
-boxplot(all_traits[, c(2, 6:30)],
+boxplot(all_traits[, c(2, 6:35)],
         horizontal = TRUE,
         las = 2,
         main = "Abundance")
@@ -396,11 +404,11 @@ all_traits_u %<>%
   na.omit()  # removing rows w/NAs
 
 # Use the just the trait data (in columns 5 to 11) and convert it to an mvabund object format used by the mvabund package.
-mvab_all_u <- mvabund(all_traits_u[, c(2, 6:30)]) 
+mvab_all_u <- mvabund(all_traits_u[, c(2, 6:35)]) 
 
 # look at the spread of our data
 par(mar = c(2, 10, 2, 2)) # adjusts the margins
-boxplot(all_traits_u[, c(2, 6:30)],
+boxplot(all_traits_u[, c(2, 6:35)],
         horizontal = TRUE,
         las = 2,
         main = "Abundance")
@@ -675,6 +683,9 @@ firstpods_BLUP <- create_BLUP(repr.tr.m7) %>%
 
 peduncles_BLUP <- create_BLUP(repr.tr.m8) %>%
   dplyr::rename(peduncles = 2)
+
+poll_BLUP <- create_BLUP(repr.tr.m9) %>%
+  dplyr::rename(poll = 2)
 ```
 
 #### Urb_score
@@ -703,6 +714,9 @@ firstpods_BLUP_u <- create_BLUP(repr.tr.m7_u) %>%
 
 peduncles_BLUP_u <- create_BLUP(repr.tr.m8_u) %>%
   dplyr::rename(peduncles = 2)
+
+poll_BLUP_u <- create_BLUP(repr.tr.m9_u) %>%
+  dplyr::rename(poll = 2)
 ```
 
 ### Cardenolides
@@ -740,6 +754,7 @@ all_traits <- purrr::reduce(
      pods_BLUP,    
      firstpods_BLUP,
      peduncles_BLUP, 
+     poll_BLUP,
     
     # herbivores
     monarch_BLUP,
@@ -791,7 +806,7 @@ all_traits_u <- purrr::reduce(
      pods_BLUP_u,   
      firstpods_BLUP_u,
      peduncles_BLUP_u, 
-    
+     poll_BLUP,
 
     # herbivores
     monarch_BLUP_u,
@@ -820,22 +835,16 @@ all_traits %<>%
   dplyr::filter(Transect_ID != "Rural") %<>% # remove rural pops
   na.omit()  # removing rows w/NAs
 
-mvab_all <- mvabund(all_traits[,c(2, 6:29)]) 
+mvab_all <- mvabund(all_traits[,c(2, 6:31)]) 
 
 # look at the spread of our data
-par(mar = c(2, 10, 2, 2)) # adjusts the margins
-boxplot(all_traits[, c(2, 6:29)],
+boxplot(all_traits[, c(2, 6:31)],
         horizontal = TRUE,
         las = 2,
         main = "Abundance")
 
 # It looks like some traits are much more variable than others. It’s probably a good idea to check our mean-variance relationship then! We can do this using the meanvar.plot function:
 meanvar.plot(mvab_all)
-
-# the species with high means (on the x axis) also have high variances (y axis).
-# We can deal with this relationship by choosing a family of GLMs with an appropriate mean-variance assumption. The default family used by mvabund when fitting multivariate GLMs is negative binomial which assumes a quadratic mean-variance relationship and a log-linear relationship between the response variables and any continuous variables. In [the site's] example, we only have categorical variables so that one’s not too important. If you are unsure of these relationships, don’t worry, we can check our model fit later. [I have quantitative variables too]
-
-# There is a ‘quick and dirty’ built-in plotting function in the mvabund package that allows us to contrast transformed abundances to the predictor variables of our choice. To contrast abundances against urban-rural habitat, we would use:
 
 plot(mvab_all ~ as.factor(all_traits$Urb_Rur),
      cex.axis = 0.8,
@@ -845,10 +854,8 @@ plot(mvab_all ~ as.factor(all_traits$Urb_Rur),
 mod1 <- manylm(mvab_all ~ City_dist*Transect_ID,
               data = all_traits)
 
-# Before we examine the output, we need to check our model assumptions. We can use the plot function to generate a plot of residuals.
 
 plot(mod1)
-# We can test the multivariate hypothesis of whether species composition varied across the habitats by using the anova function. This gives an analysis of deviance table where we use likelihood ratio tests and resampled p values to look for a significant effect of Habitat on the community data.
 
 anova(mod1)
 
@@ -865,10 +872,9 @@ all_traits_u %<>%
   na.omit()  # removing rows w/NAs
 
 # Use the just the trait data (in columns 5 to 11) and convert it to an mvabund object format used by the mvabund package.
-mvab_all_u <- mvabund(all_traits_u[, c(2, 6:29)]) 
+mvab_all_u <- mvabund(all_traits_u[, c(2, 6:31)]) 
 
 # look at the spread of our data
-par(mar = c(2, 10, 2, 2)) # adjusts the margins
 boxplot(all_traits_u[, c(2, 6:29)],
         horizontal = TRUE,
         las = 2,
