@@ -85,6 +85,9 @@ repr.m7 <- glmmTMB(Julian_first_follicle-200 ~
                              family = poisson) 
 
 repr.m8 <- make_1yrmod(peduncles_mods_best_c[[1]], "2022", flowering)
+
+# adding the pollinaria removed variable last here because I didn't add it earlier and don't want to reorganize everything
+repr.m9 <- make_1yrmod(poll_mods_best_c[[1]], "2022", flowering)
 ```
 
 ##### Herbivores
@@ -137,6 +140,7 @@ all_1yr_mods <- list(
   repr.m6,
   repr.m7,
   repr.m8,
+  repr.m9,
   
   # Herbivores
   herb.m1,
@@ -210,6 +214,8 @@ repr.m7_u <- glmmTMB(Julian_first_follicle-200 ~
                              family = poisson) 
 
 repr.m8_u <- make_1yrmod(peduncles_mods_best_u[[1]], "2022", flowering)
+
+repr.m9_u <- make_1yrmod(poll_mods_best_u[[1]], "2022", flowering)
 ```
 
 ##### Herbivores
@@ -262,6 +268,7 @@ all_1yr_mods.u <- list(
   repr.m6_u,
   repr.m7_u,
   repr.m8_u,
+  repr.m9_u,
   
   # Herbivores
   herb.m1_u,
@@ -341,6 +348,8 @@ repr.tr.m7 <- glmmTMB(Julian_first_follicle-200 ~
                              family = poisson) 
 
 repr.tr.m8 <- make_1yrmod_transects(peduncles_mods_best_c[[2]], "2022", flowering)
+
+repr.tr.m9 <- make_1yrmod_transects(poll_mods_best_c[[2]], "2022", flowering)
 ```
 
 ##### Herbivores
@@ -393,6 +402,7 @@ all_1yr_mods_tr <- list(
   repr.tr.m6,
   repr.tr.m7,
   repr.tr.m8,
+  repr.tr.m9,
   
   # Herbivores
   herb.tr.m1,
@@ -471,6 +481,8 @@ repr.tr.m7_u <- glmmTMB(Julian_first_follicle-200 ~
                              family = poisson) 
 
 repr.tr.m8_u <- make_1yrmod_transects(peduncles_mods_best_u[[2]], "2022", flowering)
+
+repr.tr.m9_u <- make_1yrmod_transects(poll_mods_best_u[[2]], "2022", flowering)
 ```
 
 ##### Herbivores
@@ -523,6 +535,7 @@ all_1yr_mods.u_tr <- list(
   repr.tr.m6_u,
   repr.tr.m7_u,
   repr.tr.m8_u,
+  repr.tr.m9_u,
   
   # Herbivores
   herb.tr.m1_u,
@@ -540,4 +553,3 @@ all_1yr_mods.u_tr <- list(
   grow.tr.m8_u
   )
 ```
-

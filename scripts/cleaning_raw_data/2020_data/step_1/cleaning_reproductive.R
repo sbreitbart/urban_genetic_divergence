@@ -11,7 +11,7 @@ library(here)
 # Import data
 #-------------------
 # Data about flowering, pollen removal, inflor and follicle count, + other reproductive traits (Data collection 2)-----
-reproductive <- read.csv(here(
+reproductive <- read.csv(here::here(
   "./CommonGardenExperiment_2020Data/raw_data/Reproductive_Traits/2020_Datacollection2_20210110.csv"),
   header=T,
   stringsAsFactors=FALSE,
@@ -180,10 +180,20 @@ flowering_2020 <- flowering_2020 %>%
                                               Flower_count_I3),
                                             na.rm = TRUE))
 
+# find mean pollinaria removed per plant
+poll_avg <- flowering_2020 %>%
+  dplyr::select(c(1:6), starts_with("Poll")) %>%
+  dplyr::mutate(mean_poll = mean(c_across(7:15), na.rm = T)) %>%
+  dplyr::select(1:6, mean_poll) 
+
+# add means to df
+flowering_2020 %<>%
+  left_join(poll_avg)
+
 #-------------------
 # Export to new csv
 #-------------------
 write.csv(reproductive,
-          here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_reproductive_partialclean.csv"))
+          here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_reproductive_partialclean.csv"))
 write.csv(flowering_2020,
-          here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_floweringplants_partialclean.csv"))
+          here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_floweringplants_partialclean.csv"))

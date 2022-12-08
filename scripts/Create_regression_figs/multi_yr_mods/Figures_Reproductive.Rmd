@@ -1,13 +1,11 @@
 # Set up notebook
 ## Load libraries and add functions
-
 ```{r}
 source("libraries.R")
 source("functions.R")
 ```
 
 ## Import data
-
 ```{r}
 source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
 ```
@@ -194,6 +192,43 @@ flstart_urbsubs_02_pred <- ggeffects::ggpredict(flstart_mods_best_u[[2]],
   as.data.frame()
 
 
+```
+
+
+## Pollinaria removed
+### Gradient
+```{r}
+
+# city_dist
+poll_mods_best_c[1]  # sqrt transformed
+poll_gradient_01_pred <- ggeffects::ggpredict(poll_mods_best_c[[1]] ,
+                                   terms = c("City_dist"),
+                                   type = "fe") %>%
+  as.data.frame() 
+
+# urb_score
+poll_mods_best_u[1]  # sqrt transformed
+poll_gradient_02_pred <- ggeffects::ggpredict(poll_mods_best_u[[1]],
+                                   terms = c("Urb_score"),
+                                   type = "fe") %>%
+  as.data.frame()
+```
+
+### Urban Subtransects
+```{r}
+
+# city_dist
+poll_mods_best_c[2]  # sqrt transformed
+poll_urbsubs_01_pred <- ggeffects::ggpredict(poll_mods_best_c[[2]] ,
+                                   terms = c("City_dist", "Transect_ID"),
+                                   type = "fe") %>%
+  as.data.frame()
+
+# urb_score
+poll_mods_best_u[2]  # sqrt transformed
+poll_urbsubs_02_pred <- ggeffects::ggpredict(poll_mods_best_u[[2]] ,
+                                   terms = c("Urb_score", "Transect_ID"),
+                                   type = "fe")
 ```
 
 
@@ -410,6 +445,26 @@ size = 4.5)
 ggpred_Q1.citydist_flstart
 
 
+# Pollinaria removed-----
+ggpred_Q1.citydist_poll <- 
+ggplot(poll_gradient_01_pred) +
+  rep_geoms +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Pollinaria removed " ^{1/2})) +
+  ylim(0, 2) +
+  theme_1() +
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
+                    label = paste0(" Distance: p = ", tidy_anova(poll_mods_best_c[[1]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.citydist_poll
+
+
+
 # Pods-----
 ggpred_Q1.citydist_pods <- 
 ggplot(pods_gradient_01_pred) +
@@ -573,6 +628,27 @@ dplyr::select(p))),
 size = 4.5)
 
 ggpred_Q1.urbscore_flstart
+
+
+# Pods-----
+ggpred_Q1.urbscore_poll <- 
+ggplot(poll_gradient_02_pred) +
+  rep_geoms +
+  labs(x = "Urbanization Score",
+       y = expression("Pollinaria removed " ^{1/2})) +
+ ylim(0, 2) +
+    xlim(4, -4) +
+  theme_1() +
+  
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.06,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(poll_mods_best_u[[1]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q1.urbscore_poll
+
 
 
 # Pods-----
@@ -800,6 +876,39 @@ dplyr::select(p))),
 size = 4.5)
 
 ggpred_Q2.citydist_flstart
+
+
+# Pollinaria removed-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+poll_urbsubs_01_pred$group <- factor(poll_urbsubs_01_pred$group,
+                                   levels(poll_urbsubs_01_pred$group)[c(2,1)])
+levels(poll_urbsubs_01_pred$group)
+
+ggpred_Q2.citydist_poll <-
+ggplot(poll_urbsubs_01_pred) +
+  labs(x = "Distance to Urban Center (km)",
+       y = expression("Pollinaria removed " ^{1/2}),
+       color = "Transect",
+       fill = "Transect") +
+  ylim(0, 2) +
+  xlim(0, NA) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.96,
+                    label = paste0(" Distance: p = ", tidy_anova(poll_mods_best_c[[2]]) %>%
+dplyr::filter(Predictor == "Distance to City Center") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 1, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(poll_mods_best_c[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.citydist_poll
+
 
 
 # Pods-----
@@ -1076,6 +1185,40 @@ ggpred_Q2.urbsubs_flstart
 
 
 
+# Pollinaria removed-----
+## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
+poll_urbsubs_02_pred$group <- factor(poll_urbsubs_02_pred$group,
+                                   levels(poll_urbsubs_02_pred$group)[c(2,1)])
+levels(poll_urbsubs_02_pred$group)
+
+
+ggpred_Q2.urbsubs_poll <-
+ggplot(poll_urbsubs_02_pred) +
+  labs(x = "Urbanization Score",
+       y = expression("Pollinaria removed " ^{1/2}),
+       color = "Transect",
+       fill = "Transect") +
+  ylim(0, 2.2) +
+  xlim(4, -2) +
+  theme_1() +
+  rep_geoms2 +
+
+# adding stats from ANOVA
+           ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.97,
+                    label = paste0(" Urb. Score: p = ", tidy_anova(poll_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Urbanization Score") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
+                    label = paste0(" Transect: p = ", tidy_anova(poll_mods_best_u[[2]]) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5)
+
+ggpred_Q2.urbsubs_poll
+
+
+
 # Pods-----
 ## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
 pods_urbsubs_02_pred$group <- factor(pods_urbsubs_02_pred$group,
@@ -1190,8 +1333,8 @@ size = 4.5)
 ggpred_Q2.urbsubs_peduncles
 ```
 
-## Combine plots into one figure
-### Gradient / City_dist
+# Combine plots into one figure
+## Gradient / City_dist
 ```{r}
 gradient_citydist_plots <- ggarrange(
 ggpred_Q1.citydist_flsucc,
@@ -1199,25 +1342,26 @@ ggpred_Q1.citydist_flowers,
 ggpred_Q1.citydist_flsize,
 ggpred_Q1.citydist_fltime,
 ggpred_Q1.citydist_flstart,
+ggpred_Q1.citydist_poll,
 ggpred_Q1.citydist_pods,
 ggpred_Q1.citydist_firstpods,
 ggpred_Q1.citydist_peduncles +
             font("x.text"),
-          ncol = 4,
-          nrow = 2,
+          ncol = 3,
+          nrow = 3,
           align = "hv",
-          labels = list("A", "B", "C", "D", "E", "F", "G", "H"),
+          labels = list("A", "B", "C", "D", "E", "F", "G", "H", "I"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%
   plot
 
 dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Reproduction/Q1_grad_citydist_Reproduction.pdf"),
-             width = 14, height = 7.5)
+             width = 12, height = 9.5)
 ```
 
 
-### Gradient / Urbanization Score
+## Gradient / Urbanization Score
 ```{r}
 gradient_urbscore_plots <- ggarrange(
 ggpred_Q1.urbscore_flsucc,
@@ -1225,24 +1369,25 @@ ggpred_Q1.urbscore_flowers,
 ggpred_Q1.urbscore_flsize,
 ggpred_Q1.urbscore_fltime,
 ggpred_Q1.urbscore_flstart,
+ggpred_Q1.urbscore_poll,
 ggpred_Q1.urbscore_pods,
 ggpred_Q1.urbscore_firstpods,
 ggpred_Q1.urbscore_peduncles  +
             font("x.text"),
-          ncol = 4,
-          nrow = 2,
+          ncol = 3,
+          nrow = 3,
           align = "hv",
-          labels = list("A", "B", "C", "D", "E", "F", "G", "H"),
+          labels = list("A", "B", "C", "D", "E", "F", "G", "H", "I"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%
   plot
 
 dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Reproduction/Q1_grad_urbscore_Reproduction.pdf"),
-             width = 14, height = 7.5)
+             width = 12, height = 9.5)
 ```
 
-### Urb Subtransects / City_dist
+## Urb Subtransects / City_dist
 ```{r}
 urbsubs_citydist_plots <- ggarrange(
   ggpred_Q2.citydist_succ,
@@ -1250,25 +1395,26 @@ urbsubs_citydist_plots <- ggarrange(
   ggpred_Q2.citydist_flsize,
   ggpred_Q2.citydist_fltime,
   ggpred_Q2.citydist_flstart,
+  ggpred_Q2.citydist_poll,
   ggpred_Q2.citydist_pods,
   ggpred_Q2.citydist_firstpods,
   ggpred_Q2.citydist_peduncles  +
             font("x.text"),
-          ncol = 4,
-          nrow = 2,
+          ncol = 3,
+          nrow = 3,
           align = "hv",
-          labels = list("A", "B", "C", "D", "E", "F", "G", "H"),
+          labels = list("A", "B", "C", "D", "E", "F", "G", "H", "I"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%
   plot
 
 dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Reproduction/Q2_urbsubs_citydist_Reproduction.pdf"),
-             width = 14.5, height = 8)
+             width = 12, height = 9.5)
 ```
 
 
-### Urb Subtransects / Urbanization Score
+## Urb Subtransects / Urbanization Score
 ```{r}
 urbsubs_urbscore_plots <- ggarrange(
 ggpred_Q2.urbsubs_flsucc,
@@ -1276,14 +1422,15 @@ ggpred_Q2.urbsubs_flowers,
 ggpred_Q2.urbsubs_flsize,
 ggpred_Q2.urbsubs_fltime,
 ggpred_Q2.urbsubs_flstart,
+ggpred_Q2.urbsubs_poll,
 ggpred_Q2.urbsubs_pods,
 ggpred_Q2.urbscore_firstpods,
 ggpred_Q2.urbsubs_peduncles +
             font("x.text"),
-          ncol = 4,
-          nrow = 2,
+          ncol = 3,
+          nrow = 3,
           align = "hv",
-          labels = list("A", "B", "C", "D", "E", "F", "G", "H"),
+          labels = list("A", "B", "C", "D", "E", "F", "G", "H", "I"),
           font.label = (size =16),
           common.legend = TRUE,
           legend = "top") %T>%
@@ -1291,7 +1438,7 @@ ggpred_Q2.urbsubs_peduncles +
 
 
 dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Reproduction/Q2_urbsubs_urbscore_Reproduction.pdf"),
-             width = 14.5, height = 8)
+             width = 12, height = 9.5)
 ```
 
 # Find estimated marginal means at terminii

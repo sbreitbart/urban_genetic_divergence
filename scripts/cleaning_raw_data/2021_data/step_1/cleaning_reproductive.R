@@ -144,6 +144,16 @@ flowering_2021 <- flowering_2021 %>%
                                               Flower_count_I3),
                                             na.rm = TRUE))
 
+# find mean pollinaria removed per plant
+poll_avg <- flowering_2021 %>%
+  dplyr::select(c(1:6), starts_with("Poll")) %>%
+  dplyr::mutate(mean_poll = mean(c_across(7:15), na.rm = T)) %>%
+  dplyr::select(1:6, mean_poll) 
+
+# add means to df
+flowering_2021 %<>%
+  left_join(poll_avg)
+
 #-------------------
 # Export to new csv
 #-------------------

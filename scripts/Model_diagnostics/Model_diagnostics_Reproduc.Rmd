@@ -1146,6 +1146,189 @@ fl_start_urbsubs_usc1_ME <- glmmTMB(Julian_oldest_inflor - 170~
 # car::Anova(fl_start_urbsubs_usc1, type = "III")
 ```
 
+## Pollinaria removed
+#### Gradient
+##### City_dist
+```{r}
+# # explore the data
+# flowering %>%
+#           dplyr::filter(Year == "2020") %>%
+#           dplyr::select(mean_poll) %>%
+#   # summary()
+#   hist(breaks = 50)
+# 
+# flowering %>%
+#           dplyr::filter(Year == "2021") %>%
+#           dplyr::select(mean_poll) %>%
+#   # summary()
+#   hist(breaks = 50)
+# 
+# flowering %>%
+#           dplyr::filter(Year == "2022") %>%
+#           dplyr::select(mean_poll) %>%
+#    summary()
+#  # hist(breaks = 50)
+
+poll_gr_city1 <- glmmTMB(sqrt(mean_poll)~
+                           Block +
+                           Year +
+                           (1|Population/Family) +
+                           City_dist,
+                         data = flowering,
+                         REML = F)
+
+# plot(DHARMa::simulateResiduals(poll_gr_city1))
+# performance::check_model(poll_gr_city1)
+# car::Anova(poll_gr_city1)
+
+# # test for gxe
+# gxe_test_poll <- glmmTMB(sqrt(mean_poll)~
+#                            Block*City_dist +
+#                            Year +
+#                            (1|Population/Family),
+#                          data = flowering,
+#                          REML = F)
+# 
+# test_gxe(poll_gr_city1, gxe_test_poll) # stat equiv
+# car::Anova(poll_gr_city1)
+# car::Anova(gxe_test_poll) # block*city marg sig at p = 0.09, otherwise identical
+# 
+# # compare ranovas
+# # have to use lmer instead of glmmtmb- ranova can't use glmmtmb- otherwise identical models
+# # GxE MOD
+# ranova(lmer(sqrt(mean_poll) ~
+#                                Block*City_dist +
+#                                Year +
+#                                (1|Population/Family) +
+#                                City_dist,
+#                               data = flowering,
+#                                REML = F))
+# # p(Population) = 1. p(Family) = 7.885e-05 
+# 
+# # REG MOD
+# ranova( lmer(sqrt(mean_poll) ~
+#                                         Block +
+#                                         Year +
+#                                         (1|Population/Family) +
+#                                         City_dist,
+#                               data = flowering,
+#              REML = F))
+# # p(Population) = 1. p(Family) = 8.793e-05
+# #
+# # p-values for both mods nearly identical, so I'll keep using regular model.
+```
+
+##### Urb_score
+```{r}
+poll_gr_usc1 <- glmmTMB(sqrt(mean_poll)~
+                           Block +
+                           Year +
+                           (1|Population/Family) +
+                           Urb_score,
+                         data = flowering)
+
+# plot(DHARMa::simulateResiduals(poll_gr_usc1))
+# performance::check_model(poll_gr_usc1)
+# car::Anova(poll_gr_usc1)
+
+# # test for gxe
+# gxe_test_poll2 <- glmmTMB(sqrt(mean_poll)~
+#                            Block*Urb_score +
+#                            Year +
+#                            (1|Population/Family),
+#                          data = flowering)
+# 
+# test_gxe(poll_gr_city1, gxe_test_poll2) # reg mod best
+```
+
+#### Urban Subtransects
+##### City_dist
+```{r}
+poll_urbsubs_city1 <- glmmTMB(sqrt(mean_poll)~
+                           Block +
+                           Year +
+                           (1|Population/Family) +
+                           City_dist * Transect_ID,
+                         data = flowering %>%
+                           dplyr::filter(Transect_ID != "Rural"))
+
+# plot(DHARMa::simulateResiduals(poll_urbsubs_city1))
+# performance::check_model(poll_urbsubs_city1)
+# car::Anova(poll_urbsubs_city1)
+
+
+# MAIN EFFECTS MODEL
+poll_urbsubs_city1_ME <- glmmTMB(sqrt(mean_poll)~
+                           Block +
+                           Year +
+                           (1|Population/Family) +
+                           City_dist + Transect_ID,
+                         data = flowering %>%
+                           dplyr::filter(Transect_ID != "Rural"))
+
+# plot(DHARMa::simulateResiduals(poll_urbsubs_city1_ME)) # looks fine
+# performance::check_model(poll_urbsubs_city1_ME)
+# car::Anova(poll_urbsubs_city1_ME)
+
+AIC(poll_urbsubs_city1, poll_urbsubs_city1_ME) # ME model lower AIC but <2 away
+
+
+# # test for gxe
+# gxe_test_poll3 <- glmmTMB(sqrt(mean_poll)~
+#                            Block*City_dist +
+#                            Year +
+#                             Transect_ID*City_dist +
+#                            (1|Population/Family),
+#                           data = flowering %>%
+#                            dplyr::filter(Transect_ID != "Rural"))
+# 
+# test_gxe(poll_urbsubs_city1, gxe_test_poll3) # reg mod best
+```
+
+##### Urb_score
+```{r}
+poll_urbsubs_usc1 <- glmmTMB(sqrt(mean_poll)~
+                           Block +
+                           Year +
+                           (1|Population/Family) +
+                           Urb_score * Transect_ID,
+                         data = flowering %>%
+                           dplyr::filter(Transect_ID != "Rural"))
+
+# plot(DHARMa::simulateResiduals(poll_urbsubs_usc1))
+# performance::check_model(poll_urbsubs_usc1)
+# car::Anova(poll_urbsubs_usc1)
+
+
+# MAIN EFFECTS MODEL
+poll_urbsubs_usc1_ME <- glmmTMB(sqrt(mean_poll)~
+                           Block +
+                           Year +
+                           (1|Population/Family) +
+                           Urb_score + Transect_ID,
+                         data = flowering %>%
+                           dplyr::filter(Transect_ID != "Rural"))
+
+# plot(DHARMa::simulateResiduals(poll_urbsubs_usc1_ME)) # looks fine
+# performance::check_model(poll_urbsubs_usc1_ME)
+# car::Anova(poll_urbsubs_usc1_ME)
+
+# AIC(poll_urbsubs_usc1, poll_urbsubs_usc1_ME) # ME mod best but <2 AIC from full
+
+
+# # test for gxe
+# gxe_test_poll4 <- glmmTMB(sqrt(mean_poll)~
+#                            Block*Urb_score +
+#                            Year +
+#                             Transect_ID*Urb_score +
+#                            (1|Population/Family),
+#                           data = flowering %>%
+#                            dplyr::filter(Transect_ID != "Rural"))
+# 
+# test_gxe(poll_urbsubs_usc1 , gxe_test_poll4) # reg mod best
+```
+
+
 ## Pods
 #### Gradient
 ##### City_dist
@@ -2319,6 +2502,36 @@ names(flstart_mods) <- c("City_gr",
                      "Usc_urbsubs_alt")
 ```
 
+## Pollinaria removed
+```{r}
+poll_mods <- list(
+
+## City_dist / gradient
+poll_gr_city1 ,
+
+## Urbanization score / gradient
+poll_gr_usc1 ,
+
+## City_dist / urban subtransects
+poll_urbsubs_city1, # Qualitatively identical model (<2 AIC away)
+poll_urbsubs_city1_ME, # Best model
+
+## Urbanization score  / urban subtransects
+poll_urbsubs_usc1  , # Qualitatively identical model (<2 AIC away)
+poll_urbsubs_usc1_ME # Best model 
+
+)
+
+
+names(poll_mods) <- c("City_gr",
+                     "Usc_gr",
+                     "City_urbsubs_alt",
+                     "City_urbsubs_best",
+                     "Usc_urbsubs_alt",
+                     "Usc_urbsubs_best"
+                     )
+```
+
 ## Pods
 ```{r}
 pods_mods <- list(
@@ -2415,6 +2628,7 @@ flowers_mods     , # mean flowers/inflor
 flsize_mods      , # mean flower size
 fltime_mods      , # flowering time
 flstart_mods     , # flowering start
+poll_mods        , # pollinaria removed
 pods_mods        , # pods (follicles)
 first_pods_mods  , # first pods (follicles)
 peduncles_mods   ) # peduncles (inflorescences)
@@ -2425,6 +2639,7 @@ names(all_models) <- c(
 "flsize_mods"          ,
 "fltime_mods",
 "flstart_mods",
+"poll_mods"            ,
 "pods_mods"            ,
 "first_pods_mods",
 "peduncles_mods")
@@ -2517,6 +2732,25 @@ flstart_mods_alt_c <- flstart_mods[3]
 ### Urb_score
 flstart_mods_alt_u <- flstart_mods[6] 
 ```
+
+### pollinaria removed
+```{r}
+## Best
+### City_dist
+poll_mods_best_c <- poll_mods[c(1,4)]
+
+### Urb_score
+poll_mods_best_u <- poll_mods[c(2,6)]
+
+## Alt
+### City_dist
+poll_mods_alt_c <- poll_mods[3]
+
+### Urb_score
+poll_mods_alt_u <- poll_mods[5]
+
+```
+
 
 ### pods (follicles)
 ```{r}
