@@ -1006,16 +1006,9 @@ poll_mean <- flowering %>%
   as.numeric()
 
 
-# residual variance:
-resid_var <- update(
-    repr.m9,
-    data = flowering %>% dplyr::filter(Year == 2022),
-    REML = T) %>%
-    sigma()
-
-qg_1yr_poll <- calc_quantgenvars(  ,
-                       ,
-                   resid_var,
+qg_1yr_poll <- calc_quantgenvars(0.160682  ,
+                   0.030858    ,
+                   0.261111,
                    poll_mean,
                    "Pollinaria removed")
 
