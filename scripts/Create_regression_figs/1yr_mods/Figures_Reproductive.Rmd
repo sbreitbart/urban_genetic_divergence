@@ -471,7 +471,7 @@ ggpred_Q1.citydist_poll <-
 ggplot(poll_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = expression("Pollinaria removed " ^{1/2})) +
+       y = "Pollinaria removed") +
   ylim(0, NA) +
   theme_1() +
   
@@ -656,7 +656,7 @@ ggpred_Q1.urbscore_poll <-
 ggplot(poll_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
-       y = expression("Pollinaria removed " ^{1/2})) +
+       y = "Pollinaria removed") +
  ylim(0, 1) +
     xlim(4, -4) +
   theme_1() +
@@ -908,7 +908,7 @@ levels(poll_urbsubs_01_pred$group)
 ggpred_Q2.citydist_poll <-
 ggplot(poll_urbsubs_01_pred) +
   labs(x = "Distance to Urban Center (km)",
-       y = expression("Pollinaria removed " ^{1/2}),
+       y = "Pollinaria removed",
        color = "Transect",
        fill = "Transect") +
   ylim(0, 1) +
@@ -1209,7 +1209,7 @@ levels(poll_urbsubs_02_pred$group)
 ggpred_Q2.urbsubs_poll <-
 ggplot(poll_urbsubs_02_pred) +
   labs(x = "Urbanization Score",
-       y = expression("Pollinaria removed " ^{1/2}),
+       y = "Pollinaria removed",
        color = "Transect",
        fill = "Transect") +
   ylim(0,1) +
