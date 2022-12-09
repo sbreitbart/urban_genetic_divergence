@@ -310,6 +310,24 @@ qg_flstart <- calc_quantgenvars(0.148087,
                    "Date of first flower")
 
 
+# Pollinaria removed -----
+update(
+    poll_mods_best_c[[1]],
+    .~. -City_dist, # omitting city_dist
+    REML = T) %>% VarCorr()
+
+poll_mean <- flowering %>%
+  dplyr::summarize(Mean = mean(mean_poll,
+                               na.rm = T)) %>%
+  as.numeric()
+
+qg_poll <- calc_quantgenvars(2.1425e-01   ,
+                   1.0387e-05  ,
+                   3.2508e-01,
+                   poll_mean,
+                   "Pollinaria removed")
+
+
 # Pods -----
 update(
     pods_mods_best_c[[1]],
@@ -636,6 +654,7 @@ qgen_list1_multi <- list(
   qg_flsize,
   qg_fltime,
   qg_flstart,
+  qg_poll,
   qg_pods,
   qg_first_pods,
   qg_peduncles,
@@ -971,6 +990,34 @@ qg_1yr_flstart <- calc_quantgenvars(1.4040e-01,
                    resid_var,
                    flstart_mean,
                    "Date of first flower")
+
+
+# Pollinaria removed -----
+update(
+    repr.m9,
+    .~. -City_dist, # omitting city_dist
+    data = flowering %>% dplyr::filter(Year == 2022),
+    REML = T) %>% VarCorr()
+
+poll_mean <- flowering %>%
+  dplyr::filter(Year == 2022) %>%
+  dplyr::summarize(Mean = mean(mean_poll,
+                               na.rm = T)) %>%
+  as.numeric()
+
+
+# residual variance:
+resid_var <- update(
+    repr.m9,
+    data = flowering %>% dplyr::filter(Year == 2022),
+    REML = T) %>%
+    sigma()
+
+qg_1yr_poll <- calc_quantgenvars(  ,
+                       ,
+                   resid_var,
+                   poll_mean,
+                   "Pollinaria removed")
 
 
 # Pods -----
@@ -1316,6 +1363,7 @@ qgen_list1 <- list(
   qg_1yr_flsize,
   qg_1yr_fltime,
   qg_1yr_flstart,
+  qg_1yr_poll,
   qg_1yr_pods,
   qg_1yr_first_pods,
   qg_1yr_peduncles,

@@ -106,6 +106,22 @@ delta     9.246851e-05 2.540796e-04
 lognormal 2.480660e-03 6.816214e-03
 trigamma  7.002270e-07 1.924043e-06
 
+$poll_mods1
+           R2m      R2c
+[1,] 0.1325006 0.369799
+
+$poll_mods2
+           R2m       R2c
+[1,] 0.1301655 0.3610801
+
+$poll_mods3
+           R2m       R2c
+[1,] 0.1318236 0.3782594
+
+$poll_mods4
+           R2m       R2c
+[1,] 0.1303435 0.3723829
+
 $pods_mods1
                 R2m       R2c
 delta     0.1968474 0.1968474
@@ -150,9 +166,9 @@ trigamma  0.09202896 0.6986777
 
 $first_pods_mods4
                  R2m       R2c
-delta     0.06630771 0.7081509
-lognormal 0.06691039 0.7145874
-trigamma  0.06567766 0.7014221
+delta     0.09690574 0.7134545
+lognormal 0.09777038 0.7198203
+trigamma  0.09600152 0.7067974
 
 $peduncles_mods1
                    R2m          R2c

@@ -24,6 +24,7 @@ flstart_mods_reml_T    <- reml_to_true(flstart_mods     )
 pods_mods_reml_T       <- reml_to_true(pods_mods       ) 
 first_pods_mods_reml_T <- reml_to_true(first_pods_mods  ) 
 peduncles_mods_reml_T  <- reml_to_true(peduncles_mods   ) 
+poll_mods_reml_T       <- reml_to_true(poll_mods   ) 
 
 
 all_models_reml_T <- list(
@@ -31,10 +32,11 @@ flsucc_mods_reml_T      ,
 flowers_mods_reml_T     , 
 flsize_mods_reml_T      , 
 fltime_mods_reml_T      , 
-flstart_mods_reml_T     , 
+flstart_mods_reml_T      ,
+poll_mods_reml_T    , 
 pods_mods_reml_T        , 
 first_pods_mods_reml_T  , 
-peduncles_mods_reml_T   ) 
+peduncles_mods_reml_T ) 
 
 names(all_models_reml_T) <- c(
 "flsucc_mods"          ,
@@ -42,6 +44,7 @@ names(all_models_reml_T) <- c(
 "flsize_mods"          ,
 "fltime_mods",
 "flstart_mods",
+"poll_mods",
 "pods_mods"            ,
 "first_pods_mods",
 "peduncles_mods")
@@ -61,6 +64,7 @@ flsucc_r2      <- make_r2_table( flsucc_mods_reml_T    )
 flowers_r2       <- make_r2_table(flowers_mods_reml_T      )
 flsize_r2 <- make_r2_table(flsize_mods_reml_T) 
 flstart_r2  <- make_r2_table(flstart_mods_reml_T )
+poll_r2  <- make_r2_table(poll_mods_reml_T )
 
 
 ## these models don't have an alternative model for urb score/ urbsubs and will use this table format
@@ -165,21 +169,15 @@ pods_r2 ,
           "Follicles",
           "./Figures_Tables/Rsquared/Multi_yr_mods/Reproduction/R2_Reproduction2.docx")
 
-# table 3: will just use code from function
-  word_export <- read_docx()
-  
-  body_add_par(word_export, value = paste("R-squared estimates for",  "Date of first follicle", "Models"), style = "heading 1")
-  body_add_par(word_export, value = "")
-  body_add_flextable(word_export, first_pods_r2)
-  
-  body_add_break(word_export)
-
-  body_add_par(word_export, value = paste("R-squared estimates for",  "Inflorescences", "Models"), style = "heading 1")
-  body_add_par(word_export, value = "")
-  body_add_flextable(word_export, peduncles_r2)
-  
-  word_export <- body_end_section_landscape(word_export)
-  print(word_export, here::here("./Figures_Tables/Rsquared/Multi_yr_mods/Reproduction/R2_Reproduction3.docx"))
+# table 3
+export_r2(
+poll_r2,
+first_pods_r2,
+peduncles_r2 ,
+          "Flowering time",
+          "Date of first flower", 
+          "Follicles",
+          "./Figures_Tables/Rsquared/Multi_yr_mods/Reproduction/R2_Reproduction3.docx") 
 ```
 
 ### Defense
@@ -586,7 +584,7 @@ make_full_R2_table <- function(list1, list2, list3,
                                list16, list17, list18,
                                list19 , list20, list21,
                                list22, list23, list24,
-                               list25 , list26
+                               list25 , list26 , list27
                                ){
       
   make_1_table <- function(list1){
@@ -634,7 +632,7 @@ make_full_R2_table <- function(list1, list2, list3,
                                list16, list17, list18,
                                list19 , list20, list21,
                                list22, list23, list24,
-                                list25 , list26),
+                                list25 , list26, list27),
                        make_1_table) %>%
     reduce(full_join, all = T) %>%
       dplyr::mutate(Variable = c(list1[[1]]$call[[2]][[2]],
@@ -662,7 +660,8 @@ make_full_R2_table <- function(list1, list2, list3,
                                  list23[[1]]$call[[2]][[2]],
                                  list24[[1]]$call[[2]][[2]],
                                  list25[[1]]$call[[2]][[2]],
-                                 list26[[1]]$call[[2]][[2]]
+                                 list26[[1]]$call[[2]][[2]],
+                                 list27[[1]]$call[[2]][[2]]
                                  )) %>%
       dplyr::relocate(Variable) %>%
   dplyr::mutate(Variable = case_when(
@@ -696,6 +695,8 @@ make_full_R2_table <- function(list1, list2, list3,
       "Date of first flower",
     str_detect(Variable, "Pods")~
       "Follicles",
+    str_detect(Variable, "poll")~
+      "Pollinaria removed",
     str_detect(Variable, "Julian_first")~
       "Date of first follicle",
     str_detect(Variable, "Peduncles")~
@@ -783,6 +784,7 @@ make_full_R2_table(
                    pods_mods_reml_T       ,
                    first_pods_mods_reml_T ,
                    peduncles_mods_reml_T ,
+                   poll_mods_reml_T      ,
                    
   # herbivores
                    monarch_mods_reml_T,
@@ -1026,6 +1028,10 @@ peduncles_mods_reml_T  <-lapply(
   list(repr.m8, repr.m8_u, repr.tr.m8, repr.tr.m8_u),
   make_1yrmod_REML_repr2)
 
+poll_mods_reml_T  <-lapply(
+  list(repr.m9, repr.m9_u, repr.tr.m9, repr.tr.m9_u),
+  make_1yrmod_REML_repr2)
+
 
 all_models_reml_T <- list(
 flsucc_mods_reml_T      , 
@@ -1033,6 +1039,7 @@ flowers_mods_reml_T     ,
 flsize_mods_reml_T      , 
 fltime_mods_reml_T      , 
 flstart_mods_reml_T     , 
+poll_mods_reml_T ,
 pods_mods_reml_T        , 
 first_pods_mods_reml_T  , 
 peduncles_mods_reml_T   ) 
@@ -1043,6 +1050,7 @@ names(all_models_reml_T) <- c(
 "flsize_mods"          ,
 "fltime_mods",
 "flstart_mods",
+"poll_mods",
 "pods_mods"            ,
 "first_pods_mods",
 "peduncles_mods")
@@ -1229,7 +1237,7 @@ make_full_R2_table <- function(list1, list2, list3,
                                 list16, list17, list18,
                                 list19 , list20, list21,
                                 list22, list23, list24,
-                                list25, list26
+                                list25, list26, list27
                                ){
       
   make_1_table <- function(list1){
@@ -1282,7 +1290,7 @@ make_full_R2_table <- function(list1, list2, list3,
                                 list16, list17, list18,
                                 list19 , list20, list21,
                                 list22, list23, list24,
-                                  list25 , list26
+                                  list25 , list26, list27
                       ), make_1_table) %>%
     reduce(full_join, all = T) %>%
       dplyr::mutate(Variable = c(list1[[1]]$call[[2]][[2]],
@@ -1312,7 +1320,8 @@ make_full_R2_table <- function(list1, list2, list3,
                                  list23[[1]]$call[[2]][[2]],
                                  list24[[1]]$call[[2]][[2]],
                                  list25[[1]]$call[[2]][[2]],
-                                 list26[[1]]$call[[2]][[2]]
+                                 list26[[1]]$call[[2]][[2]],
+                                 list27[[1]]$call[[2]][[2]]
                                  )) %>%
       dplyr::relocate(Variable) %>%
   dplyr::mutate(Variable = case_when(
@@ -1344,6 +1353,8 @@ make_full_R2_table <- function(list1, list2, list3,
       "Flowering duration",
     str_detect(Variable, "Julian_oldest_inflor")~
       "Date of first flower",
+    str_detect(Variable, "poll")~
+      "Pollinaria removed",
     str_detect(Variable, "Pods")~
       "Follicles",
     str_detect(Variable, "first_foll")~
@@ -1437,6 +1448,7 @@ make_full_R2_table(
                    flsize_mods_reml_T     ,
                    fltime_mods_reml_T     ,
                    flstart_mods_reml_T    ,
+                   poll_mods_reml_T       ,
                    pods_mods_reml_T       ,
                    first_pods_mods_reml_T ,
                    peduncles_mods_reml_T ,
@@ -1463,4 +1475,3 @@ make_full_R2_table(
                 type = "continuous",
                 page_margins = page_mar()))
 ```
-
