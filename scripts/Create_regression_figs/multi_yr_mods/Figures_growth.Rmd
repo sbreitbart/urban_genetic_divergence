@@ -1,13 +1,11 @@
 # Set up notebook
 ## Load libraries and add functions
-
 ```{r}
 source("libraries.R")
 source("functions.R")
 ```
 
 ## Import data
-
 ```{r}
 source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Growth.Rmd", quiet=TRUE))
 ```
@@ -1189,8 +1187,8 @@ ggpred_Q2.urbsubs_mortality
 
 ```
 
-## Combine plots into one figure
-### Gradient / City_dist
+# Combine plots into one figure
+## Gradient / City_dist
 ```{r}
 gradient_citydist_plots <- ggarrange(
 ggpred_Q1.citydist_ldmc,
@@ -1217,7 +1215,7 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Growt
 ```
 
 
-### Gradient / Urbanization Score
+## Gradient / Urbanization Score
 ```{r}
 gradient_urbscore_plots <- ggarrange(
 ggpred_Q1.urbscore_ldmc,
@@ -1242,7 +1240,7 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Growt
              width = 15, height = 7.5)
 ```
 
-### Urb Subtransects / City_dist
+## Urb Subtransects / City_dist
 ```{r}
 urbsubs_citydist_plots <- ggarrange(
   ggpred_Q2.citydist_ldmc,
@@ -1268,7 +1266,7 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/multi_yr_mods/Growt
 ```
 
 
-### Urb Subtransects / Urbanization Score
+## Urb Subtransects / Urbanization Score
 ```{r}
 urbsubs_urbscore_plots <- ggarrange(
   ggpred_Q2.urbsubs_ldmc,
