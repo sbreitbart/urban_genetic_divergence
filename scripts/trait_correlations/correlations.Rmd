@@ -3,7 +3,7 @@
 source("libraries.R")
 ```
 
-# Import data
+# Import data (multi-year models)
 ## Reproductive traits
 ```{r}
 source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
@@ -78,7 +78,9 @@ names(reprod_city_gr) <- c(
 "flsize_mods"          ,
 "fltime_mods",
 "flstart_mods",
+"poll_mods"            ,
 "pods_mods"            ,
+"firstpods_mods"            ,
 "peduncles_mods")
 ```
 
@@ -129,17 +131,17 @@ blup_list <- function(list){
 
 all_blups <- blup_list(all) %>%
 # back-transform traits transformed in lmers
-  dplyr::mutate(Peduncles =          .[[8]]^(1/3), # inverse of x^3
-                LDMC =               .[[9]]^2, # inverse of sqrt(x)
-                SLA =                .[[10]]^3, # inverse of x^(1/3)
-                Total_height_early = .[[11]]^3, # "
-                Total_height_late =  .[[12]]^3, # "
-                Rel_growth_rate =    .[[13]]^3, # "
-                Latex =              .[[17]]^3, # "
-                Herbivory_mean_early=exp(.[[19]]), # inverse of log
-                Herbivory_mean_late =exp(.[[21]]), # "
-                Scar_length_cm =     exp(.[[23]])) %>% # "
-  dplyr::select(-c(8:13, 17, 19, 21, 23)) %>%
+  dplyr::mutate(mean_poll =          .[[7]]^2, # inverse of sqrt(x)
+                LDMC =               .[[11]]^2, # inverse of sqrt(x)
+                SLA =                exp(.[[12]]), # inverse of log
+                Total_height_early = .[[13]]^3, # inverse of x^(1/3)
+                Total_height_late =  .[[14]]^3, # "
+                Rel_growth_rate =    .[[15]]^3, # "
+                Latex =              .[[19]]^3, # "
+                Herbivory_mean_early=exp(.[[21]]), # inverse of log
+                Herbivory_mean_late =exp(.[[23]]), # "
+                Scar_length_cm =     exp(.[[25]])) %>% # "
+  dplyr::select(-c(7,11:15, 19, 21, 23, 25)) %>%
   mutate_all(~ifelse(is.nan(.), NA, .)) %>%
   left_join(., cards[,c(2,10)], by = "Population") %>% # add cardenolides
   dplyr::mutate(cardenolides = total) %>%
@@ -147,43 +149,46 @@ all_blups <- blup_list(all) %>%
 
 oldnames <- colnames(all_blups)
 newnames <- c("Population",
-             "Flowering (0/1)",
-             "Mean Flower Count",
-             "Mean Flower Size",
-             "Flowering Time",
-             "Date of Oldest \nInflorescence",
+             "Flowering success",
+             "Flowers per inflorescence",
+             "Flower size",
+             "Flowering duration",
+             "Date of first flower",
              "Follicles",
-             "Ramets \n(before flowering)",
-             "Ramets \n(after flowering)",
-             "Seasons Survived",
-             "Herbivory (0/1) \n(before flowering)",
-             "Herbivory (0/1) \n(after flowering)",
-             "R. lineaticollis \ndamage (0/1)",
+             "Date of first follicle",
              "Inflorescences",
-             "Leaf Dry Matter \nContent (LDMC)",
-             "Specific Leaf Area \n(SLA)",
-             "Total Plant Height \n(before flowering)",
-             "Total Plant Height \n(after flowering)",
-             "Relative Growth \nRate",
-             "Latex Exudation",
-             "Herbivory (>0) \n(before flowering)",
-             "Herbivory (>0) \n(after flowering)",
-             "R. lineaticollis \nScar Length",
-             "Total Cardenolide \nConcentration"
+             "Ramets \n before flowering",
+             "Ramets \n after flowering",
+             "Mortality",
+             "Herbivory before flowering\n (binary)",
+             "Herbivory after flowering\n (binary)",
+             "Weevil damage (binary)",
+             "Pollinaria removed",
+             "LDMC",
+             "SLA",
+             "Height before flowering",
+             "Height after flowering",
+             "Relative growth rate",
+             "Latex exudation",
+             "Herbivory before flowering\n (quantitative)",
+             "Herbivory after flowering\n (quantitative)",
+             "Weevil damage (quantitative)",
+             "Total cardenolide \nconcentration"
 )
 
 all_blups %<>%
   rename_at(vars(oldnames), ~ newnames) %>%
   # arrange traits by life history category
-  dplyr::relocate(Inflorescences, .after = Follicles) %>%
-  dplyr::relocate('Herbivory (0/1) \n(before flowering)',
-                  .after = 'Latex Exudation') %>%
-  dplyr::relocate('Herbivory (0/1) \n(before flowering)',
-                  .after = 'Latex Exudation') %>%
-  dplyr::relocate(13, .after = 'Relative Growth \nRate') %>%
-  dplyr::relocate(12, .after = 'Relative Growth \nRate') %>%
-  dplyr::relocate(17, .after = 20) %>%
-  dplyr::relocate(23, .after = 17)
+  dplyr::relocate('Latex exudation',
+                  .before = 'Herbivory before flowering\n (binary)') %>%
+  dplyr::relocate('Herbivory before flowering\n (quantitative)',
+                  .after = 'Herbivory before flowering\n (binary)') %>%
+  dplyr::relocate('Herbivory after flowering\n (quantitative)',
+                  .after = 'Herbivory after flowering\n (binary)') %>%
+  dplyr::relocate('Weevil damage (quantitative)',
+                  .after = 'Weevil damage (binary)') %>%
+  dplyr::relocate('Total cardenolide \nconcentration',
+                  .after = 'Weevil damage (quantitative)')
 ```
 
 # Generate correlation matrix
@@ -231,13 +236,19 @@ correlations2.p %>%
 ```
 
 # Visualize
+LEAVING OFF HERE 12/9/2022- This probably won't be in final paper and the correlation matrix won't plot- maybe because some values are NA/Inf? So this isn't finished
 ## Scatterplot matrix
 ```{r}
 
 correlations2.r[correlations2.r == 1] <- NA # replace all perfect correlations (1; var A on var A; var B on var B; etc.) with NAs
 
+# remove traits with values that are nearly zero: SLA
+correlations2.r %>%
+  dplyr::select(-SLA) %>%
+  dplyr::filter(-SLA)
+
 library(GGally)
-ggpairs(correlations2.r) 
+ggpairs(correlations2.r ) 
 
 dev.copy2pdf(file = here::here("./Figures_Tables/correlations/scatterplot_matrix_longnames.pdf"),
              width = 30, height = 30)

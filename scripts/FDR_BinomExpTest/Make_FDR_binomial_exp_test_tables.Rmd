@@ -547,8 +547,8 @@ prob_succ <- 0.05 # critical p-value
 
 t2_results_fam <- binom.test(t2_fam_succ, t2_fam_trials, prob_succ, "two.sided")
 
-t2_results_fam$p.value # p-value: 3.67354e-05
-t2_results_fam$estimate # probability of success: 0.2962963  
+t2_results_fam$p.value # p-value: 4.010664e-06
+t2_results_fam$estimate # probability of success: 0.3333333   
 ```
 
 ### Table 3
@@ -595,8 +595,8 @@ prob_succ <- 0.05 # critical p-value
 
 t3_results_pop <- binom.test(t3_pop_succ, t3_pop_trials, prob_succ, "two.sided")
 
-t3_results_pop$p.value # p-value: 0.04373595 
-t3_results_pop$estimate # probability of success: 0.1481481   
+t3_results_pop$p.value # p-value: 0.1504944 
+t3_results_pop$estimate # probability of success: 0.1111111    
 ```
 
 ##### Family

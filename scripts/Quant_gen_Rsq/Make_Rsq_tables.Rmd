@@ -1235,7 +1235,8 @@ make_full_R2_table <- function(list1, list2, list3,
                                 list10, list11, list12,
                                 list13, list14, list15,
                                 list16, list17, list18,
-                                list19 , list20, list21,
+                         #       list19 ,
+                               list20, list21,
                                 list22, list23, list24,
                                 list25, list26, list27
                                ){
@@ -1283,14 +1284,15 @@ make_full_R2_table <- function(list1, list2, list3,
     }
 
   full_table <- lapply(list(list1, list2, list3,
-                               list4, list5, list6,
-                               list7, list8, list9,
-                                list10, list11, list12,
-                                list13, list14, list15, 
-                                list16, list17, list18,
-                                list19 , list20, list21,
-                                list22, list23, list24,
-                                  list25 , list26, list27
+                            list4, list5, list6,
+                            list7, list8, list9,
+                            list10, list11, list12,
+                            list13, list14, list15, 
+                            list16, list17, list18,
+                       #    list19 , 
+                                    list20, list21,
+                            list22, list23, list24,
+                            list25 , list26, list27
                       ), make_1_table) %>%
     reduce(full_join, all = T) %>%
       dplyr::mutate(Variable = c(list1[[1]]$call[[2]][[2]],
@@ -1310,10 +1312,10 @@ make_full_R2_table <- function(list1, list2, list3,
                                  list15[[1]]$call[[2]][[2]],
                                  list16[[1]]$call[[2]][[2]],
                                  list17[[1]]$call[[2]][[2]],
+                                 list18[[1]]$call[[2]][[2]],
+
+                            #     list19[[1]]$call[[2]][[2]],
                                  
-                          #       list17[[1]]$call[[2]][[2]],
-                                 
-                                 list19[[1]]$call[[2]][[2]],
                                  list20[[1]]$call[[2]][[2]],
                                  list21[[1]]$call[[2]][[2]],
                                  list22[[1]]$call[[2]][[2]],
@@ -1357,7 +1359,7 @@ make_full_R2_table <- function(list1, list2, list3,
       "Pollinaria removed",
     str_detect(Variable, "Pods")~
       "Follicles",
-    str_detect(Variable, "first_foll")~
+    str_detect(Variable, "Julian_first_foll")~
       "Date of first follicle",
     str_detect(Variable, "Peduncles")~
       "Inflorescences",
@@ -1391,13 +1393,12 @@ make_full_R2_table <- function(list1, list2, list3,
 
     )) %>%
     add_row(
-      # adding the clivicollis row this way because otherwise this function breaks when I try to add it, not sure why. All the values are 0 though... could be related?
+      # adding the clivicollis row this way because otherwise this function breaks when I try to add it, not sure why
       Variable = "Labidomera clivicollis abundance",
             Type = "trigamma",
             Distance_Q1.R2m = 0,  Distance_Q1.R2c = 0,  Distance_Q2_best.R2m = 0,  Distance_Q2_best.R2c = 0,  UrbScore_Q1.R2m = 0,  UrbScore_Q1.R2c = 0,  UrbScore_Q2_best.R2m = 0,  UrbScore_Q2_best.R2c = 0,
-            .before = 18) %>%
-    
-      flextable() %>%
+            .before = 19) %>%
+       flextable() %>%
       add_header_row(
         values = c("",
                    "Model 1",
@@ -1442,6 +1443,7 @@ make_full_R2_table(
                   herb_l_quant_mods_reml_T ,
                   weevil_bin_mods_reml_T   ,
                   weevil_quant_mods_reml_T ,
+  
   # reproductive traits
                     flsucc_mods_reml_T   ,  
                    flowers_mods_reml_T    ,
@@ -1456,7 +1458,7 @@ make_full_R2_table(
   # herbivores
                     monarch_mods_reml_T,
                     asclepiadis_mods_reml_T,
-                    clivicollis_mods_reml_T,
+                #    clivicollis_mods_reml_T,
   # growth traits
                     ldmc_mods_reml_T     ,
                     sla_mods_reml_T      ,
