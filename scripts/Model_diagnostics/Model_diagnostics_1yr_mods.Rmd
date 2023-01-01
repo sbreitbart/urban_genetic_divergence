@@ -718,10 +718,27 @@ all_1yr_mods_tr <- list(
 #### Make lists of models
 ##### Defense
 ```{r}
-def.tr.m1_u <-latex_mods_best_u[[2]]
+# Latex-----
+def.tr.m1_u <- latex_mods_best_u[[2]]
 
+AIC(
+  # full model
+  latex_mods_best_u[[2]],
+  # reduced model
+  update(def.tr.m1_u, .~. - Urb_score*Transect_ID + Urb_score + Transect_ID)
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but full is lower
+
+# Herbivory before flowering, binary-----
 def.tr.m2_u <- make_1yrmod_transects(herb_e_bin_mods_best_u[[2]], "2021", herbivory)
 
+AIC(
+  update(def.tr.m2_u, .~. + Urb_score:Transect_ID,
+         data = herbivory %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2021")),
+  def.tr.m2_u
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
+
+# Herbivory before flowering, quant-----
 def.tr.m3_u <- update(herb_e_quant_mods_best_u[[2]],
                  .~. - Year,
                  data = herbivory %>%
@@ -729,8 +746,30 @@ def.tr.m3_u <- update(herb_e_quant_mods_best_u[[2]],
                                    Year == "2021" &
                                    Herbivory_mean_early_binary == 1))
 
+AIC(
+  def.tr.m3_u,
+  update(def.tr.m3_u, .~. - Urb_score:Transect_ID,
+         data = herbivory %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2021" &
+                                   Herbivory_mean_early_binary == 1))
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
+
+def.tr.m3_u <- update(def.tr.m3_u, .~. - Urb_score:Transect_ID,
+         data = herbivory %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2021" &
+                                   Herbivory_mean_early_binary == 1))
+
+# Herbivory after flowering, binary-----
 def.tr.m4_u <- make_1yrmod_transects(herb_l_bin_mods_best_u[[2]], "2021", herbivory)
 
+AIC(
+  update(def.tr.m4_u, .~. + Urb_score:Transect_ID,
+         data = herbivory %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2021")),
+  def.tr.m4_u
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
+
+# Herbivory after flowering, quant-----
 def.tr.m5_u <- update(herb_l_quant_mods_best_u[[2]],
                  .~. - Year,
                  data = herbivory %>%
@@ -738,30 +777,136 @@ def.tr.m5_u <- update(herb_l_quant_mods_best_u[[2]],
                                    Year == "2021" &
                                    Herbivory_mean_late_binary == 1))
 
+AIC(
+  update(def.tr.m5_u, .~. + Urb_score:Transect_ID,
+         data = herbivory %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2021" &
+                                   Herbivory_mean_late_binary == 1)),
+  def.tr.m5_u
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but full is lower
+
+def.tr.m5_u <- update(def.tr.m5_u, .~. + Urb_score:Transect_ID,
+         data = herbivory %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2021" &
+                                   Herbivory_mean_late_binary == 1))
+
+
+# Weevil damage, binary-----
 def.tr.m6_u <- make_1yrmod_transects(weev_bin_mods_best_u[[2]], "2021", weevil)
 
+AIC(
+  update(def.tr.m6_u, .~. + Urb_score:Transect_ID,
+         data = weevil %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2021")),
+  def.tr.m6_u
+  ) %>% as.list() # Full model is best
+
+def.tr.m6_u <- update(def.tr.m6_u, .~. + Urb_score:Transect_ID,
+         data = weevil %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2021"))
+
+# Weevil damage, quant-----
 def.tr.m7_u <- update(weev_quant_mods_best_u[[2]],
                  .~. - Year,
                  data = weevil %>%
                    dplyr::filter(Transect_ID != "Rural" &
                                    Year == "2021" &
                                    Scar_length_cm > 0))
+
+
+AIC(
+  update(def.tr.m7_u, .~. + Urb_score:Transect_ID,
+         data = weevil %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2021"&
+                                   Scar_length_cm > 0)),
+  def.tr.m7_u
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
 ```
 
 ##### Reproduction
 ```{r}
+# Flowering success-----
 repr.tr.m1_u <- make_1yrmod_transects(flsucc_mods_best_u[[2]], "2022", reproduc)
 
+AIC(
+  update(repr.tr.m1_u, .~. + Urb_score:Transect_ID,
+         data = reproduc %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2022")),
+  repr.tr.m1_u
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but full is lower
+
+repr.tr.m1_u <- update(repr.tr.m1_u, .~. + Urb_score:Transect_ID,
+         data = reproduc %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2022"))
+
+# Flowers-----
 repr.tr.m2_u <- make_1yrmod_transects(flowers_mods_best_u[[2]], "2022", flowering)
 
+AIC(
+  repr.tr.m2_u,
+  update(repr.tr.m2_u, .~. - Urb_score:Transect_ID,
+         data = flowering %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2022"))
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
+
+repr.tr.m2_u <- update(repr.tr.m2_u, .~. - Urb_score:Transect_ID,
+         data = flowering %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2022"))
+
+# Flower size-----
 repr.tr.m3_u <- make_1yrmod_transects(flsize_mods_best_u[[2]], "2022", flowering)
 
+AIC(
+  update(repr.tr.m4_u, .~. + Urb_score:Transect_ID,
+         data = flowering %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2022")),
+  repr.tr.m4_u
+  ) %>% as.list() # Full model is best
+
+repr.tr.m3_u <- update(repr.tr.m4_u, .~. + Urb_score:Transect_ID,
+         data = flowering %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2022"))
+
+# Flowering time-----
 repr.tr.m4_u <- make_1yrmod_transects(fltime_mods_best_u[[2]], "2022", flowering)
 
+AIC(
+  update(repr.tr.m4_u, .~. + Urb_score:Transect_ID,
+         data = flowering %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2022")),
+  repr.tr.m4_u
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but full is lower
+
+repr.tr.m4_u <- update(repr.tr.m4_u, .~. + Urb_score:Transect_ID,
+         data = flowering %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2022"))
+
+# Flowering start-----
 repr.tr.m5_u <- make_1yrmod_transects(flstart_mods_best_u[[2]], "2022", flowering)
 
+AIC(
+  repr.tr.m5_u,
+  update(repr.tr.m5_u, .~. - Urb_score:Transect_ID,
+         data = flowering %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2022"))
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
+
+repr.tr.m5_u <- update(repr.tr.m5_u, .~. - Urb_score:Transect_ID,
+         data = flowering %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2022"))
+
+# Follicles-----
 repr.tr.m6_u <- make_1yrmod_transects(pods_mods_best_u[[2]], "2022", flowering)
 
+AIC(
+  repr.tr.m6_u,
+  update(repr.tr.m6_u, .~. - Urb_score:Transect_ID,
+         data = flowering %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2022"))
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but full is lower
+
+
+# First follicle-----
 # other models of this variable won't converge if I take the multi-yr mod and alter it- has to be above x - 170, so I chose to increase it by a month to 200 days
 repr.tr.m7_u <- glmmTMB(Julian_first_follicle-200 ~
                                Block +
@@ -770,39 +915,148 @@ repr.tr.m7_u <- glmmTMB(Julian_first_follicle-200 ~
                              data = flowering %>%
           dplyr::filter(Year == 2022 &
                           Transect_ID != "Rural"),
-                             family = poisson) 
+                             family = poisson)
 
+AIC(
+  update(repr.tr.m7_u, .~. + Urb_score:Transect_ID),
+  repr.tr.m7_u
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but full is lower
+
+repr.tr.m7_u <- update(repr.tr.m7_u, .~. + Urb_score:Transect_ID)
+
+# Inflorescences-----
 repr.tr.m8_u <- make_1yrmod_transects(peduncles_mods_best_u[[2]], "2022", flowering)
 
+AIC(
+  repr.tr.m8_u,
+  update(repr.tr.m8_u, .~. - Urb_score:Transect_ID,
+         data = flowering %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2022"))
+  ) %>% as.list() # Full model is best
+
+
+# Pollinaria removed-----
 repr.tr.m9_u <- make_1yrmod_transects(poll_mods_best_u[[2]], "2022", flowering)
+
+AIC(
+  update(repr.tr.m9_u, .~. + Urb_score:Transect_ID,
+         data = flowering %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2022")),
+  repr.tr.m9_u
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
 ```
 
 ##### Herbivores
 ```{r}
+# Danaus plexippus-----
 herb.tr.m1_u <- make_1yrmod_transects(monarch_mods_best_u[[2]], "2021", herbivores)
 
+AIC(
+  update(herb.tr.m1_u, .~. + Urb_score:Transect_ID,
+         data = herbivores %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2021")),
+  herb.tr.m1_u
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
+
+# Aphis asclepiadis-----
 herb.tr.m2_u <- make_1yrmod_transects(asclepiadis_mods_best_u[[2]], "2021", herbivores)
 
+AIC(
+  update(herb.tr.m2_u, .~. + Urb_score:Transect_ID,
+         data = herbivores %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2021")),
+  herb.tr.m2_u
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
+
+# Labidomera clivicollis-----
 herb.tr.m3_u <- make_1yrmod_transects(clivicollis_mods_best_u[[2]], "2021", herbivores)
+
+AIC(
+  update(herb.tr.m3_u, .~. + Urb_score:Transect_ID,
+         data = herbivores %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2021")),
+  herb.tr.m3_u
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but full is lower
+
+herb.tr.m3_u <- update(herb.tr.m3_u, .~. + Urb_score:Transect_ID,
+         data = herbivores %>%
+           dplyr::filter(Transect_ID != "Rural" & Year == "2021"))
 ```
 
 ##### Growth
 ```{r}
+# LDMC-----
 grow.tr.m1_u <- ldmc_mods_best_u[[2]]
 
+AIC(
+  update(grow.tr.m1_u, .~. + Urb_score:Transect_ID),
+  grow.tr.m1_u
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
+
+# SLA-----
 grow.tr.m2_u <- sla_mods_best_u[[2]]
 
+AIC(
+  update(grow.tr.m2_u, .~. + Urb_score:Transect_ID),
+  grow.tr.m2_u
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
+
+# Height before flowering-----
 grow.tr.m3_u <- make_1yrmod_transects(heights_early_mods_best_u[[2]], "2021", heights)
 
+AIC(
+  update(grow.tr.m3_u, .~. + Urb_score:Transect_ID,
+         data = heights %>% dplyr::filter(Transect_ID != "Rural" & Year == "2021")),
+  grow.tr.m3_u
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
+
+# Height after flowering-----
 grow.tr.m4_u <- make_1yrmod_transects(heights_late_mods_best_u[[2]], "2021", heights)
 
+AIC(
+  update(grow.tr.m4_u, .~. + Urb_score:Transect_ID,
+         data = heights %>% dplyr::filter(Transect_ID != "Rural" & Year == "2021")),
+  grow.tr.m4_u
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
+
+# Rel growth rate-----
 grow.tr.m5_u <- make_1yrmod_transects(rgr_mods_best_u[[2]], "2021", heights)
 
+AIC(
+  update(grow.tr.m5_u, .~. + Urb_score:Transect_ID,
+         data = heights %>% dplyr::filter(Transect_ID != "Rural" & Year == "2021")),
+  grow.tr.m5_u
+  ) %>% as.list() # Full model doesn't converge so will use reduced
+
+# Ramets before flowering-----
 grow.tr.m6_u <- make_1yrmod_transects(ramets_early_mods_best_u[[2]], "2021", heights)
 
+AIC(
+  update(grow.tr.m6_u, .~. + Urb_score:Transect_ID,
+         data = heights %>% dplyr::filter(Transect_ID != "Rural" & Year == "2021")),
+  grow.tr.m6_u
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
+
+# Ramets after flowering-----
 grow.tr.m7_u <- make_1yrmod_transects(ramets_late_mods_best_u[[2]], "2021", heights)
 
+AIC(
+  update(grow.tr.m7_u, .~. + Urb_score:Transect_ID,
+         data = heights %>% dplyr::filter(Transect_ID != "Rural" & Year == "2021")),
+  grow.tr.m7_u
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
+
+# Mortality-----
 grow.tr.m8_u <- make_1yrmod_transects(mortality_mods_best_u[[2]], "2022", survival)
+
+AIC(
+  grow.tr.m8_u,
+  update(grow.tr.m8_u, .~. - Urb_score:Transect_ID,
+         data = survival %>% dplyr::filter(Transect_ID != "Rural" & Year == "2022"))
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but full is lower
+
+grow.tr.m8_u <- update(grow.tr.m8_u, .~. - Urb_score:Transect_ID,
+         data = survival %>% dplyr::filter(Transect_ID != "Rural" & Year == "2022"))
 ```
 
 ##### All
