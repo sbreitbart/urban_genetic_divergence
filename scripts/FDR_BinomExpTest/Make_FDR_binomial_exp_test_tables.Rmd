@@ -106,15 +106,24 @@ all_pvalues_Q1_u <- sapply(all_1yr_mods.u,
 
 
 # Question 2-----
+
 extract_p_Q2 <- function(model){
  response_var <- tidy_anova(model) %>%
-    dplyr::filter(row_number()==n()) %>% # take last row = either interaction or subtransect
+   dplyr::filter(
+     Predictor == "Distance to City Center x Subtransect" |
+     Predictor == "Urbanization Score x Subtransect"  |
+     Predictor == "Subtransect") %>%
+   dplyr::slice_min(p) %>% # take smallest p-value
     dplyr::select(Response) %>%
   as.character()
     
   pval <- tidy_anova(model) %>%
-    dplyr::filter(row_number()==n()) %>% # take last row = either interaction or subtransect
-    dplyr::select(p) %>%
+   dplyr::filter(
+     Predictor == "Distance to City Center x Subtransect" |
+     Predictor == "Urbanization Score x Subtransect"  |
+     Predictor == "Subtransect") %>%
+   dplyr::slice_min(p) %>%
+   dplyr::select(p) %>%
   as.character()
   
   output_vector <- as.vector(c(response_var, pval))

@@ -2,11 +2,15 @@ Sites,ID,Trait,Urbanization,Predictor,p_multiyr,p_1yr
 All,1,Herbivory before flowering (binary),Distance,Distance,0.046,0.085
 All,2,Herbivory before flowering (quantitative),Urb. score,Urb. score,0.138,0.013
 All,3,Flowers per inflorescence,Urb. score,Urb. score,0.037,0.059
-Urban,4,Herbivory before flowering (quantitative),Urb. score,Urb. score,0.041,0.584
-Urban,5,Weevil damage (binary),Urb. score,U x S,0.365,0.031
+Urban,4,Herbivory before flowering (quantitative),Urb. score,Urb. score,0.041,0.585
+Urban,5,Weevil damage (binary),Urb. score,U x S,-,0.031
 Urban,6,Weevil damage (quantitative),Distance,Subtransect,0.034,0.363
-Urban,7,Weevil damage (quantitative),Urb. score,Subtransect,0.027,0.355
-Urban,8,Date of first follicle,Distance,Distance,0.011,0.097
-Urban,9,Flowering duration,Distance,Subtransect,0.012,0.15
-Urban,10,Flowers per inflorescence,Distance,Subtransect,0.07,0.039
-Urban,11,Flowers per inflorescence,Urb. score,Urb. score,0.032,0.121
+Urban,7,Weevil damage (quantitative),Urb. score,Subtransect,0.03,0.369
+Urban,8,Date of first follicle,Distance,Distance,0.011,0.069
+Urban,9,Flowering duration,Distance,Subtransect,0.013,0.155
+Urban,10,Flowering duration,Urb. Score,U x S,-,0.006
+Urban,11,Flowers per inflorescence,Distance,Subtransect,0.071,0.039
+Urban,12,Flowers per inflorescence,Urb. score,Urb. score,0.032,0.142
+Urban,13,Height before flowering,Distance,Distance,0.083,0.047
+Urban,14,Ramets after flowering,Distance,Distance,0.09,0.014
+Urban,15,Mortality,Distance,Distance,0.015,0.297

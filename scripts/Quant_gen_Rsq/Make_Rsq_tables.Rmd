@@ -1334,11 +1334,11 @@ make_full_R2_table <- function(list1, list2, list3,
     str_detect(Variable, "Herbivory_mean_early_binary") ~
       "Herbivory before flowering (binary)",
     str_detect(Variable, "(Herbivory_mean_early)") ~
-                 "Herbivory before flowering (quantitative)",
+      "Herbivory before flowering (quantitative)",
     str_detect(Variable, "Herbivory_mean_late_binary")~
       "Herbivory after flowering (binary)",
     str_detect(Variable, "(Herbivory_mean_late)")~
-      "Herbivory before flowering (quantitative)",
+      "Herbivory after flowering (quantitative)",
     str_detect(Variable, "Scar_binary")~
       "Weevil damage (binary)",
     str_detect(Variable, "Scar_length_cm")~

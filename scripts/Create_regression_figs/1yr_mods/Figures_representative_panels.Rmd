@@ -142,7 +142,8 @@ points_Q2.citydist_weev_bin <- ggpred_Q2.citydist_weev_bin +
              aes(x = City_dist,
                  y = Scar_binary,
                  color = Transect_ID)) +
-  scale_y_continuous(limits = c(0, 1.2), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
+  scale_y_continuous(limits = c(0, 1.2),
+                     breaks = c(0, 0.25, 0.5, 0.75, 1)) +
     scale_colour_brewer(labels = c("Corridor",
                                  "Non-Corridor"),
                       palette = "Set2")
@@ -160,7 +161,7 @@ points_Q2.citydist_firstpods <- ggpred_Q2.citydist_firstpods +
              aes(x = City_dist,
                  y = foll_sum,
                  color = Transect_ID)) +
-  ylim(0, NA) +
+  ylim(0, 40) +
     scale_colour_brewer(labels = c("Corridor",
                                  "Non-Corridor"),
                       palette = "Set2")
@@ -223,28 +224,5 @@ ggarrange(
   plot
 
 dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Q2_urbsubs_citydist_representative_panels.pdf"),
-             width = 10, height = 8)
-```
-
-
-## Urb Subtransects / Urbanization Score
-POINTS NOT ADDED
-```{r}
-ggarrange(
-  addborder(ggpred_Q2.urbsubs_weev_bin, "defense"),
-  addborder(ggpred_Q2.urbscore_firstpods, "reproduction"),
-  addborder(ggpred_Q2.usc_asclepiadis, "herbivores"),
-  addborder(ggpred_Q2.urbsubs_height_e, "growth") +
-            font("x.text"),
-          ncol = 2,
-          nrow = 2,
-          align = "hv",
-          labels = list("A", "B", "C", "D"),
-          font.label = (size =16),
-          common.legend = T,
-          legend = "top") %T>%
-  plot
-
-dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Q2_urbsubs_urbscore_representative_panels.pdf"),
              width = 10, height = 8)
 ```
