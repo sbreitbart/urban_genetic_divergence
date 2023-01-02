@@ -404,12 +404,12 @@ ggpred_Q2.citydist_clivicollis <-
 ggplot(clivicollis_urbsubs_01_pred) +
       annotation_custom(clivicollis_img,
                     xmin=28, xmax=32,
-                    ymin=0.22, ymax=0.25) +
+                    ymin=0.26, ymax=0.3) +
   labs(x = "Distance to Urban Center (km)",
        y = expression(atop(paste(italic("Labidomera clivicollis "), "Presence"))),
        color = "Transect",
        fill = "Transect") +
-  ylim(NA,0.25) +
+  ylim(NA,0.3) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -422,6 +422,12 @@ dplyr::select(p))),
   ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(herb.tr.m3) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.79,
+                    label = paste0(" D x T: p = ",
+                                   tidy_anova(herb.tr.m3) %>%
+dplyr::filter(Predictor == "Distance to City Center x Subtransect") %>%
 dplyr::select(p))),
                 size = 4.5) 
 
@@ -515,13 +521,13 @@ ggpred_Q2.usc_clivicollis <-
 ggplot(clivicollis_urbsubs_02_pred) +
       annotation_custom(clivicollis_img,
                     xmin=1, xmax=2,
-                    ymin=0.17, ymax=0.2) +
+                    ymin=0.21, ymax=0.25) +
   rep_geoms2 +
   labs(x = "Urbanization Score",
        y = expression(atop(paste(italic("Labidomera clivicollis "), "Presence"))),
        color = "Transect",
        fill = "Transect") +
-  ylim(0,0.2) +
+  ylim(0, 0.25) +
   xlim(4, -2) +
   theme_1() +
 
@@ -534,6 +540,11 @@ dplyr::select(p))),
   ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(herb.tr.m3_u) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+                size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.79,
+                    label = paste0(" U x T: p = ", tidy_anova(herb.tr.m3_u) %>%
+dplyr::filter(Predictor == "Urbanization Score x Subtransect") %>%
 dplyr::select(p))),
                 size = 4.5) 
 

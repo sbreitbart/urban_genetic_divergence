@@ -179,10 +179,8 @@ heights_late_gradient_02_pred <- ggeffects::ggpredict(grow.m4_u,
 ### Urban Subtransects
 ```{r}
 
-grow.tr.m4 <- make_1yrmod_transects(
-  update(heights_late_mods_best_c[[2]],
-         heights_l_cuberoot ~ .),
-  "2021", heights)
+grow.tr.m4_ggpred <- update(grow.tr.m4,
+         heights_l_cuberoot ~ .)
 
 
 grow.tr.m4_u <- make_1yrmod_transects(
@@ -192,7 +190,7 @@ grow.tr.m4_u <- make_1yrmod_transects(
 
 # city_dist
 grow.tr.m4 # cube root transfomred
-heights_late_urbsubs_01_pred <- ggeffects::ggpredict(grow.tr.m4,
+heights_late_urbsubs_01_pred <- ggeffects::ggpredict(grow.tr.m4_ggpred,
                                    terms = c("City_dist", "Transect_ID"),
                                    type = "fe") %>%
   as.data.frame()
@@ -240,12 +238,12 @@ rgr_gradient_02_pred <- ggeffects::ggpredict(grow.m5_u,
 ### Urban Subtransects
 ```{r}
 
-grow.tr.m5 <- make_1yrmod_transects(
+grow.tr.m5_ggpred <- make_1yrmod_transects(
   update(rgr_mods_best_c[[2]],
          rgr_cuberoot ~ .),
   "2021", heights)
 
-grow.tr.m5_u <- make_1yrmod_transects(
+grow.tr.m5_u_ggpred <- make_1yrmod_transects(
   update(rgr_mods_best_u[[2]],
          rgr_cuberoot ~ .),
   "2021", heights)
@@ -789,7 +787,7 @@ ggplot(heights_late_urbsubs_01_pred) +
        y = expression("Height (after flowering) (cm)" ^{1/3}), 
        color = "Transect",
        fill = "Transect") +
-  ylim(NA, 5) +
+  ylim(NA, 6) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -803,6 +801,11 @@ size = 4.5) +
   ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(grow.tr.m4) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.79,
+                    label = paste0(" D x T: p = ", tidy_anova(grow.tr.m4) %>%
+dplyr::filter(Predictor == "Distance to City Center x Subtransect") %>%
 dplyr::select(p))),
 size = 4.5)
 
@@ -854,7 +857,7 @@ ggplot(ramets_early_urbsubs_01_pred) +
        y = expression("Ramets (before flowering) (cm)" ^{1/3}), 
        color = "Transect",
        fill = "Transect") +
-  ylim(NA, 4.5) +
+  ylim(NA, 5.5) +
   xlim(0, NA) +
   theme_1() +
   rep_geoms2 +
@@ -868,6 +871,11 @@ size = 4.5) +
   ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(grow.tr.m6) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.79,
+                    label = paste0(" D x T: p = ", tidy_anova(grow.tr.m6) %>%
+dplyr::filter(Predictor == "Distance to City Center x Subtransect") %>%
 dplyr::select(p))),
 size = 4.5)
 
@@ -899,6 +907,11 @@ size = 4.5) +
   ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(grow.tr.m7) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.79,
+                    label = paste0(" D x T: p = ", tidy_anova(grow.tr.m7) %>%
+dplyr::filter(Predictor == "Distance to City Center x Subtransect") %>%
 dplyr::select(p))),
 size = 4.5)
 
@@ -1176,7 +1189,7 @@ ggplot(mortality_urbsubs_02_pred) +
        y = "Probability of death at\n end of growing season",
        color = "Transect",
        fill = "Transect") +
-  ylim(0, 0.) +
+  ylim(0, 0.6) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
@@ -1190,11 +1203,6 @@ size = 4.5) +
   ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(grow.tr.m8_u) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
-dplyr::select(p))),
-size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.8,
-                    label = paste0(" U x T: p = ", tidy_anova(grow.tr.m8_u) %>%
-dplyr::filter(Predictor == "Urbanization Score x Subtransect") %>%
 dplyr::select(p))),
 size = 4.5)
 

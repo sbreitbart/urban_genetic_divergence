@@ -56,7 +56,7 @@ $heights_l_mods2
 
 $heights_l_mods3
             R2m       R2c
-[1,] 0.08181665 0.1580224
+[1,] 0.08770025 0.1626383
 
 $heights_l_mods4
            R2m       R2c
@@ -92,9 +92,9 @@ trigamma  0.07761698 0.2696855
 
 $ramets_e_mods3
                  R2m       R2c
-delta     0.09179048 0.3045698
-lognormal 0.10057886 0.3337305
-trigamma  0.08233822 0.2732063
+delta     0.09820931 0.3112315
+lognormal 0.10751365 0.3407176
+trigamma  0.08818305 0.2794577
 
 $ramets_e_mods4
                  R2m       R2c
@@ -116,9 +116,9 @@ trigamma  0.1001199 0.2044697
 
 $ramets_l_mods3
                 R2m       R2c
-delta     0.1268688 0.2508546
-lognormal 0.1471268 0.2909102
-trigamma  0.1049962 0.2076064
+delta     0.1334652 0.2573222
+lognormal 0.1545635 0.2979997
+trigamma  0.1106200 0.2132764
 
 $ramets_l_mods4
                 R2m       R2c
@@ -138,11 +138,11 @@ delta       0.03460995 0.07529485
 
 $mortality_mods3
                    R2m        R2c
-theoretical 0.04683176 0.10380479
-delta       0.03851558 0.08537159
+theoretical 0.04229866 0.09742498
+delta       0.03474353 0.08002352
 
 $mortality_mods4
                    R2m        R2c
-theoretical 0.04795962 0.10316274
-delta       0.03943815 0.08483276
+theoretical 0.04251124 0.09709290
+delta       0.03491585 0.07974551
 

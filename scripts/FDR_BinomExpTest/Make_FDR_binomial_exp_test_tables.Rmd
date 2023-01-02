@@ -362,9 +362,15 @@ make_FDR_table <- function(p_val_df){
       "SLA",
     str_detect(Variable, "Total_Height_early")~
       "Height before flowering",
+    str_detect(Variable, "heights_e")~
+      "Height before flowering",
     str_detect(Variable, "Total_Height_late")~
       "Height after flowering",
+    str_detect(Variable, "heights_l")~
+      "Height after flowering",
     str_detect(Variable, "rel_gr")~
+      "Relative growth rate",
+    str_detect(Variable, "rgr")~
       "Relative growth rate",
     str_detect(Variable, "Ramets_early")~
       "Ramets before flowering",

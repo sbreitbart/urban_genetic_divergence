@@ -1,148 +1,196 @@
-$ldmc_mods1
-           R2m        R2c
-[1,] 0.0576286 0.05762861
+$flsucc_mods1
+                   R2m       R2c
+theoretical 0.06656994 0.1556714
+delta       0.03759475 0.0879140
 
-$ldmc_mods2
-            R2m        R2c
-[1,] 0.05562238 0.05571153
+$flsucc_mods2
+                   R2m        R2c
+theoretical 0.06657348 0.15550034
+delta       0.03759343 0.08780962
 
-$ldmc_mods3
-             R2m        R2c
-[1,] 0.007235247 0.02234698
+$flsucc_mods3
+                   R2m        R2c
+theoretical 0.07522948 0.16420588
+delta       0.04267289 0.09314353
 
-$ldmc_mods4
-            R2m        R2c
-[1,] 0.05931749 0.07171907
+$flsucc_mods4
+                   R2m        R2c
+theoretical 0.08528728 0.17419531
+delta       0.04862957 0.09932364
 
-$sla_mods1
-            R2m        R2c
-[1,] 0.04152134 0.04152134
+$flowers_mods1
+                   R2m          R2c
+delta     0.0039000418 0.0054970233
+lognormal 0.0138407061 0.0195081710
+trigamma  0.0004884008 0.0006883902
 
-$sla_mods2
+$flowers_mods2
+                   R2m          R2c
+delta     0.0043447322 0.0055112960
+lognormal 0.0154068095 0.0195435492
+trigamma  0.0005447646 0.0006910343
+
+$flowers_mods3
+                   R2m          R2c
+delta     0.0053059852 0.0059956295
+lognormal 0.0187932736 0.0212359253
+trigamma  0.0006655118 0.0007520116
+
+$flowers_mods4
+                   R2m         R2c
+delta     0.0059311955 0.006142993
+lognormal 0.0210791315 0.021831848
+trigamma  0.0007394056 0.000765809
+
+$flsize_mods1
+            R2m       R2c
+[1,] 0.01912096 0.1292511
+
+$flsize_mods2
+            R2m       R2c
+[1,] 0.02095042 0.1283389
+
+$flsize_mods3
+            R2m       R2c
+[1,] 0.02765555 0.1403944
+
+$flsize_mods4
+            R2m       R2c
+[1,] 0.02743345 0.1397583
+
+$fltime_mods1
+                   R2m         R2c
+delta     0.0023892403 0.002389241
+lognormal 0.0063140972 0.006314099
+trigamma  0.0004969708 0.000496971
+
+$fltime_mods2
+                   R2m          R2c
+delta     0.0024159330 0.0024159343
+lognormal 0.0063853115 0.0063853151
+trigamma  0.0005024031 0.0005024034
+
+$fltime_mods3
+                  R2m          R2c
+delta     0.003590989 0.0035909897
+lognormal 0.009459588 0.0094595890
+trigamma  0.000749259 0.0007492591
+
+$fltime_mods4
+                  R2m         R2c
+delta     0.008627819 0.008627819
+lognormal 0.023217053 0.023217054
+trigamma  0.001715891 0.001715891
+
+$flstart_mods1
+                   R2m          R2c
+delta     7.576756e-05 2.290767e-04
+lognormal 2.057241e-03 6.219891e-03
+trigamma  5.655549e-07 1.709906e-06
+
+$flstart_mods2
+                   R2m          R2c
+delta     7.805720e-05 2.293243e-04
+lognormal 2.119803e-03 6.227769e-03
+trigamma  5.825045e-07 1.711340e-06
+
+$flstart_mods3
+                   R2m          R2c
+delta     8.545388e-05 2.390409e-04
+lognormal 2.281067e-03 6.380848e-03
+trigamma  6.515079e-07 1.822468e-06
+
+$flstart_mods4
+                   R2m          R2c
+delta     8.111130e-05 2.424131e-04
+lognormal 2.181951e-03 6.521082e-03
+trigamma  6.123277e-07 1.830032e-06
+
+$poll_mods1
+           R2m      R2c
+[1,] 0.1325006 0.369799
+
+$poll_mods2
            R2m       R2c
-[1,] 0.0414626 0.0414626
+[1,] 0.1301655 0.3610801
 
-$sla_mods3
-            R2m        R2c
-[1,] 0.04542685 0.04542686
-
-$sla_mods4
+$poll_mods3
            R2m       R2c
-[1,] 0.0474405 0.0474405
+[1,] 0.1318236 0.3782594
 
-$heights_e_mods1
-            R2m       R2c
-[1,] 0.06437278 0.1599894
-
-$heights_e_mods2
-            R2m       R2c
-[1,] 0.06258516 0.1607086
-
-$heights_e_mods3
-            R2m       R2c
-[1,] 0.06490672 0.1635848
-
-$heights_e_mods4
-            R2m       R2c
-[1,] 0.06231013 0.1646728
-
-$heights_l_mods1
-            R2m       R2c
-[1,] 0.08073993 0.1544182
-
-$heights_l_mods2
-            R2m       R2c
-[1,] 0.07929619 0.1544675
-
-$heights_l_mods3
-            R2m       R2c
-[1,] 0.08181665 0.1580224
-
-$heights_l_mods4
+$poll_mods4
            R2m       R2c
-[1,] 0.0792278 0.1581477
+[1,] 0.1303435 0.3723829
 
-$rgr_mods1
-            R2m        R2c
-[1,] 0.01397958 0.02609076
-
-$rgr_mods2
-            R2m        R2c
-[1,] 0.01425419 0.02650454
-
-$rgr_mods3
-            R2m        R2c
-[1,] 0.01603204 0.03088083
-
-$rgr_mods4
-            R2m        R2c
-[1,] 0.01544481 0.03151517
-
-$ramets_e_mods1
-                 R2m       R2c
-delta     0.08971888 0.3005383
-lognormal 0.09836351 0.3294959
-trigamma  0.08043193 0.2694291
-
-$ramets_e_mods2
-                 R2m       R2c
-delta     0.08657539 0.3008122
-lognormal 0.09491356 0.3297837
-trigamma  0.07761698 0.2696855
-
-$ramets_e_mods3
-                 R2m       R2c
-delta     0.09179048 0.3045698
-lognormal 0.10057886 0.3337305
-trigamma  0.08233822 0.2732063
-
-$ramets_e_mods4
-                 R2m       R2c
-delta     0.08717228 0.3051980
-lognormal 0.09551024 0.3343900
-trigamma  0.07820286 0.2737953
-
-$ramets_l_mods1
+$pods_mods1
                 R2m       R2c
-delta     0.1237356 0.2471209
-lognormal 0.1436076 0.2868086
-trigamma  0.1023153 0.2043408
+delta     0.1968474 0.1968474
+lognormal 0.2310183 0.2310183
+trigamma  0.1608239 0.1608239
 
-$ramets_l_mods2
+$pods_mods2
                 R2m       R2c
-delta     0.1210765 0.2472684
-lognormal 0.1405171 0.2869708
-trigamma  0.1001199 0.2044697
+delta     0.1954569 0.1954569
+lognormal 0.2294862 0.2294862
+trigamma  0.1596044 0.1596044
 
-$ramets_l_mods3
+$pods_mods3
                 R2m       R2c
-delta     0.1268688 0.2508546
-lognormal 0.1471268 0.2909102
-trigamma  0.1049962 0.2076064
+delta     0.2325019 0.2325020
+lognormal 0.2695297 0.2695298
+trigamma  0.1928889 0.1928889
 
-$ramets_l_mods4
+$pods_mods4
                 R2m       R2c
-delta     0.1224016 0.2517074
-lognormal 0.1419205 0.2918462
-trigamma  0.1013190 0.2083531
+delta     0.2950086 0.2950086
+lognormal 0.3398879 0.3398879
+trigamma  0.2455267 0.2455267
 
-$mortality_mods1
-                   R2m        R2c
-theoretical 0.04205219 0.09191525
-delta       0.03450346 0.07541568
+$first_pods_mods1
+                 R2m       R2c
+delta     0.05581032 0.6970979
+lognormal 0.05633699 0.7036762
+trigamma  0.05526013 0.6902257
 
-$mortality_mods2
-                   R2m        R2c
-theoretical 0.04218318 0.09177062
-delta       0.03460995 0.07529485
+$first_pods_mods2
+                 R2m       R2c
+delta     0.05315185 0.6979223
+lognormal 0.05365204 0.7044902
+trigamma  0.05262927 0.6910605
 
-$mortality_mods3
-                   R2m        R2c
-theoretical 0.04683176 0.10380479
-delta       0.03851558 0.08537159
+$first_pods_mods3
+                 R2m       R2c
+delta     0.09292000 0.7054424
+lognormal 0.09377247 0.7119144
+trigamma  0.09202896 0.6986777
 
-$mortality_mods4
-                   R2m        R2c
-theoretical 0.04795962 0.10316274
-delta       0.03943815 0.08483276
+$first_pods_mods4
+                 R2m       R2c
+delta     0.06630771 0.7081509
+lognormal 0.06691039 0.7145874
+trigamma  0.06567766 0.7014221
+
+$peduncles_mods1
+                   R2m          R2c
+delta     0.0002950224 0.0032239379
+lognormal 0.0018030732 0.0197035749
+trigamma  0.0000159762 0.0001745843
+
+$peduncles_mods2
+                   R2m          R2c
+delta     3.391895e-04 0.0032165310
+lognormal 2.069077e-03 0.0196210442
+trigamma  1.842074e-05 0.0001746838
+
+$peduncles_mods3
+                 R2m       R2c
+delta     0.03530621 0.3779290
+lognormal 0.04118224 0.4408278
+trigamma  0.02841154 0.3041262
+
+$peduncles_mods4
+                  R2m          R2c
+delta     0.001482032 0.0038069061
+lognormal 0.008719473 0.0223977719
+trigamma  0.000084623 0.0002173717
 

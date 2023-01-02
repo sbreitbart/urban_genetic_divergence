@@ -857,15 +857,11 @@ repr.tr.m2_u <- update(repr.tr.m2_u, .~. - Urb_score:Transect_ID,
 repr.tr.m3_u <- make_1yrmod_transects(flsize_mods_best_u[[2]], "2022", flowering)
 
 AIC(
-  update(repr.tr.m4_u, .~. + Urb_score:Transect_ID,
+  update(repr.tr.m3_u, .~. + Urb_score:Transect_ID,
          data = flowering %>%
            dplyr::filter(Transect_ID != "Rural" & Year == "2022")),
-  repr.tr.m4_u
-  ) %>% as.list() # Full model is best
-
-repr.tr.m3_u <- update(repr.tr.m4_u, .~. + Urb_score:Transect_ID,
-         data = flowering %>%
-           dplyr::filter(Transect_ID != "Rural" & Year == "2022"))
+  repr.tr.m3_u
+  ) %>% as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
 
 # Flowering time-----
 repr.tr.m4_u <- make_1yrmod_transects(fltime_mods_best_u[[2]], "2022", flowering)

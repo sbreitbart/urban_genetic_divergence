@@ -302,26 +302,22 @@ firstpods_gradient_02_pred <- ggeffects::ggpredict(repr.m7_u,
 
 ### Urban Subtransects
 ```{r}
-repr.tr.m7 <- make_1yrmod_transects(
-  update(first_pods_mods_best_c[[2]],
-         first_foll_minus200 ~ .),
-  "2022", flowering)
+repr.tr.m7_ggpred <- update(repr.tr.m7,
+         first_foll_minus200 ~ .)
 
-repr.tr.m7_u <- make_1yrmod_transects(
-  update(first_pods_mods_best_u[[2]],
-         first_foll_minus200 ~ .),
-  "2022", flowering)
+repr.tr.m7_u_ggpred <- update(repr.tr.m7_u,
+         first_foll_minus200 ~ .)
 
 # city_dist
 repr.tr.m7 # -200
-firstpods_urbsubs_01_pred <- ggeffects::ggpredict(repr.tr.m7 ,
+firstpods_urbsubs_01_pred <- ggeffects::ggpredict(repr.tr.m7_ggpred ,
                                    terms = c("City_dist", "Transect_ID"),
                                    type = "fe") %>%
   as.data.frame()
 
 # urb_score
 repr.tr.m7_u # -200
-firstpods_urbsubs_02_pred <- ggeffects::ggpredict(repr.tr.m7_u ,
+firstpods_urbsubs_02_pred <- ggeffects::ggpredict(repr.tr.m7_u_ggpred ,
                                    terms = c("Urb_score", "Transect_ID"),
                                    type = "fe")
 ```
@@ -959,6 +955,12 @@ size = 4.5) +
                     label = paste0(" Transect: p = ", tidy_anova(repr.tr.m6) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.79,
+                    label = paste0(" D x T: p = ",
+                                   tidy_anova(repr.tr.m6) %>%
+dplyr::filter(Predictor == "Distance to City Center x Subtransect") %>%
+dplyr::select(p))),
 size = 4.5)
 
 ggpred_Q2.citydist_pods
@@ -1046,7 +1048,7 @@ ggplot(flsucc_urbsubs_02_pred) +
        y = "Flowering success",
        color = "Transect",
        fill = "Transect") +
-  ylim(NA, 0.5) +
+  ylim(0, 0.8) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
@@ -1059,6 +1061,11 @@ dplyr::select(p))),
 size = 4.5) +
   ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(repr.tr.m1_u) %>%
+dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.79,
+                    label = paste0(" U x T: p = ", tidy_anova(repr.tr.m1_u) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
 size = 4.5)
@@ -1144,7 +1151,7 @@ ggplot(fltime_urbsubs_02_pred) +
        y = "Flowering duration (days)",
        color = "Transect",
        fill = "Transect") +
- ylim(5, 22) +
+ ylim(0, 50) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
@@ -1158,6 +1165,11 @@ size = 4.5) +
   ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.88,
                     label = paste0(" Transect: p = ", tidy_anova(repr.tr.m4_u) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
+dplyr::select(p))),
+size = 4.5) +
+  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.79,
+                    label = paste0(" U x T: p = ", tidy_anova(repr.tr.m4_u) %>%
+dplyr::filter(Predictor == "Urbanization Score x Subtransect") %>%
 dplyr::select(p))),
 size = 4.5)
 
@@ -1177,7 +1189,7 @@ ggplot(flstart_urbsubs_02_pred) +
        y = "Days to first flower\n (Day 0 = June 20)",
        color = "Transect",
        fill = "Transect") +
-  ylim(NA, 32.5) +
+  ylim(NA, 25) +
   xlim(4, -2) +
   theme_1() +
   rep_geoms2 +
