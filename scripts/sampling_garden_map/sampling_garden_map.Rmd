@@ -36,7 +36,8 @@ sites %<>%
           .) %T>% view
 ```
 
-# Make large map
+# Map 1: Without urbanization scores shown
+## Make large map
 ```{r}
 # Make basemap of sampling sites-----
 mylocation <- c(-80.19, 43.2, -79.2, 43.81)
@@ -151,7 +152,7 @@ dev.copy2pdf(file = here::here("./Figures_Tables/map/map_noinset.pdf"),
              width = 7, height = 5)
 ```
 
-# Create inset of point in North America
+## Create inset of point in North America
 ```{r}
 
 mylocation_inset <- c(-87, 40, -72, 47)
@@ -189,7 +190,7 @@ map1_inset
 
 ```
 
-# Add inset to larger map
+## Add inset to larger map
 ```{r}
 # First, move scale bar and north arrow from larger map
 map1_large <- base_map_full +
@@ -277,6 +278,220 @@ ggsn::north2(full,
 
 # Export
 dev.copy2pdf(file = here::here("./Figures_Tables/map/map_inset.pdf"),
+             width = 7, height = 5)
+
+```
+
+# Map 2: With urbanization scores shown
+## Make large map
+```{r}
+
+map1 <- base_map +
+  geom_point(data = sites,
+             mapping = aes(x = Longitude, y = Latitude,
+                           fill=Urb_score, shape=Transect),
+             color = "black", size=3) +
+  labs(x = 'Longitude', y = 'Latitude') +
+  ggsn::scalebar(x.min = -80.19, x.max = -79.25,
+           y.min = 43.25, y.max = 43.8,
+           dist = 10, dist_unit = "km",
+           st.bottom = FALSE, st.color = "black",
+           transform = TRUE, model = 'WGS84',
+           st.dist=.03) +
+  theme(legend.position = c(0.75, 0.35),
+        legend.background = element_rect(fill = "white",colour = "black"),
+        legend.box.margin = margin(6, 6, 6, 6),
+        legend.text = element_text(size=12),
+        legend.title = element_text(size = 14),
+        axis.text=element_text(size=12),
+        axis.title=element_text(size=14)) +
+  scale_shape_manual(values = c(23,24,21),
+                     breaks = c("North", "South", "Rural"),
+                     labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
+                     name = "Sample Site Subtransect")  +
+  scale_fill_gradient(low = "white", high = "dark red",
+                      breaks=c(-4, -2, 0, 2, 4),
+                      labels=c("-4 (Rural)", -2, 0, 2, "4 (Urban)"),
+                      limits=c(-4, 4),
+                      name = "Urbanization Score"
+                      ) +
+  guides(fill = guide_colorbar(title = "Urbanization Score",
+                               # label.position = "top",
+                               title.position = "top",
+                               # title.vjust = 1,
+                               # draw border around the legend
+                               frame.colour = "black",
+                               frame.linewidth = 1.5,
+                               barwidth = 1,
+                               barheight = 5)) 
+
+
+north2(map1, x = .59, y = .2, scale = 0.11, symbol = 1)
+
+
+
+# widen and add KSR pin-----
+map1_wider <- base_map_full +
+  geom_point(data = sites,
+             mapping = aes(x = Longitude, y = Latitude,
+                           fill=Urb_score, shape=Transect),
+             color = "black", size=3) + 
+  
+  # Add KSR point
+  geom_label_repel(data = KSR_point,
+    aes(lat, long),
+    label = "Koffler Scientific\n Reserve",
+     nudge_x = 0.18,
+     nudge_y = -0.08,
+    size = 4 ,
+    fontface = "italic",
+    segment.color = 'gray'
+   ) +
+  
+  geom_star(data = KSR_point, 
+             mapping = aes(x = lat, y = long),
+             color = "black", fill = "orangered",
+             size = 5 ) +
+
+  labs(x = 'Longitude', y = 'Latitude') +
+
+  ggsn::scalebar(x.min = -80.3, x.max = -79.85,
+           y.min = 44.05, y.max = 44.1,
+           height = 0.4, st.dist= 0.5,
+           dist = 15, dist_unit = "km",
+           st.bottom = TRUE, st.color = "black",
+           st.size = 4,
+           transform = TRUE, model = 'WGS84'
+           ) +
+  theme(#legend.position = c(0.32, 0.65),
+        legend.position = c(0.75, 0.15),
+        legend.background = element_rect(fill = "white",colour = "black"),
+        legend.box.margin = margin(4,4,4,4),
+        legend.text = element_text(size=11),
+        legend.title = element_text(size = 12),
+        axis.text=element_text(size=12),
+        axis.title=element_text(size=12)) +
+   scale_shape_manual(values = c(23,24,21),
+                     breaks = c("North", "South", "Rural"),
+                     labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
+                     name = "Sample Site Subtransect")  +
+  scale_fill_gradient(low = "white", high = "dark red",
+                      breaks=c(-4, -2, 0, 2, 4),
+                      labels=c("-4 (Rural)", -2, 0, 2, "4 (Urban)"),
+                      limits=c(-4, 4),
+                      name = "Urbanization Score"
+                      ) +
+  guides(fill = guide_colorbar(title = "Urbanization Score",
+                               # label.position = "top",
+                               title.position = "top",
+                               # title.vjust = 1,
+                               # draw border around the legend
+                               frame.colour = "black",
+                               frame.linewidth = 1.5,
+                               barwidth = 1,
+                               barheight = 5))
+ map1_wider
+
+
+ggsn::north2(map1_wider, x = .29, y = .8,
+       scale = 0.11, symbol = 1)
+
+
+# Export
+dev.copy2pdf(file = here::here("./Figures_Tables/map/map_noinset_USC.pdf"),
+             width = 7, height = 5)
+```
+
+## Add inset to larger map
+```{r}
+# First, move scale bar and north arrow from larger map
+map1_large <- base_map_full +
+  geom_point(data = sites,
+             mapping = aes(x = Longitude, y = Latitude,
+                           fill=Urb_score, shape=Transect),
+             color = "black", size=3) + 
+  
+  # Add KSR point
+  geom_text_repel(data = KSR_point,
+    aes(lat, long),
+    label = "Koffler Scientific\n Reserve",
+     nudge_x = 0.22,
+     nudge_y = -0.02,
+    size = 4 ,
+    color = "gray18",
+    fontface = "bold",
+    segment.color = 'gray'
+   ) +
+  
+    geom_star(data = KSR_point, 
+             mapping = aes(x = lat, y = long),
+             color = "gray26", fill = "forestgreen",
+             size = 6.5) +
+  
+  labs(x = 'Longitude', y = 'Latitude') +
+
+  ggsn::scalebar(x.min = -80.2, x.max = -79.8,
+           y.min = 43.24, y.max = 43.28,
+           height = 0.4, st.dist= 0.5,
+           dist = 15, dist_unit = "km",
+           st.bottom = TRUE, st.color = "black",
+           st.size = 4,
+           transform = TRUE, model = 'WGS84'
+           ) +
+  theme(legend.position = c(0.24, 0.68),
+        legend.background = element_rect(fill = "white",
+                                         colour = "grey30"),
+        legend.box.margin = margin(0,0,0,0),
+        legend.text = element_text(size=10.5),
+        legend.title = element_text(size = 11),
+        axis.text=element_text(size=12),
+        axis.title=element_text(size=12)) +
+   scale_shape_manual(values = c(23,24,21),
+                     breaks = c("North", "South", "Rural"),
+                     labels = c("Urban: Non-Corridor", "Urban: Corridor", "Rural"),
+                     name = "Sample Site Subtransect")  +
+  scale_fill_gradient(low = "white", high = "dark red",
+                      breaks=c(-4, -2, 0, 2, 4),
+                      labels=c("-4 (Rural)", -2, 0, 2, "4 (Urban)"),
+                      limits=c(-4, 4),
+                      name = "Urbanization Score"
+                      ) +
+  guides(fill = guide_colorbar(title = "Urbanization Score",
+                               # label.position = "top",
+                               title.position = "top",
+                               # title.vjust = 1,
+                               # draw border around the legend
+                               frame.colour = "black",
+                               frame.linewidth = 1.5,
+                               barwidth = 1,
+                               barheight = 5)) + 
+  guides(shape = guide_legend(order = 2),
+         col = guide_legend(order = 1))
+
+map1_large
+
+# then add inset to larger map
+full <- map1_large +
+    ggmap::inset(ggplotGrob(map1_inset),
+        # xmin = -79.75,
+        # xmax = -80.25,
+        # ymin = 43.8,
+        # ymax = 44.1 
+        xmin = -79.15,
+        xmax = -79.65,
+        ymin = 43.5,
+        ymax = 43.22 
+        ) 
+
+ggsn::north2(full, 
+         #    x = .29, y = .25,
+             x = .26, y = .15,
+       scale = 0.09, symbol = 3)
+
+
+
+# Export
+dev.copy2pdf(file = here::here("./Figures_Tables/map/map_inset_USC.pdf"),
              width = 7, height = 5)
 
 ```
