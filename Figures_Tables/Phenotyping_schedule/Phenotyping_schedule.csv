@@ -17,5 +17,5 @@ Mean flower size,Reproduction,, X         , X         , X
 Pollinaria removed,Reproduction,, X         , X         , X         
 No. follicles,Reproduction,, X         , X         , X         
 No. inflorescences,Reproduction,, X         , X         , X         
-Date of first flower,,, X         , X         , X         
-"Date of first 2"" follicle",,, X         , X         , X         
+Date of first flower,Reproduction,, X         , X         , X         
+"Date of first 2"" follicle",Reproduction,, X         , X         , X         

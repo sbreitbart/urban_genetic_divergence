@@ -1,12 +1,7 @@
-
-* Herbivore surveys were done twice: Once in July, once in August.
 * The species observed are in the column names. The only species with two columns was the Monarch butterfly:
     + one column for Monarchs that had been on the plant in the past ("mean_Monarch_Quantity_Past") and which refers to empty chrysalis, empty eggs, and chrysalis with a dead butterfly inside, and
     + one column for alive Monarchs present on the plant itself ("mean_Monarch_Quantity_Observed") and which refers to all other Monarch forms (caterpillars, eggs, chrysalises with insects still inside)
-* Monarchs notwithstanding, dead herbivores were not counted in the surveys. After Hellinger transformation, though, the mean_Monarch_Quantity_Past column had been converted to all 0's.
-* Environmental variables are as follows:
-    + To quantify urbanization, both distance from the city center and urbanization score were used, separately.
-    + Transect was also used as a variable when analyzing the urban sites ONLY (i.e. excluding rural sites).
+* Monarchs notwithstanding, dead herbivores were not counted in the surveys.
 
 # Set up notebook
 ## Load libraries & functions

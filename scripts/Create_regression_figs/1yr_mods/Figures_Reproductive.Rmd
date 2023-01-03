@@ -384,12 +384,12 @@ ggpred_Q1.citydist_flsucc
 
 
 
-# Mean flowers/inflorescence-----
+# Flowers per inflorescence-----
 ggpred_Q1.citydist_flowers <- 
 ggplot(flowers_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = "Mean flowers/infloresence") +
+       y = "Flowers per inflorescence") +
   ylim(15, 45) +
   theme_1() +
   
@@ -448,7 +448,7 @@ ggpred_Q1.citydist_flstart <-
 ggplot(flstart_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = "Days to first flower\n (Day 0 = June 20)") +
+       y = "Date of first flower\n (Day 0 = June 20)") +
  # ylim(NA, 22) +
   theme_1() +
   
@@ -507,7 +507,7 @@ ggpred_Q1.citydist_firstpods <-
 ggplot(firstpods_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = "Days to first follicle\n (Day 0 = July 20)") +
+       y = "Date of first follicle\n (Day 0 = July 20)") +
   ylim(8, 18) +
   theme_1() +
   
@@ -564,12 +564,12 @@ ggpred_Q1.urbscore_flsucc
 
 
 
-# Mean flowers/infloresence-----
+# Flowers per inflorescence-----
 ggpred_Q1.urbscore_flowers <- 
 ggplot(flowers_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
-       y = "Mean flowers/infloresence") +
+       y = "Flowers per inflorescence") +
  ylim(15, NA) +
     xlim(4, -4) +
   theme_1() +
@@ -632,7 +632,7 @@ ggpred_Q1.urbscore_flstart <-
 ggplot(flstart_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
-       y = "Days to first flower\n (Day 0 = June 20)") +
+       y = "Date of first flower\n (Day 0 = June 20)") +
  ylim(14, 22) +
     xlim(4, -4) +
   theme_1() +
@@ -694,7 +694,7 @@ ggpred_Q1.urbscore_firstpods <-
 ggplot(firstpods_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
-       y = "Days to first follicle\n (Day 0 = July 20)") +
+       y = "Date of first follicle\n (Day 0 = July 20)") +
  ylim(9, 16) +
     xlim(4, -4) +
   theme_1() +
@@ -765,7 +765,7 @@ size = 4.5)
 ggpred_Q2.citydist_succ
 
 
-# Mean flowers/infloresence-----
+# Flowers per inflorescence-----
 ## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
 flowers_urbsubs_01_pred$group <- factor(flowers_urbsubs_01_pred$group,
                                    levels(flowers_urbsubs_01_pred$group)[c(2,1)])
@@ -774,7 +774,7 @@ levels(flowers_urbsubs_01_pred$group)
 ggpred_Q2.citydist_flowers <-
 ggplot(flowers_urbsubs_01_pred) +
   labs(x = "Distance to Urban Center (km)",
-       y = "Mean flowers/infloresence",
+       y = "Flowers per inflorescence",
        color = "Transect",
        fill = "Transect") +
   ylim(10, 50) +
@@ -872,7 +872,7 @@ levels(flstart_urbsubs_01_pred$group)
 ggpred_Q2.citydist_flstart <-
 ggplot(flstart_urbsubs_01_pred) +
   labs(x = "Distance to Urban Center (km)",
-       y = "Days to first flower\n (Day 0 = June 20)",
+       y = "Date of first flower\n (Day 0 = June 20)",
        color = "Transect",
        fill = "Transect") +
   ylim(12, 24.5) +
@@ -976,7 +976,7 @@ levels(firstpods_urbsubs_01_pred$group)
 ggpred_Q2.citydist_firstpods <-
 ggplot(firstpods_urbsubs_01_pred) +
   labs(x = "Distance to Urban Center (km)",
-       y = "Days to first follicle\n (Day 0 = July 20)",
+       y = "Date of first follicle\n (Day 0 = July 20)",
        color = "Transect",
        fill = "Transect") +
   ylim(5, 20) +
@@ -1073,7 +1073,7 @@ size = 4.5)
 ggpred_Q2.urbsubs_flsucc
 
 
-# Mean flowers/infloresence-----
+# Flowers per inflorescence-----
 ## factors (transects) for this object are North, then South. To keep legend consistent, reorder levels first
 flowers_urbsubs_02_pred$group <- factor(flowers_urbsubs_02_pred$group,
                                    levels(flowers_urbsubs_02_pred$group)[c(2,1)])
@@ -1083,7 +1083,7 @@ levels(flowers_urbsubs_02_pred$group)
 ggpred_Q2.urbsubs_flowers <-
 ggplot(flowers_urbsubs_02_pred) +
   labs(x = "Urbanization Score",
-       y = "Mean flowers/infloresence",
+       y = "Flowers per inflorescence",
        color = "Transect",
        fill = "Transect") +
 #  ylim(35, 55) +
@@ -1186,7 +1186,7 @@ levels(flstart_urbsubs_02_pred$group)
 ggpred_Q2.urbsubs_flstart <-
 ggplot(flstart_urbsubs_02_pred) +
   labs(x = "Urbanization Score",
-       y = "Days to first flower\n (Day 0 = June 20)",
+       y = "Date of first flower\n (Day 0 = June 20)",
        color = "Transect",
        fill = "Transect") +
   ylim(NA, 25) +
@@ -1294,7 +1294,7 @@ levels(firstpods_urbsubs_02_pred$group)
 ggpred_Q2.urbscore_firstpods <-
 ggplot(firstpods_urbsubs_02_pred) +
   labs(x = "Urbanization Score",
-       y = "Days to first follicle\n (Day 0 = July 20)",
+       y = "Date of first follicle\n (Day 0 = July 20)",
        color = "Transect",
        fill = "Transect") +
   ylim(NA, 28) +

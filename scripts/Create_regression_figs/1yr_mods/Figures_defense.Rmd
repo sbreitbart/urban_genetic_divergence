@@ -331,7 +331,7 @@ ggpred_Q1.citydist_latex
 ggpred_Q1.citydist_herb_e_bin <- ggplot(herb_e_bin_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = "Chance of herbivory \n (before flowering)") +
+       y = "Herbivory before flowering  \n (binary)") +
     scale_y_continuous(labels = scales::percent_format(
     scale = 100,
     accuracy = 1)
@@ -375,7 +375,7 @@ ggpred_Q1.citydist_herb_e_quant
 ggpred_Q1.citydist_herb_l_bin <- ggplot(herb_l_bin_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = "Chance of herbivory \n (after flowering)") +
+       y = "Herbivory after flowering  \n (binary)") +
     scale_y_continuous(labels = scales::percent_format(
     scale = 100,
     accuracy = 1),
@@ -418,7 +418,7 @@ ggpred_Q1.citydist_herb_l_quant
 ggpred_Q1.citydist_weev_bin <- ggplot(weev_b_gradient_01_pred) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = "Chance of weevil damage") +
+       y = "Weevil damage (binary)") +
     scale_y_continuous(labels = scales::percent_format(
     scale = 100,
     accuracy = 1),
@@ -484,7 +484,7 @@ ggpred_Q1.urbscore_herb_e_bin <- ggplot(herb_e_bin_gradient_02_pred) +
   rep_geoms +
       xlim(4, -4) +
 labs(x = "Urbanization Score",
-       y = "Chance of herbivory \n (before flowering)") +
+       y = "Herbivory before flowering  \n (binary)") +
     scale_y_continuous(labels = scales::percent_format(
     scale = 100,
     accuracy = 1),
@@ -530,7 +530,7 @@ ggpred_Q1.urbscore_herb_l_bin <- ggplot(herb_l_bin_gradient_02_pred) +
   rep_geoms +
       xlim(4, -4) +
 labs(x = "Urbanization Score",
-       y = "Chance of herbivory \n (after flowering)") +
+       y = "Herbivory after flowering  \n (binary)") +
     scale_y_continuous(labels = scales::percent_format(
     scale = 100,
     accuracy = 1),
@@ -574,7 +574,7 @@ ggpred_Q1.urbscore_herb_l_quant
 ggpred_Q1.urbscore_weev_bin <- ggplot(weev_b_gradient_02_pred) +
   rep_geoms +
   labs(x = "Urbanization Score",
-       y = "Chance of weevil damage") +
+       y = "Weevil damage (binary)") +
     xlim(4, -4) +
     scale_y_continuous(labels = scales::percent_format(
     scale = 100,
@@ -661,7 +661,7 @@ ggpred_Q2.citydist_herb_e_bin <-
 ggplot(herb_e_bin_urbsubs_01_pred) +
   rep_geoms2 +
   labs(x = "Distance to Urban Center (km)",
-       y = "Chance of herbivory \n (before flowering)",
+       y = "Herbivory before flowering  \n (binary)",
        color = "Transect",
        fill = "Transect") +
   scale_y_continuous(labels = scales::percent_format(
@@ -736,7 +736,7 @@ ggpred_Q2.citydist_herb_l_bin <-
 ggplot(herb_l_bin_urbsubs_01_pred) +
   rep_geoms2 +
   labs(x = "Distance to Urban Center (km)",
-       y = "Chance of herbivory \n (after flowering)",
+       y = "Herbivory after flowering  \n (binary)",
        color = "Transect",
        fill = "Transect") +
   scale_y_continuous(labels = scales::percent_format(
@@ -806,7 +806,7 @@ ggpred_Q2.citydist_weev_bin <-
 ggplot(weev_bin_urbsubs_01_pred) +
   rep_geoms2 +
   labs(x = "Distance to Urban Center (km)",
-       y = "Chance of weevil damage",
+       y = "Weevil damage (binary)",
        color = "Transect",
        fill = "Transect") +
   scale_y_continuous(labels = scales::percent_format(
@@ -918,7 +918,7 @@ ggpred_Q2.urbsubs_herb_e_bin <-
 ggplot(herb_e_bin_urbsubs_02_pred) +
   rep_geoms2 +
   labs(x = "Urbanization Score",
-       y = "Chance of herbivory \n (before flowering)",
+       y = "Herbivory before flowering  \n (binary)",
        color = "Transect",
        fill = "Transect") +
   scale_y_continuous(labels = scales::percent_format(
@@ -988,7 +988,7 @@ ggpred_Q2.urbsubs_herb_l_bin <-
 ggplot(herb_l_bin_urbsubs_02_pred) +
   rep_geoms2 +
   labs(x = "Urbanization Score",
-       y = "Chance of herbivory \n (after flowering)",
+       y = "Herbivory after flowering  \n (binary)",
        color = "Transect",
        fill = "Transect") +
   scale_y_continuous(labels = scales::percent_format(
@@ -1063,7 +1063,7 @@ ggpred_Q2.urbsubs_weev_bin <-
 ggplot(weev_bin_urbsubs_02_pred) +
   rep_geoms2 +
   labs(x = "Urbanization Score",
-       y = "Chance of weevil damage",
+       y = "Weevil damage (binary)",
        color = "Transect",
        fill = "Transect") +
   scale_y_continuous(labels = scales::percent_format(

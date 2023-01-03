@@ -103,29 +103,6 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Q1_grad_ci
 ```
 
 
-## Gradient / Urbanization Score
-POINTS NOT ADDED
-```{r}
-ggarrange(
-  addborder(ggpred_Q1.urbscore_weev_bin, "defense"),
-  addborder(ggpred_Q1.urbscore_firstpods, "reproduction"),
-  addborder(ggpred_Q1.usc_asclepiadis, "herbivores"),
-  addborder(ggpred_Q1.urbscore_height_e, "growth") +
-            font("x.text"),
-          ncol = 2,
-          nrow = 2,
-          align = "hv",
-          labels = list("A", "B", "C", "D"),
-          font.label = (size =16),
-          common.legend = T,
-          legend = "top") %T>%
-  plot
-
-
-dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Q1_grad_urbscore_representative_panels.pdf"),
-             width = 10, height = 8)
-```
-
 ## Urb Subtransects / City_dist
 ### Add points (family means)
 ```{r}
