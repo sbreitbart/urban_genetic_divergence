@@ -1,0 +1,29 @@
+﻿Trait,Dist_Q1,Dist_Q2,Usc_Q1,Usc_Q2
+Height before flowering,Cube root,Cube root,Cube root,Cube root
+Height after flowering,Cube root,Cube root,Cube root,Cube root
+LDMC,sqrt(x),sqrt(x),sqrt(x),log(x)
+Mortality,-,-,-,-
+Ramets before flowering,-,-,-,-
+Ramets after flowering,-,-,-,-
+Relative growth rate,Cube root,Cube root,Cube root,Cube root
+SLA,log(x + 1),log(x + 1),log(x + 1),log(x + 1)
+Danaus plexippus abundance,-,-,-,-
+Labidomera clivicollis abundance,-,-,-,-
+Liriomyza asclepiadis abundance,-,-,-,-
+Herbivory before flowering (binary),-,-,-,-
+Herbivory before flowering (quantitative),log(x),log(x),log(x),log(x)
+Herbivory after flowering (binary),-,-,-,-
+Herbivory after flowering (quantitative),log(x),log(x),log(x),log(x)
+Latex exudation,Cube root,Cube root,Cube root,Cube root
+Weevil damage (binary),-,-,-,-
+Weevil damage (quantitative),log(x),log(x),log(x),log(x)
+Date of first flower,x - 170,x - 170,x - 170,x - 170
+Date of first follicle,x - 170,x - 170,x - 170,x - 170
+Flower size,-,-,-,-
+Flowering duration,-,-,-,-
+Flowering success,-,-,-,-
+Follicles,-,-,-,-
+Inflorescences,-,-,x^2,-
+Flowers per inflorescence,-,-,-,-
+Pollinaria removed,sqrt(x),sqrt(x),sqrt(x),sqrt(x)
+Cardenolides,-,-,-,-

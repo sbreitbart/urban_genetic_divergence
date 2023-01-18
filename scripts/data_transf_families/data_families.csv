@@ -1,0 +1,29 @@
+﻿Trait,Dist_Q1,Dist_Q2,Usc_Q1,Usc_Q2
+Height before flowering,-,-,-,-
+Height after flowering,-,-,-,-
+LDMC,-,-,-,-
+Mortality,Binomial,Binomial,Binomial,Binomial
+Ramets before flowering,Poisson,Poisson,Poisson,Poisson
+Ramets after flowering,Poisson,Poisson,Poisson,Poisson
+Relative growth rate,-,-,-,-
+SLA,-,-,-,-
+Danaus plexippus abundance,Negative binomial,Negative binomial,Negative binomial,Negative binomial
+Labidomera clivicollis abundance,Negative binomial,Negative binomial,Negative binomial,Negative binomial
+Liriomyza asclepiadis abundance,Negative binomial,Negative binomial,Negative binomial,Negative binomial
+Herbivory before flowering (binary),Binomial,Binomial,Binomial,Binomial
+Herbivory before flowering (quantitative),-,-,-,-
+Herbivory after flowering (binary),Binomial,Binomial,Binomial,Binomial
+Herbivory after flowering (quantitative),-,-,-,-
+Latex exudation,-,-,-,-
+Weevil damage (binary),Binomial,Binomial,Binomial,Binomial
+Weevil damage (quantitative),-,-,-,-
+Date of first flower,Negative binomial,Negative binomial,Negative binomial,Negative binomial
+Date of first follicle,Poisson,Poisson,Poisson,Poisson
+Flower size,-,-,-,-
+Flowering duration,Negative binomial,Negative binomial,Negative binomial,Negative binomial
+Flowering success,Binomial,Binomial,Binomial,Binomial
+Follicles,Negative binomial,Negative binomial,Negative binomial,Negative binomial
+Inflorescences,Negative binomial,Negative binomial,Negative binomial,Negative binomial
+Flowers per inflorescence,Negative binomial,Negative binomial,Negative binomial,Negative binomial
+Pollinaria removed,-,-,-,-
+Cardenolides,-,-,-,-
