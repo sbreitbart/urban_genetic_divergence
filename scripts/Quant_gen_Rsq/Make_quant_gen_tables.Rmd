@@ -210,14 +210,16 @@ resid_var <- update(
     sigma()
 
 flsucc_mean <- reproduc %>%
-  dplyr::summarize(Mean = mean(Flowered ,
+  dplyr::summarize(Mean = mean(as.numeric(Flowered) + 0.00000000001 ,
                                na.rm = T)) %>%
-  as.numeric() # can't calculate this because it's 0s x 1s... will be 0
+  as.numeric() # can't calculate this because it's 0s x 1s... will be 0, so adding a tiny number to increase it above 0 for an estimate
+
+
 
 qg_flsucc <- calc_quantgenvars( 0.70759 ,
                    0.54422 ,
                    resid_var,
-                   NA,
+                   flsucc_mean,
                    "Flowering success")
 
 
@@ -875,15 +877,15 @@ resid_var <- update(
 
 flsucc_mean <- reproduc %>%
   dplyr::filter(Year == 2022) %>%
-  dplyr::summarize(Mean = mean(Flowered ,
+  dplyr::summarize(Mean = mean(as.numeric(Flowered) + 0.00000000001 ,
                                na.rm = T)) %>%
-  as.numeric() # can't calculate this because it's 0s x 1s... will be 0
+  as.numeric() # can't calculate this because it's 0s x 1s... will be 0, so adding a tiny number to increase it above 0 for an estimate
 
 qg_1yr_flsucc <- calc_quantgenvars(
                    0.25975  ,
                    0.51146  ,
                    resid_var,
-                   NA,
+                   flsucc_mean,
                    "Flowering success")
 
 

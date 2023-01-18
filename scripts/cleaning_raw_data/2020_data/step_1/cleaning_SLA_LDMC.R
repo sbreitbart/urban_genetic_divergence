@@ -64,6 +64,10 @@ str(repeats)
 sla_ldmc %<>%
   anti_join(., repeats)
 
+# change 0 values to NA since these leaves don't have photographs
+sla_ldmc %<>%
+  dplyr::mutate_at("SLA", ~na_if(., 0))
+
 #-------------------
 # Export to new csv
 #-------------------

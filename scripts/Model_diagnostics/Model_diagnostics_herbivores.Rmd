@@ -43,6 +43,20 @@ str(herbivores_all)
 herbivores <- herbivores_all %>%
   dplyr::select(c(1:7, 10, 13, 19, 22:Surveyor))%>%
   dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
+
+# Take mean of two sampling events
+herbivores %<>%
+  dplyr::group_by(Population, Row, Column, Block, Family, Replicate, Year) %>%
+  dplyr::summarise(Monarch_Quantity_Observed = mean(Monarch_Quantity_Observed, na.rm = T),
+                   Liriomyza_asclepiadis = mean(Liriomyza_asclepiadis, na.rm = T),
+                   Labidomera_clivicollis = mean(Labidomera_clivicollis, na.rm = T),
+                   Transect_ID = first(Transect_ID),
+                   City_dist = first(City_dist),
+                   Urb_Rur = first(Urb_Rur),
+                   Urb_score = first(Urb_score),
+                   Fam_uniq = first(Fam_uniq))
+                   
+  
 ```
 
 # Diagnostics
@@ -54,11 +68,10 @@ monarch_gr_city_m1 <- glmmTMB(Monarch_Quantity_Observed ~
                                 Block +
                                 (1|Population/Family) +
                                 Year +
-                                Sample +
                                 City_dist,
               data = herbivores,
               family = nbinom2,
-              REML = F) # may be an outlier, but it's biologically relevant. And anova result doesn't change if it's included or excluded.
+              REML = F) 
 
 # performance::check_model(monarch_gr_city_m1) # looks fine
 # car::Anova(monarch_gr_city_m1)
@@ -68,7 +81,6 @@ monarch_gr_city_m1 <- glmmTMB(Monarch_Quantity_Observed ~
 # gxe_test_mon1 <- glmmTMB(Monarch_Quantity_Observed ~
 #                                 (1|Population/Family) +
 #                                 Year +
-#                                 Sample +
 #                                 City_dist*Block,
 #               data = herbivores,
 #               family = nbinom2,
@@ -85,7 +97,6 @@ monarch_gr_usc_m1 <- glmmTMB(Monarch_Quantity_Observed ~
                                 Block +
                                 (1|Population/Family) +
                                 Year +
-                                Sample +
                                 Urb_score,
               data = herbivores,
               family = nbinom2,
@@ -98,7 +109,6 @@ monarch_gr_usc_m1 <- glmmTMB(Monarch_Quantity_Observed ~
 # gxe_test_mon2 <- glmmTMB(Monarch_Quantity_Observed ~
 #                                 (1|Population/Family) +
 #                                 Year +
-#                                 Sample +
 #                                 Urb_score*Block,
 #               data = herbivores,
 #               family = nbinom2,
@@ -117,7 +127,6 @@ monarch_urbsubs_city_m1 <- glmmTMB(Monarch_Quantity_Observed ~
                                 Block +
                                 (1|Population/Family) +
                                 Year +
-                                Sample +
                                 City_dist * Transect_ID,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
@@ -128,11 +137,11 @@ monarch_urbsubs_city_m1 <- glmmTMB(Monarch_Quantity_Observed ~
 
 
 # MAIN EFFECTS MODEL
+# this won't converge unless I remove both block and year
 monarch_urbsubs_city_m2 <- glmmTMB(Monarch_Quantity_Observed ~
-                                Block +
+                          #      Block +
                                 (1|Population/Family) +
-                                Year +
-                                Sample +
+                         #       Year +
                                 City_dist + Transect_ID,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
@@ -141,24 +150,26 @@ monarch_urbsubs_city_m2 <- glmmTMB(Monarch_Quantity_Observed ~
 
 # performance::check_model(monarch_urbsubs_city_m2) # looks fine
 
+# Makes sense that m2 is better because it has three fewer effects in it, but this anova also confirms that there's no interaction between city_dist and transect, so I'll use the reduced model as the best one.
+# car::Anova(monarch_urbsubs_city_m1, type = "III")
 # AIC(monarch_urbsubs_city_m1,
-#     monarch_urbsubs_city_m2) # m2 better but <2 AIC apart
+#     monarch_urbsubs_city_m2) # m2 better
 
 
 # # test for gxe
 # gxe_test_mon3 <- glmmTMB(Monarch_Quantity_Observed ~
-#                                 Block*City_dist +
+#                                 Block:City_dist +
 #                                 (1|Population/Family) +
-#                                 Year +
-#                                 Sample +
-#                                 City_dist * Transect_ID,
+#                             #    Year +
+#                                 City_dist + Transect_ID,
 #               data = herbivores %>%
 #                 dplyr::filter(Transect_ID != "Rural"),
 #               family = nbinom2,
-#               REML = F) 
+#               REML = F)
 # 
-# test_gxe(gxe_test_mon3, monarch_urbsubs_city_m1) # stat equiv
-# car::Anova(monarch_urbsubs_city_m1, type = "III") # city_dist sig here, not in gxe mod
+# # using m2 here
+# test_gxe(gxe_test_mon3, monarch_urbsubs_city_m1) # stat equiv. Not getting AIC for reg model so just compared manually
+# car::Anova(monarch_urbsubs_city_m2, type = "II") # city_dist sig here, marg sig in gxe mod
 # car::Anova(gxe_test_mon3, type = "III") # block*city NOT sig
 ```
 
@@ -169,7 +180,6 @@ monarch_urbsubs_usc_m1 <- glmmTMB(Monarch_Quantity_Observed ~
                                 Block +
                                 (1|Population/Family) +
                                 Year +
-                                Sample +
                                 Urb_score * Transect_ID,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
@@ -184,7 +194,6 @@ monarch_urbsubs_usc_m2 <- glmmTMB(Monarch_Quantity_Observed ~
                                 Block +
                                 (1|Population/Family) +
                                 Year +
-                                Sample +
                                 Urb_score + Transect_ID,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
@@ -201,16 +210,15 @@ monarch_urbsubs_usc_m2 <- glmmTMB(Monarch_Quantity_Observed ~
 #                                 Block*Urb_score +
 #                                 (1|Population/Family) +
 #                                 Year +
-#                                 Sample +
 #                                 Urb_score * Transect_ID,
 #               data = herbivores %>%
 #                 dplyr::filter(Transect_ID != "Rural"),
 #               family = nbinom2,
-#               REML = F) 
+#               REML = F)
 # 
 # test_gxe(gxe_test_mon4, monarch_urbsubs_usc_m1) # stat equiv
-# car::Anova(monarch_urbsubs_usc_m1, type = "III") 
-# car::Anova(gxe_test_mon4, type = "III") # block*urb_score is sig (p = 0.04574)
+# car::Anova(monarch_urbsubs_usc_m1, type = "III")
+# car::Anova(gxe_test_mon4, type = "III") # block*urb_score is marg sig (p = 0.08731)
 # 
 # 
 # 
@@ -263,7 +271,7 @@ monarch_urbsubs_usc_m2 <- glmmTMB(Monarch_Quantity_Observed ~
 #                             na.action = na.exclude
 #               )
 # 
-# PBmodcomp(lgmod1, smmod2, seed = 45, nsim = 10) # p = 1
+# PBmodcomp(lgmod1, smmod2, seed = 45, nsim = 10) # p > 0.5
 # 
 # 
 # # REG MOD-----
@@ -331,7 +339,6 @@ asclepiadis_gr_city_m1 <- glmmTMB(Liriomyza_asclepiadis ~
                                 Block +
                                 (1|Population/Family) +
                                 Year +
-                                Sample +
                                 City_dist,
               data = herbivores,
               family = nbinom2,
@@ -344,7 +351,6 @@ asclepiadis_gr_city_m1 <- glmmTMB(Liriomyza_asclepiadis ~
 # gxe_test_ascl1 <- glmmTMB(Liriomyza_asclepiadis ~
 #                                 (1|Population/Family) +
 #                                 Year +
-#                                 Sample +
 #                                 City_dist*Block,
 #               data = herbivores,
 #               family = nbinom2,
@@ -361,7 +367,6 @@ asclepiadis_gr_usc_m1 <- glmmTMB(Liriomyza_asclepiadis ~
                                 Block +
                                 (1|Population/Family) +
                                 Year +
-                                Sample +
                                 Urb_score,
               data = herbivores,
               family = nbinom2,
@@ -373,13 +378,12 @@ asclepiadis_gr_usc_m1 <- glmmTMB(Liriomyza_asclepiadis ~
 # gxe_test_ascl2 <- glmmTMB(Liriomyza_asclepiadis ~
 #                                 (1|Population/Family) +
 #                                 Year +
-#                                 Sample +
 #                                 Urb_score*Block,
 #               data = herbivores,
 #               family = nbinom2,
 #               REML = F)
 # 
-# test_gxe(gxe_test_ascl2, asclepiadis_gr_usc_m1) # stat equiv
+# test_gxe(gxe_test_ascl2, asclepiadis_gr_usc_m1) # gxe mod best
 # car::Anova(asclepiadis_gr_usc_m1, type = "III") # qual identical to gxe mod
 # car::Anova(gxe_test_ascl2, type = "III") # block*city NOT sig
 ```
@@ -392,7 +396,6 @@ asclepiadis_urbsubs_city_m1 <- glmmTMB(Liriomyza_asclepiadis ~
                                 Block +
                                 (1|Population/Family) +
                                 Year +
-                                Sample +
                                 City_dist * Transect_ID,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
@@ -407,7 +410,6 @@ asclepiadis_urbsubs_city_m2 <- glmmTMB(Liriomyza_asclepiadis ~
                                 Block +
                                 (1|Population/Family) +
                                 Year +
-                                Sample +
                                 City_dist + Transect_ID,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
@@ -424,7 +426,6 @@ asclepiadis_urbsubs_city_m2 <- glmmTMB(Liriomyza_asclepiadis ~
 #                                 Block*City_dist +
 #                                 (1|Population/Family) +
 #                                 Year +
-#                                 Sample +
 #                                 City_dist * Transect_ID,
 #               data = herbivores %>%
 #                 dplyr::filter(Transect_ID != "Rural"),
@@ -443,7 +444,6 @@ asclepiadis_urbsubs_usc_m1 <- glmmTMB(Liriomyza_asclepiadis ~
                                 Block +
                                 (1|Population/Family) +
                                 Year +
-                                Sample +
                                 Urb_score * Transect_ID,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
@@ -458,7 +458,6 @@ asclepiadis_urbsubs_usc_m2 <- glmmTMB(Liriomyza_asclepiadis ~
                                 Block +
                                 (1|Population/Family) +
                                 Year +
-                                Sample +
                                 Urb_score + Transect_ID,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural"),
@@ -475,123 +474,15 @@ asclepiadis_urbsubs_usc_m2 <- glmmTMB(Liriomyza_asclepiadis ~
 #                                 Block*Urb_score +
 #                                 (1|Population/Family) +
 #                                 Year +
-#                                 Sample +
 #                                 Urb_score * Transect_ID,
 #               data = herbivores %>%
 #                 dplyr::filter(Transect_ID != "Rural"),
 #               family = nbinom2,
 #               REML = F)
 # 
-# test_gxe(gxe_test_ascl4, asclepiadis_urbsubs_usc_m1) # gxe mod best
-# car::Anova(asclepiadis_urbsubs_usc_m1, type = "III") # 
-# car::Anova(gxe_test_ascl4, type = "III") # block*urbscore marg sig (p = 0.05128)
-
-
-# # compare ranovas
-# # GxE MOD-----
-# #   test family
-# #     large mod
-# lgmod1 <- glmer.nb(Liriomyza_asclepiadis ~
-#               #    Year +
-#                   (1|Population) +
-#                   (1|Population:Fam_uniq) +
-#                   Urb_score*Block +
-#                 Urb_score*Transect_ID,
-#               data = herbivores %>%
-#                 dplyr::filter(Year == "2021" &
-#                                 Transect_ID != "Rural"),
-#               control=glmerControl(optimizer="bobyqa",
-#                              optCtrl=list(maxfun=2e5)),
-#                             na.action = na.exclude
-#               )
-# 
-# #     small mod 1
-# smmod1 <- glmer.nb(Liriomyza_asclepiadis ~
-#               #    Year +
-#                   (1|Population) +
-#                   Urb_score*Block +
-#                 Urb_score*Transect_ID,
-#                 data = herbivores %>%
-#                 dplyr::filter(Year == "2021" &
-#                                 Transect_ID != "Rural"),
-#               control=glmerControl(optimizer="bobyqa",
-#                              optCtrl=list(maxfun=2e5)),
-#                             na.action = na.exclude
-#               )
-# 
-# PBmodcomp(lgmod1, smmod1, seed = 45, nsim = 10) # p = 0.03392
-# 
-# # test pop
-# #     small mod 2
-# smmod2 <- glmer.nb(Liriomyza_asclepiadis ~
-#               #    Year +
-#                   (1|Population:Fam_uniq) +
-#                   Urb_score*Block +
-#                 Urb_score*Transect_ID,
-#                 data = herbivores %>%
-#                 dplyr::filter(Year == "2021" &
-#                                 Transect_ID != "Rural"),
-#               control=glmerControl(optimizer="bobyqa",
-#                              optCtrl=list(maxfun=2e5)),
-#                             na.action = na.exclude
-#               )
-# 
-# PBmodcomp(lgmod1, smmod2, seed = 45, nsim = 10) # p = 0.7970
-# 
-# 
-# # REG MOD-----
-# #   test family
-# #     large mod
-# lgmod1.reg <- glmer.nb(Liriomyza_asclepiadis ~
-#               #    Year +
-#                   (1|Population) +
-#                   (1|Population:Fam_uniq) +
-#                   Urb_score*Transect_ID + Block,
-#                 data = herbivores %>%
-#                 dplyr::filter(Year == "2021" &
-#                                 Transect_ID != "Rural"),
-# 
-#               control=glmerControl(optimizer="bobyqa",
-#                              optCtrl=list(maxfun=2e5)),
-#                             na.action = na.exclude
-#               )
-# 
-# #     small mod 1
-# smmod1.reg <- glmer.nb(Liriomyza_asclepiadis ~
-#               #    Year +
-#                   (1|Population) +
-#                   Urb_score*Transect_ID + Block,
-#                 data = herbivores %>%
-#                 dplyr::filter(Year == "2021" &
-#                                 Transect_ID != "Rural"),
-# 
-#               control=glmerControl(optimizer="bobyqa",
-#                              optCtrl=list(maxfun=2e5)),
-#                             na.action = na.exclude
-#               )
-# 
-# PBmodcomp(lgmod1.reg, smmod1.reg, seed = 45, nsim = 10) # p = 0.038
-# 
-# # test pop
-# #     small mod 2
-# smmod2.reg <- glmer.nb(Liriomyza_asclepiadis ~
-#              #     Year +
-#                   (1|Population:Fam_uniq) +
-#                   Urb_score*Transect_ID + Block,
-#                 data = herbivores %>%
-#                 dplyr::filter(Year == "2021" &
-#                                 Transect_ID != "Rural"),
-# 
-#               control=glmerControl(optimizer="bobyqa",
-#                              optCtrl=list(maxfun=2e5)),
-#                             na.action = na.exclude
-#              )
-# 
-# 
-# PBmodcomp(lgmod1.reg, smmod2.reg, seed = 45, nsim = 10) # p = 0.8774
-# 
-# # mod comparison-----
-# # qualitatively identical so I'll keep using regular model.
+# test_gxe(gxe_test_ascl4, asclepiadis_urbsubs_usc_m1) # qual identical
+# car::Anova(asclepiadis_urbsubs_usc_m1, type = "III") # qual identical
+# car::Anova(gxe_test_ascl4, type = "III") # block*urbscore not sig
 ```
 
 
@@ -603,7 +494,6 @@ clivicollis_gr_city_m1 <- glmmTMB(Labidomera_clivicollis ~
                                 Block +
                                 (1|Population/Family) +
                                 Year +
-                                Sample +
                                 City_dist,
               data = herbivores %>%
                 dplyr::filter(Labidomera_clivicollis < 9),
@@ -617,119 +507,15 @@ clivicollis_gr_city_m1 <- glmmTMB(Labidomera_clivicollis ~
 # gxe_test_cliv1 <- glmmTMB(Labidomera_clivicollis ~
 #                                 (1|Population/Family) +
 #                                 Year +
-#                                 Sample +
 #                                 City_dist*Block,
 #               data = herbivores %>%
 #                 dplyr::filter(Labidomera_clivicollis < 9),
 #               family = nbinom2,
 #               REML = F)
 # 
-# test_gxe(gxe_test_cliv1, clivicollis_gr_city_m1) # stat equiv
-# car::Anova(clivicollis_gr_city_m1, type = "III") # otherwise, qual identical to gxe mod
-# car::Anova(gxe_test_cliv1, type = "III") # block*city marg sig (p = 0.0998624)
-
-
-# # compare ranovas
-# # GxE MOD-----
-# #   test family
-# #     large mod
-# lgmod1 <- glmer.nb(Labidomera_clivicollis ~
-#               #    Year +
-#                   (1|Population) +
-#                   (1|Population:Fam_uniq) +
-#                   City_dist*Block,
-#                data = herbivores %>%
-#                 dplyr::filter(Labidomera_clivicollis < 9 &
-#                                 Year == "2021" &
-#                                 is.na(Labidomera_clivicollis) == FALSE),
-#              nAGQ = 0, # this mod can converge w/o this, but then it wouldn't be comparable to the regular model below
-#               na.action = na.exclude
-#               )
-# 
-# #     small mod 1
-# smmod1 <- glmer.nb(Labidomera_clivicollis ~
-#               #    Year +
-#                   (1|Population) +
-#                   City_dist*Block,
-#                 data = herbivores %>%
-#                 dplyr::filter(Labidomera_clivicollis < 9 &
-#                                 Year == "2021"&
-#                                 is.na(Labidomera_clivicollis) == FALSE),
-#               nAGQ = 0, 
-#                             na.action = na.exclude
-#               )
-# 
-# PBmodcomp(lgmod1, smmod1, seed = 45, nsim = 10) # p = 1
-# 
-# # test pop
-# #     small mod 2
-# smmod2 <- glmer.nb(Labidomera_clivicollis ~
-#               #    Year +
-#                   (1|Population:Fam_uniq) +
-#                   City_dist*Block,
-#                 data = herbivores %>%
-#                 dplyr::filter(Labidomera_clivicollis < 9 &
-#                                 Year == "2021"&
-#                                 is.na(Labidomera_clivicollis) == FALSE),
-#              nAGQ = 0,
-#                             na.action = na.exclude
-#               )
-# 
-# PBmodcomp(lgmod1, smmod2, seed = 45, nsim = 10) # p = 0.6701. I had to change nAGQ to 0 for these models, or else it wouldn't work
-# 
-# 
-# # REG MOD-----
-# #   test family
-# #     large mod
-# lgmod1.reg <- glmer.nb(Labidomera_clivicollis ~
-#               #    Year +
-#                   (1|Population) +
-#                   (1|Population:Fam_uniq) +
-#                 City_dist +
-#                 Block,
-#                 data = herbivores %>%
-#                 dplyr::filter(Labidomera_clivicollis < 9 &
-#                                 Year == "2021"&
-#                                 is.na(Labidomera_clivicollis) == FALSE),
-#                             na.action = na.exclude,
-#               nAGQ = 0 # doesn't converge w/o this
-#               )
-# 
-# #     small mod 1
-# smmod1.reg <- glmer.nb(Labidomera_clivicollis ~
-#               #    Year +
-#                   (1|Population) +
-#                 City_dist + 
-#                 Block,
-#                 data = herbivores %>%
-#                 dplyr::filter(Labidomera_clivicollis < 9 &
-#                                 Year == "2021"&
-#                                 is.na(Labidomera_clivicollis) == FALSE),
-#                             nAGQ = 0, # doesn't converge w/o this
-#                             na.action = na.exclude
-#               )
-# 
-# PBmodcomp(lgmod1.reg, smmod1.reg, seed = 45, nsim = 10) # p = 1
-# 
-# # test pop
-# #     small mod 2
-# smmod2.reg <- glmer.nb(Labidomera_clivicollis ~
-#              #     Year +
-#                   (1|Population:Fam_uniq) +
-#                    + Block,
-#                 data = herbivores %>%
-#                 dplyr::filter(Labidomera_clivicollis < 9 &
-#                                 Year == "2021" &
-#                                 is.na(Labidomera_clivicollis) == FALSE),
-#               nAGQ = 0, 
-#                             na.action = na.exclude
-#              )
-# 
-# 
-# PBmodcomp(lgmod1.reg, smmod2.reg, seed = 45, nsim = 10) # p = 0.9843
-# 
-# # mod comparison-----
-# # qualitatively identical so I'll keep using regular model.
+# test_gxe(gxe_test_cliv1, clivicollis_gr_city_m1) # gxe mod best
+# car::Anova(clivicollis_gr_city_m1, type = "III") # qual identical to gxe mod
+# car::Anova(gxe_test_cliv1, type = "III") # block*city not sig
 ```
 
 #### Urb_score
@@ -738,7 +524,6 @@ clivicollis_gr_usc_m1 <- glmmTMB(Labidomera_clivicollis ~
                                 Block +
                                 (1|Population/Family) +
                                 Year +
-                                Sample +
                                 Urb_score,
               data = herbivores %>%
                 dplyr::filter(Labidomera_clivicollis < 9),
@@ -752,16 +537,15 @@ clivicollis_gr_usc_m1 <- glmmTMB(Labidomera_clivicollis ~
 # gxe_test_cliv2 <- glmmTMB(Labidomera_clivicollis ~
 #                                 (1|Population/Family) +
 #                                 Year +
-#                                 Sample +
 #                                 Urb_score*Block,
 #               data = herbivores %>%
 #                 dplyr::filter(Labidomera_clivicollis < 9),
 #               family = nbinom2,
 #               REML = F)
 # 
-# test_gxe(gxe_test_cliv2, clivicollis_gr_city_m1) # stat equiv
+# test_gxe(gxe_test_cliv2, clivicollis_gr_city_m1) # gxe mod best
 # car::Anova(clivicollis_gr_city_m1, type = "III") # qual identical
-# car::Anova(gxe_test_cliv2, type = "III") 
+# car::Anova(gxe_test_cliv2, type = "III") # urb score*block not sig
 ```
 
 ### Urban Subtransects
@@ -772,11 +556,10 @@ clivicollis_urbsubs_city_m1 <- glmmTMB(Labidomera_clivicollis ~
                                 Block +
                                 (1|Population/Family) +
                                 Year +
-                                Sample +
                                 City_dist * Transect_ID,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural" &
-                                Labidomera_clivicollis < 20), # remove outlier
+                                Labidomera_clivicollis < 10), # remove outlier
               family = nbinom2,
               REML = F)
 
@@ -789,16 +572,15 @@ clivicollis_urbsubs_city_m2 <- glmmTMB(Labidomera_clivicollis ~
                                 Block +
                                 (1|Population/Family) +
                                 Year +
-                                Sample +
                                 City_dist + Transect_ID,
               data = herbivores %>%
-                dplyr::filter(Transect_ID != "Rural" & Labidomera_clivicollis < 20), # remove outlier
+                dplyr::filter(Transect_ID != "Rural" & Labidomera_clivicollis < 10), # remove outlier
               family = nbinom2,
               REML = F)
 
 # performance::check_model(clivicollis_urbsubs_city_m2) 
 # AIC(clivicollis_urbsubs_city_m1,
-#     clivicollis_urbsubs_city_m2) # m1 better but <2 AIC apart
+#     clivicollis_urbsubs_city_m2) # m2 better but <2 AIC apart
 
 
 
@@ -807,17 +589,16 @@ clivicollis_urbsubs_city_m2 <- glmmTMB(Labidomera_clivicollis ~
 #                                 Block*City_dist +
 #                                 (1|Population/Family) +
 #                                 Year +
-#                                 Sample +
 #                                 City_dist * Transect_ID,
 #               data = herbivores %>%
 #                 dplyr::filter(Transect_ID != "Rural" &
-#                                 Labidomera_clivicollis < 20), # remove outlier
+#                                 Labidomera_clivicollis < 10), # remove outlier
 #               family = nbinom2,
 #               REML = F)
 # 
-# test_gxe(gxe_test_cliv3, clivicollis_urbsubs_city_m1) # stat equiv
+# test_gxe(gxe_test_cliv3, clivicollis_urbsubs_city_m1) # gxe mod best
 # car::Anova(clivicollis_urbsubs_city_m1, type = "III") # city_dist sig in reg model, otherwise qual identical
-# car::Anova(gxe_test_cliv3, type = "III")
+# car::Anova(gxe_test_cliv3, type = "III") # city*block not sig
 ```
 
 #### Urb_score
@@ -827,11 +608,10 @@ clivicollis_urbsubs_usc_m1 <- glmmTMB(Labidomera_clivicollis ~
                                 Block +
                                 (1|Population/Family) +
                                 Year +
-                                Sample +
                                 Urb_score * Transect_ID,
               data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural" &
-                                Labidomera_clivicollis < 20), # remove outlier
+                                Labidomera_clivicollis < 10), # remove outlier
               family = nbinom2,
               REML = F)
 
@@ -844,10 +624,9 @@ clivicollis_urbsubs_usc_m2 <- glmmTMB(Labidomera_clivicollis ~
                                 Block +
                                 (1|Population/Family) +
                                 Year +
-                                Sample +
                                 Urb_score + Transect_ID,
               data = herbivores %>%
-                dplyr::filter(Transect_ID != "Rural" & Labidomera_clivicollis < 20), # remove outlier
+                dplyr::filter(Transect_ID != "Rural" & Labidomera_clivicollis < 10), # remove outlier
               family = nbinom2,
               REML = F)
 
@@ -862,17 +641,16 @@ clivicollis_urbsubs_usc_m2 <- glmmTMB(Labidomera_clivicollis ~
 #                                 Block*Urb_score +
 #                                 (1|Population/Family) +
 #                                 Year +
-#                                 Sample +
 #                                 Urb_score * Transect_ID,
 #               data = herbivores %>%
 #                 dplyr::filter(Transect_ID != "Rural" &
-#                                 Labidomera_clivicollis < 20), # remove outlier
+#                                 Labidomera_clivicollis < 10), # remove outlier
 #               family = nbinom2,
 #               REML = F)
 # 
 # test_gxe(gxe_test_cliv4, clivicollis_urbsubs_usc_m1) # gxe mod best
 # car::Anova(clivicollis_urbsubs_usc_m1, type = "III") # qual identical
-# car::Anova(gxe_test_cliv4, type = "III")
+# car::Anova(gxe_test_cliv4, type = "III") # urb score*block not sig
 ```
 
 # Models for use in analysis
@@ -943,8 +721,8 @@ clivicollis_gr_city_m1 ,
 clivicollis_gr_usc_m1 ,
 
 ## City_dist / urban subtransects
-clivicollis_urbsubs_city_m1, # Best model
-clivicollis_urbsubs_city_m2, # Qualitatively identical model (<2 AIC away)
+clivicollis_urbsubs_city_m1, # Qualitatively identical model (<2 AIC away)
+clivicollis_urbsubs_city_m2, # Best model
 
 ## Urbanization score  / urban subtransects
 clivicollis_urbsubs_usc_m1, # Qualitatively identical model (<2 AIC away)
@@ -954,8 +732,8 @@ clivicollis_urbsubs_usc_m2 # Best model
 
 names(clivicollis_mods) <- c("City_gr",
                      "Usc_gr",
-                     "City_urbsubs_best",
                      "City_urbsubs_alt",
+                     "City_urbsubs_best",
                      "Usc_urbsubs_alt",
                      "Usc_urbsubs_best")
 ```
@@ -999,14 +777,14 @@ asclepiadis_mods_alt_u <- asclepiadis_mods[5]
 ```{r}
 ## Best
 ### City_dist
-clivicollis_mods_best_c <- clivicollis_mods[c(1,3)]
+clivicollis_mods_best_c <- clivicollis_mods[c(1,4)]
 
 ### Urb_score
 clivicollis_mods_best_u <- clivicollis_mods[c(2,6)]
 
 ## Alt
 ### City_dist
-clivicollis_mods_alt_c <- clivicollis_mods[4]
+clivicollis_mods_alt_c <- clivicollis_mods[3]
 
 ### Urb_score
 clivicollis_mods_alt_u <- clivicollis_mods[5]

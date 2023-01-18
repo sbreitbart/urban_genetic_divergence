@@ -1,6 +1,6 @@
 * The species observed are in the column names. The only species with two columns was the Monarch butterfly:
     + one column for Monarchs that had been on the plant in the past ("mean_Monarch_Quantity_Past") and which refers to empty chrysalis, empty eggs, and chrysalis with a dead butterfly inside, and
-    + one column for alive Monarchs present on the plant itself ("mean_Monarch_Quantity_Observed") and which refers to all other Monarch forms (caterpillars, eggs, chrysalises with insects still inside)
+    + one column for alive Monarchs present on the plant itself ("Monarch_Quantity_Observed") and which refers to all other Monarch forms (caterpillars, eggs, chrysalises with insects still inside)
 * Monarchs notwithstanding, dead herbivores were not counted in the surveys.
 
 # Set up notebook
