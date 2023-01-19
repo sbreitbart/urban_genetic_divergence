@@ -39,6 +39,18 @@ herbivores <- read.csv(here::here("./Joined_annual_data/herbivores.csv")) %>%
                           "Date")),
                      as.factor) %>%
   dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
+
+# Take mean of two sampling events
+herbivores %<>%
+  dplyr::group_by(Population, Row, Column, Block, Family, Replicate, Year) %>%
+  dplyr::summarise(Monarch_Quantity_Observed = mean(Monarch_Quantity_Observed, na.rm = T),
+                   Liriomyza_asclepiadis = mean(Liriomyza_asclepiadis, na.rm = T),
+                   Labidomera_clivicollis = mean(Labidomera_clivicollis, na.rm = T),
+                   Transect_ID = first(Transect_ID),
+                   City_dist = first(City_dist),
+                   Urb_Rur = first(Urb_Rur),
+                   Urb_score = first(Urb_score),
+                   Fam_uniq = first(Fam_uniq))
 ```
 
 ## Import final models
@@ -139,7 +151,7 @@ clivicoll_ranova1 <- glmer.nb(Labidomera_clivicollis ~
                                (1|Population) +
                                (1|Population:Fam_uniq),
                              data = herbivores %>%
-                dplyr::filter(Labidomera_clivicollis < 9 &
+                dplyr::filter(Labidomera_clivicollis < 10 &
                                 Year == 2020),
                             na.action = na.exclude)
 
@@ -156,7 +168,7 @@ clivicoll_ranova2 <- glmer.nb(Labidomera_clivicollis ~
                                (1|Population) +
                                (1|Population:Fam_uniq),
                              data = herbivores %>%
-                dplyr::filter(Year == 2021),
+                dplyr::filter(Labidomera_clivicollis < 10 & Year == 2021),
                             na.action = na.exclude)
 
 # performance::check_model(clivicoll_ranova2)
@@ -196,12 +208,9 @@ monarchs_ranova2_pb <- glmer.nb(Monarch_Quantity_Observed ~
                                data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural" &
                                 Year == 2021),
-                control = glmerControl(optimizer = "Nelder_Mead"),
                             na.action = na.exclude)
 
 # performance::check_model(monarchs_ranova2_pb)
-
-summary(monarchs_ranova2_pb) # again, nearly zero variance among families and pops- on the order of 1x10^-11
 
 pb_ranova_transects(monarchs_ranova2_pb,
           "Monarch butterfly: 2021",
@@ -219,8 +228,7 @@ asclepiadis_ranova1_pb <- glmer.nb(Liriomyza_asclepiadis ~
                                data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural" &
                                 Year == 2020),
-                            na.action = na.exclude,
-                            nAGQ = 0) # won't converge w/o this)
+                            na.action = na.exclude) 
 
 # performance::check_model(asclepiadis_ranova1_pb)
 
@@ -256,7 +264,8 @@ clivicollis_ranova1_pb <- glmer.nb(Labidomera_clivicollis ~
                                (1|Population:Fam_uniq),
                                data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural" &
-                                Year == 2020),
+                                Year == 2020 &
+                                Labidomera_clivicollis < 9),
                             na.action = na.exclude)
 
 # performance::check_model(clivicollis_ranova1_pb)
@@ -273,8 +282,9 @@ clivicollis_ranova2_pb <- glmer.nb(Labidomera_clivicollis ~
                                (1|Population:Fam_uniq),
                                data = herbivores %>%
                 dplyr::filter(Transect_ID != "Rural" &
-                                Year == 2021),
-                nAGQ = 0,
+                                Year == 2021 &
+                                Labidomera_clivicollis < 9),
+                nAGQ = 0, # won't run without this
                             na.action = na.exclude)
 
 # performance::check_model(clivicollis_ranova2_pb)

@@ -6,10 +6,10 @@ Mortality,0,0.5,1.067,Population,Distance
 Ramets before flowering,0,0.5,0.165,Population,Distance
 Ramets after flowering,0,0.5,0,Population,Distance
 Relative growth rate,0.483,0.2435,1.389,Population,Distance
-SLA,0,0.5,0,Population,Distance
+SLA,2.44,0.059,3.728,Population,Distance
 D. plexippus abundance,0,0.5,0,Population,Distance
-L. clivicollis abundance,0,0.5,0.373,Population,Distance
-L. asclepiadis abundance,0.007,0.4566,0.957,Population,Distance
+L. clivicollis abundance,0,0.5,0.8,Population,Distance
+L. asclepiadis abundance,0.034,0.4275,1.673,Population,Distance
 Herbivory before flowering (binary),0,0.5,0,Population,Distance
 Herbivory before flowering (quantitative),0,0.5,0,Population,Distance
 Herbivory after flowering (binary),0.001,0.4895,0,Population,Distance
@@ -33,10 +33,10 @@ Mortality,3.952,0.0235,7.163,Family,Distance
 Ramets before flowering,52.455,<0.001,7.884,Family,Distance
 Ramets after flowering,22.59,<0.001,5.826,Family,Distance
 Relative growth rate,0,0.5,0,Family,Distance
-SLA,0,0.5,0,Family,Distance
+SLA,0.037,0.4235,0.785,Family,Distance
 D. plexippus abundance,0,0.5,0,Family,Distance
 L. clivicollis abundance,0,0.5,0,Family,Distance
-L. asclepiadis abundance,5.651,0.0085,3.385,Family,Distance
+L. asclepiadis abundance,3.365,0.0335,4.881,Family,Distance
 Herbivory before flowering (binary),0,0.5,0,Family,Distance
 Herbivory before flowering (quantitative),0,0.5,0,Family,Distance
 Herbivory after flowering (binary),0.315,0.2875,3.729,Family,Distance
@@ -60,10 +60,10 @@ Mortality,0,0.5,0.923,Population,UrbScore
 Ramets before flowering,0,0.5,0.473,Population,UrbScore
 Ramets after flowering,0,0.5,0,Population,UrbScore
 Relative growth rate,0.237,0.3135,0.973,Population,UrbScore
-SLA,0,0.5,0,Population,UrbScore
-D. plexippus abundance,0,0.5,0,Population,UrbScore
+SLA,2.258,0.0665,3.486,Population,UrbScore
+D. plexippus abundance,0.017,0.4485,0.437,Population,UrbScore
 L. clivicollis abundance,0,0.5,0,Population,UrbScore
-L. asclepiadis abundance,0.024,0.4385,0.904,Population,UrbScore
+L. asclepiadis abundance,0.055,0.407,1.583,Population,UrbScore
 Herbivory before flowering (binary),0,0.5,0,Population,UrbScore
 Herbivory before flowering (quantitative),0,0.5,0,Population,UrbScore
 Herbivory after flowering (binary),0.001,0.4885,0,Population,UrbScore
@@ -87,10 +87,10 @@ Mortality,3.965,0.023,7.079,Family,UrbScore
 Ramets before flowering,52.334,<0.001,7.827,Family,UrbScore
 Ramets after flowering,22.903,<0.001,5.999,Family,UrbScore
 Relative growth rate,0,0.5,0,Family,UrbScore
-SLA,0,0.5,0,Family,UrbScore
-D. plexippus abundance,0,0.5,0,Family,UrbScore
+SLA,0.006,0.4685,0.319,Family,UrbScore
+D. plexippus abundance,0.044,0.4175,0,Family,UrbScore
 L. clivicollis abundance,0,0.5,0,Family,UrbScore
-L. asclepiadis abundance,5.397,0.01,3.368,Family,UrbScore
+L. asclepiadis abundance,3.181,0.0375,4.849,Family,UrbScore
 Herbivory before flowering (binary),0,0.5,0,Family,UrbScore
 Herbivory before flowering (quantitative),0,0.5,0,Family,UrbScore
 Herbivory after flowering (binary),0.28,0.2985,3.809,Family,UrbScore
