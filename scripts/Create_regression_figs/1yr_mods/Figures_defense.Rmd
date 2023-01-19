@@ -1229,27 +1229,3 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Defense/Q2
 
 # Create regression plots (lms for cardenolides)
 These are already in multi_yr_mods folder
-# Find estimated marginal means at terminii (lmers)
-## Gradient
-### City_dist
-#### Herbivory: Before flowering (binary)
-```{r}
-Calc_percent_change(herb_e_bin_gradient_01_pred) # 25.8%
-
-```
-
-#### Herbivory: After flowering (quant)
-```{r}
-Calc_percent_change(herb_l_quant_gradient_01_pred) # 23.3%
-
-```
-
-## Urban Subtransects
-### City_dist
-#### Weevil damage: Binary
-```{r}
-Calc_percent_change_urbsubs(weev_bin_urbsubs_01_pred) # "Percent change from suburban to urban terminus: -19.1%"
-```
-
-# Find estimated marginal means at terminii (lms for cardenolides)
-These are already in multi_yr_mods folder
