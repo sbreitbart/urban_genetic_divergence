@@ -716,13 +716,7 @@ dplyr::select(p))),
                     label = paste0(" Subtransect: p = ", tidy_anova(def.tr.m3) %>%
 dplyr::filter(Predictor == "Subtransect") %>%
 dplyr::select(p))),
-                size = 4.5) +
-  ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.79,
-                    label = paste0(" D x S: p = ", tidy_anova(def.tr.m3) %>%
-dplyr::filter(Predictor == "Distance to City Center x Subtransect") %>%
-dplyr::select(p))),
-                size = 4.5)
-
+                size = 4.5) 
 ggpred_Q2.citydist_herb_e_quant
 
 # herbivory, after flowering: Binary-----
@@ -1069,8 +1063,8 @@ ggplot(weev_bin_urbsubs_02_pred) +
   scale_y_continuous(labels = scales::percent_format(
     scale = 100,
     accuracy = 1),
-    limits = c(NA, 1),
-    breaks = c(0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1)
+    limits = c(0.2, 1),
+    breaks = c(0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1)
     ) +
   xlim(4, -2) +
   theme_1() +
