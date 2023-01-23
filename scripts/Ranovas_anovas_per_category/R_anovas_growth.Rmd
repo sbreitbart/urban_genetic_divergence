@@ -55,7 +55,7 @@ ranova_2step(sla_ranova_mod1,
 
 # Rel growth rate-----
 # 2019--------
-rgr_ranova_mod1 <- lmer(rel_growth_rate^(1/3) ~
+rgr_ranova_mod1 <- lmer((rel_growth_rate^(1/3))*100 ~
                           (1|Population/Family) +
                           Block,
                         data = heights %>%
@@ -73,7 +73,7 @@ ranova_2step(rgr_ranova_mod1,
 
 
 # 2020--------
-rgr_ranova_mod2 <- lmer(rel_growth_rate^(1/3) ~
+rgr_ranova_mod2 <- lmer((rel_growth_rate^(1/3))*100 ~
                           (1|Population/Family) +
                           Block,
                         data = heights %>%
@@ -91,7 +91,7 @@ ranova_2step(rgr_ranova_mod2,
 
 
 # 2021--------
-rgr_ranova_mod3 <- lmer(rel_growth_rate^(1/3) ~
+rgr_ranova_mod3 <- lmer((rel_growth_rate^(1/3))*100 ~
                           (1|Population/Family) +
                           Block,
                         data = heights %>%
@@ -259,7 +259,7 @@ ranova_transect(sla_ranova_mod1,
 
 # Rel growth rate-----
 # 2019-----
-rgr_ranova_mod1 <- lmer(rel_growth_rate^(1/3) ~
+rgr_ranova_mod1 <- lmer((rel_growth_rate^(1/3))*100 ~
                           (1|Population/Family) +
                           Block ,
                              data = heights %>%
@@ -276,7 +276,7 @@ ranova_transect(rgr_ranova_mod1,
 
 
 # 2020-----
-rgr_ranova_mod2 <- lmer(rel_growth_rate^(1/3) ~
+rgr_ranova_mod2 <- lmer((rel_growth_rate^(1/3))*100 ~
                           (1|Population/Family) +
                           Block ,
                              data = heights %>%
@@ -293,7 +293,7 @@ ranova_transect(rgr_ranova_mod2,
 
 
 # 2021-----
-rgr_ranova_mod3 <- lmer(rel_growth_rate^(1/3) ~
+rgr_ranova_mod3 <- lmer((rel_growth_rate^(1/3))*100 ~
                           (1|Population/Family) +
                           Block ,
                              data = heights %>%

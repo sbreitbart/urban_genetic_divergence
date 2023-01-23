@@ -26,7 +26,7 @@ Follicles,0,0.5,14.43,Population,Distance
 Inflorescences,1.325,0.125,12.878,Population,Distance
 Flowers per inflorescence,0.359,0.2745,11.915,Population,Distance
 Pollinaria removed,0.145,0.3515,3.139,Population,Distance
-Height before flowering,7.886,0.0025,10.055,Family,Distance
+Height before flowering,1.681,0.0975,4.617,Family,Distance
 Height after flowering,7.154,0.0035,9.027,Family,Distance
 LDMC,0.011,0.459,0.439,Family,Distance
 Mortality,3.952,0.0235,7.163,Family,Distance
@@ -53,7 +53,7 @@ Follicles,0,0.5,11.954,Family,Distance
 Inflorescences,9.892,0.001,0,Family,Distance
 Flowers per inflorescence,0,0.5,1.85,Family,Distance
 Pollinaria removed,0.628,0.214,14.544,Family,Distance
-Height before flowering,0.102,0.375,0.7,Population,UrbScore
+Height before flowering,0,0.5,0,Population,UrbScore
 Height after flowering,0.05,0.411,0.485,Population,UrbScore
 LDMC,0.211,0.323,0.888,Population,UrbScore
 Mortality,0,0.5,0.923,Population,UrbScore
@@ -80,7 +80,7 @@ Follicles,0,0.5,5.764,Population,UrbScore
 Inflorescences,0.93,0.1675,7.011,Population,UrbScore
 Flowers per inflorescence,0,0.5,9.792,Population,UrbScore
 Pollinaria removed,0.035,0.426,1.477,Population,UrbScore
-Height before flowering,7.619,0.003,10.179,Family,UrbScore
+Height before flowering,1.575,0.1045,4.475,Family,UrbScore
 Height after flowering,7.029,0.004,9.265,Family,UrbScore
 LDMC,0.013,0.454,0.492,Family,UrbScore
 Mortality,3.965,0.023,7.079,Family,UrbScore

@@ -29,8 +29,10 @@ transf %>%
                      value = as_paragraph("All Populations")) %>%
   flextable::compose(i = 2, j = c(3,5), part = "header",
                      value = as_paragraph("Urban Populations")) %>%
-  flextable::compose(i = c(1,2,7,16), j = c(2:5), part = "body",
+  flextable::compose(i = c(1,2,16), j = c(2:5), part = "body",
                      value = as_paragraph("x", as_sup("1/3"))) %>%
+  flextable::compose(i = 7, j = c(2:5), part = "body",
+                     value = as_paragraph("x", as_sup("1/3"), " × 100")) %>%
   flextable::compose(i = c(3, 27), j = c(2:5), part = "body",
                      value = as_paragraph("x", as_sup("1/2"))) %>%
   flextable::compose(i = c(25), j = c(4), part = "body",

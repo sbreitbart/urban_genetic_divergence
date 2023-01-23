@@ -17,7 +17,7 @@ heights <- read.csv(here::here("./Joined_annual_data/heights.csv"), na.strings=c
   dplyr::select(., -1) %>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur", "Pop_ID", "Patch_ID")), as.character) %>%
     dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur", "Pop_ID", "Patch_ID")), as.factor) %>%
-  dplyr::mutate_at(vars(c("rel_growth_rate")), as.numeric) %>%
+  dplyr::mutate_at(c("Total_Height_early", "Total_Height_late", "rel_growth_rate"), as.numeric) %>%
   dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
 
 str(heights)
@@ -364,17 +364,15 @@ height_e_gr_city_m1 <- glmmTMB(Total_Height_early^(1/3) ~
 
 
 # test for gxe intxns
-# gxe_test_height_l <- glmmTMB(Total_Height_early^(1/3) ~ 
+# gxe_test_height_e <- glmmTMB(Total_Height_early^(1/3) ~
 #                                  City_dist*Block +
 #                                  Year +
-#                                  (1|Population/Family) 
+#                                  (1|Population/Family)
 #                                  ,
 #                         data = heights,
 #                         REML = F)
 # 
-# test_gxe(height_e_gr_city_m1, gxe_test_height_e) # modes stat equivalent
-# car::Anova(height_e_gr_city_m1, type = "III") # gxe mod below doesn't have sig gxe intxn but city_dist is marg sig at 0.0560, not sig in reg model
-# car::Anova(gxe_test_height_e, type = "III")
+# test_gxe(height_e_gr_city_m1, gxe_test_height_e) # reg mod best
 ```
 
 ##### Urb_score
@@ -402,15 +400,12 @@ height_e_gr_usc_m1 <- glmmTMB(Total_Height_early^(1/3) ~
 #                         data = heights,
 #                         REML = F)
 # 
-# test_gxe(height_e_gr_usc_m1, gxe_test_height_e2) # mods stat equivalent
-# car::Anova(height_e_gr_usc_m1, type = "III") # qualitatively identical results
-# car::Anova(gxe_test_height_e2, type = "III")
+# test_gxe(height_e_gr_usc_m1, gxe_test_height_e2) # reg mod best
 ```
 
 #### Urban Subtransects
 ##### City_dist
 ```{r}
-# year is adding a lot of variation and complicates model fit. When I treat it as random, model fits MUCH better as per diagnostics, yet anova shows nearly identical results for city_dist and transect_ID so I'll keep it fixed.
 height_e_urbsubs_city_m1 <- glmmTMB(Total_Height_early^(1/3) ~ 
                                  Block +
                                  Year +
@@ -499,9 +494,34 @@ height_e_urbsubs_usc_m2 <- glmmTMB(Total_Height_early^(1/3) ~
 #                           dplyr::filter(Transect_ID != "Rural"),
 #                           REML = F)
 # 
-# test_gxe(height_e_urbsubs_usc_m1, gxe_test_height_e4) # mods stat equivalent
-# car::Anova(gxe_test_height_e4, type = "III") # mods qual identical
+# test_gxe(height_e_urbsubs_usc_m1, gxe_test_height_e4) # gxe mod best
+# car::Anova(gxe_test_height_e4, type = "III") # Urb_score:Block sig at p = 0.0225
 # car::Anova(height_e_urbsubs_usc_m1, type = "III")
+# 
+# # compare ranovas
+# # have to use lmer instead of glmmtmb- ranova can't use glmmtmb- otherwise identical models
+# # GxE MOD
+# ranova(lmer((Total_Height_early^(1/3)) ~
+#                              Urb_score*Block +
+#                              (1|Population/Family) +
+#                              Urb_score*Transect_ID,
+#                          data = heights %>%
+#                           dplyr::filter(Transect_ID != "Rural" & Year == "2021"),
+#                          REML = F))
+# # p(Population) = 1; p(Family) = 0.3625
+# 
+# # REG MOD
+# ranova(lmer((Total_Height_early^(1/3)) ~
+#                                  Block +
+#                                  (1|Population/Family) +
+#                                  Urb_score * Transect_ID,
+#                         data = heights %>%
+#                           dplyr::filter(Transect_ID != "Rural" & Year == "2021"),
+#                          REML = F))
+# # p(Population) = 1; p(Family) = 0.296
+# #
+# # p-values for both mods qualitatively identical, so I'll keep using regular model. 
+
 ```
 
 ### Late
@@ -562,7 +582,6 @@ height_l_gr_usc_m1 <- glmmTMB(Total_Height_late^(1/3) ~
 #### Urban Subtransects
 ##### City_dist
 ```{r}
-# again, model fit isn't perfect but it's due to year being so variable. When it's taken out/turned into random effect, diagnostics looks fine and anova result for city_dist nearly identical.
 height_l_urbsubs_city_m1 <- glmmTMB(Total_Height_late^(1/3) ~ 
                                  Block +
                                  Year +
@@ -658,7 +677,8 @@ height_l_urbsubs_usc_m2 <- glmmTMB(Total_Height_late^(1/3) ~
 # hist(heights$rel_growth_rate, breaks = 80) 
 # boxplot(rel_growth_rate ~ Year, data = heights)
 
-rgr_gr_city_m1 <- glmmTMB(rel_growth_rate^(1/3) ~ 
+# doesn't converge unless I increase magnitude of RGR
+rgr_gr_city_m1 <- glmmTMB((rel_growth_rate^(1/3))*100 ~ 
                                  Block +
                                  Year +
                                  (1|Population/Family) +
@@ -667,13 +687,13 @@ rgr_gr_city_m1 <- glmmTMB(rel_growth_rate^(1/3) ~
                         REML = F)
 
 
-# plot(DHARMa::simulateResiduals(rgr_gr_city_m1))
+ plot(DHARMa::simulateResiduals(rgr_gr_city_m1))
 # performance::check_model(rgr_gr_city_m1)
 # car::Anova(rgr_gr_city_m1)
 
 
 # test for gxe intxns
-# gxe_test_rgr <- glmmTMB(rel_growth_rate^(1/3) ~
+# gxe_test_rgr <- glmmTMB((rel_growth_rate^(1/3))*100 ~
 #                              City_dist*Block +
 #                              (1|Population/Family),
 #                          data = heights ,
@@ -686,7 +706,7 @@ rgr_gr_city_m1 <- glmmTMB(rel_growth_rate^(1/3) ~
 
 #### Urb_score
 ```{r}
-rgr_gr_usc_m1 <- glmmTMB(rel_growth_rate^(1/3) ~ 
+rgr_gr_usc_m1 <- glmmTMB((rel_growth_rate^(1/3))*100 ~ 
                                  Block +
                                  Year +
                                  (1|Population/Family) +
@@ -701,7 +721,7 @@ rgr_gr_usc_m1 <- glmmTMB(rel_growth_rate^(1/3) ~
 
 
 # test for gxe intxns
-# gxe_test_rgr2 <- glmmTMB(rel_growth_rate^(1/3) ~
+# gxe_test_rgr2 <- glmmTMB((rel_growth_rate^(1/3))*100 ~
 #                              Urb_score*Block +
 #                              (1|Population/Family),
 #                          data = heights ,
@@ -715,7 +735,7 @@ rgr_gr_usc_m1 <- glmmTMB(rel_growth_rate^(1/3) ~
 ### Urban Subtransects
 #### City_dist
 ```{r}
-rgr_urbsubs_city_m1 <- glmmTMB(rel_growth_rate^(1/3) ~ 
+rgr_urbsubs_city_m1 <- glmmTMB((rel_growth_rate^(1/3))*100 ~ 
                                  Block +
                                  Year +
                                  (1|Population/Family) +
@@ -731,7 +751,7 @@ rgr_urbsubs_city_m1 <- glmmTMB(rel_growth_rate^(1/3) ~
 
 
 # MAIN EFFECTS MODEL
-rgr_urbsubs_city_m2 <- glmmTMB(rel_growth_rate^(1/3) ~ 
+rgr_urbsubs_city_m2 <- glmmTMB((rel_growth_rate^(1/3))*100 ~ 
                                  Block +
                                  Year +
                                  (1|Population/Family) +
@@ -741,13 +761,13 @@ rgr_urbsubs_city_m2 <- glmmTMB(rel_growth_rate^(1/3) ~
                         REML = F)
 
 
-# plot(DHARMa::simulateResiduals(rgr_urbsubs_city_m2)) # ???
+# plot(DHARMa::simulateResiduals(rgr_urbsubs_city_m2)) 
 # performance::check_model(rgr_urbsubs_city_m2)
 # AIC(rgr_urbsubs_city_m1, rgr_urbsubs_city_m2) #m2 best but <2 AIC from full
 
 
 # test for gxe intxns
-# gxe_test_rgr3 <- glmmTMB(rel_growth_rate ~
+# gxe_test_rgr3 <- glmmTMB((rel_growth_rate^(1/3))*100 ~
 #                              City_dist*Block +
 #                              (1|Population/Family) +
 #                              City_dist*Transect_ID,
@@ -755,12 +775,14 @@ rgr_urbsubs_city_m2 <- glmmTMB(rel_growth_rate^(1/3) ~
 #                           dplyr::filter(Transect_ID != "Rural"),
 #                          REML = F)
 # 
-# test_gxe(rgr_urbsubs_city_m1, gxe_test_rgr3) # reg mod best,but the gxe mod wouldn't converge unless I changed the response from ^(1/3) to untransformed
+# test_gxe(rgr_urbsubs_city_m1, gxe_test_rgr3) # stat equiv
+# car::Anova(gxe_test_rgr3, type = "III") # qual identical results
+# car::Anova(rgr_urbsubs_city_m1, type = "III")
 ```
 
 #### Urb_score
 ```{r}
-rgr_urbsubs_usc_m1 <- glmmTMB(rel_growth_rate^(1/3) ~ 
+rgr_urbsubs_usc_m1 <- glmmTMB((rel_growth_rate^(1/3))*100 ~ 
                                  Block +
                                  Year +
                                  (1|Population/Family) +
@@ -776,7 +798,7 @@ rgr_urbsubs_usc_m1 <- glmmTMB(rel_growth_rate^(1/3) ~
 
 
 # MAIN EFFECTS MODEL
-rgr_urbsubs_usc_m2 <- glmmTMB(rel_growth_rate^(1/3) ~ 
+rgr_urbsubs_usc_m2 <- glmmTMB((rel_growth_rate^(1/3))*100 ~ 
                                  Block +
                                  Year +
                                  (1|Population/Family) +
@@ -792,7 +814,7 @@ rgr_urbsubs_usc_m2 <- glmmTMB(rel_growth_rate^(1/3) ~
 
 
 # # test for gxe intxns
-# gxe_test_rgr4 <- glmmTMB(rel_growth_rate^(1/3) ~
+# gxe_test_rgr4 <- glmmTMB((rel_growth_rate^(1/3))*100 ~
 #                              Urb_score*Block +
 #                              (1|Population/Family) +
 #                              Urb_score*Transect_ID,
@@ -801,13 +823,13 @@ rgr_urbsubs_usc_m2 <- glmmTMB(rel_growth_rate^(1/3) ~
 #                          REML = F)
 # 
 # test_gxe(rgr_urbsubs_usc_m1, gxe_test_rgr4) # gxe mod best
-# car::Anova(rgr_urbsubs_usc_m1, type = "III") # shows urb_score*block intxn is sig (p = 0.035)
+# car::Anova(rgr_urbsubs_usc_m1, type = "III") # shows urb_score*block intxn is sig (p = 0.0337)
 # car::Anova(gxe_test_rgr4, type = "III")
 # 
 # # compare ranovas
 # # have to use lmer instead of glmmtmb- ranova can't use glmmtmb- otherwise identical models
 # # GxE MOD
-# ranova(lmer(rel_growth_rate^(1/3) ~
+# ranova(lmer((rel_growth_rate^(1/3))*100 ~
 #                              Urb_score*Block +
 #                         #     Year +
 #                              (1|Population/Family) +
@@ -818,7 +840,7 @@ rgr_urbsubs_usc_m2 <- glmmTMB(rel_growth_rate^(1/3) ~
 # # p(Population) = 0.9111; p(Family) = 1
 # 
 # # REG MOD
-# ranova(lmer(rel_growth_rate^(1/3) ~
+# ranova(lmer((rel_growth_rate^(1/3))*100 ~
 #                                  Block +
 #                         #         Year +
 #                                  (1|Population/Family) +

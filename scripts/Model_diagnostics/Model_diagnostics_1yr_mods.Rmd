@@ -320,6 +320,7 @@ AIC(
          data = herbivory %>%
            dplyr::filter(Year == 2021 & Transect_ID != "Rural"))) %>%
   as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
+
 def.tr.m2 <- update(full1,
          .~. - City_dist*Transect_ID + City_dist + Transect_ID,
          data = herbivory %>%
@@ -1052,7 +1053,7 @@ AIC(
   update(grow.tr.m5_u, .~. + Urb_score:Transect_ID,
          data = heights %>% dplyr::filter(Transect_ID != "Rural" & Year == "2021")),
   grow.tr.m5_u
-  ) %>% as.list() # Full model doesn't converge so will use reduced
+  ) %>% as.list() # AIC qual identical but reduced model is lower
 
 # Ramets before flowering-----
 grow.tr.m6_u <- make_1yrmod_transects(ramets_early_mods_best_u[[2]], "2021", heights)

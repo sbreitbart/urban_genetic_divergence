@@ -5,7 +5,7 @@ LDMC,sqrt(x),sqrt(x),sqrt(x),log(x)
 Mortality,-,-,-,-
 Ramets before flowering,-,-,-,-
 Ramets after flowering,-,-,-,-
-Relative growth rate,Cube root,Cube root,Cube root,Cube root
+Relative growth rate,Cube root * 100,Cube root * 100,Cube root * 100,Cube root * 100
 SLA,log(x + 1),log(x + 1),log(x + 1),log(x + 1)
 Danaus plexippus abundance,-,-,-,-
 Labidomera clivicollis abundance,-,-,-,-

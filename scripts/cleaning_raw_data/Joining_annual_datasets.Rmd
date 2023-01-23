@@ -322,6 +322,23 @@ str(height_2021)
 
 # combine yearly dfs
 heights_19_20_21 <- rbind.fill(height_2019, height_2020, height_2021)
+
+#########################################
+# for plants with height = 0 for both surveys within a year, make heights & relative growth rate NA
+heights_19_20_21 %>%
+  dim()
+
+heights_19_20_21$Total_Height_early[heights_19_20_21$Total_Height_early == 0 & heights_19_20_21$Total_Height_late == 0] <- NA
+
+heights_19_20_21$Total_Height_late[heights_19_20_21$Total_Height_early == 0 & heights_19_20_21$Total_Height_late == 0] <- NA
+
+heights_19_20_21$rel_growth_rate[heights_19_20_21$Total_Height_early == 0 & heights_19_20_21$Total_Height_late == 0] <- NA
+
+heights_19_20_21 %>%
+  dplyr::filter(Total_Height_early == 0 &
+                  Total_Height_late == 0) %>%
+  dim()
+
 ```
 
 ## Survival

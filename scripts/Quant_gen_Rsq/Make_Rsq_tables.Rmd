@@ -579,12 +579,12 @@ ramets_e_r2 ,
 make_full_R2_table <- function(list1, list2, list3,
                                list4, list5, list6,
                                list7, list8, list9,
-                               list10, list11, list12,
-                               list13, list14, list15,
-                               list16, list17, list18,
-                               list19 , list20, list21,
-                               list22, list23, list24,
-                               list25 , list26 , list27
+                                list10, list11, list12,
+                                list13, list14, list15,
+                                list16, list17, list18,
+                                list19 , list20, list21,
+                                list22, list23, list24,
+                                list25, list26 #, list27
                                ){
       
   make_1_table <- function(list1){
@@ -627,12 +627,13 @@ make_full_R2_table <- function(list1, list2, list3,
   full_table <- lapply(list(list1, list2, list3,
                                list4, list5, list6,
                                list7, list8, list9,
-                               list10, list11, list12,
-                               list13, list14, list15,
-                               list16, list17, list18,
-                               list19 , list20, list21,
-                               list22, list23, list24,
-                                list25 , list26, list27),
+                                list10, list11, list12,
+                                list13, list14, list15,
+                                list16, list17, list18,
+                                list19 , list20, list21,
+                                list22, list23, list24,
+                                 list25, list26 #, list27
+                            ),
                        make_1_table) %>%
     reduce(full_join, all = T) %>%
       dplyr::mutate(Variable = c(list1[[1]]$call[[2]][[2]],
@@ -659,9 +660,9 @@ make_full_R2_table <- function(list1, list2, list3,
                                  list22[[1]]$call[[2]][[2]],
                                  list23[[1]]$call[[2]][[2]],
                                  list24[[1]]$call[[2]][[2]],
-                                 list25[[1]]$call[[2]][[2]],
-                                 list26[[1]]$call[[2]][[2]],
-                                 list27[[1]]$call[[2]][[2]]
+                                  list25[[1]]$call[[2]][[2]],
+                                  list26[[1]]$call[[2]][[2]]#,
+                          #       list27[[1]]$call[[2]][[2]]
                                  )) %>%
       dplyr::relocate(Variable) %>%
   dplyr::mutate(Variable = case_when(
@@ -730,6 +731,12 @@ make_full_R2_table <- function(list1, list2, list3,
     
     
     )) %>%
+        add_row(
+      # adding the monarch row this way because otherwise this function breaks when I try to add it, not sure why
+      Variable = "Danaus plexippus abundance",
+            Type = "trigamma",
+            Distance_Q1.R2m = 0,  Distance_Q1.R2c = 0,  Distance_Q2_best.R2m = 0,  Distance_Q2_best.R2c = 0,  UrbScore_Q1.R2m = 0,  UrbScore_Q1.R2c = 0,  UrbScore_Q2_best.R2m = 0,  UrbScore_Q2_best.R2c = 0,
+            .before = 17) %>%
       flextable() %>%
       add_header_row(
         values = c("",
@@ -776,7 +783,7 @@ make_full_R2_table(
                   weevil_bin_mods_reml_T   ,
                   weevil_quant_mods_reml_T ,
   # reproductive traits
-                   flsucc_mods_reml_T   ,  
+                   flsucc_mods_reml_T   ,
                    flowers_mods_reml_T    ,
                    flsize_mods_reml_T     ,
                    fltime_mods_reml_T     ,
@@ -785,12 +792,12 @@ make_full_R2_table(
                    first_pods_mods_reml_T ,
                    peduncles_mods_reml_T ,
                    poll_mods_reml_T      ,
-                   
-  # herbivores
-                   monarch_mods_reml_T,
-                   asclepiadis_mods_reml_T,
-                   clivicollis_mods_reml_T,
-  # growth traits
+  #                  
+  # # herbivores
+  #                  monarch_mods_reml_T,
+                    asclepiadis_mods_reml_T,
+                    clivicollis_mods_reml_T,
+  # # growth traits
                    ldmc_mods_reml_T     ,
                    sla_mods_reml_T      ,
                    heights_e_mods_reml_T,
@@ -815,13 +822,13 @@ Not doing for cardenolides because same as multi-year mods
 Excluding alternative models because my workflow to create 1yr models involved taking best models only
 ### Create function that makes REML = T one-year models
 ```{r}
-# this function is too general because the lapply to export all rsquared values see that the data = mod_allyrs_df... need to be specific with each model regarding the year and df
-make_1yrmod_REML <- function(orig_mod,
+# these functions are too general because the lapply to export all rsquared values see that the data = mod_allyrs_df... need to be specific with each model regarding the year and df & pops included (i.e., exclude rural for Q2)
+make_REML_T <- function(mod_1yr,
                              last_year,
                              mod_allyrs_df){
   return(
-    update(orig_mod,
-           .~. - Year,
+    update(mod_1yr,
+           .~. ,
            data = mod_allyrs_df %>%
              dplyr::filter(Year == last_year),
            REML = T
@@ -830,15 +837,28 @@ make_1yrmod_REML <- function(orig_mod,
     
 }
 
-
+make_REML_T_q2 <- function(mod_1yr,
+                             last_year,
+                             mod_allyrs_df){
+  return(
+    update(mod_1yr,
+           .~. ,
+           data = mod_allyrs_df %>%
+             dplyr::filter(Year == last_year &
+                             Transect_ID != "Rural"),
+           REML = T
+           )
+    )
+    
+}
 #### Reproduction ########
 ##########################
 
 # DF = reproduc, Year = 2022
-make_1yrmod_REML_repr1 <- function(orig_mod){
+make_REML_T_repr1 <- function(mod_1yr){
   return(
-    update(orig_mod,
-           .~. - Year,
+    update(mod_1yr,
+           .~. ,
            data = reproduc %>%
              dplyr::filter(Year == "2022"),
            REML = T
@@ -847,11 +867,26 @@ make_1yrmod_REML_repr1 <- function(orig_mod){
     
 }
 
-# DF = flowering, Year = 2022
-make_1yrmod_REML_repr2 <- function(orig_mod){
+# DF = reproduc, Year = 2022
+make_REML_T_repr1_q2 <- function(mod_1yr){
   return(
-    update(orig_mod,
-           .~. - Year,
+    update(mod_1yr,
+           .~. ,
+           data = reproduc %>%
+             dplyr::filter(Year == "2022" &
+                             Transect_ID != "Rural"),
+           REML = T
+           )
+    )
+    
+}
+
+
+# DF = flowering, Year = 2022
+make_REML_T_repr2 <- function(mod_1yr){
+  return(
+    update(mod_1yr,
+           .~. ,
            data = flowering %>%
              dplyr::filter(Year == "2022"),
            REML = T
@@ -860,16 +895,29 @@ make_1yrmod_REML_repr2 <- function(orig_mod){
     
 }
 
+# DF = flowering, Year = 2022
+make_REML_T_repr2_q2 <- function(mod_1yr){
+  return(
+    update(mod_1yr,
+           .~. ,
+           data = flowering %>%
+             dplyr::filter(Year == "2022" &
+                             Transect_ID != "Rural"),
+           REML = T
+           )
+    )
+    
+}
 
 
 #### Defense ########
 #####################
 
 # DF = herbivory, Year = 2021
-make_1yrmod_REML_def1 <- function(orig_mod){
+make_REML_T_def1 <- function(mod_1yr){
   return(
-    update(orig_mod,
-           .~. - Year,
+    update(mod_1yr,
+           .~. ,
            data = herbivory %>%
              dplyr::filter(Year == "2021"),
            REML = T
@@ -878,11 +926,26 @@ make_1yrmod_REML_def1 <- function(orig_mod){
     
 }
 
-# DF = herbivory, Year = 2021, herb early binary
-make_1yrmod_REML_def2 <- function(orig_mod){
+# DF = herbivory, Year = 2021
+make_REML_T_def1_q2 <- function(mod_1yr){
   return(
-    update(orig_mod,
-           .~. - Year,
+    update(mod_1yr,
+           .~. ,
+           data = herbivory %>%
+             dplyr::filter(Year == "2021" &
+                             Transect_ID != "Rural"),
+           REML = T
+           )
+    )
+    
+}
+
+
+# DF = herbivory, Year = 2021, herb early binary
+make_REML_T_def2 <- function(mod_1yr){
+  return(
+    update(mod_1yr,
+           .~. ,
            data = herbivory %>%
              dplyr::filter(Year == "2021" &
                                    Herbivory_mean_early_binary == 1),
@@ -892,11 +955,27 @@ make_1yrmod_REML_def2 <- function(orig_mod){
     
 }
 
-# DF = herbivory, Year = 2021, herb late binary
-make_1yrmod_REML_def3 <- function(orig_mod){
+# DF = herbivory, Year = 2021, herb early binary
+make_REML_T_def2_q2 <- function(mod_1yr){
   return(
-    update(orig_mod,
-           .~. - Year,
+    update(mod_1yr,
+           .~. ,
+           data = herbivory %>%
+             dplyr::filter(Year == "2021" &
+                                   Herbivory_mean_early_binary == 1 &
+                             Transect_ID != "Rural"),
+           REML = T
+           )
+    )
+    
+}
+
+
+# DF = herbivory, Year = 2021, herb late binary
+make_REML_T_def3 <- function(mod_1yr){
+  return(
+    update(mod_1yr,
+           .~. ,
            data = herbivory %>%
              dplyr::filter(Year == "2021"&
                                    Herbivory_mean_late_binary == 1),
@@ -906,11 +985,27 @@ make_1yrmod_REML_def3 <- function(orig_mod){
     
 }
 
-# DF = weevil, Year = 2021
-make_1yrmod_REML_def4 <- function(orig_mod){
+# DF = herbivory, Year = 2021, herb late binary
+make_REML_T_def3_q2 <- function(mod_1yr){
   return(
-    update(orig_mod,
-           .~. - Year,
+    update(mod_1yr,
+           .~. ,
+           data = herbivory %>%
+             dplyr::filter(Year == "2021"&
+                                   Herbivory_mean_late_binary == 1 &
+                             Transect_ID != "Rural"),
+           REML = T
+           )
+    )
+    
+}
+
+
+# DF = weevil, Year = 2021
+make_REML_T_def4 <- function(mod_1yr){
+  return(
+    update(mod_1yr,
+           .~. ,
            data = weevil %>%
              dplyr::filter(Year == "2021"),
            REML = T
@@ -919,11 +1014,26 @@ make_1yrmod_REML_def4 <- function(orig_mod){
     
 }
 
-# DF = weevil, Year = 2021, binary
-make_1yrmod_REML_def5 <- function(orig_mod){
+# DF = weevil, Year = 2021
+make_REML_T_def4_q2 <- function(mod_1yr){
   return(
-    update(orig_mod,
-           .~. - Year,
+    update(mod_1yr,
+           .~. ,
+           data = weevil %>%
+             dplyr::filter(Year == "2021" &
+                             Transect_ID != "Rural"),
+           REML = T
+           )
+    )
+    
+}
+
+
+# DF = weevil, Year = 2021, binary
+make_REML_T_def5 <- function(mod_1yr){
+  return(
+    update(mod_1yr,
+           .~. ,
            data = weevil %>%
              dplyr::filter(Year == "2021" &
                                    Scar_length_cm > 0),
@@ -932,26 +1042,57 @@ make_1yrmod_REML_def5 <- function(orig_mod){
     )
     
 }
+
+# DF = weevil, Year = 2021, binary
+make_REML_T_def5_q2 <- function(mod_1yr){
+  return(
+    update(mod_1yr,
+           .~. ,
+           data = weevil %>%
+             dplyr::filter(Year == "2021" &
+                                   Scar_length_cm > 0 &
+                             Transect_ID != "Rural"),
+           REML = T
+           )
+    )
+    
+}
+
+
 #### Herbivores ########
 ########################
 
 # DF = herbivory, Year = 2021
-make_1yrmod_REML_herb1 <- function(orig_mod){
+make_REML_T_herb1 <- function(mod_1yr){
   return(
-    update(orig_mod,
-           .~. - Year,
+    update(mod_1yr,
+           .~. ,
            data = herbivores %>%
              dplyr::filter(Year == "2021"),
            REML = T
            )
   )
 }
+
+# DF = herbivory, Year = 2021
+make_REML_T_herb1_q2 <- function(mod_1yr){
+  return(
+    update(mod_1yr,
+           .~. ,
+           data = herbivores %>%
+             dplyr::filter(Year == "2021" &
+                             Transect_ID != "Rural"),
+           REML = T
+           )
+  )
+}
+
   
 # DF = herbivory, Year = 2021, filtered for clivicollis >9
-make_1yrmod_REML_herb2 <- function(orig_mod){
+make_REML_T_herb2 <- function(mod_1yr){
   return(
-    update(orig_mod,
-           .~. - Year,
+    update(mod_1yr,
+           .~. ,
            data = herbivores %>%
              dplyr::filter(Year == "2021" &
                              Labidomera_clivicollis < 9),
@@ -960,14 +1101,47 @@ make_1yrmod_REML_herb2 <- function(orig_mod){
     )
     
 }
+  
+# DF = herbivory, Year = 2021, filtered for clivicollis >9
+make_REML_T_herb2_q2 <- function(mod_1yr){
+  return(
+    update(mod_1yr,
+           .~. ,
+           data = herbivores %>%
+             dplyr::filter(Year == "2021" &
+                             Labidomera_clivicollis < 9 &
+                             Transect_ID != "Rural"),
+           REML = T
+           )
+    )
+    
+}
+
+# labidomera/urb_score/Q2 didn’t converge with 2021 data so I used 2020 data
+# DF = herbivory, Urb score, Year = 2020, filtered for clivicollis >9
+make_REML_T_herb2_q2_urbscore <- function(mod_1yr){
+  return(
+    update(mod_1yr,
+           .~. ,
+           data = herbivores %>%
+             dplyr::filter(Year == "2020" &
+                             Labidomera_clivicollis < 9 &
+                             Transect_ID != "Rural"),
+           REML = T
+           )
+    )
+    
+}
+
+
 ##### Growth ########
 #####################
 
 # DF = heights, Year = 2021
-make_1yrmod_REML_grow1 <- function(orig_mod){
+make_REML_T_grow1 <- function(mod_1yr){
   return(
-    update(orig_mod,
-           .~. - Year,
+    update(mod_1yr,
+           .~. ,
            data = heights %>%
              dplyr::filter(Year == "2021"),
            REML = T
@@ -976,11 +1150,25 @@ make_1yrmod_REML_grow1 <- function(orig_mod){
     
 }
 
-# DF = survival, Year = 2022
-make_1yrmod_REML_grow2 <- function(orig_mod){
+# DF = heights, Year = 2021
+make_REML_T_grow1_q2 <- function(mod_1yr){
   return(
-    update(orig_mod,
-           .~. - Year,
+    update(mod_1yr,
+           .~. ,
+           data = heights %>%
+             dplyr::filter(Year == "2021" &
+                             Transect_ID != "Rural"),
+           REML = T
+           )
+    )
+    
+}
+
+# DF = survival, Year = 2022
+make_REML_T_grow2 <- function(mod_1yr){
+  return(
+    update(mod_1yr,
+           .~. ,
            data = survival %>%
              dplyr::filter(Year == "2022"),
            REML = T
@@ -989,6 +1177,19 @@ make_1yrmod_REML_grow2 <- function(orig_mod){
     
 }
 
+# DF = survival, Year = 2022
+make_REML_T_grow2_q2 <- function(mod_1yr){
+  return(
+    update(mod_1yr,
+           .~. ,
+           data = survival %>%
+             dplyr::filter(Year == "2022" &
+                             Transect_ID != "Rural"),
+           REML = T
+           )
+    )
+    
+}
 
 ```
 
@@ -996,41 +1197,105 @@ make_1yrmod_REML_grow2 <- function(orig_mod){
 ```{r}
 
 # change REML to T
-flsucc_mods_reml_T <- lapply(
-  list(repr.m1, repr.m1_u, repr.tr.m1, repr.tr.m1_u),
-  make_1yrmod_REML_repr1)
+flsucc_mods_reml_T <- append(
+  
+  lapply(
+    list(repr.m1, repr.m1_u),
+   make_REML_T_repr1),
+   
+  lapply(
+     list(repr.tr.m1, repr.tr.m1_u),
+  make_REML_T_repr1_q2)
+  )
 
-flowers_mods_reml_T    <- lapply(
-  list(repr.m2, repr.m2_u, repr.tr.m2, repr.tr.m2_u),
-  make_1yrmod_REML_repr2)
 
-flsize_mods_reml_T     <- lapply(
-  list(repr.m3, repr.m3_u, repr.tr.m3, repr.tr.m3_u),
-  make_1yrmod_REML_repr2)
+flowers_mods_reml_T  <- append(
+  
+  lapply(
+    list(repr.m2, repr.m2_u),
+   make_REML_T_repr2),
+  
+  lapply(
+    list(repr.tr.m2, repr.tr.m2_u),
+  make_REML_T_repr2_q2)
+  )
 
-fltime_mods_reml_T     <- lapply(
-  list(repr.m4, repr.m4_u, repr.tr.m4, repr.tr.m4_u),
-  make_1yrmod_REML_repr2)
+flsize_mods_reml_T     <- append(
+  
+  lapply(
+    list(repr.m3, repr.m3_u),
+   make_REML_T_repr2),
+  
+  lapply(
+    list(repr.tr.m3, repr.tr.m3_u),
+  make_REML_T_repr2_q2)
+  )
 
-flstart_mods_reml_T    <- lapply(
-  list(repr.m5, repr.m5_u, repr.tr.m5, repr.tr.m5_u),
-  make_1yrmod_REML_repr2)
+fltime_mods_reml_T <- append(
+  
+  lapply(
+    list(repr.m4, repr.m4_u),
+   make_REML_T_repr2),
+  
+  lapply(
+    list(repr.tr.m4, repr.tr.m4_u),
+  make_REML_T_repr2_q2)
+  )
 
-pods_mods_reml_T       <- lapply(
-  list(repr.m6, repr.m6_u, repr.tr.m6, repr.tr.m6_u),
-  make_1yrmod_REML_repr2)
+flstart_mods_reml_T  <- append(
+  
+  lapply(
+    list(repr.m5, repr.m5_u),
+   make_REML_T_repr2),
+  
+  lapply(
+    list(repr.tr.m5, repr.tr.m5_u),
+  make_REML_T_repr2_q2)
+  )
 
-first_pods_mods_reml_T <- lapply(
-  list(repr.m7, repr.m7_u, repr.tr.m7, repr.tr.m7_u),
-  make_1yrmod_REML_repr2)
+pods_mods_reml_T  <- append(
+  
+  lapply(
+    list(repr.m6, repr.m6_u),
+   make_REML_T_repr2),
+  
+  lapply(
+    list(repr.tr.m6, repr.tr.m6_u),
+  make_REML_T_repr2_q2)
+  )
 
-peduncles_mods_reml_T  <-lapply(
-  list(repr.m8, repr.m8_u, repr.tr.m8, repr.tr.m8_u),
-  make_1yrmod_REML_repr2)
+first_pods_mods_reml_T <- append(
+  
+  lapply(
+    list(repr.m7, repr.m7_u),
+   make_REML_T_repr2),
+  
+  lapply(
+    list(repr.tr.m7, repr.tr.m7_u),
+  make_REML_T_repr2_q2)
+  )
 
-poll_mods_reml_T  <-lapply(
-  list(repr.m9, repr.m9_u, repr.tr.m9, repr.tr.m9_u),
-  make_1yrmod_REML_repr2)
+peduncles_mods_reml_T <- append(
+  
+  lapply(
+    list(repr.m8, repr.m8_u),
+   make_REML_T_repr2),
+  
+  lapply(
+    list(repr.tr.m8, repr.tr.m8_u),
+  make_REML_T_repr2_q2)
+  )
+
+poll_mods_reml_T <- append(
+  
+  lapply(
+    list(repr.m9, repr.m9_u),
+   make_REML_T_repr2),
+  
+  lapply(
+    list(repr.tr.m9, repr.tr.m9_u),
+  make_REML_T_repr2_q2)
+  )
 
 
 all_models_reml_T <- list(
@@ -1055,7 +1320,6 @@ names(all_models_reml_T) <- c(
 "first_pods_mods",
 "peduncles_mods")
 
-
 # export to csv
 all_rsq <- lapply(all_models_reml_T, lapply, r.squaredGLMM) %>%
   unlist(recursive = FALSE)
@@ -1074,29 +1338,77 @@ latex_mods_reml_T          <- reml_to_true(list(latex_mods_best_c[[1]],
                                              latex_mods_best_c[[2]],
                                              latex_mods_best_u[[2]]))
 
-herb_e_bin_mods_reml_T <- lapply(
-  list(def.m2, def.m2_u, def.tr.m2, def.tr.m2_u),
-  make_1yrmod_REML_def1)
 
-herb_e_quant_mods_reml_T <- lapply(
-  list(def.m3, def.m3_u, def.tr.m3, def.tr.m3_u),
-  make_1yrmod_REML_def2)
+herb_e_bin_mods_reml_T <- append(
+  
+  lapply(
+    list(def.m2, def.m2_u),
+   make_REML_T_def1),
+   
+  lapply(
+     list(def.tr.m2, def.tr.m2_u),
+  make_REML_T_def1_q2)
+  )
+  
 
-herb_l_bin_mods_reml_T   <- lapply(
-  list(def.m4, def.m4_u, def.tr.m4, def.tr.m4_u),
-  make_1yrmod_REML_def1)
+herb_e_quant_mods_reml_T <- append(
+  
+  lapply(
+    list(def.m3, def.m3_u),
+   make_REML_T_def2),
+   
+  lapply(
+     list(def.tr.m3, def.tr.m3_u),
+  make_REML_T_def2_q2)
+  )
 
-herb_l_quant_mods_reml_T <- lapply(
-  list(def.m5, def.m5_u, def.tr.m5, def.tr.m5_u),
-  make_1yrmod_REML_def3)
 
-weevil_bin_mods_reml_T   <- lapply(
-  list(def.m6, def.m6_u, def.tr.m6, def.tr.m6_u),
-  make_1yrmod_REML_def4)
+herb_l_bin_mods_reml_T   <- append(
+  
+  lapply(
+    list(def.m4, def.m4_u),
+   make_REML_T_def1),
+   
+  lapply(
+     list(def.tr.m4, def.tr.m4_u),
+  make_REML_T_def1_q2)
+  )
 
-weevil_quant_mods_reml_T <- lapply(
-  list(def.m7, def.m7_u, def.tr.m7, def.tr.m7_u),
-  make_1yrmod_REML_def5)
+
+herb_l_quant_mods_reml_T <- append(
+  
+  lapply(
+    list(def.m5, def.m5_u),
+   make_REML_T_def3),
+   
+  lapply(
+     list(def.tr.m5, def.tr.m5_u),
+  make_REML_T_def3_q2)
+  )
+
+
+weevil_bin_mods_reml_T   <- append(
+  
+  lapply(
+    list(def.m6, def.m6_u),
+   make_REML_T_def4),
+   
+  lapply(
+     list(def.tr.m6, def.tr.m6_u),
+  make_REML_T_def4_q2)
+  )
+
+
+weevil_quant_mods_reml_T <- append(
+  
+  lapply(
+    list(def.m7, def.m7_u),
+   make_REML_T_def5),
+   
+  lapply(
+     list(def.tr.m7, def.tr.m7_u),
+  make_REML_T_def5_q2)
+  )
 
 
 all_models_reml_T <- list(
@@ -1128,33 +1440,112 @@ all_rsq <- lapply(all_models_reml_T, lapply, r.squaredGLMM) %>%
 ### 2021 Herbivores
 ```{r}
 # change REML to T
-monarch_mods_reml_T <- lapply(
-  list(herb.m1, herb.m1_u, herb.tr.m1, herb.tr.m1_u),
-  make_1yrmod_REML_herb1)
+# both monarch and liriomyza models won't give trigamma r2 when I try to export so I'll get rsq values for these the same way I do with labidomera clivicollis
+monarch_mods_reml_T <- append(
+  
+  lapply(
+    list(herb.m1, herb.m1_u),
+   make_REML_T_herb1),
+   
+  lapply(
+     list(herb.tr.m1, herb.tr.m1_u),
+  make_REML_T_herb1_q2)
+  )
+  
 
-asclepiadis_mods_reml_T <- lapply(
-  list(herb.m2, herb.m2_u, herb.tr.m2, herb.tr.m2_u),
-  make_1yrmod_REML_herb1)
 
-clivicollis_mods_reml_T <- lapply(
-  list(herb.m3, herb.m3_u, herb.tr.m3, herb.tr.m3_u),
-  make_1yrmod_REML_herb2)
+asclepiadis_mods_reml_T <-  append(
+  
+  lapply(
+    list(herb.m2, herb.m2_u),
+   make_REML_T_herb1),
+   
+  lapply(
+     list(herb.tr.m2, herb.tr.m2_u),
+  make_REML_T_herb1_q2)
+  )
 
-all_models_reml_T <- list(
-monarch_mods_reml_T          , 
-asclepiadis_mods_reml_T           , 
-clivicollis_mods_reml_T)
+# these won't append. will do separately 
+clivicollis_mods_reml_T <- append(
+  
+  lapply(
+    list(herb.m3, herb.m3_u),
+   make_REML_T_herb2),
+   
+  make_REML_T_herb2_q2(herb.tr.m3)  )
 
-names(all_models_reml_T) <- c(
-"monarch_mods"          ,
-"asclepiadis_mods"           ,
-"clivicollis_mods"         )
+clivicollis_mods_reml_T %<>% append( 
+    make_REML_T_herb2_q2_urbscore(herb.tr.m3_u))
+
+
+
+# getting rsq separately
+# D. plexippus
+DP_r2 <- rbind(
+  data.frame(r.squaredGLMM(monarch_mods_reml_T[[1]])),
+  data.frame(r.squaredGLMM(monarch_mods_reml_T[[2]])),
+  data.frame(r.squaredGLMM(monarch_mods_reml_T[[3]])),
+  data.frame(r.squaredGLMM(monarch_mods_reml_T[[4]])))%>%
+  as.data.frame() %>%
+  dplyr::mutate(Model = c("1", "1", "1", 
+                          "2", "2", "2", 
+                          "3", "3", "3", 
+                          "4", "4", "4"),
+                Species = "Danaus plexippus") %>%
+  tibble::rownames_to_column("Type")
+  
+  # L. asclepiadis
+LA_r2 <- rbind(
+  data.frame(r.squaredGLMM(asclepiadis_mods_reml_T[[1]])),
+  data.frame(r.squaredGLMM(asclepiadis_mods_reml_T[[2]])),
+  data.frame(r.squaredGLMM(asclepiadis_mods_reml_T[[3]])),
+  data.frame(r.squaredGLMM(asclepiadis_mods_reml_T[[4]]))) %>%
+  as.data.frame() %>%
+  dplyr::mutate(Model = c("1", "1", "1", 
+                          "2", "2", "2", 
+                          "3", "3", "3", 
+                          "4", "4", "4"),
+                Species = "Liriomyza asclepiadis") %>%
+  tibble::rownames_to_column("Type")
+  
+
+    
+  # L. clivicollis
+LC_r2 <- rbind(
+  data.frame(r.squaredGLMM(clivicollis_mods_reml_T[[1]])),
+  data.frame(r.squaredGLMM(clivicollis_mods_reml_T[[2]])),
+  data.frame(r.squaredGLMM(make_REML_T_herb2_q2(herb.tr.m3) )),
+  data.frame(r.squaredGLMM(make_REML_T_herb2_q2_urbscore(herb.tr.m3_u)))) %>%
+  as.data.frame() %>%
+  dplyr::mutate(Model = c("1", "1", "1", 
+                          "2", "2", "2", 
+                          "3", "3", "3", 
+                          "4", "4", "4"),
+                Species = "Labidomera clivicollis") %>%
+  tibble::rownames_to_column("Type")
+ 
+herbivores_r2 <- rbind(DP_r2, LA_r2, LC_r2)
+
+# 
+# all_models_reml_T <- list(
+# monarch_mods_reml_T          , 
+# asclepiadis_mods_reml_T   #        , 
+# #clivicollis_mods_reml_T
+# )
+# 
+# names(all_models_reml_T) <- c(
+# "monarch_mods"          ,
+# "asclepiadis_mods"   #        ,
+# #"clivicollis_mods" 
+#         )
 
 # export to csv
-all_rsq <- lapply(all_models_reml_T, lapply, r.squaredGLMM) %>%
-  unlist(recursive = FALSE) %T>%
-  write.csv(here::here("./Figures_Tables/Rsquared/1yr_mods/Defense/Rsquare_herbivores.csv"))
+# all_rsq <- lapply(all_models_reml_T, lapply, r.squaredGLMM) %>%
+#   unlist(recursive = FALSE) %T>%
+#   write.csv(here::here("./Figures_Tables/Rsquared/1yr_mods/Defense/Rsquare_herbivores.csv"))
 
+herbivores_r2 %>%
+  write.csv(here::here("./Figures_Tables/Rsquared/1yr_mods/Defense/Rsquare_herbivores.csv"))
 ```
 
 ### Growth
@@ -1170,29 +1561,73 @@ sla_mods_reml_T       <-  reml_to_true(list(sla_mods_best_c[[1]],
                                             sla_mods_best_c[[2]],
                                             sla_mods_best_u[[2]]))
   
-heights_e_mods_reml_T <- lapply(
-  list(grow.m3, grow.m3_u, grow.tr.m3, grow.tr.m3_u),
-  make_1yrmod_REML_grow1)
-
-heights_l_mods_reml_T <- lapply(
-  list(grow.m4, grow.m4_u, grow.tr.m4, grow.tr.m4_u),
-  make_1yrmod_REML_grow1)
-
-rgr_mods_reml_T       <- lapply(
-  list(grow.m5, grow.m5_u, grow.tr.m5, grow.tr.m5_u),
-  make_1yrmod_REML_grow1)
+heights_e_mods_reml_T <- append(
   
-ramets_e_mods_reml_T  <- lapply(
-  list(grow.m6, grow.m6_u, grow.tr.m6, grow.tr.m6_u),
-  make_1yrmod_REML_grow1)
+  lapply(
+    list(grow.m3, grow.m3_u),
+   make_REML_T_grow1),
+   
+  lapply(
+     list(grow.tr.m3, grow.tr.m3_u),
+  make_REML_T_grow1_q2)
+  )
+  
 
-ramets_l_mods_reml_T  <- lapply(
-  list(grow.m7, grow.m7_u, grow.tr.m7, grow.tr.m7_u),
-  make_1yrmod_REML_grow1)
+heights_l_mods_reml_T <- append(
+  
+  lapply(
+    list(grow.m4, grow.m4_u),
+   make_REML_T_grow1),
+   
+  lapply(
+     list(grow.tr.m4, grow.tr.m4_u),
+  make_REML_T_grow1_q2)
+  )
 
-mortality_mods_reml_T <- lapply(
-  list(grow.m8, grow.m8_u, grow.tr.m8, grow.tr.m8_u),
-  make_1yrmod_REML_grow2)
+rgr_mods_reml_T       <- append(
+  
+  lapply(
+    list(grow.m5, grow.m5_u),
+   make_REML_T_grow1),
+   
+  lapply(
+     list(grow.tr.m5, grow.tr.m5_u),
+  make_REML_T_grow1_q2)
+  )
+  
+ramets_e_mods_reml_T  <- append(
+  
+  lapply(
+    list(grow.m6, grow.m6_u),
+   make_REML_T_grow1),
+   
+  lapply(
+     list(grow.tr.m6, grow.tr.m6_u),
+  make_REML_T_grow1_q2)
+  )
+
+ramets_l_mods_reml_T  <- append(
+  
+  lapply(
+    list(grow.m7, grow.m7_u),
+   make_REML_T_grow1),
+   
+  lapply(
+     list(grow.tr.m7, grow.tr.m7_u),
+  make_REML_T_grow1_q2)
+  )
+
+
+mortality_mods_reml_T <- append(
+  
+  lapply(
+    list(grow.m8, grow.m8_u),
+   make_REML_T_grow2),
+   
+  lapply(
+     list(grow.tr.m8, grow.tr.m8_u),
+  make_REML_T_grow2_q2)
+  )
 
 
 all_models_reml_T <- list(
@@ -1235,10 +1670,9 @@ make_full_R2_table <- function(list1, list2, list3,
                                 list10, list11, list12,
                                 list13, list14, list15,
                                 list16, list17, list18,
-                         #       list19 ,
-                               list20, list21,
-                                list22, list23, list24,
-                                list25, list26, list27
+                                list19 , list20, list21,
+                                list22, list23, list24#,
+                               # list25, list26, list27
                                ){
       
   make_1_table <- function(list1){
@@ -1289,10 +1723,9 @@ make_full_R2_table <- function(list1, list2, list3,
                             list10, list11, list12,
                             list13, list14, list15, 
                             list16, list17, list18,
-                       #    list19 , 
-                                    list20, list21,
-                            list22, list23, list24,
-                            list25 , list26, list27
+                            list19 , list20, list21,
+                            list22, list23, list24#,
+                           # list25 , list26, list27
                       ), make_1_table) %>%
     reduce(full_join, all = T) %>%
       dplyr::mutate(Variable = c(list1[[1]]$call[[2]][[2]],
@@ -1313,17 +1746,15 @@ make_full_R2_table <- function(list1, list2, list3,
                                  list16[[1]]$call[[2]][[2]],
                                  list17[[1]]$call[[2]][[2]],
                                  list18[[1]]$call[[2]][[2]],
-
-                            #     list19[[1]]$call[[2]][[2]],
-                                 
+                                 list19[[1]]$call[[2]][[2]],
                                  list20[[1]]$call[[2]][[2]],
                                  list21[[1]]$call[[2]][[2]],
                                  list22[[1]]$call[[2]][[2]],
                                  list23[[1]]$call[[2]][[2]],
-                                 list24[[1]]$call[[2]][[2]],
-                                 list25[[1]]$call[[2]][[2]],
-                                 list26[[1]]$call[[2]][[2]],
-                                 list27[[1]]$call[[2]][[2]]
+                                 list24[[1]]$call[[2]][[2]]#,
+                                 # list25[[1]]$call[[2]][[2]],
+                                 # list26[[1]]$call[[2]][[2]],
+                                 # list27[[1]]$call[[2]][[2]]
                                  )) %>%
       dplyr::relocate(Variable) %>%
   dplyr::mutate(Variable = case_when(
@@ -1393,11 +1824,21 @@ make_full_R2_table <- function(list1, list2, list3,
 
     )) %>%
     add_row(
-      # adding the clivicollis row this way because otherwise this function breaks when I try to add it, not sure why
-      Variable = "Labidomera clivicollis abundance",
+      # adding the herbivore rows this way because otherwise this function breaks when I try to add them, not sure why
+      Variable = "Danaus plexippus abundance",
             Type = "trigamma",
             Distance_Q1.R2m = 0,  Distance_Q1.R2c = 0,  Distance_Q2_best.R2m = 0,  Distance_Q2_best.R2c = 0,  UrbScore_Q1.R2m = 0,  UrbScore_Q1.R2c = 0,  UrbScore_Q2_best.R2m = 0,  UrbScore_Q2_best.R2c = 0,
-            .before = 19) %>%
+            .after = 15) %>%
+        add_row(
+      Variable = "Liriomyza asclepiadis abundance",
+            Type = "trigamma",
+            Distance_Q1.R2m = 0.013,  Distance_Q1.R2c = 0.029,  Distance_Q2_best.R2m = 0.013,  Distance_Q2_best.R2c = 0.029,  UrbScore_Q1.R2m = 0.011,  UrbScore_Q1.R2c = 0.028,  UrbScore_Q2_best.R2m = 0.011,  UrbScore_Q2_best.R2c = 0.028,
+            .after = 16) %>%
+        add_row(
+      Variable = "Labidomera clivicollis abundance",
+            Type = "trigamma",
+            Distance_Q1.R2m = 0,  Distance_Q1.R2c = 0,  Distance_Q2_best.R2m = 0,  Distance_Q2_best.R2c = 0,  UrbScore_Q1.R2m = 0,  UrbScore_Q1.R2c = 0,  UrbScore_Q2_best.R2m = 0.001,  UrbScore_Q2_best.R2c = 0.008,
+            .after = 17) %>%
        flextable() %>%
       add_header_row(
         values = c("",
@@ -1456,9 +1897,9 @@ make_full_R2_table(
                    peduncles_mods_reml_T ,
                    
   # herbivores
-                    monarch_mods_reml_T,
-                    asclepiadis_mods_reml_T,
-                #    clivicollis_mods_reml_T,
+                   #  monarch_mods_reml_T,
+                    # asclepiadis_mods_reml_T,
+                    # clivicollis_mods_reml_T,
   # growth traits
                     ldmc_mods_reml_T     ,
                     sla_mods_reml_T      ,

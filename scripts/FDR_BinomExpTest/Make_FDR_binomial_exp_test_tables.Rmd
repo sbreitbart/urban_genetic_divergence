@@ -501,8 +501,8 @@ prob_succ <- 0.05 # critical p-value
 
 t1_results_fam <- binom.test(t1_fam_succ, t1_fam_trials, prob_succ, "two.sided")
 
-t1_results_fam$p.value # p-value: 4.010664e-06
-t1_results_fam$estimate # probability of success: 0.3333333  
+t1_results_fam$p.value # p-value: 3.67354e-05
+t1_results_fam$estimate # probability of success: 0.2962963   
 ```
 
 ### Table 2
@@ -562,8 +562,8 @@ prob_succ <- 0.05 # critical p-value
 
 t2_results_fam <- binom.test(t2_fam_succ, t2_fam_trials, prob_succ, "two.sided")
 
-t2_results_fam$p.value # p-value: 4.010664e-06
-t2_results_fam$estimate # probability of success: 0.3333333   
+t2_results_fam$p.value # p-value:  3.67354e-05
+t2_results_fam$estimate # probability of success: 0.2962963    
 ```
 
 ### Table 3
@@ -622,8 +622,8 @@ prob_succ <- 0.05 # critical p-value
 
 t3_results_fam <- binom.test(t3_fam_succ, t3_fam_trials, prob_succ, "two.sided")
 
-t3_results_fam$p.value # p-value: 4.010664e-06 
-t3_results_fam$estimate # probability of success: 0.3333333  
+t3_results_fam$p.value # p-value: 3.67354e-05 
+t3_results_fam$estimate # probability of success: 0.2962963   
 ```
 
 ## Q2
@@ -684,8 +684,8 @@ prob_succ <- 0.05 # critical p-value
 
 t1_results_fam2 <- binom.test(t1_fam_succ, t1_fam_trials, prob_succ, "two.sided")
 
-t1_results_fam2$p.value # p-value: 3.011142e-08
-t1_results_fam2$estimate # probability of success: 0.4074074  
+t1_results_fam2$p.value # p-value: 3.745823e-07
+t1_results_fam2$estimate # probability of success: 0.3703704   
 ```
 
 ### Table 2
@@ -744,8 +744,8 @@ prob_succ <- 0.05 # critical p-value
 
 t2_results_fam2 <- binom.test(t2_fam_succ, t2_fam_trials, prob_succ, "two.sided")
 
-t2_results_fam2$p.value # p-value: 3.011142e-08
-t2_results_fam2$estimate # probability of success: 0.4074074  
+t2_results_fam2$p.value # p-value:  3.745823e-07
+t2_results_fam2$estimate # probability of success: 0.3703704   
 ```
 
 ## Export

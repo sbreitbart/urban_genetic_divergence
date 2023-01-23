@@ -1,5 +1,5 @@
 ﻿Variable,Chisq,p,PVE,Group
-Height before flowering,0.427,0.257,1.186,Population
+Height before flowering,0,0.5,0,Population
 Height after flowering,0.776,0.189,1.442,Population
 LDMC,0,0.3805,0.407,Population
 Mortality,0.795,0.186,1.41,Population
@@ -26,7 +26,7 @@ Follicles,0,0.5,0,Population
 Inflorescences,3.285,0.035,7.409,Population
 Flowers per inflorescence,0.833,0.1805,8.369,Population
 Pollinaria removed,0.017,0.449,1.003,Population
-Height before flowering,9.561,0.001,9.227,Family
+Height before flowering,1.477,0.112,3.438,Family
 Height after flowering,5.626,0.009,6.616,Family
 LDMC,0,0.5,0,Family
 Mortality,0.778,0.189,2.746,Family

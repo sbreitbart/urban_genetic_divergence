@@ -175,7 +175,7 @@ points_Q2.citydist_height_e <- ggpred_Q2.citydist_height_e +
              aes(x = City_dist,
                  y = height_cubert,
                  color = Transect_ID)) +
-  ylim(0, 7) +
+  ylim(0, 8) +
     scale_colour_brewer(labels = c("Corridor",
                                  "Non-Corridor"),
                       palette = "Set2")
