@@ -295,7 +295,7 @@ update(
     REML = T) %>% VarCorr()
 
 flstart_mean <- flowering %>%
-  dplyr::summarize(Mean = mean(Julian_oldest_inflor ,
+  dplyr::summarize(Mean = mean(Julian_oldest_inflor -170,
                                na.rm = T)) %>%
   as.numeric()
 
@@ -361,7 +361,7 @@ update(
     REML = T) %>% VarCorr()
 
 first_pods_mean <- flowering %>%
-  dplyr::summarize(Mean = mean(Julian_first_follicle,
+  dplyr::summarize(Mean = mean(Julian_first_follicle -170,
                                na.rm = T)) %>%
   as.numeric()
 
@@ -421,8 +421,8 @@ monarch_mean <- herbivores %>%
                                na.rm = T)) %>%
   as.numeric()
 
-qg_monarch <- calc_quantgenvars(0.146429,
-                                0.069211,
+qg_monarch <- calc_quantgenvars(0.052469,
+                                0.074502,
                                 resid_var,
                                 monarch_mean,
                                 "D. plexippus abundance")
@@ -444,8 +444,8 @@ lascelp_mean <- herbivores %>%
                                na.rm = T)) %>%
   as.numeric()
 
-qg_lasclep <- calc_quantgenvars(0.31796 ,
-            0.14935 ,
+qg_lasclep <- calc_quantgenvars(0.25752  ,
+            0.12421  ,
             resid_var,
             lascelp_mean,
             "L. asclepiadis abundance")
@@ -468,8 +468,8 @@ clivicoll_mean <- herbivores %>%
                                na.rm = T)) %>%
   as.numeric()
 
-qg_clivicoll <- calc_quantgenvars(0.00011488,
-            0.30719353,
+qg_clivicoll <- calc_quantgenvars(0.50549 ,
+            0.48033 ,
             resid_var,
             clivicoll_mean,
             "L. clivicollis abundance")
@@ -489,10 +489,10 @@ ldmc_mean <- sla_ldmc %>%
                                na.rm = T)) %>%
   as.numeric()
 
-qg_ldmc <- calc_quantgenvars( 9.4956e-06,
-                   2.2071e-05,
-                   0.387388,
-                   5.8581e-02,
+qg_ldmc <- calc_quantgenvars( 3.7986e-06,
+                   8.1643e-07,
+                   5.8917e-02,
+                   ldmc_mean,
                    "LDMC")
 
 
@@ -507,9 +507,9 @@ sla_mean <- sla_ldmc %>%
                                na.rm = T)) %>%
   as.numeric()
 
-qg_sla <- calc_quantgenvars(4.5386e-06,
-                   9.5195e-06,
-                    4.0241e-01,
+qg_sla <- calc_quantgenvars(8.5713e-06,
+                  2.4052e-02,
+                    3.4704e-01,
                    sla_mean,
                    "SLA")
 
@@ -526,9 +526,9 @@ heights_e_mean <- heights %>%
                                na.rm = T)) %>%
   as.numeric()
 
-qg_heights_e <- calc_quantgenvars(0.36591,
-                                  0.15034 ,
-                                  1.12547 ,
+qg_heights_e <- calc_quantgenvars(0.215134,
+                                  0.039398 ,
+                                  0.861319 ,
                    heights_e_mean,
                    "Height before flowering")
 
@@ -558,13 +558,13 @@ update(
     REML = T) %>% VarCorr()
 
 rgr_mean <- heights %>%
-  dplyr::summarize(Mean = mean(rel_growth_rate,
+  dplyr::summarize(Mean = mean(rel_growth_rate*100, # multiplying by 100 because that's how I transformed it in model
                                na.rm = T)) %>%
   as.numeric()
  
-qg_rgr <- calc_quantgenvars( 3.8967e-06 ,
-                             2.6174e-03 ,
-                            5.5405e-02,
+qg_rgr <- calc_quantgenvars(0.00057931 ,
+                            0.26399752 ,
+                            5.54025753, 
                    rgr_mean,
                    "Relative growth rate")
 
@@ -630,8 +630,8 @@ resid_var <- update(
      mortality_mods_best_c[[1]], REML = T) %>%
     sigma()
 
-qg_survival <- calc_quantgenvars(6.6969e-08,
-                   1.3094e-05,
+qg_survival <- calc_quantgenvars(0.86406 ,
+                  0.40162 ,
                    resid_var ,
                    surv_mean,
                    "Mortality")
@@ -1124,8 +1124,8 @@ monarch_mean <- herbivores %>%
                                na.rm = T)) %>%
   as.numeric()
 
-qg_1yr_monarch <- calc_quantgenvars(0.17212 ,
-                                0.16350 ,
+qg_1yr_monarch <- calc_quantgenvars(0.24206  ,
+                                0.11298 ,
                                 resid_var,
                                 monarch_mean,
                                 "D. plexippus abundance")
@@ -1153,8 +1153,8 @@ lascelp_mean <- herbivores %>%
                                na.rm = T)) %>%
   as.numeric()
 
-qg_1yr_lasclep <- calc_quantgenvars(0.31791  ,
-            0.18936  ,
+qg_1yr_lasclep <- calc_quantgenvars(0.19164   ,
+            0.16830   ,
             resid_var,
             lascelp_mean,
             "L. asclepiadis abundance")
@@ -1182,8 +1182,8 @@ clivicoll_mean <- herbivores %>%
                                na.rm = T)) %>%
   as.numeric()
 
-qg_1yr_clivicoll <- calc_quantgenvars(9.7757e-05,
-            4.1090e-01,
+qg_1yr_clivicoll <- calc_quantgenvars(1.1656e-04,
+            8.7063e-05,
             resid_var,
             clivicoll_mean,
             "L. clivicollis abundance")
@@ -1213,9 +1213,9 @@ heights_e_mean <- heights %>%
                                na.rm = T)) %>%
   as.numeric()
 
-qg_1yr_heights_e <- calc_quantgenvars(0.51437 ,
-                                  0.18437  ,
-                                  1.60275  ,
+qg_1yr_heights_e <- calc_quantgenvars(2.2422e-01 ,
+                                  7.5154e-05  ,
+                                  1.1883e+00  ,
                    heights_e_mean,
                    "Height before flowering")
 
@@ -1249,13 +1249,13 @@ update(
 
 rgr_mean <- heights %>% 
   dplyr::filter(Year == 2021) %>%
-  dplyr::summarize(Mean = mean(rel_growth_rate,
+  dplyr::summarize(Mean = mean(rel_growth_rate*100, # multiplying by 100 because that's how I transformed it in model
                                na.rm = T)) %>%
   as.numeric()
  
-qg_1yr_rgr <- calc_quantgenvars(6.2247e-03,
-                             4.4362e-06 ,
-                            6.0391e-02,
+qg_1yr_rgr <- calc_quantgenvars(0.62258438,
+                            0.00072807,
+                            6.03911527,
                    rgr_mean,
                    "Relative growth rate")
 
@@ -1398,6 +1398,28 @@ qgen_list1 %>%
   flextable::align(j = 2:4, align = "center", part = "all") %>%
   autofit() %>%
   save_as_docx(path = here::here("./Figures_Tables/Quant_gen/Quant_gen_1yrmods.docx"))
+
+
+
+# Get mean, range, and SE
+qgen_df <- qgen_list1 %>% 
+  bind_rows() %>%
+  dplyr::mutate_at(2:4, round, 3) %>%
+  dplyr::rename(Variable = 1) 
+
+std.error <- function(x) sd(x)/sqrt(length(x))
+
+summarise(qgen_df,
+          mean_h2 = mean(h2),
+          mean_qst = mean(qst),
+          mean_cva = mean(cva),
+          range_h2 = range(h2),
+          range_qst = range(qst),
+          range_cva = range(cva),
+          se_h2 = std.error(h2),
+          se_qst = std.error(qst),
+          se_cva = std.error(cva)) 
+
 
 ```
 

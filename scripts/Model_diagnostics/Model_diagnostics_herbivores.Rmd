@@ -42,10 +42,9 @@ str(herbivores_all)
 # Herbivores surveyed in 2020-2021: Monarchs, L. asclepiadis, L. clivicollis
 herbivores <- herbivores_all %>%
   dplyr::select(c(1:7, 10, 13, 19, 22:Surveyor))%>%
-  dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
+  dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family))) %>%
 
 # Take mean of two sampling events
-herbivores %<>%
   dplyr::group_by(Population, Row, Column, Block, Family, Replicate, Year) %>%
   dplyr::summarise(Monarch_Quantity_Observed = mean(Monarch_Quantity_Observed, na.rm = T),
                    Liriomyza_asclepiadis = mean(Liriomyza_asclepiadis, na.rm = T),
@@ -54,9 +53,10 @@ herbivores %<>%
                    City_dist = first(City_dist),
                    Urb_Rur = first(Urb_Rur),
                    Urb_score = first(Urb_score),
-                   Fam_uniq = first(Fam_uniq))
+                   Fam_uniq = first(Fam_uniq)) %>%
+  as.data.frame()
                    
-  
+str(herbivores)
 ```
 
 # Diagnostics
