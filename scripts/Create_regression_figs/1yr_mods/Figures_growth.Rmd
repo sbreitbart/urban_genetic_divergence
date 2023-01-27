@@ -1225,7 +1225,7 @@ addborder(ggpred_Q1.citydist_mortality, "growth") +
           ncol = 4,
           nrow = 2,
           align = "hv",
-          labels = list("A", "B", "C", "D", "E", "F", "G"),
+          labels = list("a", "b", "c", "d", "e", "f", "g", "h"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%
@@ -1252,7 +1252,7 @@ addborder(ggpred_Q1.urbscore_mortality, "growth") +
           ncol = 4,
           nrow = 2,
           align = "hv",
-          labels = list("A", "B", "C", "D", "E", "F", "G"),
+          labels = list("a", "b", "c", "d", "e", "f", "g", "h"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%
@@ -1277,7 +1277,7 @@ ggarrange(
           ncol = 4,
           nrow = 2,
           align = "hv",
-          labels = list("A", "B", "C", "D", "E", "F", "G"),
+          labels = list("a", "b", "c", "d", "e", "f", "g", "h"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%
@@ -1303,7 +1303,7 @@ ggarrange(
           ncol = 4,
           nrow = 2,
           align = "hv",
-          labels = list("A", "B", "C", "D", "E", "F", "G"),
+          labels = list("a", "b", "c", "d", "e", "f", "g", "h"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%

@@ -92,7 +92,7 @@ ggarrange(
           ncol = 2,
           nrow = 2,
           align = "hv",
-          labels = list("A", "B", "C", "D"),
+          labels = list("a", "b", "c", "d"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%
@@ -194,7 +194,7 @@ ggarrange(
           ncol = 2,
           nrow = 2,
           align = "hv",
-          labels = list("A", "B", "C", "D"),
+          labels = list("a", "b", "c", "d"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%

@@ -1376,7 +1376,7 @@ addborder(ggpred_Q1.citydist_peduncles, "reproduction") +
           ncol = 3,
           nrow = 3,
           align = "hv",
-          labels = list("A", "B", "C", "D", "E", "F", "G", "H", "I"),
+          labels = list("a", "b", "c", "d", "e", "f", "g", "h", "i"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%
@@ -1402,7 +1402,7 @@ addborder(ggpred_Q1.urbscore_peduncles, "reproduction") +
           ncol = 3,
           nrow = 3,
           align = "hv",
-          labels = list("A", "B", "C", "D", "E", "F", "G", "H", "I"),
+          labels = list("a", "b", "c", "d", "e", "f", "g", "h", "i"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%
@@ -1428,7 +1428,7 @@ ggarrange(
           ncol = 3,
           nrow = 3,
           align = "hv",
-          labels = list("A", "B", "C", "D", "E", "F", "G", "H", "I"),
+          labels = list("a", "b", "c", "d", "e", "f", "g", "h", "i"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%
@@ -1454,7 +1454,7 @@ addborder(ggpred_Q2.urbsubs_peduncles, "reproduction") +
           ncol = 3,
           nrow = 3,
           align = "hv",
-          labels = list("A", "B", "C", "D", "E", "F", "G", "H", "I"),
+          labels = list("a", "b", "c", "d", "e", "f", "g", "h", "i"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%

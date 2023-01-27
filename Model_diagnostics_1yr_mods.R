@@ -1,28 +1,28 @@
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 source("libraries.R")
 source("functions.R")
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
 
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Defense.Rmd", quiet=TRUE))
 
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_herbivores.Rmd", quiet=TRUE))
 
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Growth.Rmd", quiet=TRUE))
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 def.m1 <- latex_mods_best_c[[1]]
 
 def.m2 <- make_1yrmod(herb_e_bin_mods_best_c[[1]], "2021", herbivory)
@@ -50,7 +50,7 @@ def.m7 <- update(weev_quant_mods_best_c[[1]],
                                    Scar_length_cm > 0))
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 repr.m1 <- make_1yrmod(flsucc_mods_best_c[[1]], "2022", reproduc)
 
 repr.m2 <- make_1yrmod(flowers_mods_best_c[[1]], "2022", flowering)
@@ -78,7 +78,7 @@ repr.m8 <- make_1yrmod(peduncles_mods_best_c[[1]], "2022", flowering)
 repr.m9 <- make_1yrmod(poll_mods_best_c[[1]], "2022", flowering)
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 herb.m1 <- make_1yrmod(monarch_mods_best_c[[1]], "2021", herbivores)
 
 herb.m2 <- make_1yrmod(asclepiadis_mods_best_c[[1]], "2021", herbivores)
@@ -89,7 +89,7 @@ herb.m3 <- update(clivicollis_mods_best_c[[1]],
              dplyr::filter(Year == 2021 & Labidomera_clivicollis < 9))
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 grow.m1 <- ldmc_mods_best_c[[1]]
 
 grow.m2 <- sla_mods_best_c[[1]]
@@ -107,7 +107,7 @@ grow.m7 <- make_1yrmod(ramets_late_mods_best_c[[1]], "2021", heights)
 grow.m8 <- make_1yrmod(mortality_mods_best_c[[1]], "2022", survival)
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 all_1yr_mods <- list(
   
   # defense
@@ -147,7 +147,7 @@ all_1yr_mods <- list(
   )
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 def.m1_u <- latex_mods_best_u[[1]]
 
 def.m2_u <- make_1yrmod(herb_e_bin_mods_best_u[[1]], "2021", herbivory)
@@ -175,7 +175,7 @@ def.m7_u <- update(weev_quant_mods_best_u[[1]],
                                    Scar_length_cm > 0))
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 repr.m1_u <- make_1yrmod(flsucc_mods_best_u[[1]], "2022", reproduc)
 
 repr.m2_u <- make_1yrmod(flowers_mods_best_u[[1]], "2022", flowering)
@@ -202,7 +202,7 @@ repr.m8_u <- make_1yrmod(peduncles_mods_best_u[[1]], "2022", flowering)
 repr.m9_u <- make_1yrmod(poll_mods_best_u[[1]], "2022", flowering)
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 herb.m1_u <- make_1yrmod(monarch_mods_best_u[[1]], "2021", herbivores)
 
 herb.m2_u <- make_1yrmod(asclepiadis_mods_best_u[[1]], "2021", herbivores)
@@ -213,7 +213,7 @@ herb.m3_u <- update(clivicollis_mods_best_u[[1]],
              dplyr::filter(Year == 2021 & Labidomera_clivicollis < 9))
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 grow.m1_u <- ldmc_mods_best_u[[1]]
 
 grow.m2_u <- sla_mods_best_u[[1]]
@@ -231,7 +231,7 @@ grow.m7_u <- make_1yrmod(ramets_late_mods_best_u[[1]], "2021", heights)
 grow.m8_u <- make_1yrmod(mortality_mods_best_u[[1]], "2022", survival)
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 all_1yr_mods.u <- list(
   
   # defense
@@ -271,7 +271,7 @@ all_1yr_mods.u <- list(
   )
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 # Latex-----
 def.tr.m1 <- latex_mods_best_c[[2]]
 AIC(
@@ -387,7 +387,7 @@ AIC(
   as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 # Flowering success-----
 repr.tr.m1 <- make_1yrmod_transects(flsucc_mods_best_c[[2]], "2022", reproduc)
 
@@ -512,7 +512,7 @@ AIC(
   as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 # Danaus plexippus-----
 herb.tr.m1 <- make_1yrmod_transects(monarch_mods_best_c[[2]], "2021", herbivores)
 
@@ -560,7 +560,7 @@ car::Anova(update(herb.tr.m3,
            type = "III")
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 # LDMC-----
 grow.tr.m1 <- ldmc_mods_best_c[[2]]
 
@@ -661,7 +661,7 @@ grow.tr.m8 <- update(grow.tr.m8, .~. - City_dist*Transect_ID + City_dist + Trans
            dplyr::filter(Transect_ID != "Rural" & Year == "2022"))
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 all_1yr_mods_tr <- list(
   
   # defense
@@ -701,7 +701,7 @@ all_1yr_mods_tr <- list(
   )
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 # Latex-----
 def.tr.m1_u <- latex_mods_best_u[[2]]
 
@@ -807,7 +807,7 @@ AIC(
   ) %>% as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 # Flowering success-----
 repr.tr.m1_u <- make_1yrmod_transects(flsucc_mods_best_u[[2]], "2022", reproduc)
 
@@ -925,7 +925,7 @@ AIC(
   ) %>% as.list() # Qualitatively identical (<2 AIC apart) but reduced is lower
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 # Danaus plexippus-----
 herb.tr.m1_u <- make_1yrmod_transects(monarch_mods_best_u[[2]], "2021", herbivores)
 
@@ -972,7 +972,7 @@ herb.tr.m3_u <- update(herb.tr.m3_u, .~. - Urb_score:Transect_ID,
 performance::check_model(herb.tr.m3_u)
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 # LDMC-----
 grow.tr.m1_u <- ldmc_mods_best_u[[2]]
 
@@ -1047,7 +1047,7 @@ grow.tr.m8_u <- update(grow.tr.m8_u, .~. - Urb_score:Transect_ID,
          data = survival %>% dplyr::filter(Transect_ID != "Rural" & Year == "2022"))
 
 
-## -----------------------------------------------------
+## ----------------------------------------------------------------
 all_1yr_mods.u_tr <- list(
   
   # defense

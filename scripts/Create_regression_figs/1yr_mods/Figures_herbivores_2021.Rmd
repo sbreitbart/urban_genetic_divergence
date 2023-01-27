@@ -572,7 +572,7 @@ ggarrange(
           ncol = 3,
           nrow = 1,
           align = "hv",
-          labels = list("A", "B", "C"),
+          labels = list("a", "b", "c"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%
@@ -593,7 +593,7 @@ ggarrange(
           ncol = 3,
           nrow = 1,
           align = "hv",
-          labels = list("A", "B", "C"),
+          labels = list("a", "b", "c"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%
@@ -613,7 +613,7 @@ ggarrange(
           ncol = 3,
           nrow = 1,
           align = "hv",
-          labels = list("A", "B", "C"),
+          labels = list("a", "b", "c"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%
@@ -634,7 +634,7 @@ ggarrange(
           ncol = 3,
           nrow = 1,
           align = "hv",
-          labels = list("A", "B", "C"),
+          labels = list("a", "b", "c"),
           font.label = (size =16),
           common.legend = T,
           legend = "top") %T>%
