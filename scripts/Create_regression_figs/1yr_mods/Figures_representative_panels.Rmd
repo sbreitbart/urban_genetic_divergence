@@ -84,10 +84,10 @@ points_Q1.citydist_height_e <- ggpred_Q1.citydist_height_e +
 ### Arrange, export
 ```{r}
 ggarrange(
-  addborder(points_Q1.citydist_weev_bin, "defense"),
-  addborder(points_Q1.citydist_firstpods, "reproduction"),
-  addborder(points_Q1.citydist_asclepiadis, "herbivores"),
-  addborder(points_Q1.citydist_height_e, "growth") +
+  points_Q1.citydist_weev_bin, 
+  points_Q1.citydist_firstpods,
+  points_Q1.citydist_asclepiadis,
+  points_Q1.citydist_height_e +
             font("x.text"),
           ncol = 2,
           nrow = 2,
@@ -186,10 +186,10 @@ points_Q2.citydist_height_e <- ggpred_Q2.citydist_height_e +
 ### Arrange, export
 ```{r}
 ggarrange(
-  addborder(points_Q2.citydist_weev_bin, "defense"),
-  addborder(points_Q2.citydist_firstpods, "reproduction"),
-  addborder(points_Q2.citydist_asclepiadis, "herbivores"),
-  addborder(points_Q2.citydist_height_e, "growth") +
+  points_Q2.citydist_weev_bin, 
+  points_Q2.citydist_firstpods, 
+  points_Q2.citydist_asclepiadis,
+  points_Q2.citydist_height_e +
             font("x.text"),
           ncol = 2,
           nrow = 2,
