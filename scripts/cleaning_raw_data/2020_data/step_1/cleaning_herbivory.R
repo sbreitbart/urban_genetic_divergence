@@ -11,11 +11,11 @@ library(here)
 # Import data
 ##-------------------
 # in middle of season 
-herbivory_1 <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Herbivory/2020_Datacollection3_Herbivory.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>%
+herbivory_1 <- read.csv(here("./data/CommonGardenExperiment_2020Data/raw_data/Herbivory/2020_Datacollection3_Herbivory.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>%
   as.data.frame()
 
 # towards end of season 
-herbivory_2 <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Herbivory/2020_Datacollection7_Herbivory.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>%
+herbivory_2 <- read.csv(here("./data/CommonGardenExperiment_2020Data/raw_data/Herbivory/2020_Datacollection7_Herbivory.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>%
   as.data.frame()
 
 
@@ -81,4 +81,4 @@ herbivory_both <- left_join(herbivory_1, herbivory_2,
 # Export to new csv
 #-------------------
 write.csv(herbivory_both,
-          here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_herbivory_partialclean.csv"))
+          here("./data/CommonGardenExperiment_2020Data/partially_cleaned_data/2020_herbivory_partialclean.csv"))

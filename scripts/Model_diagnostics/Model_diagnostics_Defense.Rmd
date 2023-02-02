@@ -22,7 +22,7 @@ str(latex)
 
 
 # HERBIVORY-----
-herbivory <- read.csv(here::here("./Joined_annual_data/herbivory.csv")) %>%
+herbivory <- read.csv(here::here("./data/Joined_annual_data/herbivory.csv")) %>%
   dplyr::select(-1) %>%
   dplyr::filter(Year != 2019) %>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
@@ -35,7 +35,7 @@ herbivory %<>%
 
 
 # WEEVIL DAMAGE-----
-weevil <- read.csv(here::here("./Joined_annual_data/weevil.csv")) %>%
+weevil <- read.csv(here::here("./data/Joined_annual_data/weevil.csv")) %>%
   dplyr::select(-1) %>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
     dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor) %T>%

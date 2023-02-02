@@ -3,39 +3,39 @@
 #-------------------
 
 # 2019 data-----
-data_clean_2019 <- read.csv(here::here("./CommonGardenExperiment_2019Data/clean_data/clean_data_2019KSR.csv"),
+data_clean_2019 <- read.csv(here::here("./data/CommonGardenExperiment_2019Data/clean_data/clean_data_2019KSR.csv"),
                             na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
   dplyr::select(., -c(1:2))
 
 # 2020 data-----
-heights_both <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_heights_partialclean.csv")) %>%
+heights_both <- read.csv(here::here("./data/CommonGardenExperiment_2020Data/partially_cleaned_data/2020_heights_partialclean.csv")) %>%
   dplyr::select(., -1)
 
-herbivory_both <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_herbivory_partialclean.csv")) %>%
+herbivory_both <- read.csv(here::here("./data/CommonGardenExperiment_2020Data/partially_cleaned_data/2020_herbivory_partialclean.csv")) %>%
   dplyr::select(., -1)
 
-survival <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_survival_partialclean.csv")) %>%
+survival <- read.csv(here::here("./data/CommonGardenExperiment_2020Data/partially_cleaned_data/2020_survival_partialclean.csv")) %>%
   dplyr::select(., -1)
 
-weevil_both <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_weevil_damage_partialclean.csv")) %>%
+weevil_both <- read.csv(here::here("./data/CommonGardenExperiment_2020Data/partially_cleaned_data/2020_weevil_damage_partialclean.csv")) %>%
   dplyr::select(., -1)
 
-herbivores <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_insect_herbivores_partialclean.csv")) %>%
+herbivores <- read.csv(here::here("./data/CommonGardenExperiment_2020Data/partially_cleaned_data/2020_insect_herbivores_partialclean.csv")) %>%
   dplyr::select(., -1)
 
-reproductive <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_reproductive_partialclean.csv")) %>%
+reproductive <- read.csv(here::here("./data/CommonGardenExperiment_2020Data/partially_cleaned_data/2020_reproductive_partialclean.csv")) %>%
   dplyr::select(., -1)
 
-flowering_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_floweringplants_partialclean.csv")) %>%
+flowering_2020 <- read.csv(here::here("./data/CommonGardenExperiment_2020Data/partially_cleaned_data/2020_floweringplants_partialclean.csv")) %>%
   dplyr::select(., -1)
 
-sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_sla_ldmc_partialclean.csv")) %>%
+sla_ldmc <- read.csv(here::here("./data/CommonGardenExperiment_2020Data/partially_cleaned_data/2020_sla_ldmc_partialclean.csv")) %>%
   dplyr::select(., -1)
 
-cards <-  read.csv(here::here("./CommonGardenExperiment_2020Data/raw_data/Latex_Cardenolides/Cardenolides_forR.csv")) %>%
+cards <-  read.csv(here::here("./data/CommonGardenExperiment_2020Data/raw_data/Latex_Cardenolides/Cardenolides_forR.csv")) %>%
   dplyr::rename(., Population = 1)
 
-latex <-  read.csv(here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_latex_partialclean.csv"))
+latex <-  read.csv(here::here("./data/CommonGardenExperiment_2020Data/partially_cleaned_data/2020_latex_partialclean.csv"))
 
 #-------------------
 # Clean data- step 2
@@ -370,7 +370,7 @@ latex %<>%
 ### Add urb_score data
 # Import urb_index values for each of these rows
 urb_scores <- read.csv(
-  here::here("./CommonGardenExperiment_2020Data/raw_data/Urbanization_Score/Urbanization_Scores_Table.csv"),  header=T, na.strings=c("","NA"))
+  here::here("./data/CommonGardenExperiment_2020Data/raw_data/Urbanization_Score/Urbanization_Scores_Table.csv"),  header=T, na.strings=c("","NA"))
 
 # get rid of unnecessary cols, rename Patch ID to Pop_ID for joins
 urb_scores <- urb_scores[,c(2,8)]
@@ -399,22 +399,22 @@ latex %<>%
 # ----------------
 
 write.csv(heights_both,
-          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_heights_clean.csv"))
+          here::here("./data/CommonGardenExperiment_2020Data/clean_data/2020_heights_clean.csv"))
 write.csv(herbivory_both,
-          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_herbivory_clean.csv"))
+          here::here("./data/CommonGardenExperiment_2020Data/clean_data/2020_herbivory_clean.csv"))
 write.csv(survival_2020,
-          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_survival_clean.csv"))
+          here::here("./data/CommonGardenExperiment_2020Data/clean_data/2020_survival_clean.csv"))
 write.csv(weevil_both,
-          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_weevil_damage_clean.csv"))
+          here::here("./data/CommonGardenExperiment_2020Data/clean_data/2020_weevil_damage_clean.csv"))
 write.csv(herbivores,
-          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_herbivores_clean.csv"))
+          here::here("./data/CommonGardenExperiment_2020Data/clean_data/2020_herbivores_clean.csv"))
 write.csv(reproductive,
-          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_reproductive_clean.csv"))
+          here::here("./data/CommonGardenExperiment_2020Data/clean_data/2020_reproductive_clean.csv"))
 write.csv(flowering_2020,
-          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_floweringplants_clean.csv"))
+          here::here("./data/CommonGardenExperiment_2020Data/clean_data/2020_floweringplants_clean.csv"))
 write.csv(sla_ldmc,
-          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv"))
+          here::here("./data/CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv"))
 write.csv(cards,
-          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_cardenolides_clean.csv"))
+          here::here("./data/CommonGardenExperiment_2020Data/clean_data/2020_cardenolides_clean.csv"))
 write.csv(latex,
-          here::here("./CommonGardenExperiment_2020Data/clean_data/2020_latex_clean.csv"))
+          here::here("./data/CommonGardenExperiment_2020Data/clean_data/2020_latex_clean.csv"))

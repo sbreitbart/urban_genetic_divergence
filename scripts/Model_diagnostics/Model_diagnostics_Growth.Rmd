@@ -13,7 +13,7 @@ sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/20
   dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
 
 
-heights <- read.csv(here::here("./Joined_annual_data/heights.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+heights <- read.csv(here::here("./data/Joined_annual_data/heights.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
   dplyr::select(., -1) %>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur", "Pop_ID", "Patch_ID")), as.character) %>%
     dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur", "Pop_ID", "Patch_ID")), as.factor) %>%
@@ -24,7 +24,7 @@ str(heights)
 
 
 
-survival <- read.csv(here::here("./Joined_annual_data/survival.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+survival <- read.csv(here::here("./data/Joined_annual_data/survival.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
   dplyr::select(., -1) %>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur", "Pop_ID", "Patch_ID", "Dead")), as.character) %>%
     dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur", "Pop_ID", "Patch_ID", "Dead")), as.factor)%>%

@@ -11,11 +11,11 @@ library(here)
 # Import data
 ##-------------------
 # at start of season
-heights_1 <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Height/2020_Datacollection1_Height.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>%
+heights_1 <- read.csv(here("./data/CommonGardenExperiment_2020Data/raw_data/Height/2020_Datacollection1_Height.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>%
   as.data.frame()
 
 # at end of season
-heights_2 <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Height/2020_Datacollection7_Height.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>%
+heights_2 <- read.csv(here("./data/CommonGardenExperiment_2020Data/raw_data/Height/2020_Datacollection7_Height.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>%
   as.data.frame()
 
 
@@ -99,4 +99,4 @@ heights_both <- as.data.frame(heights_both)
 # Export to new csv
 #-------------------
 write.csv(heights_both,
-          here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_heights_partialclean.csv"))
+          here("./data/CommonGardenExperiment_2020Data/partially_cleaned_data/2020_heights_partialclean.csv"))

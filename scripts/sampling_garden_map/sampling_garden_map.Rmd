@@ -5,7 +5,7 @@ source(libraries.R)
 
 # Import data
 ```{r}
-sites <- read.csv(here::here("./CommonGardenExperiment_2019Data/clean_data/clean_haversine_Distances.csv"), sep = ",", header = TRUE) %>%
+sites <- read.csv(here::here("./data/CommonGardenExperiment_2019Data/clean_data/clean_haversine_Distances.csv"), sep = ",", header = TRUE) %>%
   dplyr::select(-X)
 
 
@@ -20,7 +20,7 @@ sites %<>%
                     by = c("Pop_ID" = "Patch_ID")) 
 
 # add 2019 field data to extract populations whose seeds were actually planted
-data_2019 <- read.csv(here::here("./CommonGardenExperiment_2019Data/clean_data/clean_data_2019KSR.csv"), sep = ",", header = TRUE) %>%
+data_2019 <- read.csv(here::here("./data/CommonGardenExperiment_2019Data/clean_data/clean_data_2019KSR.csv"), sep = ",", header = TRUE) %>%
   dplyr::select(-X) 
 
 # find number of pops per subtransect

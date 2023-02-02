@@ -6,7 +6,7 @@ source("functions.R")
 
 # Import data
 ```{r}
-reproduc <- read.csv(here::here("./Joined_annual_data/reproductive.csv"), na.strings=c("NO PLANT", "none", "NA"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+reproduc <- read.csv(here::here("./data/Joined_annual_data/reproductive.csv"), na.strings=c("NO PLANT", "none", "NA"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
   dplyr::select(., -1)%>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Pop_ID", "Patch_ID", "Transect_ID", "Urb_Rur")), as.character) %>%
     dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Pop_ID", "Patch_ID", "Transect_ID", "Urb_Rur", "Flowered")), as.factor) %>%
@@ -14,7 +14,7 @@ reproduc <- read.csv(here::here("./Joined_annual_data/reproductive.csv"), na.str
 
 str(reproduc)
 
-flowering <- read.csv(here::here("./Joined_annual_data/flowering.csv"), na.strings=c("NO PLANT", "none", "NA"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+flowering <- read.csv(here::here("./data/Joined_annual_data/flowering.csv"), na.strings=c("NO PLANT", "none", "NA"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
   dplyr::select(., -1)%>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Pop_ID", "Patch_ID", "Transect_ID", "Urb_Rur")), as.character) %>%
     dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Pop_ID", "Patch_ID", "Transect_ID", "Urb_Rur")), as.factor) %>%

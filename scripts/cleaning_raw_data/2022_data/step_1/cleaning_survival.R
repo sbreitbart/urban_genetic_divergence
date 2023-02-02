@@ -11,7 +11,7 @@ library(magrittr)
 # Import data
 #-------------------
 # at end of season 
-survival <- read.csv(here::here("./CommonGardenExperiment_2022Data/raw_data/2022_Survival_final.csv"),
+survival <- read.csv(here::here("./data/CommonGardenExperiment_2022Data/raw_data/2022_Survival_final.csv"),
                      header=T, na.strings=c("NO PLANT", "none", ""),
                      blank.lines.skip=TRUE) %>%
   as.data.frame()
@@ -51,4 +51,4 @@ unique(survival$Survival_LateAugust)
 # Export to new csv
 #-------------------
 write.csv(survival,
-          here::here("./CommonGardenExperiment_2022Data/partially_cleaned_data/2022_survival_partialclean.csv"))
+          here::here("./data/CommonGardenExperiment_2022Data/partially_cleaned_data/2022_survival_partialclean.csv"))

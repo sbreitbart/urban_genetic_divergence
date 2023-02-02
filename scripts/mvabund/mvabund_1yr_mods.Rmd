@@ -7,7 +7,7 @@ source("functions.R")
 
 ## Import data
 ```{r}
-pop_vars <- read.csv(here::here("./Joined_annual_data/weevil.csv")) %>%
+pop_vars <- read.csv(here::here("./data/Joined_annual_data/weevil.csv")) %>%
   dplyr::select(-1) %>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.character) %>%
     dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur")), as.factor) %>%

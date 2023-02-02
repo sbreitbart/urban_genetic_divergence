@@ -1,13 +1,13 @@
 #-------------------
 # Import KSR field data
 #-------------------
-survival_2022 <- read.csv(here::here("./CommonGardenExperiment_2022Data/partially_cleaned_data/2022_survival_partialclean.csv")) %>%
+survival_2022 <- read.csv(here::here("./data/CommonGardenExperiment_2022Data/partially_cleaned_data/2022_survival_partialclean.csv")) %>%
   dplyr::select(., -1)
 
-reproductive2 <- read.csv(here::here("./CommonGardenExperiment_2022Data/partially_cleaned_data/2022_reproductive_partialclean.csv")) %>%
+reproductive2 <- read.csv(here::here("./data/CommonGardenExperiment_2022Data/partially_cleaned_data/2022_reproductive_partialclean.csv")) %>%
   dplyr::select(., -1)
 
-flowering_2022 <- read.csv(here::here("./CommonGardenExperiment_2022Data/partially_cleaned_data/2022_floweringplants_partialclean.csv")) %>%
+flowering_2022 <- read.csv(here::here("./data/CommonGardenExperiment_2022Data/partially_cleaned_data/2022_floweringplants_partialclean.csv")) %>%
   dplyr::select(., -1)
 
 
@@ -57,7 +57,7 @@ df.list %>%
 ### Add urb_score data
 # Import urb_index values for each of these rows
 urb_scores <- read.csv(
-  here::here("./CommonGardenExperiment_2020Data/raw_data/Urbanization_Score/Urbanization_Scores_Table.csv"),  header=T, na.strings=c("","NA"))
+  here::here("./data/CommonGardenExperiment_2020Data/raw_data/Urbanization_Score/Urbanization_Scores_Table.csv"),  header=T, na.strings=c("","NA"))
 
 # get rid of unnecessary cols, rename Patch ID to Pop_ID for joins
 urb_scores <- urb_scores[,c(2,8)]
@@ -74,8 +74,8 @@ flowering_2022 <- merge(flowering_2022, y = urb_scores, by = "Pop_ID", all.x = T
 # ----------------
 
 write.csv(survival_2022,
-          here::here("./CommonGardenExperiment_2022Data/clean_data/2022_survival_clean.csv"))
+          here::here("./data/CommonGardenExperiment_2022Data/clean_data/2022_survival_clean.csv"))
 write.csv(reproductive2,
-          here::here("./CommonGardenExperiment_2022Data/clean_data/2022_reproductive_clean.csv"))
+          here::here("./data/CommonGardenExperiment_2022Data/clean_data/2022_reproductive_clean.csv"))
 write.csv(flowering_2022,
-          here::here("./CommonGardenExperiment_2022Data/clean_data/2022_floweringplants_clean.csv"))
+          here::here("./data/CommonGardenExperiment_2022Data/clean_data/2022_floweringplants_clean.csv"))

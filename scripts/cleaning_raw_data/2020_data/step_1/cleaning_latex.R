@@ -1,7 +1,7 @@
 #-------------------
 # Import data
 ##-------------------
-latex <- read.csv(here::here("./CommonGardenExperiment_2020Data/raw_data/Latex_Cardenolides/Latex.csv"),
+latex <- read.csv(here::here("./data/CommonGardenExperiment_2020Data/raw_data/Latex_Cardenolides/Latex.csv"),
                   header=T, na.strings=c("NO PLANT", "none", ""),
                   blank.lines.skip=TRUE) %>%
   as.data.frame()
@@ -42,4 +42,4 @@ latex %<>%
 # Export to new csv
 #-------------------
 write.csv(latex,
-          here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_latex_partialclean.csv"))
+          here::here("./data/CommonGardenExperiment_2020Data/partially_cleaned_data/2020_latex_partialclean.csv"))

@@ -11,7 +11,7 @@ library(here)
 # Import data
 #-------------------
 # at end of season 
-survival <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Survival/2020_Datacollection7_Survival.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>%
+survival <- read.csv(here("./data/CommonGardenExperiment_2020Data/raw_data/Survival/2020_Datacollection7_Survival.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>%
   as.data.frame()
 
 
@@ -47,4 +47,4 @@ str(survival)
 # Export to new csv
 #-------------------
 write.csv(survival,
-          here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_survival_partialclean.csv"))
+          here("./data/CommonGardenExperiment_2020Data/partially_cleaned_data/2020_survival_partialclean.csv"))

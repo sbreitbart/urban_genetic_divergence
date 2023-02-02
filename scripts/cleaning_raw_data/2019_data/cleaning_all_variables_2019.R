@@ -13,7 +13,7 @@ library(stringi)
 #-------------------
 # data collection 1
 DC1 <- read.csv(
-  here::here("./CommonGardenExperiment_2019Data/raw_data/DataAnalysis_FirstHeightSurvivalMeasurement_20190610.csv"),
+  here::here("./data/CommonGardenExperiment_2019Data/raw_data/DataAnalysis_FirstHeightSurvivalMeasurement_20190610.csv"),
   header=T,
   na.strings=c("NO PLANT", "none"),
   blank.lines.skip=TRUE) %>%
@@ -21,7 +21,7 @@ DC1 <- read.csv(
 
 # data collection 2
 DC2 <- read.csv(
-  here::here("./CommonGardenExperiment_2019Data/raw_data/DataAnalysis_SecondHeightSurvivalMeasurement_20190621.csv"),
+  here::here("./data/CommonGardenExperiment_2019Data/raw_data/DataAnalysis_SecondHeightSurvivalMeasurement_20190621.csv"),
   header=T,
   na.strings=c("NO PLANT", "none"),
   blank.lines.skip=TRUE) %>%
@@ -29,7 +29,7 @@ DC2 <- read.csv(
 
 # data collection 3- end of season
 DC3 <- read.csv(
-  here::here("./CommonGardenExperiment_2019Data/raw_data/FINAL_3rdmeasuredheight_survival.csv"),
+  here::here("./data/CommonGardenExperiment_2019Data/raw_data/FINAL_3rdmeasuredheight_survival.csv"),
   header=T,
   na.strings=c("NO PLANT", "none"),
   blank.lines.skip=TRUE) %>%
@@ -301,7 +301,7 @@ DC_all_2019 <- merge(x = DC_all_2019, y = Distances, by = "Population", all.x = 
 #--------------------------
 # Import urb_index values for each of these rows
 urb_scores <- read.csv(
-  here::here("./CommonGardenExperiment_2020Data/raw_data/Urbanization_Score/Urbanization_Scores_Table.csv"),  header=T, na.strings=c("","NA"))
+  here::here("./data/CommonGardenExperiment_2020Data/raw_data/Urbanization_Score/Urbanization_Scores_Table.csv"),  header=T, na.strings=c("","NA"))
 
 # get rid of unnecessary cols, rename Patch ID to Pop_ID for joins
 urb_scores <- urb_scores[,c(2,8)]
@@ -318,4 +318,4 @@ DC_all_2019 <- DC_all_2019[,-36]
 # Export to new csv
 #-------------------
 write.csv(DC_all_2019,
-          here::here("./CommonGardenExperiment_2019Data/clean_data/clean_data_2019KSR.csv"))
+          here::here("./data/CommonGardenExperiment_2019Data/clean_data/clean_data_2019KSR.csv"))

@@ -33,7 +33,7 @@ repeats <- data.frame(Population  = c(19, 23, 35, 35, 41, 41, 41),
 # Import data
 ## 2019
 ```{r}
-data_2019 <- read.csv(here::here("./CommonGardenExperiment_2019Data/clean_data/clean_data_2019KSR.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+data_2019 <- read.csv(here::here("./data/CommonGardenExperiment_2019Data/clean_data/clean_data_2019KSR.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
   dplyr::select(., -c(1:2)) %>%
   anti_join(., repeats)
 
@@ -81,15 +81,15 @@ survival_2020 <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_da
 ## 2021
 ```{r}
 # DEFENSE
-herbivory_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_herbivory_clean.csv")) %>%
+herbivory_2021 <- read.csv(here::here("./data/CommonGardenExperiment_2021Data/clean_data/2021_herbivory_clean.csv")) %>%
   dplyr::select(., -c(1, 21)) %>%
   anti_join(., repeats)
 
-weevil_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_weevil_damage_clean.csv")) %>%
+weevil_2021 <- read.csv(here::here("./data/CommonGardenExperiment_2021Data/clean_data/2021_weevil_damage_clean.csv")) %>%
   dplyr::select(., -c(1, 18)) %>%
   anti_join(., repeats)
 
-herbivores_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_herbivores_clean.csv")) %>%
+herbivores_2021 <- read.csv(here::here("./data/CommonGardenExperiment_2021Data/clean_data/2021_herbivores_clean.csv")) %>%
   dplyr::select(., -c(1, 16)) %>%
   anti_join(., repeats)
 
@@ -97,22 +97,22 @@ herbivores_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_
 
 
 # REPRODUCTIVE
-reproductive_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_reproductive_clean.csv")) %>%
+reproductive_2021 <- read.csv(here::here("./data/CommonGardenExperiment_2021Data/clean_data/2021_reproductive_clean.csv")) %>%
   dplyr::select(., -c(1, 16)) %>%
   anti_join(., repeats)
 
-flowering_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_floweringplants_clean.csv")) %>%
+flowering_2021 <- read.csv(here::here("./data/CommonGardenExperiment_2021Data/clean_data/2021_floweringplants_clean.csv")) %>%
   dplyr::select(-1) %>%
   anti_join(., repeats)
 
 
 
 # GROWTH
-heights_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_heights_clean.csv")) %>%
+heights_2021 <- read.csv(here::here("./data/CommonGardenExperiment_2021Data/clean_data/2021_heights_clean.csv")) %>%
   dplyr::select(., -c(1, 22)) %>%
   anti_join(., repeats)
 
-survival_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_data/2021_survival_clean.csv")) %>%
+survival_2021 <- read.csv(here::here("./data/CommonGardenExperiment_2021Data/clean_data/2021_survival_clean.csv")) %>%
   dplyr::select(., -c(1, 12)) %>%
   anti_join(., repeats)
 ```
@@ -122,17 +122,17 @@ survival_2021 <- read.csv(here::here("./CommonGardenExperiment_2021Data/clean_da
 ```{r}
 
 # REPRODUCTIVE
-reproductive_2022 <- read.csv(here::here("./CommonGardenExperiment_2022Data/clean_data/2022_reproductive_clean.csv")) %>%
+reproductive_2022 <- read.csv(here::here("./data/CommonGardenExperiment_2022Data/clean_data/2022_reproductive_clean.csv")) %>%
   dplyr::select(., -c(1, 16)) %>%
   anti_join(., repeats)
 
-flowering_2022 <- read.csv(here::here("./CommonGardenExperiment_2022Data/clean_data/2022_floweringplants_clean.csv")) %>%
+flowering_2022 <- read.csv(here::here("./data/CommonGardenExperiment_2022Data/clean_data/2022_floweringplants_clean.csv")) %>%
   dplyr::select(-1) %>%
   anti_join(., repeats)
 
 
 # GROWTH
-survival_2022 <- read.csv(here::here("./CommonGardenExperiment_2022Data/clean_data/2022_survival_clean.csv")) %>%
+survival_2022 <- read.csv(here::here("./data/CommonGardenExperiment_2022Data/clean_data/2022_survival_clean.csv")) %>%
   dplyr::select(., -c(1, 17)) %>%
   anti_join(., repeats)
 ```
@@ -387,23 +387,23 @@ survival_19_20_21_22 <- rbind.fill(surv_2019,
 # Export
 ```{r}
 write.csv(herbivory_19_20_21,
-          here::here("./Joined_annual_data/herbivory.csv"))
+          here::here("./data/Joined_annual_data/herbivory.csv"))
 
 write.csv(weevil_20_21,
-          here::here("./Joined_annual_data/weevil.csv"))
+          here::here("./data/Joined_annual_data/weevil.csv"))
 
 write.csv(herbivores_20_21,
-          here::here("./Joined_annual_data/herbivores.csv"))
+          here::here("./data/Joined_annual_data/herbivores.csv"))
 
 write.csv(reprod_20_21_22,
-          here::here("./Joined_annual_data/reproductive.csv"))
+          here::here("./data/Joined_annual_data/reproductive.csv"))
 
 write.csv(flowering_20_21_22,
-          here::here("./Joined_annual_data/flowering.csv"))
+          here::here("./data/Joined_annual_data/flowering.csv"))
 
 write.csv(heights_19_20_21,
-          here::here("./Joined_annual_data/heights.csv"))
+          here::here("./data/Joined_annual_data/heights.csv"))
 
 write.csv(survival_19_20_21_22,
-          here::here("./Joined_annual_data/survival.csv"))
+          here::here("./data/Joined_annual_data/survival.csv"))
 ```

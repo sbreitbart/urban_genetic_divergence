@@ -11,7 +11,7 @@ library(here)
 # Import data
 ##-------------------
 # For both data collections (July & August)
-herbivores <- read.csv(here("./CommonGardenExperiment_2020Data/raw_data/Herbivores/2020_Datacollection_Herbvivores2020_raw_formatted.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>%
+herbivores <- read.csv(here("./data/CommonGardenExperiment_2020Data/raw_data/Herbivores/2020_Datacollection_Herbvivores2020_raw_formatted.csv"),header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>%
   as.data.frame()
 
 
@@ -56,4 +56,4 @@ str(herbivores)
 # Export to new csv
 #-------------------
 write.csv(herbivores,
-          here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_insect_herbivores_partialclean.csv"))
+          here("./data/CommonGardenExperiment_2020Data/partially_cleaned_data/2020_insect_herbivores_partialclean.csv"))

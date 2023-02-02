@@ -12,7 +12,7 @@ library(magrittr)
 #-------------------
 # at start of season (Data Collection 1)- QUANTITATIVE
 weevil_1 <- read.csv(
-  here("./CommonGardenExperiment_2021Data/raw_data/2021_DC3_Height_Ramets_ScarLength.csv"),
+  here("./data/CommonGardenExperiment_2021Data/raw_data/2021_DC3_Height_Ramets_ScarLength.csv"),
   header=T, na.strings=c("NO PLANT", "none", ""), blank.lines.skip=TRUE) %>%
   as.data.frame()
 
@@ -52,4 +52,4 @@ str(weevil_1)
 # Export to new csv
 #-------------------
 write.csv(weevil_1,
-          here("./CommonGardenExperiment_2021Data/partially_cleaned_data/2021_weevil_damage_partialclean.csv"))
+          here("./data/CommonGardenExperiment_2021Data/partially_cleaned_data/2021_weevil_damage_partialclean.csv"))

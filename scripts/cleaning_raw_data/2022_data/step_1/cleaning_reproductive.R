@@ -158,6 +158,6 @@ flowering_2022 %<>%
 # Export to new csv
 #-------------------
 write.csv(reproductive,
-          here::here("./CommonGardenExperiment_2022Data/partially_cleaned_data/2022_reproductive_partialclean.csv"))
+          here::here("./data/CommonGardenExperiment_2022Data/partially_cleaned_data/2022_reproductive_partialclean.csv"))
 write.csv(flowering_2022,
-          here::here("./CommonGardenExperiment_2022Data/partially_cleaned_data/2022_floweringplants_partialclean.csv"))
+          here::here("./data/CommonGardenExperiment_2022Data/partially_cleaned_data/2022_floweringplants_partialclean.csv"))

@@ -12,7 +12,7 @@ library(here)
 #-------------------
 # at start of season (Data Collection 1)- BINARY
 sla_ldmc <- read.csv(
-  here::here("./CommonGardenExperiment_2020Data/raw_data/SLA_DLMC/2020_Datacollection5_Leaves_SLA_DLMC_20210603.csv"), header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>%
+  here::here("./data/CommonGardenExperiment_2020Data/raw_data/SLA_DLMC/2020_Datacollection5_Leaves_SLA_DLMC_20210603.csv"), header=T, na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE) %>%
   as.data.frame()
 
 
@@ -72,4 +72,4 @@ sla_ldmc %<>%
 # Export to new csv
 #-------------------
 write.csv(sla_ldmc,
-          here::here("./CommonGardenExperiment_2020Data/partially_cleaned_data/2020_sla_ldmc_partialclean.csv"))
+          here::here("./data/CommonGardenExperiment_2020Data/partially_cleaned_data/2020_sla_ldmc_partialclean.csv"))

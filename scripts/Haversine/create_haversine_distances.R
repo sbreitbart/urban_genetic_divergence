@@ -1,6 +1,6 @@
 # import data
 Distances <- read.csv(
-  here::here("./CommonGardenExperiment_2019Data/raw_data/Transect_Milkweed_HaversineData_forjoining.csv"),
+  here::here("./data/CommonGardenExperiment_2019Data/raw_data/Transect_Milkweed_HaversineData_forjoining.csv"),
   na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",")
 
 # Ref lat and longs are for Yonge & Dundas intersection in downtown Toronto
@@ -27,4 +27,4 @@ Distances <- Distances[,-c(7:9)]
 # Export
 # --------
 write.csv(Distances,
-          here::here("./CommonGardenExperiment_2019Data/clean_data/clean_haversine_Distances.csv"))
+          here::here("./data/CommonGardenExperiment_2019Data/clean_data/clean_haversine_Distances.csv"))
