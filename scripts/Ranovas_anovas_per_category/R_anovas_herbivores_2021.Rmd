@@ -12,7 +12,7 @@ source("functions.R")
 
 ## Import data
 ```{r}
-herbivores <- read.csv(here::here("./Joined_annual_data/herbivores.csv")) %>%
+herbivores <- read.csv(here::here("./data/Joined_annual_data/herbivores.csv")) %>%
   dplyr::select(., -1) %>%
   dplyr::mutate_at(vars(c("Population",
                           "Family",

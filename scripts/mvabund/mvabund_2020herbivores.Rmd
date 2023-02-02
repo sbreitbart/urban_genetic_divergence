@@ -10,7 +10,7 @@ library(purrr)
 # First attempt- NOT accounting for pseudoreplication
 ```{r}
 # USED THIS DATASET WITH FIRST RUN-THROUGH
-herbivores <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_herbivores_clean.csv")) %>%
+herbivores <- read.csv(here::here("./data/CommonGardenExperiment_2020Data/clean_data/2020_herbivores_clean.csv")) %>%
   dplyr::select(., -c(1:2)) %>%
   mutate(Population = factor(Population),
          Family = factor(Family),

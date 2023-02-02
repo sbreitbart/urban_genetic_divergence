@@ -6,7 +6,7 @@ source("functions.R")
 
 # Import data
 ```{r}
-sla_ldmc <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv")) %>%
+sla_ldmc <- read.csv(here::here("./data/CommonGardenExperiment_2020Data/clean_data/2020_sla_ldmc_clean.csv")) %>%
   dplyr::select(., -c(1:2)) %>%
   dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Transect_ID", "Urb_Rur", "Patch_ID")), as.character) %>%
     dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Transect_ID", "Urb_Rur", "Patch_ID")), as.factor) %>%

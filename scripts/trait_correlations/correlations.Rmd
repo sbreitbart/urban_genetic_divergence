@@ -88,7 +88,7 @@ names(reprod_city_gr) <- c(
 ## Cardenolide model
 ```{r}
 # cardenolides per population (pooled)
-cards <-  read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_cardenolides_clean.csv")) %>%
+cards <-  read.csv(here::here("./data/CommonGardenExperiment_2020Data/clean_data/2020_cardenolides_clean.csv")) %>%
   dplyr::select(., -1)
 
 cards$Population <- as.character(cards$Population)

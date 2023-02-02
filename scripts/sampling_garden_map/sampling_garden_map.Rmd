@@ -10,7 +10,7 @@ sites <- read.csv(here::here("./data/CommonGardenExperiment_2019Data/clean_data/
 
 
 urb_scores <- read.csv(
-  here::here("./CommonGardenExperiment_2020Data/raw_data/Urbanization_Score/Urbanization_Scores_Table.csv"),  header=T, na.strings=c("","NA")) %>%
+  here::here("./data/CommonGardenExperiment_2020Data/raw_data/Urbanization_Score/Urbanization_Scores_Table.csv"),  header=T, na.strings=c("","NA")) %>%
   dplyr::select(Patch_ID, Urb_score, City_dist, Transect)
 
 

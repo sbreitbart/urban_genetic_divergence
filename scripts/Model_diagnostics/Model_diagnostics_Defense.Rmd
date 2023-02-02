@@ -8,7 +8,7 @@ source("functions.R")
 ```{r}
 
 # LATEX-----
-latex <- read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_latex_clean.csv")) %>%
+latex <- read.csv(here::here("./data/CommonGardenExperiment_2020Data/clean_data/2020_latex_clean.csv")) %>%
   dplyr::select(-1) %>%
   dplyr::mutate_at(vars(c(1:7, 9:12, 15, 18, 21)), as.character) %>%
     dplyr::mutate_at(vars(c(1:7, 9:12, 15, 18, 21)), as.factor) %>%
@@ -45,7 +45,7 @@ weevil %<>%
   dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
 
 # cardenolides per population (pooled by population)
-cards <-  read.csv(here::here("./CommonGardenExperiment_2020Data/clean_data/2020_cardenolides_clean.csv")) %>%
+cards <-  read.csv(here::here("./data/CommonGardenExperiment_2020Data/clean_data/2020_cardenolides_clean.csv")) %>%
   dplyr::select(., -1) 
 ```
 
