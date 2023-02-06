@@ -1,0 +1,353 @@
+# Set up notebook
+## Load libraries & functions
+```{r}
+source("libraries.R")
+source("functions.R")
+```
+
+# ANOVA: Herbivores
+## Import data
+```{r}
+herbivores <- read.csv(here::here("./data/Joined_annual_data/herbivores.csv")) %>%
+  dplyr::select(., -1) %>%
+  dplyr::mutate_at(vars(c("Population",
+                          "Family",
+                          "Replicate",
+                          "Block",
+                          "Transect_ID",
+                          "Sample",
+                          "Patch_ID",
+                          "Urb_Rur",
+                          "Year",
+                          "Surveyor",
+                          "Date")),
+                   as.character) %>%
+    dplyr::mutate_at(vars(c("Population",
+                            "Family",
+                            "Replicate",
+                            "Block",
+                            "Transect_ID",
+                            "Sample",
+                            "Patch_ID",
+                            "Urb_Rur",
+                            "Year",
+                            "Surveyor",
+                          "Date")),
+                     as.factor) %>%
+  dplyr::mutate(Fam_uniq = paste0(Population, "_", Family))
+
+# Take mean of two sampling events
+herbivores %<>%
+  dplyr::group_by(Population, Row, Column, Block, Family, Replicate, Year) %>%
+  dplyr::summarise(Monarch_Quantity_Observed = mean(Monarch_Quantity_Observed, na.rm = T),
+                   Liriomyza_asclepiadis = mean(Liriomyza_asclepiadis, na.rm = T),
+                   Labidomera_clivicollis = mean(Labidomera_clivicollis, na.rm = T),
+                   Transect_ID = first(Transect_ID),
+                   City_dist = first(City_dist),
+                   Urb_Rur = first(Urb_Rur),
+                   Urb_score = first(Urb_score),
+                   Fam_uniq = first(Fam_uniq))
+```
+
+## Import final models
+```{r}
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_herbivores.Rmd", quiet=TRUE))
+
+all_models <- list(
+monarch_mods          , 
+asclepiadis_mods           , 
+clivicollis_mods)
+
+names(all_models) <- c(
+"monarch_mods"          ,
+"asclepiadis_mods"           ,
+"clivicollis_mods"         )
+```
+
+## Export all best / alt multi-year models in separate word docs
+### Distance / best
+```{r}
+all_models_best_c <- list(
+monarch_mods_best_c      , 
+asclepiadis_mods_best_c     , 
+clivicollis_mods_best_c       )
+
+
+anovas_best_c <- lapply(all_models_best_c, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_best_c, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_herbivores_best_distance.docx")
+```
+
+### Distance / alt
+```{r}
+all_models_alt_c <- list(
+monarch_mods_alt_c      , 
+asclepiadis_mods_alt_c     , 
+clivicollis_mods_alt_c      )
+
+anovas_alt_c <- lapply(all_models_alt_c, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_alt_c, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_herbivores_alt_distance.docx")
+```
+
+### UrbScore / best
+```{r}
+all_models_best_u <- list(
+monarch_mods_best_u      ,
+asclepiadis_mods_best_u     , 
+clivicollis_mods_best_u     ) 
+
+anovas_best_u <- lapply(all_models_best_u, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_best_u, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_herbivores_best_urbscore.docx")
+```
+
+### UrbScore / alt
+```{r}
+all_models_alt_u <- list(
+monarch_mods_alt_u      , 
+asclepiadis_mods_alt_u     , 
+clivicollis_mods_alt_u        ) 
+
+anovas_alt_u <- lapply(all_models_alt_u, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_alt_u, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_herbivores_alt_urbscore.docx")
+
+```
+
+
+# ANOVA: Growth
+## Import final models
+### Create full list
+```{r}
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Growth.Rmd", quiet=TRUE))
+```
+
+## Export all best / alt multi-year models in separate word docs
+### Distance / best
+```{r}
+all_models_best_c <- list(
+ldmc_mods_best_c,
+sla_mods_best_c,
+heights_early_mods_best_c,
+heights_late_mods_best_c,
+rgr_mods_best_c,
+ramets_early_mods_best_c,
+ramets_late_mods_best_c,
+mortality_mods_best_c    )
+
+
+anovas_best_c <- lapply(all_models_best_c, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_best_c, "./Figures_Tables/ANOVA_multi_yr/Growth/all_anova_growth_best_distance.docx")
+```
+
+### Distance / alt
+```{r}
+all_models_alt_c <- list(
+ldmc_mods_alt_c,
+sla_mods_alt_c,
+heights_early_mods_alt_c,
+heights_late_mods_alt_c,
+rgr_mods_alt_c,
+ramets_early_mods_alt_c,
+ramets_late_mods_alt_c,
+mortality_mods_alt_c    )
+
+anovas_alt_c <- lapply(all_models_alt_c, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_alt_c, "./Figures_Tables/ANOVA_multi_yr/Growth/all_anova_growth_alt_distance.docx")
+```
+
+### UrbScore / best
+```{r}
+all_models_best_u <- list(
+ldmc_mods_best_u,
+sla_mods_best_u,
+heights_early_mods_best_u,
+heights_late_mods_best_u,
+rgr_mods_best_u,
+ramets_early_mods_best_u,
+ramets_late_mods_best_u,
+mortality_mods_best_u    )
+
+anovas_best_u <- lapply(all_models_best_u, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_best_u, "./Figures_Tables/ANOVA_multi_yr/Growth/all_anova_growth_best_urbscore.docx")
+```
+
+### UrbScore / alt
+```{r}
+all_models_alt_u <- list(
+ldmc_mods_alt_u,
+sla_mods_alt_u,
+heights_early_mods_alt_u,
+heights_late_mods_alt_u,
+rgr_mods_alt_u,
+ramets_early_mods_alt_u,
+ramets_late_mods_alt_u,
+mortality_mods_alt_u    )
+
+anovas_alt_u <- lapply(all_models_alt_u, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_alt_u, "./Figures_Tables/ANOVA_multi_yr/Growth/all_anova_growth_alt_urbscore.docx")
+
+```
+
+# ANOVA: Defense
+## Import final models
+```{r}
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Defense.Rmd", quiet=TRUE))
+```
+
+## Export all best / alt multi-year models in separate word docs
+### Distance / best
+```{r}
+all_models_best_c <- list(
+latex_mods_best_c,
+herb_e_bin_mods_best_c,
+herb_e_quant_mods_best_c,
+herb_l_bin_mods_best_c,
+herb_l_quant_mods_best_c,
+weev_bin_mods_best_c,
+weev_quant_mods_best_c   )
+
+
+anovas_best_c <- lapply(all_models_best_c, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_best_c, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_Defense_best_distance.docx")
+```
+
+### Distance / alt
+```{r}
+all_models_alt_c <- list(
+latex_mods_alt_c,
+# herb_e_bin_mods_alt_c, # NONE
+herb_e_quant_mods_alt_c,
+herb_l_bin_mods_alt_c,
+herb_l_quant_mods_alt_c,
+weev_bin_mods_alt_c,
+weev_quant_mods_alt_c)
+
+anovas_alt_c <- lapply(all_models_alt_c, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_alt_c, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_Defense_alt_distance.docx")
+```
+
+### UrbScore / best
+```{r}
+all_models_best_u <- list(
+latex_mods_best_u,
+herb_e_bin_mods_best_u,
+herb_e_quant_mods_best_u,
+herb_l_bin_mods_best_u,
+herb_l_quant_mods_best_u,
+weev_bin_mods_best_u,
+weev_quant_mods_best_u,
+mortality_mods_best_u    )
+
+anovas_best_u <- lapply(all_models_best_u, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_best_u, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_Defense_best_urbscore.docx")
+```
+
+### UrbScore / alt
+```{r}
+all_models_alt_u <- list(
+# latex_mods_alt_u, # NONE
+herb_e_bin_mods_alt_u,
+herb_e_quant_mods_alt_u,
+herb_l_bin_mods_alt_u,
+herb_l_quant_mods_alt_u,
+weev_bin_mods_alt_u,
+weev_quant_mods_alt_u,
+mortality_mods_alt_u    )
+
+anovas_alt_u <- lapply(all_models_alt_u, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_alt_u, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_Defense_alt_urbscore.docx")
+
+```
+
+### Cardenolides (lms, not lmers)
+-already did this in create_summary_anova_table.Rmd
+
+# ANOVA: Reproduction
+## Import final models
+```{r}
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
+```
+## Export all best / alt multi-year models in separate word docs
+### Distance / best
+```{r}
+all_models_best_c <- list(
+flsucc_mods_best_c      , # flowering success
+flowers_mods_best_c     , # mean flowers/inflor
+flsize_mods_best_c      , # mean flower size
+fltime_mods_best_c      , # flowering time
+flstart_mods_best_c     , # flowering start
+poll_mods_best_c        , # pollinaria removed
+pods_mods_best_c        , # pods (follicles)
+first_pods_mods_best_c  , # first pods (follicles)
+peduncles_mods_best_c   ) # peduncles (inflorescences)
+
+
+anovas_best_c <- lapply(all_models_best_c, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_best_c, "./Figures_Tables/ANOVA_multi_yr/Reproduction/all_anova_repro_best_distance.docx")
+```
+
+### Distance / alt
+```{r}
+all_models_alt_c <- list(
+flsucc_mods_alt_c      , # flowering success
+flowers_mods_alt_c     , # mean flowers/inflor
+flsize_mods_alt_c      , # mean flower size
+fltime_mods_alt_c      , # flowering time
+flstart_mods_alt_c     , # flowering start
+poll_mods_alt_c        , # pollinaria removed
+pods_mods_alt_c        , # pods (follicles)
+first_pods_mods_alt_c   , # first pods (follicles)
+peduncles_mods_alt_c   ) # peduncles (inflorescences)
+
+anovas_alt_c <- lapply(all_models_alt_c, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_alt_c, "./Figures_Tables/ANOVA_multi_yr/Reproduction/all_anova_repro_alt_distance.docx")
+```
+
+### UrbScore / best
+```{r}
+all_models_best_u <- list(
+flsucc_mods_best_u      , # flowering success
+flowers_mods_best_u     , # mean flowers/inflor
+flsize_mods_best_u      , # mean flower size
+fltime_mods_best_u      , # flowering time
+flstart_mods_best_u     , # flowering start
+poll_mods_best_u        , # pollinaria removed
+pods_mods_best_u        , # pods (follicles)
+first_pods_mods_best_u  , # first pods (follicles)
+peduncles_mods_best_u   ) # peduncles (inflorescences)
+
+anovas_best_u <- lapply(all_models_best_u, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_best_u, "./Figures_Tables/ANOVA_multi_yr/Reproduction/all_anova_repro_best_urbscore.docx")
+```
+
+### UrbScore / alt
+```{r}
+all_models_alt_u <- list(
+flsucc_mods_alt_u      , # flowering success
+flowers_mods_alt_u     , # mean flowers/inflor
+flsize_mods_alt_u      , # mean flower size
+# fltime_mods_alt_u      , # flowering time - NONE
+flstart_mods_alt_u,     # flowering start
+poll_mods_alt_u )     # pollinaria removed
+# pods_mods_alt_u        , # pods (follicles) - NONE
+#first_pods_mods_alt_u ) # , # first pods (follicles) - NONE
+# peduncles_mods_alt_u   ) # peduncles (inflorescences) - NONE
+
+anovas_alt_u <- lapply(all_models_alt_u, make_all_anovas_tidy_altmods)
+
+export_anovas(anovas_alt_u, "./Figures_Tables/ANOVA_multi_yr/Reproduction/all_anova_repro_alt_urbscore.docx")
+
+```

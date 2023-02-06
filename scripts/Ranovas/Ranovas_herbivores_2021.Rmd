@@ -1,8 +1,3 @@
-* The species observed are in the column names. The only species with two columns was the Monarch butterfly:
-    + one column for Monarchs that had been on the plant in the past ("mean_Monarch_Quantity_Past") and which refers to empty chrysalis, empty eggs, and chrysalis with a dead butterfly inside, and
-    + one column for alive Monarchs present on the plant itself ("Monarch_Quantity_Observed") and which refers to all other Monarch forms (caterpillars, eggs, chrysalises with insects still inside)
-* Monarchs notwithstanding, dead herbivores were not counted in the surveys.
-
 # Set up notebook
 ## Load libraries & functions
 ```{r}
@@ -421,56 +416,3 @@ export_recalc(recalc_tab1,
               "./Figures_Tables/ranova_PVE/Defense/PVE_nonGaussmods/PVE_nonGaussmods_herbivores_Q2.docx")
 
 ```
-
-# ANOVA
-## Export all best / alt multi-year models in separate word docs
-### Distance / best
-```{r}
-all_models_best_c <- list(
-monarch_mods_best_c      , 
-asclepiadis_mods_best_c     , 
-clivicollis_mods_best_c       )
-
-
-anovas_best_c <- lapply(all_models_best_c, make_all_anovas_tidy_altmods)
-
-export_anovas(anovas_best_c, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_herbivores_best_distance.docx")
-```
-
-### Distance / alt
-```{r}
-all_models_alt_c <- list(
-monarch_mods_alt_c      , 
-asclepiadis_mods_alt_c     , 
-clivicollis_mods_alt_c      )
-
-anovas_alt_c <- lapply(all_models_alt_c, make_all_anovas_tidy_altmods)
-
-export_anovas(anovas_alt_c, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_herbivores_alt_distance.docx")
-```
-
-### UrbScore / best
-```{r}
-all_models_best_u <- list(
-monarch_mods_best_u      ,
-asclepiadis_mods_best_u     , 
-clivicollis_mods_best_u     ) 
-
-anovas_best_u <- lapply(all_models_best_u, make_all_anovas_tidy_altmods)
-
-export_anovas(anovas_best_u, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_herbivores_best_urbscore.docx")
-```
-
-### UrbScore / alt
-```{r}
-all_models_alt_u <- list(
-monarch_mods_alt_u      , 
-asclepiadis_mods_alt_u     , 
-clivicollis_mods_alt_u        ) 
-
-anovas_alt_u <- lapply(all_models_alt_u, make_all_anovas_tidy_altmods)
-
-export_anovas(anovas_alt_u, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_herbivores_alt_urbscore.docx")
-
-```
-

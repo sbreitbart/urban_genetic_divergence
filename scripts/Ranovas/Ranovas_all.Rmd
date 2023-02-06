@@ -7,7 +7,7 @@ source("functions.R")
 
 ## Import ranova tables
 these values were generated in:
--scripts/Ranovas_anovas_per_category/R_anovas_growth.Rmd (etc. for rest of similarly-named files)...
+-scripts/Ranovas/Ranovas_growth.Rmd (etc. for rest of similarly-named files)...
 
 manually extracted, then organized into these word docs:
 -Figures_Tables\ranova_PVE\ranovas_allyears.docx

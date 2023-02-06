@@ -1,6 +1,5 @@
 # Set up notebook
-## Load libraries and add functions
-
+## Load libraries and functions
 ```{r}
 source("libraries.R")
 source("functions.R")
@@ -714,76 +713,3 @@ ggsave(filename = "pve_def_Q1.png",
          height = 6,
          units = "cm")
 ```
-
-# Anova
-## Export all best / alt multi-year models in separate word docs
-### Distance / best
-```{r}
-all_models_best_c <- list(
-latex_mods_best_c,
-herb_e_bin_mods_best_c,
-herb_e_quant_mods_best_c,
-herb_l_bin_mods_best_c,
-herb_l_quant_mods_best_c,
-weev_bin_mods_best_c,
-weev_quant_mods_best_c   )
-
-
-anovas_best_c <- lapply(all_models_best_c, make_all_anovas_tidy_altmods)
-
-export_anovas(anovas_best_c, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_Defense_best_distance.docx")
-```
-
-### Distance / alt
-```{r}
-all_models_alt_c <- list(
-latex_mods_alt_c,
-# herb_e_bin_mods_alt_c, # NONE
-herb_e_quant_mods_alt_c,
-herb_l_bin_mods_alt_c,
-herb_l_quant_mods_alt_c,
-weev_bin_mods_alt_c,
-weev_quant_mods_alt_c)
-
-anovas_alt_c <- lapply(all_models_alt_c, make_all_anovas_tidy_altmods)
-
-export_anovas(anovas_alt_c, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_Defense_alt_distance.docx")
-```
-
-### UrbScore / best
-```{r}
-all_models_best_u <- list(
-latex_mods_best_u,
-herb_e_bin_mods_best_u,
-herb_e_quant_mods_best_u,
-herb_l_bin_mods_best_u,
-herb_l_quant_mods_best_u,
-weev_bin_mods_best_u,
-weev_quant_mods_best_u,
-mortality_mods_best_u    )
-
-anovas_best_u <- lapply(all_models_best_u, make_all_anovas_tidy_altmods)
-
-export_anovas(anovas_best_u, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_Defense_best_urbscore.docx")
-```
-
-### UrbScore / alt
-```{r}
-all_models_alt_u <- list(
-# latex_mods_alt_u, # NONE
-herb_e_bin_mods_alt_u,
-herb_e_quant_mods_alt_u,
-herb_l_bin_mods_alt_u,
-herb_l_quant_mods_alt_u,
-weev_bin_mods_alt_u,
-weev_quant_mods_alt_u,
-mortality_mods_alt_u    )
-
-anovas_alt_u <- lapply(all_models_alt_u, make_all_anovas_tidy_altmods)
-
-export_anovas(anovas_alt_u, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_Defense_alt_urbscore.docx")
-
-```
-
-### Cardenolides (lms, not lmers)
--already did this in create_summary_anova_table.Rmd
