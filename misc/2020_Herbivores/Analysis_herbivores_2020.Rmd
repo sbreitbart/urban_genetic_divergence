@@ -1662,26 +1662,26 @@ names(rhyssomatus_mods) <- c("City_gr",
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(monarch_mods[c(1,4)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/Monarchs_citydist.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/Monarchs_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(monarch_mods[c(2,6)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/Monarchs_urbscore.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/Monarchs_urbscore.png"))
 ```
 
 ### Alternative Models
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(monarch_mods[3]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/Monarchs_citydist_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/Monarchs_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(monarch_mods[5]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/Monarchs_urbscore_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/Monarchs_urbscore_alt.png"))
 ```
 
 ## tetraopes
@@ -1689,26 +1689,26 @@ make_all_anovas_tidy_altmods(monarch_mods[5]) %>%
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(tetraopes_mods[c(1,4)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/tetraopes_citydist.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/tetraopes_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(tetraopes_mods[c(2,6)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/tetraopes_urbscore.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/tetraopes_urbscore.png"))
 ```
 
 ### Alternative Models
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(tetraopes_mods[3]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/tetraopes_citydist_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/tetraopes_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(tetraopes_mods[5]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/tetraopes_urbscore_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/tetraopes_urbscore_alt.png"))
 ```
 
 
@@ -1717,26 +1717,26 @@ make_all_anovas_tidy_altmods(tetraopes_mods[5]) %>%
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(liriomyza_mods[c(1,4)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/liriomyza_citydist.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/liriomyza_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(liriomyza_mods[c(2,6)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/liriomyza_urbscore.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/liriomyza_urbscore.png"))
 ```
 
 ### Alternative Models
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(liriomyza_mods[3]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/liriomyza_citydist_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/liriomyza_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(liriomyza_mods[5]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/liriomyza_urbscore_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/liriomyza_urbscore_alt.png"))
 ```
 
 
@@ -1745,26 +1745,26 @@ make_all_anovas_tidy_altmods(liriomyza_mods[5]) %>%
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(nerii_mods[c(1,3)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/nerii_citydist.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/nerii_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(nerii_mods[c(2,6)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/nerii_urbscore.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/nerii_urbscore.png"))
 ```
 
 ### Alternative Models
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(nerii_mods[4]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/nerii_citydist_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/nerii_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(nerii_mods[5]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/nerii_urbscore_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/nerii_urbscore_alt.png"))
 ```
 
 
@@ -1773,26 +1773,26 @@ make_all_anovas_tidy_altmods(nerii_mods[5]) %>%
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(aasclepiadis_mods[c(1,4)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/aasclepiadis_citydist.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/aasclepiadis_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(aasclepiadis_mods[c(2,6)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/aasclepiadis_urbscore.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/aasclepiadis_urbscore.png"))
 ```
 
 ### Alternative Models
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(aasclepiadis_mods[3]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/aasclepiadis_citydist_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/aasclepiadis_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(aasclepiadis_mods[5]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/aasclepiadis_urbscore_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/aasclepiadis_urbscore_alt.png"))
 ```
 
 ## Myzocallis asclepiadis
@@ -1800,26 +1800,26 @@ make_all_anovas_tidy_altmods(aasclepiadis_mods[5]) %>%
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(masclepiadis_mods[c(1,4)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/masclepiadis_citydist.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/masclepiadis_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(masclepiadis_mods[c(2,6)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/masclepiadis_urbscore.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/masclepiadis_urbscore.png"))
 ```
 
 ### Alternative Models
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(masclepiadis_mods[3]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/masclepiadis_citydist_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/masclepiadis_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(masclepiadis_mods[5]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/masclepiadis_urbscore_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/masclepiadis_urbscore_alt.png"))
 ```
 
 ## Euchaetes egle
@@ -1827,26 +1827,26 @@ make_all_anovas_tidy_altmods(masclepiadis_mods[5]) %>%
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(euchaetes_mods[c(1,4)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/euchaetes_citydist.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/euchaetes_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(euchaetes_mods[c(2,6)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/euchaetes_urbscore.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/euchaetes_urbscore.png"))
 ```
 
 ### Alternative Models
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(euchaetes_mods[3]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/euchaetes_citydist_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/euchaetes_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(euchaetes_mods[5]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/euchaetes_urbscore_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/euchaetes_urbscore_alt.png"))
 ```
 
 ## Lygaeus kalmii
@@ -1854,76 +1854,76 @@ make_all_anovas_tidy_altmods(euchaetes_mods[5]) %>%
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(lygaeus_mods[c(1,4)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/lygaeus_citydist.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/lygaeus_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(lygaeus_mods[c(2,6)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/lygaeus_urbscore.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/lygaeus_urbscore.png"))
 ```
 
 ### Alternative Models
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(lygaeus_mods[3]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/lygaeus_citydist_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/lygaeus_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(lygaeus_mods[5]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/lygaeus_urbscore_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/lygaeus_urbscore_alt.png"))
 ```
 ## Labidomera clivicollis
 ### Best Models
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(labidomera_mods[c(1,4)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/labidomera_citydist.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/labidomera_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(labidomera_mods[c(2,6)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/labidomera_urbscore.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/labidomera_urbscore.png"))
 ```
 
 ### Alternative Models
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(labidomera_mods[3]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/labidomera_citydist_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/labidomera_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(labidomera_mods[5]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/labidomera_urbscore_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/labidomera_urbscore_alt.png"))
 ```
 ## Rhyssomatus lineaticollis
 ### Best Models
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(rhyssomatus_mods[c(1,4)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/rhyssomatus_citydist.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/rhyssomatus_citydist.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(rhyssomatus_mods[c(2,6)]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Best_models/rhyssomatus_urbscore.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Best_models/rhyssomatus_urbscore.png"))
 ```
 
 ### Alternative Models
 #### City_dist
 ```{r}
 make_all_anovas_tidy_altmods(rhyssomatus_mods[3]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/rhyssomatus_citydist_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/rhyssomatus_citydist_alt.png"))
 ```
 
 #### Urb_score
 ```{r}
 make_all_anovas_tidy_altmods(rhyssomatus_mods[5]) %>%
-  save_as_image(., path = here::here("./Figures_Tables/ANOVA_1yr/2020_Herbivores/Alt_models/rhyssomatus_urbscore_alt.png"))
+  save_as_image(., path = here::here("./misc/2020_Herbivores/2020_Herbivore_ANOVA/Alt_models/rhyssomatus_urbscore_alt.png"))
 ```

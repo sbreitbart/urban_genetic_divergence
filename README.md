@@ -2,18 +2,11 @@
 
 # Title
 
-## Journal
+## Journal: Scientific Reports
 
-## [Sophie Breitbart](https://sbreitbart.github.io/), [Anurag Agrawal](
-##########################################
-ADD WEBSITE
-##########################################
-), Wagner](https://sites.utm.utoronto.ca/wagnerlab/), [Marc Johnson](https://evoecolab.wordpress.com/)
+## [Sophie Breitbart](https://sbreitbart.github.io/), [Anurag Agrawal](https://agrawal.eeb.cornell.edu/), [Helene Wagner](https://sites.utm.utoronto.ca/wagnerlab/), [Marc Johnson](https://evoecolab.wordpress.com/)
 
 ## Abstract
-##########################################
-ADD ABSTRACT
-##########################################
 
 
 ## Using this code
@@ -25,19 +18,12 @@ ADD ABSTRACT
 
 ### Folder key
 
-* `all_data_analyses`: Contains Rmds used in analyses that utilized information from all datasets (e.g., when creating BLUPs and testing for false discovery rate).
-* `CommonGardenExperiment_2019Data`, `CommonGardenExperiment_2020Data`, `CommonGardenExperiment_2021Data`,
-`CommonGardenExperiment_2022Data`: Contains data collected during 2019, 2020, 2021, and 2022 field seasons, respectively.
-* `correlations`: Contains Rmd used to generate pairwise correlations among traits, plus figures displaying these relationships.
-* `Defense_trait_analyses`: Contains analysis scripts, figures, and tables associated with defense trait analyses.
-* `Figures_Tables`:
+* `data`: Contains data collected during 2019, 2020, 2021, and 2022 field seasons.
+* `Figures_Tables`: Contains figures and tables summarizing analyses.
+* `misc`: Contains miscellaneous files associated with project.
+* `renv`: Contains archived versions of packages used in analyses.
+* `scripts`: Contains scripts used to clean data, generate haversine distances, and perform analyses.
 
-#################################
-remove this folder eventually- redundant, I think
-#################################
+### Notes
 
-* `Growth_trait_analyses`: Contains analysis scripts, figures, and tables associated with growth trait analyses. 
-* `Joined_annual_data`: Contains csvs, each with all years' data for different traits measured.
-* `Phenotyping_schedule`: Contains csvs and figures showing years when trait data was collected.
-* `Reproductive_trait_analyses`: Contains analysis scripts, figures, and tables associated with reproductive trait analyses. 
-* `scripts`: Contains scripts used to clean data and generate haversine distances before analysis.
+* While analyzing the data, we had two questions guiding our analysis: Q1 and Q2. After drafting the paper, we created 3 questions instead (Q1, Q2, Q3). The Q1 and Q2 in this code refer to what is now Q2 and Q3 in the manuscript, respectively. The Q1 referred to in the manuscript was never given an official name.

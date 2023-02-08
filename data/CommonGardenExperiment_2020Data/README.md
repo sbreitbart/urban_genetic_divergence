@@ -4,7 +4,7 @@
 
 ### raw_data
 
-This folder contains folders containing raw data collected in the field and lab as well as Haversine distances between the city center and each population's sampling location.
+This folder contains folders containing raw data collected in the field and lab as well as each population's urbanization score ("Urbanization Score" folder).
 
 ### partially_cleaned_data
 
