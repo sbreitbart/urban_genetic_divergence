@@ -1,8 +1,8 @@
 *Add DOI badge*
 
-# Title
+# Urbanization and a green corridor do not impact genetic divergence in common milkweed
 
-## Journal: Scientific Reports
+## Scientific Reports
 
 ## [Sophie Breitbart](https://sbreitbart.github.io/), [Anurag Agrawal](https://agrawal.eeb.cornell.edu/), [Helene Wagner](https://sites.utm.utoronto.ca/wagnerlab/), [Marc Johnson](https://evoecolab.wordpress.com/)
 
