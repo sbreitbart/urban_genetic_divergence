@@ -1072,33 +1072,35 @@ compare_anovas_transects <- function(mod_allyrs_nourban,
 
 # Calculate quantitative genetic parameters -------------------------------
 ## Calculate heritability
-Calc_narrow_sense_h <- function(fam_var, pop_var, resid_var){
-  add_var <- 2*(fam_var^2)
-  total_wp_var <- (fam_var^2) + # family
-    (pop_var^2) + # population
-    (resid_var^2) # residual
+
+### SD^2 = standard deviation^2 = variance
+Calc_narrow_sense_h <- function(fam_SD, pop_SD, resid_SD){
+  add_var <- 2*(fam_SD^2)
+  total_wp_var <- (fam_SD^2) + # family
+    (pop_SD^2) + # population
+    (resid_SD^2) # residual
   h2 <- add_var/total_wp_var
   return(h2)
 }
 
 ## Calculate Qst
-Calc_qst <- function(fam_var, pop_var){
-  num_qst <- pop_var^2
-  dem_qst <- pop_var^2 + 2*(2*(fam_var^2))
+Calc_qst <- function(fam_SD, pop_SD){
+  num_qst <- pop_SD^2
+  dem_qst <- pop_SD^2 + 2*(2*(fam_SD^2))
   qst <- num_qst/dem_qst
   return(qst)
 }
 
 ## Calculate h2 and Qst in same function
-Calc_h2_qst <- function(fam_var, pop_var, resid_var){
-  add_var <- 2*(fam_var^2)
-  total_wp_var <- (fam_var^2) + # family
-    (pop_var^2) + # population
-    (resid_var^2) # residual
+Calc_h2_qst <- function(fam_SD, pop_SD, resid_SD){
+  add_var <- 2*(fam_SD^2)
+  total_wp_var <- (fam_SD^2) + # family
+    (pop_SD^2) + # population
+    (resid_SD^2) # residual
   h2 <- add_var/total_wp_var
   
-  num_qst <- pop_var^2
-  dem_qst <- pop_var^2 + 2*(2*(fam_var^2))
+  num_qst <- pop_SD^2
+  dem_qst <- pop_SD^2 + 2*(2*(fam_SD^2))
   qst <- num_qst/dem_qst
   
   print(paste0("Narrow-sense heritability: ", h2))
@@ -1106,14 +1108,14 @@ Calc_h2_qst <- function(fam_var, pop_var, resid_var){
 }
 
 ## Calculate CVA
-CVA <- function(fam_var,
-                pop_var,
-                resid_var,
+CVA <- function(fam_SD,
+                pop_SD,
+                resid_SD,
                 trait_mean){
-  add_var <- 2*(fam_var^2)
-  total_wp_var <- (fam_var^2) + # family
-    (pop_var^2) + # population
-    (resid_var^2) # residual
+  add_var <- 2*(fam_SD^2)
+  total_wp_var <- (fam_SD^2) + # family
+    (pop_SD^2) + # population
+    (resid_SD^2) # residual
   
   cva <- sqrt(add_var) / trait_mean
   
@@ -1121,19 +1123,19 @@ CVA <- function(fam_var,
 }
 
 ## Calculate h2, Qst, and CVA at once
-calc_quantgenvars <-  function(fam_var,
-                               pop_var,
-                               resid_var,
+calc_quantgenvars <-  function(fam_SD,
+                               pop_SD,
+                               resid_SD,
                                trait_mean,
                                variable_name){
-  add_var <- 2*(fam_var^2)
-  total_wp_var <- (fam_var^2) + # family
-    (pop_var^2) + # population
-    (resid_var^2) # residual
+  add_var <- 2*(fam_SD^2)
+  total_wp_var <- (fam_SD^2) + # family
+    (pop_SD^2) + # population
+    (resid_SD^2) # residual
   h2 <- add_var/total_wp_var
   
-  num_qst <- pop_var^2
-  dem_qst <- pop_var^2 + 2*(2*(fam_var^2))
+  num_qst <- pop_SD^2
+  dem_qst <- pop_SD^2 + 2*(2*(fam_SD^2))
   qst <- num_qst/dem_qst
   
   cva <- sqrt(add_var) / trait_mean
