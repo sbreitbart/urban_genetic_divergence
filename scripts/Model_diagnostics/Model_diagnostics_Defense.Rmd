@@ -44,13 +44,13 @@ weevil <- read.csv(here::here("./data/Joined_annual_data/weevil.csv")) %>%
 weevil %<>%
   dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family)))
 
-# cardenolides per population (pooled by population)
+# cardenolides per population (pooled by population)-----
 cards <-  read.csv(here::here("./data/CommonGardenExperiment_2020Data/clean_data/2020_cardenolides_clean.csv")) %>%
   dplyr::select(., -1) 
 ```
 
 # Diagnostics: Traits only measured in 2020
-## Cardenolides (open up viewport for this chunk)
+## Cardenolides
 ### Get names of response variables
 ```{r}
 cards_vars <- cards %>%

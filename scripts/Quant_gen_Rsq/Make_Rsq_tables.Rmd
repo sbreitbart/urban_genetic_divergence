@@ -421,11 +421,11 @@ make_card_rsq_table <- function(card_model){
     str_detect(Variable, "total")~
       "Total Cardenolides",
     str_detect(Variable, "6.6") ~
-      "Peak 6.6",
+      "Glycosylated Aspecioside",
     str_detect(Variable, "15") ~
-      "Peak 15",
+      "Labriformin",
     str_detect(Variable, "17.6") ~
-      "Peak 17.6")) %>%
+      "Cardenolide 17.6")) %>%
   
   dplyr::mutate(Urbanization = case_when(
     str_detect(Urbanization, "City_dist")~

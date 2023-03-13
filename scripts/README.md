@@ -42,7 +42,7 @@ This folder contains scripts used to create the field work schedule figure.
 
 ### Quant_gen_Rsq
 
-This folder contains scripts used to create tables with quantitative genetic parameter estimates (narrow-sense heritability, QST, and CVA) ("Make_quant_gen_tables.Rmd") and R-squared values ("Make_Rsq_tables.Rmd").
+This folder contains scripts used to create tables with quantitative genetic parameter estimates (broad-sense heritability, QST, and CVg) ("Make_quant_gen_tables.Rmd") and R-squared values ("Make_Rsq_tables.Rmd").
 
 ### Ranovas
 

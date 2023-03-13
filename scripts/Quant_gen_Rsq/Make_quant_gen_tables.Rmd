@@ -42,7 +42,7 @@ ran3 <- read.csv(here::here("./Figures_Tables/ranova_PVE/ranovas_allyears_transe
 
 ```
 
-# Calculate heritability, Qst, and CVA (Quantitative genetic parameters)
+# Calculate heritability, Qst, and CVg (Quantitative genetic parameters)
 -not possible for cardenolides because there are no families within pops (were pooled by population)
 ## Multi-year models
 ### Defense
@@ -210,11 +210,9 @@ resid_var <- update(
     sigma()
 
 flsucc_mean <- reproduc %>%
-  dplyr::summarize(Mean = mean(as.numeric(Flowered) + 0.00000000001 ,
+  dplyr::summarize(Mean = mean(as.numeric(Flowered) ,
                                na.rm = T)) %>%
-  as.numeric() # can't calculate this because it's 0s x 1s... will be 0, so adding a tiny number to increase it above 0 for an estimate
-
-
+  as.numeric() 
 
 qg_flsucc <- calc_quantgenvars( 0.70759 ,
                    0.54422 ,
@@ -683,14 +681,14 @@ qgen_list1_multi %>%
   dplyr::rename(Variable = 1) %>%
   flextable() %>%
   flextable::compose(part = "header", i = 1, j = 2,
-         value = as_paragraph("h",
+         value = as_paragraph("H",
                               as_sup("2"))) %>%
   flextable::compose(part = "header", i = 1, j = 3,
          value = as_paragraph("Q",
                               as_sub("ST"))) %>%
   flextable::compose(part = "header", i = 1, j = 4,
          value = as_paragraph("CV",
-                              as_sub("A"))) %>%
+                              as_sub("g"))) %>%
   theme_box() %>%
   flextable::align(j = 2:4, align = "center", part = "all") %>%
   autofit() %>%
@@ -877,9 +875,9 @@ resid_var <- update(
 
 flsucc_mean <- reproduc %>%
   dplyr::filter(Year == 2022) %>%
-  dplyr::summarize(Mean = mean(as.numeric(Flowered) + 0.00000000001 ,
+  dplyr::summarize(Mean = mean(as.numeric(Flowered) ,
                                na.rm = T)) %>%
-  as.numeric() # can't calculate this because it's 0s x 1s... will be 0, so adding a tiny number to increase it above 0 for an estimate
+  as.numeric() 
 
 qg_1yr_flsucc <- calc_quantgenvars(
                    0.25975  ,
@@ -1386,14 +1384,14 @@ qgen_list1 %>%
   dplyr::rename(Variable = 1) %>%
   flextable() %>%
   flextable::compose(part = "header", i = 1, j = 2,
-         value = as_paragraph("h",
+         value = as_paragraph("H",
                               as_sup("2"))) %>%
   flextable::compose(part = "header", i = 1, j = 3,
          value = as_paragraph("Q",
                               as_sub("ST"))) %>%
   flextable::compose(part = "header", i = 1, j = 4,
          value = as_paragraph("CV",
-                              as_sub("A"))) %>%
+                              as_sub("g"))) %>%
   theme_box() %>%
   flextable::align(j = 2:4, align = "center", part = "all") %>%
   autofit() %>%
@@ -1412,13 +1410,13 @@ std.error <- function(x) sd(x)/sqrt(length(x))
 summarise(qgen_df,
           mean_h2 = mean(h2),
           mean_qst = mean(qst),
-          mean_cva = mean(cva),
+          mean_cvg = mean(cvg),
           range_h2 = range(h2),
           range_qst = range(qst),
-          range_cva = range(cva),
+          range_cvg = range(cvg),
           se_h2 = std.error(h2),
           se_qst = std.error(qst),
-          se_cva = std.error(cva)) 
+          se_cvg = std.error(cvg)) 
 
 
 ```
@@ -1442,21 +1440,21 @@ qgen_list1 %>%
   full_join(., qgen_ranova1) %>%
   dplyr::mutate_at(2:4, round, 3) %>%
   dplyr::select(Variable,
-                h2, cva, Family_p,
+                h2, cvg, Family_p,
                 qst, Population_p) %>%
   flextable() %>%
   hline(border = NULL, part = "body") %>%
   flextable::bold(i = ~ Family_p <= 0.05, j = 4) %>%
   flextable::bold(i = ~ Population_p <= 0.05, j = 6) %>%
   flextable::compose(part = "header", i = 1, j = 2,
-         value = as_paragraph("h",
+         value = as_paragraph("H",
                               as_sup("2"))) %>%
   flextable::compose(part = "header", i = 1, j = 5,
          value = as_paragraph("Q",
                               as_sub("ST"))) %>%
   flextable::compose(part = "header", i = 1, j = 3,
          value = as_paragraph("CV",
-                              as_sub("A"))) %>%
+                              as_sub("g"))) %>%
   flextable::compose(part = "header", i = 1, j = 4,
          value = as_paragraph("p (Family)")) %>%
   flextable::compose(part = "header", i = 1, j = 6,

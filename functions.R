@@ -116,11 +116,11 @@ tidy_anova_cards <- function(model){
         str_detect(Variable, "total")~
           "Total Cardenolides",
         str_detect(Variable, "6.6") ~
-          "Peak 6.6",
+          "Glycosylated Aspecioside",
         str_detect(Variable, "15") ~
-          "Peak 15",
+          "Labriformin",
         str_detect(Variable, "17.6") ~
-          "Peak 17.6")) %>%
+          "Cardenolide 17.6")) %>%
       dplyr::filter(Predictor != "Residuals")
   )
 }
@@ -1071,16 +1071,16 @@ compare_anovas_transects <- function(mod_allyrs_nourban,
 }
 
 # Calculate quantitative genetic parameters -------------------------------
-## Calculate heritability
+## Calculate broad-sense heritability
 
 ### SD^2 = standard deviation^2 = variance
-Calc_narrow_sense_h <- function(fam_SD, pop_SD, resid_SD){
+Calc_broad_sense_h <- function(fam_SD, pop_SD, resid_SD){
   add_var <- 2*(fam_SD^2)
   total_wp_var <- (fam_SD^2) + # family
     (pop_SD^2) + # population
     (resid_SD^2) # residual
-  h2 <- add_var/total_wp_var
-  return(h2)
+  H2 <- add_var/total_wp_var
+  return(H2)
 }
 
 ## Calculate Qst
@@ -1091,19 +1091,19 @@ Calc_qst <- function(fam_SD, pop_SD){
   return(qst)
 }
 
-## Calculate h2 and Qst in same function
-Calc_h2_qst <- function(fam_SD, pop_SD, resid_SD){
+## Calculate H2 and Qst in same function
+Calc_H2_qst <- function(fam_SD, pop_SD, resid_SD){
   add_var <- 2*(fam_SD^2)
   total_wp_var <- (fam_SD^2) + # family
     (pop_SD^2) + # population
     (resid_SD^2) # residual
-  h2 <- add_var/total_wp_var
+  H2 <- add_var/total_wp_var
   
   num_qst <- pop_SD^2
   dem_qst <- pop_SD^2 + 2*(2*(fam_SD^2))
   qst <- num_qst/dem_qst
   
-  print(paste0("Narrow-sense heritability: ", h2))
+  print(paste0("Broad-sense heritability: ", H2))
   print(paste0("Qst: ", qst))
 }
 
@@ -1117,12 +1117,16 @@ CVA <- function(fam_SD,
     (pop_SD^2) + # population
     (resid_SD^2) # residual
   
-  cva <- sqrt(add_var) / trait_mean
+  # since we're calculating broad-sense heritability, CVg will 
+  # represent the coefficient of genetic variance (as opposed to CVA,
+  # which we can't calculate because we don't have additive genetic 
+  # variation, only genetic variation).
+  cvg <- sqrt(add_var) / trait_mean
   
-  return(cva)
+  return(cvg)
 }
 
-## Calculate h2, Qst, and CVA at once
+## Calculate H2, Qst, and CVA at once
 calc_quantgenvars <-  function(fam_SD,
                                pop_SD,
                                resid_SD,
@@ -1132,22 +1136,22 @@ calc_quantgenvars <-  function(fam_SD,
   total_wp_var <- (fam_SD^2) + # family
     (pop_SD^2) + # population
     (resid_SD^2) # residual
-  h2 <- add_var/total_wp_var
+  H2 <- add_var/total_wp_var
   
   num_qst <- pop_SD^2
   dem_qst <- pop_SD^2 + 2*(2*(fam_SD^2))
   qst <- num_qst/dem_qst
   
-  cva <- sqrt(add_var) / trait_mean
+  cvg <- sqrt(add_var) / trait_mean
   
-  print(paste0("Narrow-sense heritability: ", round(h2, 3)))
+  print(paste0("Broad-sense heritability: ", round(H2, 3)))
   print(paste0("Qst: ", round(qst, 3)))
-  print(paste0("CVA: ", round(cva, 3)))
+  print(paste0("CVg: ", round(cvg, 3)))
 
 return(data.frame(trait = variable_name,
-                  h2  = h2,
+                  H2  = H2,
                   qst = qst,
-                  cva = cva))
+                  cvg = cvg))
 }
 
 # Figures -----------------------------------------------------------------

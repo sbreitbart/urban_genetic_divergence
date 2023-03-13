@@ -40,7 +40,7 @@ This folder contains data used to generate field work schedule table as well as 
 
 ### Quant_gen
 
-This folder contains the tables with quantitative genetic parameter estimates (narrow-sense heritability, QST, and CVA).
+This folder contains the tables with quantitative genetic parameter estimates (broad-sense heritability, QST, and CVg).
 
 ### ranova_PVE
 
