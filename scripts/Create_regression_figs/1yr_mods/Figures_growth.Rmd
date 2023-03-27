@@ -1213,14 +1213,14 @@ ggpred_Q2.urbsubs_mortality
 ### Gradient / City_dist
 ```{r}
 ggarrange(
-addborder(ggpred_Q1.citydist_ldmc, "growth"),
-addborder(ggpred_Q1.citydist_sla, "growth"),
-addborder(ggpred_Q1.citydist_height_e, "growth"),
-addborder(ggpred_Q1.citydist_height_l, "growth"),
-addborder(ggpred_Q1.citydist_rgr, "growth"),
-addborder(ggpred_Q1.citydist_ramets_e, "growth"),
-addborder(ggpred_Q1.citydist_ramets_l, "growth"),
-addborder(ggpred_Q1.citydist_mortality, "growth") +
+ggpred_Q1.citydist_ldmc, 
+ggpred_Q1.citydist_sla, 
+ggpred_Q1.citydist_height_e, 
+ggpred_Q1.citydist_height_l, 
+ggpred_Q1.citydist_rgr, 
+ggpred_Q1.citydist_ramets_e, 
+ggpred_Q1.citydist_ramets_l, 
+ggpred_Q1.citydist_mortality  +
   font("x.text"),
           ncol = 4,
           nrow = 2,
@@ -1240,14 +1240,14 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Growth/Q1_
 ### Gradient / Urbanization Score
 ```{r}
 ggarrange(
-addborder(ggpred_Q1.urbscore_ldmc, "growth"),
-addborder(ggpred_Q1.urbscore_sla, "growth"),
-addborder(ggpred_Q1.urbscore_height_e, "growth"),
-addborder(ggpred_Q1.urbscore_height_l, "growth"),
-addborder(ggpred_Q1.urbscore_rgr, "growth"),
-addborder(ggpred_Q1.urbscore_ramets_e, "growth"),
-addborder(ggpred_Q1.urbscore_ramets_l, "growth"),
-addborder(ggpred_Q1.urbscore_mortality, "growth") +
+ggpred_Q1.urbscore_ldmc, 
+ggpred_Q1.urbscore_sla, 
+ggpred_Q1.urbscore_height_e, 
+ggpred_Q1.urbscore_height_l, 
+ggpred_Q1.urbscore_rgr, 
+ggpred_Q1.urbscore_ramets_e, 
+ggpred_Q1.urbscore_ramets_l, 
+ggpred_Q1.urbscore_mortality  +
             font("x.text"),
           ncol = 4,
           nrow = 2,
@@ -1265,14 +1265,14 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Growth/Q1_
 ### Urb Subtransects / City_dist
 ```{r}
 ggarrange(
- addborder(ggpred_Q2.citydist_ldmc, "growth"),
- addborder(ggpred_Q2.citydist_sla, "growth"),
- addborder(ggpred_Q2.citydist_height_e, "growth"),
- addborder(ggpred_Q2.citydist_height_l, "growth"),
- addborder(ggpred_Q2.citydist_rgr, "growth"),
- addborder(ggpred_Q2.citydist_ramets_e, "growth"),
- addborder(ggpred_Q2.citydist_ramets_l, "growth"),
- addborder(ggpred_Q2.citydist_mortality, "growth") +
+ ggpred_Q2.citydist_ldmc, 
+ ggpred_Q2.citydist_sla, 
+ ggpred_Q2.citydist_height_e, 
+ ggpred_Q2.citydist_height_l, 
+ ggpred_Q2.citydist_rgr, 
+ ggpred_Q2.citydist_ramets_e, 
+ ggpred_Q2.citydist_ramets_l, 
+ ggpred_Q2.citydist_mortality  +
             font("x.text"),
           ncol = 4,
           nrow = 2,
@@ -1291,14 +1291,14 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Growth/Q2_
 ### Urb Subtransects / Urbanization Score
 ```{r}
 ggarrange(
-  addborder(ggpred_Q2.urbsubs_ldmc, "growth"),
-  addborder(ggpred_Q2.urbsubs_sla, "growth"),
-  addborder(ggpred_Q2.urbsubs_height_e, "growth"),
-  addborder(ggpred_Q2.urbsubs_height_l, "growth"),
-  addborder(ggpred_Q2.urbsubs_rgr, "growth"),
-  addborder(ggpred_Q2.urbsubs_ramets_e, "growth"),
-  addborder(ggpred_Q2.urbsubs_ramets_l, "growth"),
-  addborder(ggpred_Q2.urbsubs_mortality, "growth") +
+  ggpred_Q2.urbsubs_ldmc, 
+  ggpred_Q2.urbsubs_sla, 
+  ggpred_Q2.urbsubs_height_e, 
+  ggpred_Q2.urbsubs_height_l, 
+  ggpred_Q2.urbsubs_rgr, 
+  ggpred_Q2.urbsubs_ramets_e, 
+  ggpred_Q2.urbsubs_ramets_l, 
+  ggpred_Q2.urbsubs_mortality  +
             font("x.text"),
           ncol = 4,
           nrow = 2,

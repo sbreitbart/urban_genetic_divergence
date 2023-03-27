@@ -1127,13 +1127,13 @@ ggpred_Q2.urbsubs_weev_quant
 ### Gradient / City_dist
 ```{r}
 ggarrange(
-  addborder(ggpred_Q1.citydist_latex, "defense"),
-  addborder(ggpred_Q1.citydist_herb_e_bin, "defense"),
-  addborder(ggpred_Q1.citydist_herb_e_quant, "defense"),
-  addborder(ggpred_Q1.citydist_herb_l_bin, "defense"),
-  addborder(ggpred_Q1.citydist_herb_l_quant, "defense"),
-  addborder(ggpred_Q1.citydist_weev_bin, "defense"),
-  addborder(ggpred_Q1.citydist_weev_quant, "defense") +
+  ggpred_Q1.citydist_latex,
+  ggpred_Q1.citydist_herb_e_bin,
+  ggpred_Q1.citydist_herb_e_quant,
+  ggpred_Q1.citydist_herb_l_bin,
+  ggpred_Q1.citydist_herb_l_quant,
+  ggpred_Q1.citydist_weev_bin,
+  ggpred_Q1.citydist_weev_quant +
             font("x.text"),
           ncol = 4,
           nrow = 2,
@@ -1152,13 +1152,13 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Defense/Q1
 ### Gradient / Urbanization Score
 ```{r}
 ggarrange(
-  addborder(ggpred_Q1.urbscore_latex, "defense"),
-  addborder(ggpred_Q1.urbscore_herb_e_bin, "defense"),
-  addborder(ggpred_Q1.urbscore_herb_e_quant, "defense"),
-  addborder(ggpred_Q1.urbscore_herb_l_bin, "defense"),
-  addborder(ggpred_Q1.urbscore_herb_l_quant, "defense"),
-  addborder(ggpred_Q1.urbscore_weev_bin, "defense"),
-  addborder(ggpred_Q1.urbscore_weev_quant, "defense") +
+  ggpred_Q1.urbscore_latex,
+  ggpred_Q1.urbscore_herb_e_bin,
+  ggpred_Q1.urbscore_herb_e_quant,
+  ggpred_Q1.urbscore_herb_l_bin,
+  ggpred_Q1.urbscore_herb_l_quant,
+  ggpred_Q1.urbscore_weev_bin,
+  ggpred_Q1.urbscore_weev_quant +
             font("x.text"),
           ncol = 4,
           nrow = 2,
@@ -1176,13 +1176,13 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Defense/Q1
 ### Urb Subtransects / City_dist
 ```{r}
 ggarrange(
-  addborder(ggpred_Q2.citydist_latex, "defense"),
-  addborder(ggpred_Q2.citydist_herb_e_bin, "defense"),
-  addborder(ggpred_Q2.citydist_herb_e_quant, "defense"),
-  addborder(ggpred_Q2.citydist_herb_l_bin, "defense"),
-  addborder(ggpred_Q2.citydist_herb_l_quant, "defense"),
-  addborder(ggpred_Q2.citydist_weev_bin, "defense"),
-  addborder(ggpred_Q2.citydist_weev_quant, "defense") +
+  ggpred_Q2.citydist_latex,
+  ggpred_Q2.citydist_herb_e_bin,
+  ggpred_Q2.citydist_herb_e_quant,
+  ggpred_Q2.citydist_herb_l_bin,
+  ggpred_Q2.citydist_herb_l_quant,
+  ggpred_Q2.citydist_weev_bin,
+  ggpred_Q2.citydist_weev_quant +
             font("x.text"),
           ncol = 4,
           nrow = 2,
@@ -1200,13 +1200,13 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Defense/Q2
 ### Urb Subtransects / Urbanization Score
 ```{r}
 ggarrange(
-  addborder(ggpred_Q2.urbsubs_latex, "defense"),
-  addborder(ggpred_Q2.urbsubs_herb_e_bin, "defense"),
-  addborder(ggpred_Q2.urbsubs_herb_e_quant, "defense"),
-  addborder(ggpred_Q2.urbsubs_herb_l_bin, "defense"),
-  addborder(ggpred_Q2.urbsubs_herb_l_quant, "defense"),
-  addborder(ggpred_Q2.urbsubs_weev_bin, "defense"),
-  addborder(ggpred_Q2.urbsubs_weev_quant, "defense") +
+  ggpred_Q2.urbsubs_latex,
+  ggpred_Q2.urbsubs_herb_e_bin,
+  ggpred_Q2.urbsubs_herb_e_quant,
+  ggpred_Q2.urbsubs_herb_l_bin,
+  ggpred_Q2.urbsubs_herb_l_quant,
+  ggpred_Q2.urbsubs_weev_bin,
+  ggpred_Q2.urbsubs_weev_quant +
             font("x.text"),
           ncol = 4,
           nrow = 2,

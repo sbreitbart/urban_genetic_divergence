@@ -1363,15 +1363,15 @@ ggpred_Q2.urbsubs_peduncles
 ## Gradient / City_dist
 ```{r}
 ggarrange(
-addborder(ggpred_Q1.citydist_flsucc, "reproduction"),
-addborder(ggpred_Q1.citydist_flowers, "reproduction"),
-addborder(ggpred_Q1.citydist_flsize, "reproduction"),
-addborder(ggpred_Q1.citydist_fltime, "reproduction"),
-addborder(ggpred_Q1.citydist_flstart, "reproduction"),
-addborder(ggpred_Q1.citydist_poll, "reproduction"),
-addborder(ggpred_Q1.citydist_pods, "reproduction"),
-addborder(ggpred_Q1.citydist_firstpods, "reproduction"),
-addborder(ggpred_Q1.citydist_peduncles, "reproduction") +
+ggpred_Q1.citydist_flsucc,
+ggpred_Q1.citydist_flowers,
+ggpred_Q1.citydist_flsize,
+ggpred_Q1.citydist_fltime,
+ggpred_Q1.citydist_flstart,
+ggpred_Q1.citydist_poll,
+ggpred_Q1.citydist_pods,
+ggpred_Q1.citydist_firstpods,
+ggpred_Q1.citydist_peduncles+
             font("x.text"),
           ncol = 3,
           nrow = 3,
@@ -1389,15 +1389,15 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Reproducti
 ## Gradient / Urbanization Score
 ```{r}
 ggarrange(
-addborder(ggpred_Q1.urbscore_flsucc, "reproduction"),
-addborder(ggpred_Q1.urbscore_flowers, "reproduction"),
-addborder(ggpred_Q1.urbscore_flsize, "reproduction"),
-addborder(ggpred_Q1.urbscore_fltime, "reproduction"),
-addborder(ggpred_Q1.urbscore_flstart, "reproduction"),
-addborder(ggpred_Q1.urbscore_poll, "reproduction"),
-addborder(ggpred_Q1.urbscore_pods, "reproduction"),
-addborder(ggpred_Q1.urbscore_firstpods, "reproduction"),
-addborder(ggpred_Q1.urbscore_peduncles, "reproduction") +
+ggpred_Q1.urbscore_flsucc,
+ggpred_Q1.urbscore_flowers,
+ggpred_Q1.urbscore_flsize,
+ggpred_Q1.urbscore_fltime,
+ggpred_Q1.urbscore_flstart,
+ggpred_Q1.urbscore_poll,
+ggpred_Q1.urbscore_pods,
+ggpred_Q1.urbscore_firstpods,
+ggpred_Q1.urbscore_peduncles+
             font("x.text"),
           ncol = 3,
           nrow = 3,
@@ -1415,15 +1415,15 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Reproducti
 ## Urb Subtransects / City_dist
 ```{r}
 ggarrange(
-  addborder(ggpred_Q2.citydist_succ, "reproduction"),
-  addborder(ggpred_Q2.citydist_flowers, "reproduction"),
-  addborder(ggpred_Q2.citydist_flsize, "reproduction"),
-  addborder(ggpred_Q2.citydist_fltime, "reproduction"),
-  addborder(ggpred_Q2.citydist_flstart, "reproduction"),
-  addborder(ggpred_Q2.citydist_poll, "reproduction"),
-  addborder(ggpred_Q2.citydist_pods, "reproduction"),
-  addborder(ggpred_Q2.citydist_firstpods, "reproduction"),
-  addborder(ggpred_Q2.citydist_peduncles, "reproduction") +
+  ggpred_Q2.citydist_succ,
+  ggpred_Q2.citydist_flowers,
+  ggpred_Q2.citydist_flsize,
+  ggpred_Q2.citydist_fltime,
+  ggpred_Q2.citydist_flstart,
+  ggpred_Q2.citydist_poll,
+  ggpred_Q2.citydist_pods,
+  ggpred_Q2.citydist_firstpods,
+  ggpred_Q2.citydist_peduncles+
             font("x.text"),
           ncol = 3,
           nrow = 3,
@@ -1441,15 +1441,15 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Reproducti
 ## Urb Subtransects / Urbanization Score
 ```{r}
 ggarrange(
-addborder(ggpred_Q2.urbsubs_flsucc, "reproduction"),
-addborder(ggpred_Q2.urbsubs_flowers, "reproduction"),
-addborder(ggpred_Q2.urbsubs_flsize, "reproduction"),
-addborder(ggpred_Q2.urbsubs_fltime, "reproduction"),
-addborder(ggpred_Q2.urbsubs_flstart, "reproduction"),
-addborder(ggpred_Q2.urbsubs_poll, "reproduction"),
-addborder(ggpred_Q2.urbsubs_pods, "reproduction"),
-addborder(ggpred_Q2.urbscore_firstpods, "reproduction"),
-addborder(ggpred_Q2.urbsubs_peduncles, "reproduction") +
+ggpred_Q2.urbsubs_flsucc,
+ggpred_Q2.urbsubs_flowers,
+ggpred_Q2.urbsubs_flsize,
+ggpred_Q2.urbsubs_fltime,
+ggpred_Q2.urbsubs_flstart,
+ggpred_Q2.urbsubs_poll,
+ggpred_Q2.urbsubs_pods,
+ggpred_Q2.urbscore_firstpods,
+ggpred_Q2.urbsubs_peduncles+
             font("x.text"),
           ncol = 3,
           nrow = 3,

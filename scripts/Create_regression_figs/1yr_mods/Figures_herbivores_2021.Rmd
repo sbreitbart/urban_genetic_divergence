@@ -565,9 +565,9 @@ ggpred_Q2.usc_clivicollis
 ### Gradient / City_dist
 ```{r}
 ggarrange(
-  addborder(ggpred_Q1.citydist_monarch, "herbivores"),
-  addborder(ggpred_Q1.citydist_asclepiadis, "herbivores"),
-  addborder(ggpred_Q1.citydist_clivicollis, "herbivores") +
+  ggpred_Q1.citydist_monarch,
+  ggpred_Q1.citydist_asclepiadis,
+  ggpred_Q1.citydist_clivicollis +
             font("x.text"),
           ncol = 3,
           nrow = 1,
@@ -586,9 +586,9 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Defense/Q1
 ### Gradient / Urbanization Score
 ```{r}
 ggarrange(
-  addborder(ggpred_Q1.usc_monarch, "herbivores"),
-  addborder(ggpred_Q1.usc_asclepiadis, "herbivores"),
-  addborder(ggpred_Q1.usc_clivicollis, "herbivores") + 
+  ggpred_Q1.usc_monarch,
+  ggpred_Q1.usc_asclepiadis,
+  ggpred_Q1.usc_clivicollis + 
             font("x.text"),
           ncol = 3,
           nrow = 1,
@@ -606,9 +606,9 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Defense/Q1
 ### Urb Subtransects / City_dist
 ```{r}
 ggarrange(
-  addborder(ggpred_Q2.citydist_monarch, "herbivores"),
-  addborder(ggpred_Q2.citydist_asclepiadis, "herbivores"),
-  addborder(ggpred_Q2.citydist_clivicollis, "herbivores")+
+  ggpred_Q2.citydist_monarch,
+  ggpred_Q2.citydist_asclepiadis,
+  ggpred_Q2.citydist_clivicollis +
             font("x.text"),
           ncol = 3,
           nrow = 1,
@@ -627,9 +627,9 @@ dev.copy2pdf(file = here::here("./Figures_Tables/Regressions/1yr_mods/Defense/Q2
 ### Urb Subtransects / Urbanization Score
 ```{r}
 ggarrange(
-  addborder(ggpred_Q2.usc_monarch, "herbivores"),
-  addborder(ggpred_Q2.usc_asclepiadis, "herbivores"),
-  addborder(ggpred_Q2.usc_clivicollis, "herbivores") +
+  ggpred_Q2.usc_monarch,
+  ggpred_Q2.usc_asclepiadis,
+  ggpred_Q2.usc_clivicollis +
             font("x.text"),
           ncol = 3,
           nrow = 1,
