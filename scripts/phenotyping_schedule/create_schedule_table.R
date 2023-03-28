@@ -1,10 +1,11 @@
+# Load libraries
+source("libraries.R")
+library(ggtext)
+
 # Import data
 sched <- read.csv(here::here("./Figures_Tables/Phenotyping_schedule/Schedule_for_R.csv"))%>%
   dplyr::rename("Trait" = 1) %>%
   dplyr::select(1:3) 
-
-# Load libraries
-# source("libraries.R")
 
 
 # to find number of plants alive at end of growing season each year:
@@ -14,7 +15,7 @@ survival %>%
   dplyr::summarise(alive = n())
 
 
-library(ggtext)
+
 # Create table showing when traits were recorded
 p <- ggplot(sched,
        aes(x = as.factor(Year),
@@ -22,8 +23,9 @@ p <- ggplot(sched,
   facet_grid(vars(Category),
              scales = "free_y",
              switch = "y")+
-  geom_tile(aes(fill = Category),
+  geom_tile(#aes(fill = Category),
             color = "black",
+            fill = "lightgrey",
             height = 1,
             width = 1) +
   labs(x="Year Recorded\n\n",
@@ -48,8 +50,8 @@ p <- ggplot(sched,
         plot.subtitle = element_text(color = "gray35",
                                      hjust = 1,
                                      size = 11,
-                                     face = "italic")) +
-  scale_fill_brewer(palette = "Greens")
+                                     face = "italic")) #+
+ # scale_fill_brewer(palette = "Set2")
 p
 
 # save it
