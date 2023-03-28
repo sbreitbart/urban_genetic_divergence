@@ -1,6 +1,6 @@
 *Add DOI badge*
 
-# Urbanization and a green corridor do not impact genetic divergence in common milkweed
+# Urbanization and a green corridor do not impact genetic divergence in common milkweed (*Asclepias syriaca*)
 
 ## Scientific Reports
 

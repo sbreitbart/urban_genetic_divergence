@@ -44,6 +44,17 @@ ran1 %<>%
               values_from = c("Chisq", "p", "PVE"),
               names_glue = "{Group}_{.value}") %>%
   dplyr::select(1,2,4,6,3,5,7) 
+
+
+# If p-value column cell != <0.001, round it to 3 digits
+ran1$UrbScore_Family_p <- ifelse(ran1$UrbScore_Family_p == "<0.001",
+                        ran1$UrbScore_Family_p,
+                        round(as.numeric(ran1$UrbScore_Family_p), 3))
+
+
+ran1$UrbScore_Population_p <- ifelse(ran1$UrbScore_Population_p == "<0.001",
+                        ran1$UrbScore_Population_p,
+                        round(as.numeric(ran1$UrbScore_Population_p), 3))
 ```
 
 ### Q1, table 2
@@ -53,6 +64,24 @@ ran2 %<>%
               values_from = c("Chisq", "p", "PVE"),
                 names_glue = "{Urbanization}_{Group}_{.value}") %>%
   dplyr::select(1,2,6,10,3,7,11,4,8,12,5,9,13)
+
+# If p-value column cell != <0.001, round it to 3 digits
+ran2$Distance_Population_p <- ifelse(ran2$Distance_Population_p == "<0.001",
+                        ran2$Distance_Population_p,
+                        round(as.numeric(ran2$Distance_Population_p), 3))
+
+ran2$Distance_Family_p <- ifelse(ran2$Distance_Family_p == "<0.001",
+                        ran2$Distance_Family_p,
+                        round(as.numeric(ran2$Distance_Family_p), 3))
+
+
+ran2$UrbScore_Family_p <- ifelse(ran2$UrbScore_Family_p == "<0.001",
+                        ran2$UrbScore_Family_p,
+                        round(as.numeric(ran2$UrbScore_Family_p), 3))
+
+ran2$UrbScore_Population_p <- ifelse(ran2$UrbScore_Population_p == "<0.001",
+                        ran2$UrbScore_Population_p,
+                        round(as.numeric(ran2$UrbScore_Population_p), 3))
 ```
 
 ### Q2, table 1
@@ -62,6 +91,24 @@ ran3 %<>%
               values_from = c("Chisq", "p", "PVE"),
                 names_glue = "{Urbanization}_{Group}_{.value}") %>%
   dplyr::select(1,2,6,10,3,7,11,4,8,12,5,9,13)
+
+# If p-value column cell != <0.001, round it to 3 digits
+ran3$Distance_Population_p <- ifelse(ran3$Distance_Population_p == "<0.001",
+                        ran3$Distance_Population_p,
+                        round(as.numeric(ran3$Distance_Population_p), 3))
+
+ran3$Distance_Family_p <- ifelse(ran3$Distance_Family_p == "<0.001",
+                        ran3$Distance_Family_p,
+                        round(as.numeric(ran3$Distance_Family_p), 3))
+
+
+ran3$UrbScore_Family_p <- ifelse(ran3$UrbScore_Family_p == "<0.001",
+                        ran3$UrbScore_Family_p,
+                        round(as.numeric(ran3$UrbScore_Family_p), 3))
+
+ran3$UrbScore_Population_p <- ifelse(ran3$UrbScore_Population_p == "<0.001",
+                        ran3$UrbScore_Population_p,
+                        round(as.numeric(ran3$UrbScore_Population_p), 3))
 ```
 
 ## Make nice tables & export

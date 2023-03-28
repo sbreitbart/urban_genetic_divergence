@@ -1431,7 +1431,7 @@ qgen_ranova1 <- ran1 %>%
               values_from = "p",
               names_glue = "{Group}_{.value}")
 
-qgen_list1 %>% 
+qgen_list1 %<>% 
   bind_rows() %>%
   dplyr::rename(Variable = trait) %>%
   dplyr::mutate(Variable = str_replace(Variable,
@@ -1440,14 +1440,25 @@ qgen_list1 %>%
   full_join(., qgen_ranova1) %>%
   dplyr::mutate_at(2:4, round, 3) %>%
   dplyr::select(Variable,
-                h2, cvg, Family_p,
-                qst, Population_p) %>%
+                H2, cvg, Family_p,
+                qst, Population_p)
+
+# round p-value columns to 3 digits if not <0.001
+qgen_list1$Family_p <- ifelse(qgen_list1$Family_p == "<0.001",
+                        qgen_list1$Family_p,
+                        round(as.numeric(qgen_list1$Family_p), 3))
+
+qgen_list1$Population_p <- ifelse(qgen_list1$Population_p == "<0.001",
+                        qgen_list1$Population_p,
+                        round(as.numeric(qgen_list1$Population_p), 3))
+
+qgen_list1 %>% 
   flextable() %>%
   hline(border = NULL, part = "body") %>%
   flextable::bold(i = ~ Family_p <= 0.05, j = 4) %>%
   flextable::bold(i = ~ Population_p <= 0.05, j = 6) %>%
   flextable::compose(part = "header", i = 1, j = 2,
-         value = as_paragraph("H",
+         value = as_paragraph("h",
                               as_sup("2"))) %>%
   flextable::compose(part = "header", i = 1, j = 5,
          value = as_paragraph("Q",
