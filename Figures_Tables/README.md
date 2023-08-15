@@ -14,6 +14,10 @@ This folder contains ANOVA tables using multiple years of data created in the sc
 
 This folder contains the results of binomial expansion tests.
 
+### Climate
+
+This folder contains figures and tables describing climatic differences between weather stations at the urban and rural termini of the urbanization gradient from which the plants were sampled.
+
 ### Comparing_ANOVA
 
 This folder contains the table of discrepancies between the multi-year and one-year ANOVA, as well as the csv file with the original information.

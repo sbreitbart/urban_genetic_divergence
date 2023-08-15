@@ -1,4 +1,8 @@
-This climate data was downloaded from this website on 8/15/2023:
+# Subdirectory: Climate
+
+## Folder description
+
+This folder contains one csv with climate data. This data was downloaded from this website on 8/15/2023:
 
 https://climatedata.ca/download/#station-download
 

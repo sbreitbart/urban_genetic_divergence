@@ -12,6 +12,10 @@ This folder contains scripts used to create ANOVA tables using one and mulitple 
 
 This folder contains scripts used to clean data for each year, plus an Rmd (Joining_annual_datasets.Rmd) to join each trait's annual data.
 
+### Climate
+
+This folder contains a script used to analyze climatic differences between weather stations at the urban and rural termini of the urbanization gradient from which the plants were sampled.
+
 ### Create_regression_figs
 
 This folder contains scripts used to create regressions of the 1-year and multi-year models.
