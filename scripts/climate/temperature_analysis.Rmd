@@ -1,0 +1,182 @@
+# Set up notebook
+## Load libraries and add functions
+```{r}
+source("libraries.R")
+source("functions.R")
+```
+
+## Set strings as factors to false
+```{r}
+options(stringsAsFactors = FALSE)
+```
+
+## Import data
+```{r}
+weather <-
+  read.csv(here::here("./data/Climate/climate-daily_2014_2018_OakvilleTwn_TorontoCity.csv"),
+           header=T,
+           na.strings=c("","NA"))
+```
+
+## Remove irrelevant data & clean up column names
+```{r}
+weather %<>%
+  janitor::clean_names() %>%
+  dplyr::select(1:3, 8:11) %>%
+  dplyr::rename(.,
+                "long" = 1,
+                "lat" = 2)
+```
+
+# Quality control
+```{r}
+# check for duplicates: none
+janitor::get_dupes(weather)
+
+# summary
+summary(weather) # 58 NAs for mean temperature
+
+NAs <- weather %>%
+  dplyr::filter(is.na(mean_temperature) == TRUE) %>%
+  dplyr::group_by(station_name, local_year, local_month) %>%
+  dplyr::summarise(n_nas = n()) 
+
+# visualize frequency of NAs
+ggplot(NAs,
+       aes(y = n_nas,
+           x = factor(local_month),
+           fill = station_name)) +
+  geom_bar(stat = "identity",
+           position = "dodge",
+           width = 1,
+           color = "black") +
+  labs(
+    x = "",
+    y = "Number of NAs"
+  ) +
+  theme_pubr() +
+  scale_x_discrete(labels = month.abb) +
+  facet_wrap(facets = c("local_year"),
+             nrow = 1) +
+  theme(axis.text.x = element_text(size = 8))
+
+# The Toronto City weather station has more missing data than the Oakville station. The max number of monthly NAs is 6 (occurs once), then two 5-NA months, 1 4-NA month, 1 3-NA month, and then 2s and 1s. 
+# Since this dataset has 5 years of data for all months, I think the general trends should be clear even with this missing data.
+```
+
+# Aggregate by month
+```{r}
+monthly_data <- weather %>% 
+  dplyr::group_by(local_year, local_month, station_name) %>%
+  dplyr::summarise(n = sum(!is.na(mean_temperature)), 
+            mean_temp = mean(mean_temperature,
+                             na.rm = T)) %>%
+  dplyr::mutate_at(c(1:3),
+                   as.factor)
+
+```
+
+
+# Figures
+## Monthly mean temperature data
+```{r fig.height=3.5, fig.width=9}
+
+# line graph
+ggplot(monthly_data %>%
+         dplyr::rename("Station" = station_name,
+                       "Year" = local_year),
+       aes(x = local_month,
+           y = mean_temp,
+           color = Year,
+           linetype = Station,
+           group = interaction(Year, Station)
+             )) +
+  geom_line(size = 0.5)  +
+  geom_point(size = 1) +
+  ylab("Mean temperature (C)") +
+  xlab("Month") +
+  scale_x_discrete(labels = month.abb) +
+  theme_pubr() +
+  scale_color_viridis_d(option = "turbo") +
+  theme(legend.position = "right") +
+       scale_linetype_discrete(labels=c('Oakville',
+                                    'Toronto'))
+
+# export
+ggsave(last_plot(),
+       filename = here::here("./Figures_Tables/Climate/Monthly_temp_linegraph.png"),
+         width = 18, height = 8, units = "cm")
+
+```
+
+# Tables
+## Export monthly data
+```{r}
+monthly_data %<>%
+  dplyr::mutate(mean_temp = round(mean_temp, 2)) %>%
+  dplyr::mutate(station_name = ifelse(
+    station_name == "OAKVILLE TWN",
+    "Oakville",
+    "Toronto"))
+
+monthly_data %>%
+  dplyr::rename("Year" = 1,
+                "Month" = 2,
+                "Station" = 3,
+                "Records" = 4,
+                "Mean Temperature (C)" = 5) %>%
+  flextable() %>%
+  flextable::align(align = "center", part = "all") %>%
+  autofit() %>%
+  save_as_docx(path = here::here("./Figures_Tables/Climate/Monthly_data.docx"))
+```
+
+## Export annual data
+```{r}
+annual_data <- weather %>% 
+  dplyr::group_by(local_year, 
+                  station_name) %>%
+  dplyr::summarise(n = sum(!is.na(mean_temperature)), 
+            mean_temp = mean(mean_temperature,
+                             na.rm = T)) %>%
+  dplyr::mutate_at(c(1:2),
+                   as.factor) %>%
+  dplyr::mutate(mean_temp = round(mean_temp, 2)) %>%
+  dplyr::mutate(station_name = ifelse(
+    station_name == "OAKVILLE TWN",
+    "Oakville",
+    "Toronto"))
+  
+
+annual_data %>%
+  dplyr::rename("Year" = 1,
+                "Station" = 2,
+                "Records" = 3,
+                "Mean Temperature (C)" = 4) %>%
+  flextable() %>%
+  flextable::align(align = "center", part = "all") %>%
+  autofit() %>%
+  save_as_docx(path = here::here("./Figures_Tables/Climate/Annual_data.docx"))
+```
+
+## Find annual differences between stations
+```{r}
+# Calculate percent differences
+annual_data %>%
+  dplyr::group_by(local_year) %>%
+  dplyr::mutate(
+    perc_diff = (mean_temp - lag(mean_temp)) / lag(mean_temp) * 100) %>%
+  dplyr::mutate(perc_diff = round(perc_diff, 2)) %>%
+    dplyr::rename("Year" = 1,
+                "Station" = 2,
+                "Records" = 3,
+                "Mean Temperature (C)" = 4,
+                "Percent Difference" = 5) %>%
+  flextable() %>%
+  flextable::border(i = c(2,4,6,8),
+                    border.bottom =  fp_border(color = "black") ) %>%
+  flextable::align(align = "center", part = "all") %>%
+  autofit() %>%
+  save_as_docx(path = here::here("./Figures_Tables/Climate/Annual_differences.docx"))
+```
+

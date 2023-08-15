@@ -1408,13 +1408,13 @@ qgen_df <- qgen_list1 %>%
 std.error <- function(x) sd(x)/sqrt(length(x))
 
 summarise(qgen_df,
-          mean_h2 = mean(h2),
+          mean_h2 = mean(H2),
           mean_qst = mean(qst),
           mean_cvg = mean(cvg),
-          range_h2 = range(h2),
+          range_h2 = range(H2),
           range_qst = range(qst),
           range_cvg = range(cvg),
-          se_h2 = std.error(h2),
+          se_h2 = std.error(H2),
           se_qst = std.error(qst),
           se_cvg = std.error(cvg)) 
 
@@ -1458,7 +1458,7 @@ qgen_list1 %>%
   flextable::bold(i = ~ Family_p <= 0.05, j = 4) %>%
   flextable::bold(i = ~ Population_p <= 0.05, j = 6) %>%
   flextable::compose(part = "header", i = 1, j = 2,
-         value = as_paragraph("h",
+         value = as_paragraph("H",
                               as_sup("2"))) %>%
   flextable::compose(part = "header", i = 1, j = 5,
          value = as_paragraph("Q",
