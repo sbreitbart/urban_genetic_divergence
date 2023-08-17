@@ -1,0 +1,103 @@
+# Set up notebook
+## Load libraries and add functions
+```{r}
+source("libraries.R")
+source("functions.R")
+```
+
+## Import data
+```{r}
+
+# take urb metrics from cardenolide data
+urbs <-  read.csv(here::here("./data/CommonGardenExperiment_2020Data/clean_data/2020_cardenolides_clean.csv")) %>%
+  dplyr::select(., c(2, 13:20)) 
+```
+
+# Regression
+```{r}
+mod1 <- lm(City_dist ~ Urb_score,
+           data = urbs)
+
+performance::check_model(mod1)
+
+summary(mod1)
+
+mod1_anova <- car::Anova(mod1)
+
+F_stat <- round(mod1_anova$`F value`[1], 3)
+
+```
+
+# Figures
+```{r}
+
+ggplot(urbs,
+       aes(x = City_dist,
+           y = Urb_score)) +
+  geom_smooth(method = lm,
+              color = "black",
+              size = 0.5)  +
+  geom_point(size = 1.5,
+             shape = 21) +
+  xlim(0, NA) +
+  ylim(-5, 5) +
+  xlab("Distance to City Center (km)") +
+  ylab("Urbanization Score") +
+  theme_pubr() +
+# adding stats from ANOVA
+  annotate(geom = 'text',
+         x = 50,
+         y = 4.5, 
+         label = paste("F[\"1,49\"] ==", F_stat), 
+         parse = TRUE,
+         hjust = 0) +
+  annotate(geom = 'text',
+         x = 50,
+         y = 3.75, 
+         label = paste("p < 0.001"), 
+         parse = TRUE,
+         hjust = 0) +
+  annotate(geom = 'text',
+         x = 50,
+         y = 3, 
+         label = paste(
+           "R[adj]^2 ==",
+           round(summary(mod1)$adj.r.squared, 3)), 
+         parse = TRUE,
+         hjust = 0)
+
+
+                        
+# export
+ggsave(last_plot(),
+       filename = here::here("./Figures_Tables/Urb_metrics/Urb_metrics_regression.png"),
+         width = 12, height = 10, units = "cm")
+
+```
+
+# Tables
+## Export ANOVA
+```{r}
+
+mod1 %>%
+  tidy_anova() %>%
+  dplyr::select(-Sites) %>%
+  dplyr::rename(SS = sumsq,
+                F = Chi_sq) %>%
+  replace(., is.na(.), "-") %>%
+      dplyr::filter(Predictor != "(Intercept)") %>%
+      flextable::flextable() %>% 
+      merge_v(j = "Response") %>% 
+      valign(valign = "top")%>%
+      flextable::autofit() %>%
+      align(align = "left", part = "all") %>%
+      flextable::compose(i = 1, j = 4, part = "header",
+                         value = as_paragraph("F")) %>%
+      flextable::compose(i = 1, j = 5, part = "header",
+                         value = as_paragraph(as_i("p"))) %>%
+      fontsize(size = 12, part = "header") %>%
+      fontsize(size = 12, part = "body") %>%
+      fix_border_issues() %>%
+  save_as_docx(path = here::here("./Figures_Tables/Urb_metrics/urb_metrics_anova.docx"))
+```
+
