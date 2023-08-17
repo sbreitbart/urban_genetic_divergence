@@ -1,0 +1,328 @@
+# Load libraries
+```{r}
+source("libraries.R")
+```
+
+# Import data (multi-year models)
+## Reproductive traits
+```{r}
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
+
+# save list of models as reprod_models
+reprod_models <- all_models
+```
+
+## Defense traits
+```{r}
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Defense.Rmd", quiet=TRUE))
+
+# save list of models as defense_models
+defense_models <- all_models
+```
+
+## Growth traits
+```{r}
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Growth.Rmd", quiet=TRUE))
+
+# save list of models as growth_models
+growth_models <- all_models
+```
+
+# Extract only city_dist/gradient models
+## Defense traits
+```{r}
+defense_city_gr <- defense_models %>%
+  purrr::flatten() %>%
+  keep(grepl('gr', names(.))) %>%
+  keep(grepl('City', names(.)))
+
+names(defense_city_gr) <- c(
+"latex_mods"         ,
+"herb_early_mods_binomial"    ,
+"herb_early_mods_quant"    ,
+"herb_late_mods_binomial"     ,
+"herb_late_mods_quant"     ,
+"weev_mods_binomial" ,
+"weev_mods_quant")
+```
+
+## Growth traits
+```{r}
+growth_city_gr <- growth_models %>%
+  purrr::flatten() %>%
+  keep(grepl('gr', names(.))) %>%
+  keep(grepl('City', names(.)))
+
+names(growth_city_gr) <- c(
+"ldmc_mods",
+"sla_mods",
+"heights_early_mods",
+"heights_late_mods",
+"rgr_mods",
+"ramets_early_mods",
+"ramets_late_mods" ,
+"mortality_mods" 
+  )
+```
+
+## Reproductive traits
+```{r}
+reprod_city_gr <- reprod_models %>%
+  purrr::flatten() %>%
+  keep(grepl('gr', names(.))) %>%
+  keep(grepl('City', names(.)))
+
+names(reprod_city_gr) <- c(
+"flsucc_mods"          ,
+"flowers_mods"         ,
+"flsize_mods"          ,
+"fltime_mods",
+"flstart_mods",
+"poll_mods"            ,
+"pods_mods"            ,
+"firstpods_mods"            ,
+"peduncles_mods")
+```
+
+
+## Cardenolide model
+```{r}
+# cardenolides per population (pooled)
+cards <-  read.csv(here::here("./data/CommonGardenExperiment_2020Data/clean_data/2020_cardenolides_clean.csv")) %>%
+  dplyr::select(., -1)
+
+cards$Population <- as.character(cards$Population)
+```
+
+## Join lists (without cardenolides yet)
+```{r}
+all <- c(reprod_city_gr,
+  growth_city_gr,
+  defense_city_gr)
+```
+
+# Generate df of BLUPs from each trait
+```{r}
+blup_list <- function(list){
+  
+  all_blups <- list[[1]] %>%
+    ranef() %>%
+    extract2("cond") %>%
+    extract2("Population") %>%
+    rownames_to_column("Population") %>%
+    dplyr::select("Population")
+  
+  for (i in 1:length(list)){
+    
+    var_name <- list[[i]][["call"]][["formula"]][[2]] %>%
+      toString()
+    
+    blup <- list[[i]] %>%
+      ranef() %>%
+      extract2("cond") %>%
+      extract2("Population") %>%
+      rownames_to_column("Population") %>%
+      rename(!!var_name:=2)
+      
+    all_blups <- join(all_blups, blup, by = "Population")
+  }
+  return(all_blups)
+}
+
+all_blups <- blup_list(all) %>%
+# back-transform traits transformed in lmers
+  dplyr::mutate(mean_poll =          .[[7]]^2, # inverse of sqrt(x)
+                LDMC =               .[[11]]^2, # inverse of sqrt(x)
+                SLA =                exp(.[[12]] + 1), # inverse of log, adding 1 to avoid -Inf
+                Total_height_early = .[[13]]^3, # inverse of x^(1/3)
+                Total_height_late =  .[[14]]^3, # "
+                Rel_growth_rate =    .[[15]]^3, # "
+                Latex =              .[[19]]^3, # "
+                Herbivory_mean_early=exp(.[[21]] + 1), # inverse of log, adding 1 to avoid -Inf
+                Herbivory_mean_late =exp(.[[23]] + 1), # "
+                Scar_length_cm =     exp(.[[25]] + 1)) %>% # "
+  dplyr::select(-c(7,11:15, 19, 21, 23, 25)) %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  left_join(., cards[,c(2,10)], by = "Population") %>% # add cardenolides
+  dplyr::mutate(cardenolides = total) %>%
+  dplyr::select(-total)
+
+oldnames <- colnames(all_blups)
+newnames <- c("Population",
+             "Flowering success",
+             "Flowers per inflorescence",
+             "Flower size",
+             "Flowering duration",
+             "Date of first flower",
+             "Follicles",
+             "Date of first follicle",
+             "Inflorescences",
+             "Ramets \n before flowering",
+             "Ramets \n after flowering",
+             "Mortality",
+             "Herbivory before flowering\n (binary)",
+             "Herbivory after flowering\n (binary)",
+             "Weevil damage (binary)",
+             "Pollinaria removed",
+             "LDMC",
+             "SLA",
+             "Height before flowering",
+             "Height after flowering",
+             "Relative growth rate",
+             "Latex exudation",
+             "Herbivory before flowering\n (quantitative)",
+             "Herbivory after flowering\n (quantitative)",
+             "Weevil damage (quantitative)",
+             "Total cardenolide \nconcentration"
+)
+
+all_blups %<>%
+  rename_at(vars(oldnames), ~ newnames) %>%
+  # arrange traits by life history category
+  dplyr::relocate('Latex exudation',
+                  .before = 'Herbivory before flowering\n (binary)') %>%
+  dplyr::relocate('Herbivory before flowering\n (quantitative)',
+                  .after = 'Herbivory before flowering\n (binary)') %>%
+  dplyr::relocate('Herbivory after flowering\n (quantitative)',
+                  .after = 'Herbivory after flowering\n (binary)') %>%
+  dplyr::relocate('Weevil damage (quantitative)',
+                  .after = 'Weevil damage (binary)') %>%
+  dplyr::relocate('Total cardenolide \nconcentration',
+                  .after = 'Weevil damage (quantitative)')
+```
+
+# Generate correlation matrix
+```{r}
+correlations <- rcorr(as.matrix(all_blups[-1])) # take out population column
+
+# save r values as separate df
+correlations.r <- correlations$r %>%
+  as.data.frame() %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  mutate(across(where(is.numeric), round, 3))
+
+# save p values as separate df
+correlations.p <- correlations$P %>%
+  as.data.frame() %>%
+  mutate(across(where(is.numeric), round, 3))
+
+
+# then export it
+correlations.r %>%
+  tibble::rownames_to_column(" ") %>%
+   flextable() %>%
+  save_as_html(., path = here::here("./Figures_Tables/correlations/r_values.html"))
+
+
+correlations.p %>%
+  tibble::rownames_to_column(" ") %>%
+   flextable() %>%
+  save_as_html(., path = here::here("./Figures_Tables/correlations/p_values.html"))
+
+```
+
+# Visualize
+## Scatterplot matrix
+```{r}
+
+# correlations.r[correlations.r == 1] <- NA # replace all perfect correlations (1; var A on var A; var B on var B; etc.) with NAs
+
+library(GGally)
+ggpairs(correlations.r) 
+
+dev.copy2pdf(file = here::here("./Figures_Tables/correlations/scatterplot_matrix_longnames.pdf"),
+             width = 45, height = 45)
+
+```
+
+## Heatmaps
+### Show p and r values
+```{r}
+library(corrplot)
+library(colorRamps)
+
+col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+
+col2 <- colorRampPalette(c("blue","white","red"))
+
+# show with p values
+corrplot(
+  cor(all_blups[,c(-1)], # remove population col
+             use="complete.obs"),
+  method = "color",
+  shade.col = NA,
+  tl.col = "black",
+  tl.cex = 0.25,
+  tl.srt = 45,
+  col = col2(200),
+  # addCoef.col = "black", # add correlation coefficients
+  order = "original",
+  diag = FALSE,
+  type = "upper",
+  cl.length = 5,
+  cl.cex = 0.5,
+  cl.ratio = 0.2,
+  cl.align.text = "l",
+  # p.mat = cor.mtest(all_blups[,c(-1)], conf.level = 0.95)$p,
+  # insig = 'p-value',
+  sig.level = -1)
+
+dev.copy2pdf(file = here::here("./Figures_Tables/correlations/heatmap_original.pdf"),
+             width = 5, height = 5)
+
+
+
+
+# show with p value asterisks
+corrplot(
+  cor(all_blups[,c(-1)],
+             use="complete.obs"),
+  method = "color",
+  shade.col = NA,
+  tl.col = "black",
+  tl.cex = 0.25,
+  tl.srt = 45,
+  col = col2(200),
+  order = "original",
+  diag = FALSE,
+  type = "upper",
+  p.mat = cor.mtest(all_blups[,c(-1)], conf.level = 0.95)$p,
+  sig.level = c(0.001, 0.01, 0.05),
+  pch.cex = 0.7,
+  insig = 'label_sig',
+  pch.col = 'grey20',
+  cl.length = 5,
+  cl.cex = 0.5,
+ # cl.ratio = 0.2,
+  cl.align.text = "l")
+
+dev.copy2pdf(file = here::here("./Figures_Tables/correlations/heatmap_with_p_asterisks.pdf"),
+             width = 5, height = 5)
+
+
+# show with r values
+corrplot(
+  cor(all_blups[,c(-1)],
+             use="complete.obs"),
+  method = "color",
+  shade.col = NA,
+  tl.col = "black",
+  tl.cex = 0.25,
+  tl.srt = 45,
+  col = col2(200),
+  number.cex = 0.25,
+  addCoef.col = "black",
+ # cl.pos = "n",
+  pch.cex = 0.7,
+  order = "original", 
+  diag = FALSE,
+  type = "upper",
+  cl.length = 5,
+  cl.cex = 0.5,
+  cl.ratio = 0.2,
+  cl.align.text = "l")
+
+
+dev.copy2pdf(file = here::here("./Figures_Tables/correlations/heatmap_with_r.pdf"),
+             width = 5, height = 5)
+```
