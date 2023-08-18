@@ -195,7 +195,7 @@ ggplot(monarch_gradient_01_pred) +
                     ymin=0.6, ymax=0.68) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = expression(paste(italic(" Danaus plexippus"), " Abundance"))) +
+       y = "Monarch butterfly abundance") +
   ylim(0.15, 0.68) +
   theme_1() +
   
@@ -218,7 +218,7 @@ ggplot(asclepiadis_gradient_01_pred) +
                     ymin=2.5, ymax=2.72) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = expression(paste(italic(" Liriomyza asclepiadis"), " Abundance"))) +
+       y = "Milkweed leaf-mining\nfly abundance") +
   ylim(1.15, 2.72) +
   theme_1() +
   
@@ -241,13 +241,13 @@ ggplot(clivicollis_gradient_01_pred) +
                     ymin=0.088, ymax=0.102) +
   rep_geoms +
   labs(x = "Distance to Urban Center (km)",
-       y = expression(paste(italic(" Labidomera clivicollis"), " Abundance"))) +
+       y = "Swamp milkweed leaf\nbeetle abundance") +
    ylim(-0.01, 0.1) +
   theme_1() +
   
 # adding stats from ANOVA
            ggpp::geom_text_npc(aes(npcx = 0.05, npcy = 0.08,
-                    label = paste0(" Distance: p = ", tidy_anova(herb.m3)%>%
+                    label = paste0(" Distance: p = ", tidy_anova(herb.m3) %>%
 dplyr::filter(Predictor == "Distance to City Center") %>%
 dplyr::select(p))),
                 size = 4.5)
@@ -266,7 +266,7 @@ ggplot(monarch_gradient_02_pred) +
                     ymin=0.55, ymax=0.62) +
   rep_geoms +
   labs(x = "Urbanization Score",
-       y = expression(paste(italic(" Danaus plexippus"), " Abundance"))) +
+       y = "Monarch butterfly abundance") +
   ylim(0.15, 0.62) +
   xlim(4, -4) +
   theme_1() +
@@ -290,7 +290,7 @@ ggplot(asclepiadis_gradient_02_pred) +
                     ymin=2.5, ymax=2.75) +
   rep_geoms +
   labs(x = "Urbanization Score",
-       y = expression(paste(italic(" Liriomyza asclepiadis"), " Abundance"))) +
+       y = "Milkweed leaf-mining\nfly abundance") +
   ylim(1, 2.75) +
     xlim(4, -4) +
   theme_1() +
@@ -314,7 +314,7 @@ ggplot(clivicollis_gradient_02_pred) +
                     ymin=0.068, ymax=0.08) +
   rep_geoms +
   labs(x = "Urbanization Score",
-       y = expression(paste(italic(" Labidomera clivicollis"), " Abundance"))) +
+       y = "Swamp milkweed leaf\nbeetle abundance") +
   ylim(-0.007, NA) +
     xlim(4, -4) +
   theme_1() +
@@ -346,7 +346,7 @@ ggplot(monarch_urbsubs_01_pred) +
                     xmin=28, xmax=32,
                     ymin=0.74, ymax=0.83) +
   labs(x = "Distance to Urban Center (km)",
-       y = expression(paste(italic(" Danaus plexippus"), " Abundance")),
+       y = "Monarch butterfly abundance",
        color = "Transect",
        fill = "Transect") +
   ylim(NA, 0.85) +
@@ -383,7 +383,7 @@ ggplot(asclepiadis_urbsubs_01_pred) +
                     xmin=28, xmax=32,
                     ymin=2.36, ymax=2.55) +
   labs(x = "Distance to Urban Center (km)",
-              y = expression(atop(paste(italic("Liriomyza asclepiadis")), " Abundance")),
+       y = "Milkweed leaf-mining\nfly abundance",
        color = "Transect",
        fill = "Transect") +
   ylim(1, 2.55) +
@@ -420,7 +420,7 @@ ggplot(clivicollis_urbsubs_01_pred) +
                     xmin=28, xmax=32,
                     ymin=0.13, ymax=0.15) +
   labs(x = "Distance to Urban Center (km)",
-       y = expression(atop(paste(italic("Labidomera clivicollis "), "Presence"))),
+       y = "Swamp milkweed leaf\nbeetle abundance",
        color = "Transect",
        fill = "Transect") +
   ylim(NA,0.15) +
@@ -458,7 +458,7 @@ ggplot(monarch_urbsubs_02_pred) +
                     xmin=1, xmax=2,
                     ymin=0.87, ymax=1) +
   labs(x = "Urbanization Score",
-       y = expression(paste(italic(" Danaus plexippus"), " Abundance")),
+       y = "Monarch butterfly abundance",
        color = "Transect",
        fill = "Transect") +
   ylim(NA, 1) +
@@ -501,7 +501,7 @@ ggplot(asclepiadis_urbsubs_02_pred) +
                     xmin=1, xmax=2,
                     ymin=2.5, ymax=2.75) +
   labs(x = "Urbanization Score",
-              y = expression(atop(paste(italic("Liriomyza asclepiadis")), " Abundance")),
+              y = "Milkweed leaf-mining\nfly abundance",
        color = "Transect",
        fill = "Transect") +
   ylim(1, 2.75) +
@@ -538,7 +538,7 @@ ggplot(clivicollis_urbsubs_02_pred) +
                     ymin=0.13, ymax=0.15) +
   rep_geoms2 +
   labs(x = "Urbanization Score",
-       y = expression(atop(paste(italic("Labidomera clivicollis "), "Presence"))),
+       y = "Swamp milkweed leaf\nbeetle abundance",
        color = "Transect",
        fill = "Transect") +
   ylim(0, 0.15) +
