@@ -162,7 +162,7 @@ newnames <- c("Population",
              "Mortality",
              "Herbivory before flowering\n (binary)",
              "Herbivory after flowering\n (binary)",
-             "Weevil damage (binary)",
+             "Milkweed stem weevil\n damage (binary)",
              "Pollinaria removed",
              "LDMC",
              "SLA",
@@ -172,7 +172,7 @@ newnames <- c("Population",
              "Latex exudation",
              "Herbivory before flowering\n (quantitative)",
              "Herbivory after flowering\n (quantitative)",
-             "Weevil damage (quantitative)",
+             "Milkweed stem weevil\n damage (quantitative)",
              "Total cardenolide \nconcentration"
 )
 
@@ -185,10 +185,10 @@ all_blups %<>%
                   .after = 'Herbivory before flowering\n (binary)') %>%
   dplyr::relocate('Herbivory after flowering\n (quantitative)',
                   .after = 'Herbivory after flowering\n (binary)') %>%
-  dplyr::relocate('Weevil damage (quantitative)',
-                  .after = 'Weevil damage (binary)') %>%
+  dplyr::relocate('Milkweed stem weevil\n damage (quantitative)',
+                  .after = 'Milkweed stem weevil\n damage (binary)') %>%
   dplyr::relocate('Total cardenolide \nconcentration',
-                  .after = 'Weevil damage (quantitative)')
+                  .after = 'Milkweed stem weevil\n damage (quantitative)')
 ```
 
 # Generate correlation matrix

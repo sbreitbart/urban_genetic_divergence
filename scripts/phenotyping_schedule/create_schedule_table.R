@@ -9,7 +9,11 @@ sched <- read.csv(here::here("./Figures_Tables/Phenotyping_schedule/Schedule_for
 
 
 # to find number of plants alive at end of growing season each year:
-survival %>%
+survival <- read.csv(here::here("./data/Joined_annual_data/survival.csv"), na.strings=c("NO PLANT", "none"), blank.lines.skip=TRUE, header=TRUE, sep=",") %>%
+  dplyr::select(., -1) %>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur", "Pop_ID", "Patch_ID", "Dead")), as.character) %>%
+  dplyr::mutate_at(vars(c("Population", "Family", "Replicate", "Block", "Year", "Transect_ID", "Urb_Rur", "Pop_ID", "Patch_ID", "Dead")), as.factor)%>%
+  dplyr::mutate(Fam_uniq = as.factor(paste0(Population, "_", Family))) %>%
   dplyr::filter(Dead == 0) %>%
   dplyr::group_by(Year) %>%
   dplyr::summarise(alive = n())
