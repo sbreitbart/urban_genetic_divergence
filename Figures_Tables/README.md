@@ -22,6 +22,10 @@ This folder contains figures and tables describing climatic differences between 
 
 This folder contains the table of discrepancies between the multi-year and one-year ANOVA, as well as the csv file with the original information.
 
+### correlations
+
+This folder contains figures and tables of correlations among phenotypic traits.
+
 ### data_tr_fams
 
 This folder contains tables with the data distributions and families used in models.
@@ -57,3 +61,7 @@ This folder contains regressions for 1-year and multi-year models.
 ### Rsquared
 
 This folder contains tables with R-squared values for 1-year and multi-year models.
+
+### Urb_metrics
+
+This folder contains figures and tables showing correlation between both metrics of urbanization: Distance to the City Center and Urbanization Score.

@@ -57,3 +57,11 @@ This folder contains scripts used to generate ranova tables (i.e., test how much
 ### sampling_garden_map
 
 This folder contains scripts used to create maps of sampling sites and common garden experiment location.
+
+### trait_correlations
+
+This folder contains scripts used to create trait correlation matrices.
+
+### urb_metrics_comparison
+
+This folder contains scripts used to analyze the correlation between both metrics of urbanization: Distance to the City Center and Urbanization Score.
