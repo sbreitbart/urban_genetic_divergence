@@ -1,6 +1,9 @@
 # Load libraries
 ```{r}
 source("libraries.R")
+library(GGally)
+library(corrplot)
+library(colorRamps)
 ```
 
 # Import data (multi-year models)
@@ -192,6 +195,7 @@ all_blups %<>%
 ```
 
 # Generate correlation matrix
+## Population-level trait correlations
 ```{r}
 correlations <- rcorr(as.matrix(all_blups[-1])) # take out population column
 
@@ -221,13 +225,196 @@ correlations.p %>%
 
 ```
 
+## Individual-level trait correlations
+### combine all data into one df
+```{r}
+## cardenolides excluded because we only have population-level values
+
+# prep dfs
+weevil %<>%
+  dplyr::select(-Total_Height_early,
+                -scar_div_earlyheight) %>%
+  dplyr::mutate(Row = as.factor(Row))
+
+survival %<>%
+  dplyr::mutate(Row = as.factor(Row))
+
+sla_ldmc %<>%
+  dplyr::select(-c(9:23, 26)) %>%
+  dplyr::mutate(Year = "2020") %>%
+  dplyr::mutate(Row = as.factor(Row))
+
+reproduc %<>%
+  dplyr::mutate(Row = as.factor(Row))
+
+herbivory %<>%
+  dplyr::select(-c(16:19)) %>%
+  dplyr::mutate(Row = as.factor(Row))
+
+heights %<>%
+  dplyr::select(-c(7:10, 14, 23, 26:27)) %>%
+  dplyr::mutate(Row = as.factor(Row),
+                Column = as.factor(Column))
+
+flowering %<>%
+  dplyr::select(-c(8:9, 11, 14:Flower_mean)) %>%
+  dplyr::mutate(Row = as.factor(Row),
+                Column = as.factor(Column))
+
+latex %<>%
+  dplyr::select(-c(8:13)) %>%
+  dplyr::mutate(Year = "2020") %>%
+  dplyr::mutate(Row = as.factor(Row))
+
+cols_to_join_by = c("Population", "Row", "Column", "Block", "Family", "Replicate", "Year")
+
+
+# join all
+all_data <- full_join(weevil,
+                      survival,
+                      by = cols_to_join_by) %>%
+  full_join(.,
+            sla_ldmc,
+            by = cols_to_join_by) %>%
+  full_join(.,
+            reproduc,
+            by = cols_to_join_by) %>%
+  full_join(.,
+            herbivory,
+            by = cols_to_join_by) %>%
+  dplyr::mutate(Column = as.factor(Column)) %>%
+  full_join(.,
+            latex,
+            by = cols_to_join_by) %>%
+  full_join(.,
+            flowering,
+            by = cols_to_join_by) %>%
+  full_join(.,
+            heights,
+            by = cols_to_join_by) %>%
+
+# remove unnecessary cols
+  dplyr::select(-starts_with(c("Patch",
+                               "Latit",
+                               "Longit",
+                               "Transect",
+                               "CTD",
+                               "City",
+                               "Urb_",
+                               "Pop_",
+                               "Fam_",
+                               "Comment"
+                               ))) %>%
+  dplyr::select(-c(1:6, 
+                   "Year", "Date", "Weevil_dam_binary",
+                   "total_flower_count"))
+```
+
+### Make names identical to population-level matrix
+```{r}
+oldnames_indiv <- colnames(all_data)
+newnames_indiv <- c(
+  "Milkweed stem weevil\n damage (quantitative)",
+  "Milkweed stem weevil\n damage (binary)",
+  "Mortality",
+  "SLA",
+  "LDMC",
+  "Flowering success",
+  "Herbivory after flowering\n (quantitative)",
+  "Herbivory before flowering\n (quantitative)",
+  "Herbivory before flowering\n (binary)",
+  "Herbivory after flowering\n (binary)",
+  "Latex exudation",
+  "Flowering duration", 
+  "Follicles",
+  "Inflorescences",          
+  "Flower size",
+  "Flowers per inflorescence",
+  "Pollinaria removed",   
+  "Date of first flower",
+  "Date of first follicle",
+  "Ramets \n before flowering",
+  "Ramets \n after flowering",
+  "Height after flowering",
+  "Relative growth rate",
+  "Height before flowering")
+
+all_data %<>%
+  rename_at(vars(oldnames_indiv), ~ newnames_indiv)
+
+# arrange traits by life history category
+colnames_new_order <- c(
+  "Flowering success",
+  "Flowers per inflorescence",
+  "Flower size",
+  "Flowering duration",
+  "Date of first flower",
+  "Follicles",
+  "Date of first follicle",
+  "Inflorescences",
+  "Ramets \n before flowering",
+  "Ramets \n after flowering",
+  "Mortality",
+  "Latex exudation",
+  "Herbivory before flowering\n (binary)",
+  "Herbivory before flowering\n (quantitative)",
+  "Herbivory after flowering\n (binary)",
+  "Herbivory after flowering\n (quantitative)",
+  "Milkweed stem weevil\n damage (binary)",
+  "Milkweed stem weevil\n damage (quantitative)",
+  "Pollinaria removed",
+  "LDMC",
+  "SLA",
+  "Height before flowering",
+  "Height after flowering",
+  "Relative growth rate"
+)
+
+# Reorder columns in the data frame
+all_data %<>%
+  dplyr::select(all_of(colnames_new_order))
+
+```
+
+
+### generate correlations
+```{r}
+
+correlations_indiv <- rcorr(as.matrix(all_data))
+
+# save r values as separate df
+correlations.r_indiv <- correlations_indiv$r %>%
+  as.data.frame() %>%
+  mutate_all(~ifelse(is.nan(.), NA, .)) %>%
+  mutate(across(where(is.numeric), round, 3))
+
+# save p values as separate df
+correlations.p_indiv <- correlations_indiv$P %>%
+  as.data.frame() %>%
+  mutate(across(where(is.numeric), round, 3))
+
+
+# then export it
+correlations.r_indiv %>%
+  tibble::rownames_to_column(" ") %>%
+   flextable() %>%
+  save_as_html(., path = here::here("./Figures_Tables/correlations/r_values_indivs.html"))
+
+
+correlations.p_indiv %>%
+  tibble::rownames_to_column(" ") %>%
+   flextable() %>%
+  save_as_html(., path = here::here("./Figures_Tables/correlations/p_values_indivs.html"))
+
+```
+
 # Visualize
 ## Scatterplot matrix
+### Population-level trait correlations
 ```{r}
 
 # correlations.r[correlations.r == 1] <- NA # replace all perfect correlations (1; var A on var A; var B on var B; etc.) with NAs
 
-library(GGally)
 ggpairs(correlations.r) 
 
 dev.copy2pdf(file = here::here("./Figures_Tables/correlations/scatterplot_matrix_longnames.pdf"),
@@ -235,16 +422,26 @@ dev.copy2pdf(file = here::here("./Figures_Tables/correlations/scatterplot_matrix
 
 ```
 
-## Heatmaps
-### Show p and r values
+### Individual-level trait correlations
 ```{r}
-library(corrplot)
-library(colorRamps)
+ggpairs(correlations.r_indiv) 
+
+dev.copy2pdf(file = here::here("./Figures_Tables/correlations/scatterplot_matrix_longnames_indivs.pdf"),
+             width = 45, height = 45)
+
+```
+
+## Heatmaps
+### Color palettes
+```{r}
 
 col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
 
 col2 <- colorRampPalette(c("blue","white","red"))
+```
 
+### Population-level trait correlations
+```{r}
 # show with p values
 corrplot(
   cor(all_blups[,c(-1)], # remove population col
@@ -324,5 +521,95 @@ corrplot(
 
 
 dev.copy2pdf(file = here::here("./Figures_Tables/correlations/heatmap_with_r.pdf"),
+             width = 5, height = 5)
+```
+
+### Individual-level trait correlations
+```{r}
+# show with p values
+
+all_data %<>%
+  dplyr::mutate_if(is.factor,
+                   as.numeric) %>%
+  dplyr::mutate_if(is.difftime,
+                   as.numeric)
+
+cor1 <- cor(all_data,
+      use="pairwise.complete.obs")
+cor1[is.na(cor1)] <- 0
+
+
+corrplot(
+  cor1,
+  method = "color",
+  shade.col = NA,
+  tl.col = "black",
+  tl.cex = 0.25,
+  tl.srt = 45,
+  col = col2(200),
+  order = "original",
+  diag = FALSE,
+  type = "upper",
+  cl.length = 5,
+  cl.cex = 0.5,
+  cl.ratio = 0.2,
+  cl.align.text = "l",
+  sig.level = -1)
+
+dev.copy2pdf(file = here::here("./Figures_Tables/correlations/heatmap_original_indivs.pdf"),
+             width = 5, height = 5)
+
+
+
+
+# show with p value asterisks
+corrplot(
+  cor1,
+  method = "color",
+  shade.col = NA,
+  tl.col = "black",
+  tl.cex = 0.25,
+  tl.srt = 45,
+  col = col2(200),
+  order = "original",
+  diag = FALSE,
+  type = "upper",
+  p.mat = cor.mtest(all_data %>%
+        dplyr::mutate_if(is.factor, as.numeric),
+        conf.level = 0.95)$p,
+  sig.level = c(0.001, 0.01, 0.05),
+  pch.cex = 0.7,
+  insig = 'label_sig',
+  pch.col = 'grey20',
+  cl.length = 5,
+  cl.cex = 0.5,
+  cl.align.text = "l")
+
+dev.copy2pdf(file = here::here("./Figures_Tables/correlations/heatmap_with_p_asterisks_indivs.pdf"),
+             width = 5, height = 5)
+
+
+# show with r values
+corrplot(
+  cor1,
+  method = "color",
+  shade.col = NA,
+  tl.col = "black",
+  tl.cex = 0.25,
+  tl.srt = 45,
+  col = col2(200),
+  number.cex = 0.25,
+  addCoef.col = "black",
+  pch.cex = 0.7,
+  order = "original", 
+  diag = FALSE,
+  type = "upper",
+  cl.length = 5,
+  cl.cex = 0.5,
+  cl.ratio = 0.2,
+  cl.align.text = "l")
+
+
+dev.copy2pdf(file = here::here("./Figures_Tables/correlations/heatmap_with_r_indivs.pdf"),
              width = 5, height = 5)
 ```

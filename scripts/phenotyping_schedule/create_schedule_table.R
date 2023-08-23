@@ -34,7 +34,7 @@ p <- ggplot(sched,
             width = 1) +
   labs(x="Year Recorded\n\n",
        y="",
-       subtitle = "Plants with ramets alive at end of growing season:           865            812            692           551     ",
+       subtitle = "Number of plants alive at end of growing season:           865            812            692           551     ",
        caption = expression(
          paste(italic("*Aphis asclepiadis, Aphis nerii, Danaus plexippus, Euchaetes egle, Labidomera clivicollis, Liriomyza asclepiadis, \nLygaeus kalmii, Myzocallis asclepiadis, Rhyssomatus lineaticollis, Tetraopes tetropthalmus\n\n**D. plexippus, L. clivicollis, L. asclepiadis")))) +
   theme_pubr() +
