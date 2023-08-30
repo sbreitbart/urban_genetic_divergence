@@ -15,11 +15,7 @@ source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_1yr_mods.Rmd", q
 these values were generated in:
 -scripts/Ranovas/Ranovas_growth.Rmd (etc. for rest of similarly-named files)...
 
-manually extracted, then organized into these word docs:
--Figures_Tables\ranova_PVE\ranovas_allyears.docx
--Figures_Tables\ranova_PVE\ranovas_allyears_transects.docx
-
-...then placed into csvs for import into R and manipulation: 
+manually extracted, then organized into csvs for import into R and manipulation: 
 
 ### Q1
 ```{r}

@@ -34,9 +34,9 @@ Ramets before flowering,68.887,<0.001,6.927,Family
 Ramets after flowering,27.65,<0.001,5.643,Family
 Relative growth rate,0.073,0.394,1.051,Family
 SLA,0,0.5,0,Family
-D. plexippus abundance,4.088,0.0215,0,Family
+D. plexippus abundance,4.087,0.0215,0,Family
 L. clivicollis abundance,0,0.5,0,Family
-L. asclepiadis abundance,1.145,0.1425,2.32,Family
+L. asclepiadis abundance,1.144,0.1425,2.32,Family
 Herbivory before flowering (binary),0.001,0.49,0.317,Family
 Herbivory before flowering (quantitative),0,0.5,0,Family
 Herbivory after flowering (binary),7.092,0.004,1.948,Family
@@ -44,12 +44,12 @@ Herbivory after flowering (quantitative),0.413,0.2605,2.163,Family
 Latex exudation,2.033,0.077,4.748,Family
 Weevil damage (binary),3.501,0.0305,5.624,Family
 Weevil damage (quantitative),1.189,0.138,4.006,Family
-Date of first flower,0,0.5,9.564,Family
+Date of first flower,84.743,<0.001,9.564,Family
 Date of first follicle,47.484,<0.001,0,Family
 Flower size,0.11,0.37,4.096,Family
 Flowering duration,0,0.5,0,Family
 Flowering success,0.267,0.3025,1.443,Family
 Follicles,0,0.5,0,Family
-Inflorescences,0,0.4965,0,Family
+Inflorescences,0,0.5,0,Family
 Flowers per inflorescence,0,0.5,0,Family
 Pollinaria removed,3.304,0.0345,27.192,Family

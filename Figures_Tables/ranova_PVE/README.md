@@ -6,7 +6,7 @@
 
 These folders contains the trait-specific output ranova tables. Each document summarizes how much genetic variance exists within populations, how much genetic divergence exists among populations, how much of that variance is associated with urbanization (as distance from the urban center and urbanization score), and how much of that variance is associated with proxmity to a green corridor (these files contain "transects" in the filename).
 
-The "nsim_10" and "nsim_1000" subdirectories contain this information when the number of simulations used for the non-Gaussian models was 10 and 1000, respectively. As the 1000-simulation analysis took much longer to run than the 10-simulation analysis, we ran 10 1000-simulations models, saw that the results were qualitatively identical to the 10-simulation models, and then ran the remaining models with n = 10 simulations.
+The "nsim_10", "nsim_100", and "nsim_1000" subdirectories contain this information when the number of simulations used for the non-Gaussian models was 10, 100, and 1000, respectively. As the 1000-simulation analysis took much longer to run than the 10-simulation analysis, we ran 10 1000-simulations models, saw that the results were qualitatively identical to the 10-simulation models, and then ran the remaining models with n = 10 and 100 simulations.
 
 The "PVE_nonGaussmods" contains the estimates of percent variance explained for the non-Gaussian models.
 

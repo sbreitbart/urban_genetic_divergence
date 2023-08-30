@@ -9,11 +9,7 @@ source("functions.R")
 these values were generated in:
 -scripts/Ranovas/Ranovas_growth.Rmd (etc. for rest of similarly-named files)...
 
-manually extracted, then organized into these word docs:
--Figures_Tables\ranova_PVE\ranovas_allyears.docx
--Figures_Tables\ranova_PVE\ranovas_allyears_transects.docx
-
-...then placed into csvs for import into R and manipulation: 
+manually extracted, then organized into csvs for import into R and manipulation: 
 
 ### Q1
 ```{r}
@@ -47,14 +43,14 @@ ran1 %<>%
 
 
 # If p-value column cell != <0.001, round it to 3 digits
-ran1$UrbScore_Family_p <- ifelse(ran1$UrbScore_Family_p == "<0.001",
-                        ran1$UrbScore_Family_p,
-                        round(as.numeric(ran1$UrbScore_Family_p), 3))
+ran1$Population_p <- ifelse(ran1$Population_p == "<0.001",
+                        ran1$Population_p,
+                        round(as.numeric(ran1$Population_p), 3))
 
 
-ran1$UrbScore_Population_p <- ifelse(ran1$UrbScore_Population_p == "<0.001",
-                        ran1$UrbScore_Population_p,
-                        round(as.numeric(ran1$UrbScore_Population_p), 3))
+ran1$Family_p <- ifelse(ran1$Family_p == "<0.001",
+                        ran1$Family_p,
+                        round(as.numeric(ran1$Family_p), 3))
 ```
 
 ### Q1, table 2

@@ -164,7 +164,9 @@ clivicoll_ranova2 <- glmer.nb(Labidomera_clivicollis ~
                                (1|Population:Fam_uniq),
                              data = herbivores %>%
                 dplyr::filter(Labidomera_clivicollis < 10 & Year == 2021),
-                            na.action = na.exclude)
+                            na.action = na.exclude,
+                control=glmerControl(optimizer="bobyqa",
+                            optCtrl=list(maxfun=2e5)))
 
 # performance::check_model(clivicoll_ranova2)
 

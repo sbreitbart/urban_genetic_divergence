@@ -414,7 +414,7 @@ flstart_ranova1 <- glmer(Julian_oldest_inflor-170 ~
                              family = poisson)
 
 # performance::check_model(flstart_ranova1)
-summary(flstart_ranova1)
+# summary(flstart_ranova1)
 
 pb_ranova_2step(flstart_ranova1,
           "Flowering start: 2020",
@@ -505,7 +505,7 @@ pb_ranova_2step(pods_ranova3,
 # Date of first follicle-----
 
 # copied from transects chunk below:
-summary(flowering$Julian_first_follicle) # min is 201. I've been having issues getting these models to not be singular, and subtracting 200 from the response helps a lot. I think the issue is that the numbers are so big and could have the min subtracted to keep the range from ~1-45 vs. 201-245.
+# summary(flowering$Julian_first_follicle) # min is 201. I've been having issues getting these models to not be singular, and subtracting 200 from the response helps a lot. I think the issue is that the numbers are so big and could have the min subtracted to keep the range from ~1-45 vs. 201-245.
 
 # 2020-----
 firstpod_ranova1 <- glmer(Julian_first_follicle-200 ~
@@ -780,7 +780,7 @@ pb_ranova_transects(fltime_ranova3,
 
 # Flowering start-----
 # 2020-----
-flstart_ranova1 <- glmer(Julian_oldest_inflor ~
+flstart_ranova1 <- glmer(Julian_oldest_inflor - 170~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
@@ -799,7 +799,7 @@ pb_ranova_transects(flstart_ranova1,
 
 
 # 2021-----
-flstart_ranova2 <- glmer(Julian_oldest_inflor ~
+flstart_ranova2 <- glmer(Julian_oldest_inflor  - 170~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
@@ -817,7 +817,7 @@ pb_ranova_transects(flstart_ranova2,
           "./Figures_Tables/ranova_PVE/Reproduction/flowering_start_2021_transects.docx")
 
 # 2022-----
-flstart_ranova3 <- glmer(Julian_oldest_inflor ~
+flstart_ranova3 <- glmer(Julian_oldest_inflor  - 170~
                                Block +
                                (1|Population) +
                                (1|Population:Fam_uniq),
@@ -845,7 +845,7 @@ pods_ranova1 <- glmer.nb(Pods ~
                              data = flowering %>%
                                dplyr::filter(Transect_ID != "Rural" &
                                                Year == 2020),
-                 
+                            nAGQ = 0,# won't run w/o this
                             na.action = na.exclude)
 
 # performance::check_model(pods_ranova1)
@@ -952,7 +952,7 @@ firstpod_ranova3 <- glmer((Julian_first_follicle-200) ~
 
 pb_ranova_transects(firstpod_ranova3,
           "Date of first follicle: 2022",
-          "./Figures_Tables/ranova_PVE/Reproduction/Date_first_follicle_2022_transects_test.docx")
+          "./Figures_Tables/ranova_PVE/Reproduction/Date_first_follicle_2022_transects.docx")
 
 
 
@@ -968,7 +968,7 @@ peduncles_ranova1 <- glmer.nb(Peduncles ~
              
                              na.action = na.exclude)
 
-performance::check_model(peduncles_ranova1)
+# performance::check_model(peduncles_ranova1)
 
 pb_ranova_transects(peduncles_ranova1,
           "Peduncles: 2020",
@@ -1003,8 +1003,6 @@ peduncles_ranova3 <- glmer.nb(Peduncles ~
                            na.action = na.exclude)
 
 # performance::check_model(peduncles_ranova3)
-
-
 
 pb_ranova_transects(peduncles_ranova3,
           "Peduncles: 2022",

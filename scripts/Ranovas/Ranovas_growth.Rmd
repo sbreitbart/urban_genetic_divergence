@@ -465,8 +465,8 @@ ramets_e_ranova3 <- glmer(Ramets_early ~
                              family = poisson)
 
 # performance::check_model(ramets_e_ranova3)
-summary(ramets_e_ranova3)
-insight::get_variance_random(ramets_e_ranova3)
+# summary(ramets_e_ranova3)
+# insight::get_variance_random(ramets_e_ranova3)
 pb_ranova_2step(ramets_e_ranova3,
           "Ramets before flowering: 2021",
           "./Figures_Tables/ranova_PVE/Growth/ramets_early_2021.docx")

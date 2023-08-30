@@ -44,7 +44,7 @@ Herbivory after flowering (quantitative),0.495,0.241,2.37,Family,Distance
 Latex exudation,2.052,0.076,4.77,Family,Distance
 Weevil damage (binary),3.429,0.032,5.637,Family,Distance
 Weevil damage (quantitative),1.049,0.153,3.755,Family,Distance
-Date of first flower,0,0.5,10.098,Family,Distance
+Date of first flower,84.846,<0.001,10.098,Family,Distance
 Date of first follicle,45.814,<0.001,0,Family,Distance
 Flower size,0.103,0.374,3.994,Family,Distance
 Flowering duration,0,0.5,0,Family,Distance
@@ -98,7 +98,7 @@ Herbivory after flowering (quantitative),0.482,0.244,2.348,Family,UrbScore
 Latex exudation,1.907,0.0835,4.631,Family,UrbScore
 Weevil damage (binary),3.499,0.0305,5.751,Family,UrbScore
 Weevil damage (quantitative),1.095,0.1475,3.839,Family,UrbScore
-Date of first flower,0,0.5,9.954,Family,UrbScore
+Date of first flower,84.034,<0.001,9.954,Family,UrbScore
 Date of first follicle,47.014,<0.001,0,Family,UrbScore
 Flower size,0.132,0.358,4.603,Family,UrbScore
 Flowering duration,0,0.5,0,Family,UrbScore
