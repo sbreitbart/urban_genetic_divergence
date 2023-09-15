@@ -18,7 +18,20 @@ survival <- read.csv(here::here("./data/Joined_annual_data/survival.csv"), na.st
   dplyr::group_by(Year) %>%
   dplyr::summarise(alive = n())
 
-
+my_caption <- "*<i>Aphis asclepiadis</i>,
+oleander aphid (<i>Aphis nerii</i>),
+Monarch butterfly (<i>Danaus plexippus</i>),
+milkweed tussock moth (<i>Euchaetes egle</i>),
+swamp milkweed leaf beetle (<i>Labidomera clivicollis</i>),
+milkweed leaf-mining fly (<i>Liriomyza asclepiadis</i>),
+small milkweed bug (<i>Lygaeus kalmii</i>), 
+<i>Myzocallis asclepiadis</i>, 
+milkweed stem weevil (<i>Rhyssomatus lineaticollis</i>), 
+red milkweed beetle (<i>Tetraopes tetropthalmus</i>)
+<br>
+**Monarch butterfly, 
+swamp milkweed leaf beetle, 
+milkweed leaf-mining fly"
 
 # Create table showing when traits were recorded
 p <- ggplot(sched,
@@ -35,8 +48,7 @@ p <- ggplot(sched,
   labs(x="Year Recorded\n\n",
        y="",
        subtitle = "Number of plants alive at end of growing season:           865            812            692           551     ",
-       caption = expression(
-         paste(italic("*Aphis asclepiadis, Aphis nerii, Danaus plexippus, Euchaetes egle, Labidomera clivicollis, Liriomyza asclepiadis, \nLygaeus kalmii, Myzocallis asclepiadis, Rhyssomatus lineaticollis, Tetraopes tetropthalmus\n\n**D. plexippus, L. clivicollis, L. asclepiadis")))) +
+       caption = my_caption) +
   theme_pubr() +
   theme(panel.border = element_blank(),
         panel.grid.major = element_blank(),
@@ -54,17 +66,20 @@ p <- ggplot(sched,
         plot.subtitle = element_text(color = "gray35",
                                      hjust = 1,
                                      size = 11,
-                                     face = "italic")) #+
+                                     face = "italic"))+
+  theme(plot.caption=element_textbox_simple(size=10))
+
+
+#+
  # scale_fill_brewer(palette = "Set2")
 p
 
 # save it
 png(here::here("./Figures_Tables/Phenotyping_schedule/Phenotyping_schedule.png"),
-    width = 18, height = 19,
+    width = 18, height = 21,
     units = "cm",
     res = 500)
 print(p)
 dev.off()
 ggsave(here::here("./Figures_Tables/Phenotyping_schedule/Phenotyping_schedule.pdf"),
-                  width = 7, height = 7)
-       
+                  width = 7, height = 9)
