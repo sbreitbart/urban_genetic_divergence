@@ -31,6 +31,15 @@ source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Growth.Rmd", qui
 growth_models <- all_models
 ```
 
+## Herbivores
+```{r}
+source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_herbivores.Rmd", quiet=TRUE))
+
+# save list of models as herbivore_models
+herbivore_models <- all_models
+```
+
+
 # Extract only city_dist/gradient models
 ## Defense traits
 ```{r}
@@ -88,6 +97,19 @@ names(reprod_city_gr) <- c(
 ```
 
 
+## Herbivores
+```{r}
+herbivore_city_gr <- herbivore_models %>%
+  purrr::flatten() %>%
+  keep(grepl('gr', names(.))) %>%
+  keep(grepl('City', names(.)))
+
+names(herbivore_city_gr) <- c(
+"monarch_mods"          ,
+"asclepiadis_mods"         ,
+"clivicollis_mods")
+```
+
 ## Cardenolide model
 ```{r}
 # cardenolides per population (pooled)
@@ -101,7 +123,8 @@ cards$Population <- as.character(cards$Population)
 ```{r}
 all <- c(reprod_city_gr,
   growth_city_gr,
-  defense_city_gr)
+  defense_city_gr,
+  herbivore_city_gr)
 ```
 
 # Generate df of BLUPs from each trait
@@ -166,6 +189,9 @@ newnames <- c("Population",
              "Herbivory before flowering\n (binary)",
              "Herbivory after flowering\n (binary)",
              "Milkweed stem weevil\n damage (binary)",
+             "Monarch butterfly\n abundance",
+             "Milkweed leaf-mining\n fly abundance",
+             "Swamp milkweed beetle\n abundance",
              "Pollinaria removed",
              "LDMC",
              "SLA",
@@ -182,6 +208,8 @@ newnames <- c("Population",
 all_blups %<>%
   rename_at(vars(oldnames), ~ newnames) %>%
   # arrange traits by life history category
+  dplyr::relocate('Pollinaria removed',
+                  .before = 'Follicles') %>%
   dplyr::relocate('Latex exudation',
                   .before = 'Herbivory before flowering\n (binary)') %>%
   dplyr::relocate('Herbivory before flowering\n (quantitative)',
@@ -266,6 +294,9 @@ latex %<>%
   dplyr::mutate(Year = "2020") %>%
   dplyr::mutate(Row = as.factor(Row))
 
+herbivores %<>%
+  dplyr::mutate(Row = as.factor(Row))
+
 cols_to_join_by = c("Population", "Row", "Column", "Block", "Family", "Replicate", "Year")
 
 
@@ -278,6 +309,9 @@ all_data <- full_join(weevil,
             by = cols_to_join_by) %>%
   full_join(.,
             reproduc,
+            by = cols_to_join_by)  %>%
+  full_join(.,
+            herbivores,
             by = cols_to_join_by) %>%
   full_join(.,
             herbivory,
@@ -291,7 +325,7 @@ all_data <- full_join(weevil,
             by = cols_to_join_by) %>%
   full_join(.,
             heights,
-            by = cols_to_join_by) %>%
+            by = cols_to_join_by)  %>% 
 
 # remove unnecessary cols
   dplyr::select(-starts_with(c("Patch",
@@ -307,7 +341,8 @@ all_data <- full_join(weevil,
                                ))) %>%
   dplyr::select(-c(1:6, 
                    "Year", "Date", "Weevil_dam_binary",
-                   "total_flower_count"))
+                   "total_flower_count", 
+                   "flowering_time"))
 ```
 
 ### Make names identical to population-level matrix
@@ -320,12 +355,14 @@ newnames_indiv <- c(
   "SLA",
   "LDMC",
   "Flowering success",
+  "Monarch butterfly\n abundance",
+  "Milkweed leaf-mining\n fly abundance",
+  "Swamp milkweed beetle\n abundance",
   "Herbivory after flowering\n (quantitative)",
   "Herbivory before flowering\n (quantitative)",
   "Herbivory before flowering\n (binary)",
   "Herbivory after flowering\n (binary)",
   "Latex exudation",
-  "Flowering duration", 
   "Follicles",
   "Inflorescences",          
   "Flower size",
@@ -333,6 +370,7 @@ newnames_indiv <- c(
   "Pollinaria removed",   
   "Date of first flower",
   "Date of first follicle",
+  "Flowering duration", 
   "Ramets \n before flowering",
   "Ramets \n after flowering",
   "Height after flowering",
@@ -360,6 +398,9 @@ colnames_new_order <- c(
   "Herbivory before flowering\n (quantitative)",
   "Herbivory after flowering\n (binary)",
   "Herbivory after flowering\n (quantitative)",
+  "Monarch butterfly\n abundance",
+  "Milkweed leaf-mining\n fly abundance",
+  "Swamp milkweed beetle\n abundance",
   "Milkweed stem weevil\n damage (binary)",
   "Milkweed stem weevil\n damage (quantitative)",
   "Pollinaria removed",

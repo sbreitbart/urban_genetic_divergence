@@ -790,3 +790,19 @@ clivicollis_mods_alt_c <- clivicollis_mods[3]
 clivicollis_mods_alt_u <- clivicollis_mods[5]
 
 ```
+
+# Create final list of all models
+```{r}
+all_models <- list(
+monarch_mods         , 
+asclepiadis_mods    ,
+clivicollis_mods)   
+
+names(all_models) <- c(
+"monarch_mods"         ,
+"asclepiadis_mods"    ,
+"clivicollis_mods")
+
+
+```
+
