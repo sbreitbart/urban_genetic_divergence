@@ -220,6 +220,17 @@ all_blups %<>%
                   .after = 'Milkweed stem weevil\n damage (binary)') %>%
   dplyr::relocate('Total cardenolide \nconcentration',
                   .after = 'Milkweed stem weevil\n damage (quantitative)')
+
+
+
+all_blups %<>%
+  # arrange traits by life history category
+  dplyr::relocate('Ramets \n before flowering',
+                  .after = 'Relative growth rate') %>%
+  dplyr::relocate('Ramets \n after flowering',
+                  .after = 'Ramets \n before flowering') %>%
+  dplyr::relocate('Mortality',
+                  .after = 'Ramets \n after flowering')
 ```
 
 # Generate correlation matrix
@@ -387,28 +398,28 @@ colnames_new_order <- c(
   "Flower size",
   "Flowering duration",
   "Date of first flower",
+  "Pollinaria removed",
   "Follicles",
   "Date of first follicle",
   "Inflorescences",
-  "Ramets \n before flowering",
-  "Ramets \n after flowering",
-  "Mortality",
   "Latex exudation",
   "Herbivory before flowering\n (binary)",
   "Herbivory before flowering\n (quantitative)",
   "Herbivory after flowering\n (binary)",
-  "Herbivory after flowering\n (quantitative)",
+  "Herbivory after flowering\n (quantitative)",  
+  "Milkweed stem weevil\n damage (binary)",
+  "Milkweed stem weevil\n damage (quantitative)",
   "Monarch butterfly\n abundance",
   "Milkweed leaf-mining\n fly abundance",
   "Swamp milkweed beetle\n abundance",
-  "Milkweed stem weevil\n damage (binary)",
-  "Milkweed stem weevil\n damage (quantitative)",
-  "Pollinaria removed",
   "LDMC",
   "SLA",
   "Height before flowering",
   "Height after flowering",
-  "Relative growth rate"
+  "Relative growth rate",
+  "Ramets \n before flowering",
+  "Ramets \n after flowering",
+  "Mortality"
 )
 
 # Reorder columns in the data frame
@@ -653,4 +664,5 @@ corrplot(
 
 dev.copy2pdf(file = here::here("./Figures_Tables/correlations/heatmap_with_r_indivs.pdf"),
              width = 5, height = 5)
+
 ```
