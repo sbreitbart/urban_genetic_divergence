@@ -487,7 +487,7 @@ t1_pop_succ <- as.numeric(nrow(binom_t1[binom_t1$p_pop <= 0.05, ]))
 t1_pop_trials <- as.numeric(nrow(binom_t1))
 prob_succ <- 0.05 # critical p-value
 
-t1_results_pop <- binom.test(t1_pop_succ, t1_pop_trials, prob_succ, "two.sided")
+t1_results_pop <- binom.test(t1_pop_succ, t1_pop_trials, prob_succ, "greater")
 
 t1_results_pop$p.value # p-value: 0.1504944
 t1_results_pop$estimate # probability of success: 0.1111111  
@@ -499,10 +499,10 @@ t1_fam_succ <- as.numeric(nrow(binom_t1[binom_t1$p_fam <= 0.05, ]))
 t1_fam_trials <- as.numeric(nrow(binom_t1))
 prob_succ <- 0.05 # critical p-value
 
-t1_results_fam <- binom.test(t1_fam_succ, t1_fam_trials, prob_succ, "two.sided")
+t1_results_fam <- binom.test(t1_fam_succ, t1_fam_trials, prob_succ, "greater")
 
-t1_results_fam$p.value # p-value: 3.67354e-05
-t1_results_fam$estimate # probability of success: 0.2962963   
+t1_results_fam$p.value # p-value: 4.010664e-06
+t1_results_fam$estimate # probability of success: 0.3333333    
 ```
 
 ### Table 2
@@ -548,7 +548,7 @@ t2_pop_succ <- as.numeric(nrow(binom_t2[binom_t2$p_pop <= 0.05, ]))
 t2_pop_trials <- as.numeric(nrow(binom_t2))
 prob_succ <- 0.05 # critical p-value
 
-t2_results_pop <- binom.test(t2_pop_succ, t2_pop_trials, prob_succ, "two.sided")
+t2_results_pop <- binom.test(t2_pop_succ, t2_pop_trials, prob_succ, "greater")
 
 t2_results_pop$p.value # p-value: 0.1504944 
 t2_results_pop$estimate # probability of success: 0.1111111   
@@ -560,10 +560,10 @@ t2_fam_succ <- as.numeric(nrow(binom_t2[binom_t2$p_fam <= 0.05, ]))
 t2_fam_trials <- as.numeric(nrow(binom_t2))
 prob_succ <- 0.05 # critical p-value
 
-t2_results_fam <- binom.test(t2_fam_succ, t2_fam_trials, prob_succ, "two.sided")
+t2_results_fam <- binom.test(t2_fam_succ, t2_fam_trials, prob_succ, "greater")
 
-t2_results_fam$p.value # p-value:  3.67354e-05
-t2_results_fam$estimate # probability of success: 0.2962963    
+t2_results_fam$p.value # p-value:  4.010664e-06
+t2_results_fam$estimate # probability of success: 0.3333333    
 ```
 
 ### Table 3
@@ -608,7 +608,7 @@ t3_pop_succ <- as.numeric(nrow(binom_t3[binom_t3$p_pop <= 0.05, ]))
 t3_pop_trials <- as.numeric(nrow(binom_t3))
 prob_succ <- 0.05 # critical p-value
 
-t3_results_pop <- binom.test(t3_pop_succ, t3_pop_trials, prob_succ, "two.sided")
+t3_results_pop <- binom.test(t3_pop_succ, t3_pop_trials, prob_succ, "greater")
 
 t3_results_pop$p.value # p-value: 0.1504944 
 t3_results_pop$estimate # probability of success: 0.1111111    
@@ -620,10 +620,10 @@ t3_fam_succ <- as.numeric(nrow(binom_t3[binom_t3$p_fam <= 0.05, ]))
 t3_fam_trials <- as.numeric(nrow(binom_t3))
 prob_succ <- 0.05 # critical p-value
 
-t3_results_fam <- binom.test(t3_fam_succ, t3_fam_trials, prob_succ, "two.sided")
+t3_results_fam <- binom.test(t3_fam_succ, t3_fam_trials, prob_succ, "greater")
 
-t3_results_fam$p.value # p-value: 3.67354e-05 
-t3_results_fam$estimate # probability of success: 0.2962963   
+t3_results_fam$p.value # p-value: 4.010664e-06
+t3_results_fam$estimate # probability of success: 0.3333333 
 ```
 
 ## Q2
@@ -670,9 +670,9 @@ t1_pop_succ <- as.numeric(nrow(binom_t1[binom_t1$p_pop <= 0.05, ]))
 t1_pop_trials <- as.numeric(nrow(binom_t1))
 prob_succ <- 0.05 # critical p-value
 
-t1_results_pop2 <- binom.test(t1_pop_succ, t1_pop_trials, prob_succ, "two.sided")
+t1_results_pop2 <- binom.test(t1_pop_succ, t1_pop_trials, prob_succ, "greater")
 
-t1_results_pop2$p.value # p-value: 0.6442479
+t1_results_pop2$p.value # p-value: 1
 t1_results_pop2$estimate # probability of success: 0
 ```
 
@@ -682,10 +682,10 @@ t1_fam_succ <- as.numeric(nrow(binom_t1[binom_t1$p_fam <= 0.05, ]))
 t1_fam_trials <- as.numeric(nrow(binom_t1))
 prob_succ <- 0.05 # critical p-value
 
-t1_results_fam2 <- binom.test(t1_fam_succ, t1_fam_trials, prob_succ, "two.sided")
+t1_results_fam2 <- binom.test(t1_fam_succ, t1_fam_trials, prob_succ, "greater")
 
-t1_results_fam2$p.value # p-value: 3.745823e-07
-t1_results_fam2$estimate # probability of success: 0.3703704   
+t1_results_fam2$p.value # p-value: 3.011142e-08
+t1_results_fam2$estimate # probability of success: 0.4074074    
 ```
 
 ### Table 2
@@ -730,9 +730,9 @@ t2_pop_succ <- as.numeric(nrow(binom_t2[binom_t2$p_pop <= 0.05, ]))
 t2_pop_trials <- as.numeric(nrow(binom_t2))
 prob_succ <- 0.05 # critical p-value
 
-t2_results_pop2 <- binom.test(t2_pop_succ, t2_pop_trials, prob_succ, "two.sided")
+t2_results_pop2 <- binom.test(t2_pop_succ, t2_pop_trials, prob_succ, "greater")
 
-t2_results_pop2$p.value # p-value: 0.6442479
+t2_results_pop2$p.value # p-value: 1
 t2_results_pop2$estimate # probability of success: 0
 ```
 
@@ -742,10 +742,10 @@ t2_fam_succ <- as.numeric(nrow(binom_t2[binom_t2$p_fam <= 0.05, ]))
 t2_fam_trials <- as.numeric(nrow(binom_t2))
 prob_succ <- 0.05 # critical p-value
 
-t2_results_fam2 <- binom.test(t2_fam_succ, t2_fam_trials, prob_succ, "two.sided")
+t2_results_fam2 <- binom.test(t2_fam_succ, t2_fam_trials, prob_succ, "greater")
 
-t2_results_fam2$p.value # p-value:  3.745823e-07
-t2_results_fam2$estimate # probability of success: 0.3703704   
+t2_results_fam2$p.value # p-value:  3.011142e-08
+t2_results_fam2$estimate # probability of success: 0.4074074    
 ```
 
 ## Export
@@ -763,26 +763,39 @@ binomial_results_q1 <- data.frame(
   
   Question = 1,
   
-  Model = c(q1.t1, q1.t1,
-            q1.t2, q1.t2,
-            q1.t3, q1.t3),
+  Model = c(q1.t1, q1.t1),
   
-  Table = c(1,1,2,2,3,3),
+  Table = c(1,1),
   
-  Group = c("Population", "Family",
-            "Population", "Family",
-            "Population", "Family"),
+  Group = c("Population", "Family"),
   
   Probability = c(round(t1_results_pop$estimate, 3),
-                  round(t1_results_fam$estimate, 3),
-                  round(t2_results_pop$estimate, 3),
+                  round(t1_results_fam$estimate, 3)),
+  
+  p = c(round(t1_results_pop$p.value, 3),
+        round(t1_results_fam$p.value, 3))
+  
+)
+
+
+binomial_results_q2 <- data.frame(
+  
+  Question = 2,
+  
+  Model = c(q1.t2, q1.t2,
+            q1.t3, q1.t3),
+  
+  Table = c(1,1,2,2),
+  
+  Group = c("Population", "Family",
+            "Population", "Family"),
+  
+  Probability = c(round(t2_results_pop$estimate, 3),
                   round(t2_results_fam$estimate, 3),
                   round(t3_results_pop$estimate, 3),
                   round(t3_results_fam$estimate, 3)),
   
-  p = c(round(t1_results_pop$p.value, 3),
-        round(t1_results_fam$p.value, 3),
-        round(t2_results_pop$p.value, 3),
+  p = c(round(t2_results_pop$p.value, 3),
         round(t2_results_fam$p.value, 3),
         round(t3_results_pop$p.value, 3),
         round(t3_results_fam$p.value, 3))
@@ -790,10 +803,10 @@ binomial_results_q1 <- data.frame(
 )
 
 
-# Q2 results
-binomial_results_q2 <- data.frame(
+# Q3 results
+binomial_results_q3 <- data.frame(
   
-  Question = 2,
+  Question = 3,
   
   Model = c(q2.t1, q2.t1,
             q2.t2, q2.t2),
@@ -818,7 +831,8 @@ binomial_results_q2 <- data.frame(
 
 # merge tables
 binomial_results <- rbind(binomial_results_q1,
-                          binomial_results_q2)
+                          binomial_results_q2,
+                          binomial_results_q3)
 
 binomial_results$p[binomial_results$p == 0] <- "<0.001"
 
@@ -827,7 +841,8 @@ write.csv(binomial_results,
 
 binomial_results %>%
   flextable() %>%
-  merge_at(., i = 1:6, j = 1, part = "body") %>%
+  merge_at(., i = 1:2, j = 1, part = "body") %>%
+  merge_at(., i = 3:6, j = 1, part = "body") %>%
   merge_at(., i = 7:10, j = 1, part = "body") %>%
   merge_at(., i = 1:2, j = 2, part = "body") %>%
   merge_at(., i = 3:4, j = 2, part = "body") %>%
