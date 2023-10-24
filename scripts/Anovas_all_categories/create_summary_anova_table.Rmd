@@ -20,7 +20,9 @@ anova_table_city <- all_1yr_mods %>%
   lapply(., tidy_anova) %>%
 
 # merge all items
-  reduce(full_join, all = T) %>%
+  purrr::reduce(full_join
+               # , all = T
+                ) %>%
 
 # make flextable
   dplyr::rename(Variable = 1) %>%
@@ -88,8 +90,6 @@ anova_table_city <- all_1yr_mods %>%
       "Ramets after flowering",
     str_detect(Variable, "Dead")~
       "Mortality"
-    
-    
     )) 
 
 anova_table_city %>%
@@ -115,7 +115,9 @@ anova_table_city %>%
 anova_table_usc <- all_1yr_mods.u %>% 
   lapply(., tidy_anova) %>%
 
-  reduce(full_join, all = T) %>%
+  reduce(full_join
+       #  , all = T
+         ) %>%
 
   dplyr::rename(Variable = 1) %>%
   dplyr::select(-Sites) %>%
@@ -248,6 +250,147 @@ full_join(
 
 ```
 
+### Combine city_dist and Urb_score, remove block, AND add N(indivs) and N(pops)
+#### Get N and number of populations for each model
+```{r}
+obs_table <- map_dfr(all_1yr_mods,
+                     ~ data.frame(
+                       indivs = summary(.x)$nobs,
+                       formula = toString(summary(.x)$call[2]),
+                       pops = toString(summary(.x)$ngrps$cond['Population'])
+                     )) %>%
+  dplyr::mutate(Model = row_number(),
+                Variable = str_extract(formula, "^[^~]+")) %>%
+  dplyr::select(Model,
+                Variable,
+                indivs,
+                pops) %>%
+    dplyr::mutate(Variable = case_when(
+    
+    # Defense
+    str_detect(Variable, "Latex")~
+      "Latex exudation",
+    str_detect(Variable, "Herbivory_mean_early_binary") ~
+      "Herbivory before flowering (binary)",
+    str_detect(Variable, "(Herbivory_mean_early)") ~
+                 "Herbivory before flowering (quantitative)",
+    str_detect(Variable, "Herbivory_mean_late_binary")~
+      "Herbivory after flowering (binary)",
+    str_detect(Variable, "(Herbivory_mean_late)")~
+      "Herbivory after flowering (quantitative)",
+    str_detect(Variable, "Scar_binary")~
+      "Weevil damage (binary)",
+    str_detect(Variable, "Scar_length_cm")~
+      "Weevil damage (quantitative)",
+    
+    # Reproduction
+    str_detect(Variable, "Flowered")~
+      "Flowering success",
+    str_detect(Variable, "mean_flower_c")~
+      "Flowers per Inflorescence",
+    str_detect(Variable, "Overall")~
+      "Flower size",
+    str_detect(Variable, "flowering_time")~
+      "Flowering duration",
+    str_detect(Variable, "Julian_oldest_inflor")~
+      "Date of first flower",
+    str_detect(Variable, "poll")~
+      "Pollinaria removed",
+    str_detect(Variable, "Pods")~
+      "Follicles",
+    str_detect(Variable, "Julian_first")~
+      "Date of first follicle",
+    str_detect(Variable, "Peduncles")~
+      "Inflorescences",
+    
+    # Herbivores
+    str_detect(Variable, "Monarch")~
+      "Danaus plexippus abundance",
+    str_detect(Variable, "asclep")~
+      "Liriomyza asclepiadis abundance",
+    str_detect(Variable, "clivi")~
+      "Labidomera clivicollis abundance",
+    
+    # Growth
+    str_detect(Variable, "LDMC")~
+      "LDMC",
+    str_detect(Variable, "SLA")~
+      "SLA",
+    str_detect(Variable, "Total_Height_early")~
+      "Height before flowering",
+    str_detect(Variable, "Total_Height_late")~
+      "Height after flowering",
+    str_detect(Variable, "rel_gr")~
+      "Relative growth rate",
+    str_detect(Variable, "Ramets_early")~
+      "Ramets before flowering",
+    str_detect(Variable, "Ramets_late")~
+      "Ramets after flowering",
+    str_detect(Variable, "Dead")~
+      "Mortality"
+    
+    
+    ))
+
+```
+
+#### Add Ns to table
+```{r}
+full_join(
+  anova_table_city %>%
+  dplyr::filter(Predictor == "Distance to City Center"),
+
+  anova_table_usc %>%
+  dplyr::filter(Predictor == "Urbanization Score")) %>%
+  
+  dplyr::rename("Chisq" = "Chi_sq") %>%
+  
+  pivot_wider(names_from = "Predictor", 
+              values_from = c(Chisq, p)) %>%
+  
+  dplyr::rename("Dist_Chisq" = 2,
+                "Usc_Chisq" = 3,
+                "Dist_p" = 4,
+                "Usc_p" = 5
+                ) %>%
+  dplyr::select(1,2,4,3,5) %>%
+  dplyr::full_join(.,
+                   obs_table %>%
+                     dplyr::select(-Model),
+                   by = "Variable")%>%
+  flextable() %>%
+  theme_box() %>%
+  flextable::bold(i = ~ Dist_p <= 0.05, j = 3) %>%
+  flextable::bold(i = ~ Usc_p <= 0.05, j = 5) %>%
+  ftExtra::separate_header() %>%
+  merge_v(j = ~Variable) %>% 
+  align(j = 2:7, align = "center", part = "body") %>%
+  merge_h(i = 1, part = "header") %>%
+  align(i = 2, align = "center", part = "header") %>%
+  align(i = 1, align = "left", part = "header") %>%
+  vline(j = 3, part = "all") %>%
+  hline(border = NULL, part = "body") %>%
+  flextable::compose(i = 2, j = c(2,4), part = "header",
+                     value = as_paragraph("χ", as_sup("2"))) %>%
+  flextable::compose(i = 1, j = 2, part = "header",
+                     value = as_paragraph("Distance")) %>%
+  flextable::compose(i = 1, j = 4, part = "header",
+                     value = as_paragraph("Urbanization Score")) %>%
+  flextable::compose(i = 1, j = 6, part = "header",
+                     value = as_paragraph("Individuals")) %>%
+  flextable::compose(i = 1, j = 7, part = "header",
+                     value = as_paragraph("Populations")) %>%
+  flextable::compose(i = 1, j = 1, part = "header",
+                     value = as_paragraph(" ")) %>%
+  padding(padding = 3) %>%
+  fix_border_issues(part = "all") %>%
+  autofit() %T>%
+  
+  flextable::save_as_docx(.,
+                          path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_DistAndUrbsc_Q1_with_Ns.docx"))
+
+```
+
 ### Export block effects separately
 ```{r}
 full_join(
@@ -303,7 +446,9 @@ anova_table_city2 <- all_1yr_mods_tr %>%
   lapply(., tidy_anova) %>%
 
 # STEP 4: merge all items
-  reduce(full_join, all = T) %>%
+  reduce(full_join
+      #   , all = T
+         )%>%
 
 # STEP 5: make flextable
   dplyr::rename(Variable = 1) %>%
@@ -371,8 +516,6 @@ anova_table_city2 <- all_1yr_mods_tr %>%
       "Ramets after flowering",
     str_detect(Variable, "Dead")~
       "Mortality"
-    
-    
     ))
 
 anova_table_city2 %>%
@@ -392,6 +535,143 @@ anova_table_city2 %>%
                           path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_Citydist_transects.docx"))
 ```
 
+#### Create 1-yr ANOVA table WITH df
+```{r}
+tidy_anova_with_df <- function(model){
+  type.choice <- ifelse(ID_intxn(model) > 0,
+                        3,
+                        2)
+  return(
+    car::Anova(model, type = type.choice) %>%
+      broom.mixed::tidy() %>%
+      as.data.frame() %>%
+      dplyr::mutate(Response = as.character(formula(model)[2]),
+                    .before = term) %>%
+      # dplyr::mutate(Model = paste(n(model)),
+      #               .before = term) %>%
+      dplyr::mutate(Sites = case_when(
+        str_detect(as.character(formula(model)[3]), "Transect_ID") == TRUE ~ "Urban Only",
+        str_detect(as.character(formula(model)[3]), "Transect_ID") == FALSE ~ "All"),
+        .before = term) %>%
+      dplyr::mutate(Significance = case_when(p.value < 0.001 ~ "***",
+                                             p.value < 0.01 ~ "**",
+                                             p.value <= 0.05 ~ "*")) %>%
+      # dplyr::mutate(., AIC = as.numeric(AIC(model))) %>%
+      mutate_if(is.numeric, round, 3)      %>%
+      dplyr::mutate(p.value = replace(p.value, Significance == "***", "<0.001"))  %>%
+     # dplyr::select(., -df) %>%
+      dplyr::rename(., Chi_sq = statistic,
+                    Predictor = term,
+                    p = p.value) %>%
+      unite("p", p:Significance, sep = "", na.rm = TRUE) %>%
+      dplyr::mutate_if(.,
+                       is.character,
+                       str_replace_all,
+                       pattern = c("City_dist"),
+                       replacement = c("Distance to City Center")) %>%
+      dplyr::mutate_if(.,
+                       is.character,
+                       str_replace_all,
+                       pattern = c("Urb_score"),
+                       replacement = c("Urbanization Score")) %>%
+      dplyr::mutate_if(.,
+                       is.character,
+                       str_replace_all,
+                       pattern = c("Transect_ID"),
+                       replacement = c("Subtransect")) %>%
+      dplyr::mutate_if(.,
+                       is.character,
+                       str_replace_all,
+                       pattern = c(":"),
+                       replacement = c(" x ")) %>%
+      dplyr::mutate_if(.,
+                       is.character,
+                       str_replace_all,
+                       pattern = c("Year x Urbanization Score"),
+                       replacement = c("Urbanization Score x Year"))
+  )}
+
+# STEP 3: perform tidy_anova on all list items (i.e., models)
+anova_table_city2_with_df <- all_1yr_mods_tr %>% 
+  lapply(., tidy_anova_with_df) %>%
+
+# STEP 4: merge all items
+  purrr::reduce(full_join
+       #  , all = T
+         ) %>%
+
+# STEP 5: make flextable
+  dplyr::rename(Variable = 1) %>%
+  dplyr::select(-Sites) %>% 
+  dplyr::mutate(Variable = case_when(
+    
+    # Defense
+    str_detect(Variable, "Latex")~
+      "Latex exudation",
+    str_detect(Variable, "Herbivory_mean_early_binary") ~
+      "Herbivory before flowering (binary)",
+    str_detect(Variable, "(Herbivory_mean_early)") ~
+                 "Herbivory before flowering (quantitative)",
+    str_detect(Variable, "Herbivory_mean_late_binary")~
+      "Herbivory after flowering (binary)",
+    str_detect(Variable, "(Herbivory_mean_late)")~
+      "Herbivory after flowering (quantitative)",
+    str_detect(Variable, "Scar_binary")~
+      "Weevil damage (binary)",
+    str_detect(Variable, "Scar_length_cm")~
+      "Weevil damage (quantitative)",
+    
+    # Reproduction
+    str_detect(Variable, "Flowered")~
+      "Flowering success",
+    str_detect(Variable, "mean_flower_c")~
+      "Flowers per Inflorescence",
+    str_detect(Variable, "Overall")~
+      "Flower size",
+    str_detect(Variable, "flowering_time")~
+      "Flowering duration",
+    str_detect(Variable, "Julian_oldest_inflor")~
+      "Date of first flower",
+    str_detect(Variable, "poll")~
+      "Pollinaria removed",
+    str_detect(Variable, "Pods")~
+      "Follicles",
+    str_detect(Variable, "Julian_first")~
+      "Date of first follicle",
+    str_detect(Variable, "Peduncles")~
+      "Inflorescences",
+    
+    # Herbivores
+    str_detect(Variable, "Monarch")~
+      "Danaus plexippus abundance",
+    str_detect(Variable, "asclep")~
+      "Liriomyza asclepiadis abundance",
+    str_detect(Variable, "clivi")~
+      "Labidomera clivicollis abundance",
+    
+    # Growth
+    str_detect(Variable, "LDMC")~
+      "LDMC",
+    str_detect(Variable, "SLA")~
+      "SLA",
+    str_detect(Variable, "Total_Height_early")~
+      "Height before flowering",
+    str_detect(Variable, "Total_Height_late")~
+      "Height after flowering",
+    str_detect(Variable, "rel_gr")~
+      "Relative growth rate",
+    str_detect(Variable, "Ramets_early")~
+      "Ramets before flowering",
+    str_detect(Variable, "Ramets_late")~
+      "Ramets after flowering",
+    str_detect(Variable, "Dead")~
+      "Mortality"
+    )) %>%
+  # remove Block effect
+  dplyr::filter(Predictor != "Block")
+```
+
+
 ### Urb_score
 #### Create 1-yr ANOVA table
 ```{r}
@@ -400,7 +680,9 @@ anova_table_usc2 <- all_1yr_mods.u_tr %>%
   lapply(., tidy_anova) %>%
 
 # STEP 4: merge all items
-  reduce(full_join, all = T) %>%
+  reduce(full_join
+       #  , all = T
+         ) %>%
 
 # STEP 5: make flextable
   dplyr::rename(Variable = 1) %>%
@@ -594,6 +876,144 @@ anova_table_usc2_simpler %>%
   
   flextable::save_as_docx(.,
                           path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_Urbsc_Q2.docx"))
+
+```
+
+### Repeat the above block AND add N(indivs) and N(pops)
+#### Get N and number of populations for each model
+```{r}
+obs_table2 <- map_dfr(all_1yr_mods_tr,
+                     ~ data.frame(
+                       indivs = summary(.x)$nobs,
+                       formula = toString(summary(.x)$call[2]),
+                       pops = toString(summary(.x)$ngrps$cond['Population'])
+                     )) %>%
+  dplyr::mutate(Model = row_number(),
+                Variable = str_extract(formula, "^[^~]+")) %>%
+  dplyr::select(Model,
+                Variable,
+                indivs,
+                pops) %>%
+    dplyr::mutate(Variable = case_when(
+    
+    # Defense
+    str_detect(Variable, "Latex")~
+      "Latex exudation",
+    str_detect(Variable, "Herbivory_mean_early_binary") ~
+      "Herbivory before flowering (binary)",
+    str_detect(Variable, "(Herbivory_mean_early)") ~
+                 "Herbivory before flowering (quantitative)",
+    str_detect(Variable, "Herbivory_mean_late_binary")~
+      "Herbivory after flowering (binary)",
+    str_detect(Variable, "(Herbivory_mean_late)")~
+      "Herbivory after flowering (quantitative)",
+    str_detect(Variable, "Scar_binary")~
+      "Weevil damage (binary)",
+    str_detect(Variable, "Scar_length_cm")~
+      "Weevil damage (quantitative)",
+    
+    # Reproduction
+    str_detect(Variable, "Flowered")~
+      "Flowering success",
+    str_detect(Variable, "mean_flower_c")~
+      "Flowers per Inflorescence",
+    str_detect(Variable, "Overall")~
+      "Flower size",
+    str_detect(Variable, "flowering_time")~
+      "Flowering duration",
+    str_detect(Variable, "Julian_oldest_inflor")~
+      "Date of first flower",
+    str_detect(Variable, "poll")~
+      "Pollinaria removed",
+    str_detect(Variable, "Pods")~
+      "Follicles",
+    str_detect(Variable, "Julian_first")~
+      "Date of first follicle",
+    str_detect(Variable, "Peduncles")~
+      "Inflorescences",
+    
+    # Herbivores
+    str_detect(Variable, "Monarch")~
+      "Danaus plexippus abundance",
+    str_detect(Variable, "asclep")~
+      "Liriomyza asclepiadis abundance",
+    str_detect(Variable, "clivi")~
+      "Labidomera clivicollis abundance",
+    
+    # Growth
+    str_detect(Variable, "LDMC")~
+      "LDMC",
+    str_detect(Variable, "SLA")~
+      "SLA",
+    str_detect(Variable, "Total_Height_early")~
+      "Height before flowering",
+    str_detect(Variable, "Total_Height_late")~
+      "Height after flowering",
+    str_detect(Variable, "rel_gr")~
+      "Relative growth rate",
+    str_detect(Variable, "Ramets_early")~
+      "Ramets before flowering",
+    str_detect(Variable, "Ramets_late")~
+      "Ramets after flowering",
+    str_detect(Variable, "Dead")~
+      "Mortality"
+    ))
+
+```
+
+#### Add Ns to table
+```{r}
+anova_table_city2_simpler %>%
+  dplyr::rename("Chisq" = "Chi_sq") %>%
+
+  pivot_wider(names_from = "Predictor", 
+              values_from = c(Chisq, p)) %>%
+  
+  dplyr::rename("dist_chisq" = 2,
+                "sub_chisq" = 3,
+                "intx_chisq" = 4,
+                "dist_p" = 5,
+                "sub_p" = 6,
+                "intx_p" = 7
+                ) %>%
+  dplyr::select(1,2,5,3,6,4,7) %>%
+
+  dplyr::full_join(.,
+                   obs_table2 %>%
+                     dplyr::select(-Model),
+                   by = "Variable")%>%
+  flextable() %>%
+  theme_box() %>%
+  flextable::bold(i = ~ dist_p <= 0.05, j = 3) %>%
+  flextable::bold(i = ~ sub_p <= 0.05, j = 5) %>%
+  flextable::bold(i = ~ intx_p <= 0.05, j = 7) %>%
+  ftExtra::separate_header() %>%
+  merge_v(j = ~Variable) %>% 
+  align(j = 2:9, align = "center", part = "all") %>%
+  merge_h(i = 1, part = "header") %>%
+  align(i = 2, align = "center", part = "header") %>%
+  align(i = 1, align = "left", part = "header") %>%
+  vline(j = c(3, 5, 7), part = "all") %>%
+  hline(border = NULL, part = "body") %>%
+  flextable::compose(i = 2, j = c(2,4,6), part = "header",
+                     value = as_paragraph("χ", as_sup("2"))) %>%
+  flextable::compose(i = 1, j = 2, part = "header",
+                     value = as_paragraph("Distance")) %>%
+  flextable::compose(i = 1, j = 4, part = "header",
+                     value = as_paragraph("Subtransect")) %>% 
+  flextable::compose(i = 1, j = 6, part = "header",
+                     value = as_paragraph("D x S")) %>%
+  flextable::compose(i = 1, j = 1, part = "header",
+                     value = as_paragraph(" ")) %>%
+  flextable::compose(i = 1, j = 8, part = "header",
+                     value = as_paragraph("Individuals")) %>%
+  flextable::compose(i = 1, j = 9, part = "header",
+                     value = as_paragraph("Populations")) %>%
+  padding(padding = 3) %>%
+  fix_border_issues(part = "all") %>%
+  autofit() %T>%
+  flextable::save_as_docx(.,
+                          path = here::here("./Figures_Tables/ANOVA_1yr/ANOVA_1yr_Dist_Q2_with_Ns.docx"))
 
 ```
 
