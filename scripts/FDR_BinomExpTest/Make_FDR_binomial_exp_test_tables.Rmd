@@ -328,11 +328,11 @@ make_FDR_table <- function(p_val_df){
     
     # cardenolides
     str_detect(Variable, "6.6")~
-      "Cardenolide peak 6.6",
+      "Glycosylated Aspecioside",
     str_detect(Variable, "Total")~
       "Total cardenolides",
     str_detect(Variable, "15")~
-      "Cardenolide peak 15",
+      "Labriformin",
     str_detect(Variable, "17.6")~
       "Cardenolide peak 17.6",
     
@@ -427,7 +427,7 @@ FDR_tab4 <- make_FDR_table(all_pvalues_Q2_u)
   body_add_par(word_export, value = "Urban populations & Urbanization = Urbanization Score", style = "heading 1")
   body_add_flextable(word_export, (FDR_tab4))
 
-  print(word_export, here::here("./Figures_Tables/False_discovery_rate/FDR_p_all.docx"))
+  print(word_export, here::here("./Figures_Tables/False_discovery_rate/TEST.docx"))
 ```
 
 # Perform binomial expansion test
