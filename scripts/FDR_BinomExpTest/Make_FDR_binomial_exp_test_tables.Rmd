@@ -329,7 +329,7 @@ make_FDR_table <- function(p_val_df){
     # cardenolides
     str_detect(Variable, "6.6")~
       "Glycosylated Aspecioside",
-    str_detect(Variable, "Total")~
+    str_detect(Variable, "cardenolide_Total")~
       "Total cardenolides",
     str_detect(Variable, "15")~
       "Labriformin",
@@ -405,6 +405,7 @@ FDR_tab4 <- make_FDR_table(all_pvalues_Q2_u)
 ```
 
 ### Export to word
+#### Original order
 ```{r}
 
  word_export <- read_docx()
@@ -427,7 +428,33 @@ FDR_tab4 <- make_FDR_table(all_pvalues_Q2_u)
   body_add_par(word_export, value = "Urban populations & Urbanization = Urbanization Score", style = "heading 1")
   body_add_flextable(word_export, (FDR_tab4))
 
-  print(word_export, here::here("./Figures_Tables/False_discovery_rate/TEST.docx"))
+  print(word_export, here::here("./Figures_Tables/False_discovery_rate/FDR_p_all.docx"))
+```
+
+#### New order, because now the updated Officer package has a bug and prints these in the reverse order
+```{r}
+
+ word_export <- read_docx()
+  
+  body_add_flextable(word_export, (FDR_tab4))
+  body_add_par(word_export, value = "Urban populations & Urbanization = Urbanization Score", style = "heading 1")
+  
+  body_add_break(word_export)
+  
+  body_add_flextable(word_export, (FDR_tab3))
+  body_add_par(word_export, value = "Urban populations & Urbanization = Distance from City Center", style = "heading 1")
+  
+  body_add_break(word_export)
+
+  body_add_flextable(word_export, (FDR_tab2))
+  body_add_par(word_export, value = "All populations & Urbanization = Urbanization Score", style = "heading 1")
+  
+  body_add_break(word_export)
+
+  body_add_flextable(word_export, (FDR_tab1))
+  body_add_par(word_export, value = "All populations & Urbanization = Distance from City Center", style = "heading 1")
+
+  print(word_export, here::here("./Figures_Tables/False_discovery_rate/FDR_p_all.docx"))
 ```
 
 # Perform binomial expansion test

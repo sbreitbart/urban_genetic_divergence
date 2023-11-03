@@ -41,7 +41,7 @@ ggplot(urbs,
              shape = 21) +
   xlim(0, NA) +
   ylim(-5, 5) +
-  xlab("Distance to City Center (km)") +
+  xlab("Distance to Urban Center (km)") +
   ylab("Urbanization Score") +
   theme_pubr() +
 # adding stats from ANOVA
