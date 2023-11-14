@@ -2,12 +2,12 @@
 
 # Urbanization and a green corridor do not impact genetic divergence in common milkweed (*Asclepias syriaca*)
 
-## Scientific Reports
+## Journal: Scientific Reports
 
 ## [Sophie Breitbart](https://sbreitbart.github.io/), [Anurag Agrawal](https://agrawal.eeb.cornell.edu/), [Helene Wagner](https://sites.utm.utoronto.ca/wagnerlab/), [Marc Johnson](https://evoecolab.wordpress.com/)
 
 ## Abstract
-
+Urbanization is altering landscapes globally at an unprecedented rate. While ecological differences between urban and rural environments often promote phenotypic divergence among populations, it is unclear to what degree these trait differences arise from genetic divergence as opposed to phenotypic plasticity. Furthermore, little is known about how specific landscape elements, such as green corridors, impact genetic divergence in urban environments. We tested the hypotheses that: 1) urbanization, and 2) proximity to an urban green corridor influence genetic divergence in common milkweed (*Asclepias syriaca*) populations for phenotypic traits. Using seeds from 52 populations along three urban-to-rural subtransects in the Greater Toronto Area, Canada, one of which followed a green corridor, we grew ~1000 plants in a common garden setup and measured >20 ecologically-important traits associated with plant defense/damage, reproduction, and growth over four years. We found significant heritable variation for nine traits within common milkweed populations and weak phenotypic divergence among populations. However, neither urbanization nor an urban green corridor influenced genetic divergence in individual traits or multivariate phenotype. These findings contrast with the expanding literature demonstrating that urbanization promotes rapid evolutionary change and offer preliminary insights into the eco-evolutionary role of green corridors in urban environments.
 
 ## Using this code
 
