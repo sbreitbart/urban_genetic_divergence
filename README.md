@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/323734217.svg)](https://zenodo.org/doi/10.5281/zenodo.10145007)
+[add DOI for journal]
 
 # Urbanization and a green corridor do not impact genetic divergence in common milkweed (*Asclepias syriaca*)
 
