@@ -28,8 +28,7 @@ compar %>%
   padding(padding = 3) %>%
   autofit() %T>%
   
-# STEP 6: Export
+# Export
   flextable::save_as_docx(.,
                           path = here::here("./Figures_Tables/Comparing_ANOVA/ANOVA_comparison_table_reproducible.docx"))
 ```
-

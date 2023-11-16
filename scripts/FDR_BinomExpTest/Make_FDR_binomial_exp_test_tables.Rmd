@@ -40,11 +40,6 @@ card_df_u <- data_frame(
 ```
 
 # Control the false discovery rate
-The methods Holm, Hochberg, Hommel, and Bonferroni control the family-wise error rate.  These methods attempt to limit the probability of even one false discovery (a type I error, incorrectly rejecting the null hypothesis when there is no real effect), and so are all relatively strong (conservative).
-
-The methods BH (Benjamini–Hochberg, which is the same as FDR in R) and BY control the false discovery rate.  These methods attempt to control the expected proportion of false discoveries.
-
-(From this site: https://rcompanion.org/rcompanion/f_01.html)
 ## Extract p values where predictor = city_dist, then put into df
 ```{r}
 # Question 1-----
@@ -180,17 +175,13 @@ all_pvalues_Q2_u <- sapply(all_1yr_mods.u_tr,
 all_pvalues_Q1 %<>%
 
 # Perform p-value adjustment and add to df-----
-
-# Adjustment procedures that give strong control of the family-wise error rate are the Bonferroni, Holm, Hochberg, and Hommel procedures.
-
-# Adjustments that control for the false discovery rate, which is the expected proportion of false discoveries among the rejected hypotheses, are the Benjamini and Hochberg, and Benjamini, Hochberg, and Yekutieli procedures.
   dplyr::mutate(
     Bonferroni = p.adjust(
       p,
       method = "bonferroni"), # usually too conservative
     BH = p.adjust(
       p,
-      method = "BH"), # Benjamini-Hochberg procedure- what I want (tests for FDR)
+      method = "BH"), # Benjamini-Hochberg procedure
     Holm = p.adjust(
       p,
       method = "holm"),
@@ -202,7 +193,7 @@ all_pvalues_Q1 %<>%
       method = "hommel"),
     BY = p.adjust(
       p,
-      method = "BY")  # stands for Benjamini, Hochberg, and Yekutieli procedure- what I want (tests for FDR)
+      method = "BY")  # stands for Benjamini, Hochberg, and Yekutieli procedure
     )
 
 ```
@@ -213,17 +204,13 @@ all_pvalues_Q1 %<>%
 all_pvalues_Q1_u %<>%
 
 # Perform p-value adjustment and add to df-----
-
-# Adjustment procedures that give strong control of the family-wise error rate are the Bonferroni, Holm, Hochberg, and Hommel procedures.
-
-# Adjustments that control for the false discovery rate, which is the expected proportion of false discoveries among the rejected hypotheses, are the Benjamini and Hochberg, and Benjamini, Hochberg, and Yekutieli procedures.
   dplyr::mutate(
     Bonferroni = p.adjust(
       p,
       method = "bonferroni"), # usually too conservative
     BH = p.adjust(
       p,
-      method = "BH"), # Benjamini-Hochberg procedure- what I want (tests for FDR)
+      method = "BH"), # Benjamini-Hochberg procedure
     Holm = p.adjust(
       p,
       method = "holm"),
@@ -235,7 +222,7 @@ all_pvalues_Q1_u %<>%
       method = "hommel"),
     BY = p.adjust(
       p,
-      method = "BY")  # stands for Benjamini, Hochberg, and Yekutieli procedure- what I want (tests for FDR)
+      method = "BY")  # stands for Benjamini, Hochberg, and Yekutieli procedure
     )
 
 ```
@@ -251,7 +238,7 @@ all_pvalues_Q2 %<>%
       method = "bonferroni"), # usually too conservative
     BH = p.adjust(
       p,
-      method = "BH"), # Benjamini-Hochberg procedure- what I want (tests for FDR)
+      method = "BH"), # Benjamini-Hochberg procedure
     Holm = p.adjust(
       p,
       method = "holm"),
@@ -263,7 +250,7 @@ all_pvalues_Q2 %<>%
       method = "hommel"),
     BY = p.adjust(
       p,
-      method = "BY"))  # stands for Benjamini, Hochberg, and Yekutieli procedure- what I want (tests for FDR)
+      method = "BY"))  # stands for Benjamini, Hochberg, and Yekutieli procedure
 
 ```
 
@@ -277,7 +264,7 @@ all_pvalues_Q2_u %<>%
       method = "bonferroni"), # usually too conservative
     BH = p.adjust(
       p,
-      method = "BH"), # Benjamini-Hochberg procedure- what I want (tests for FDR)
+      method = "BH"), # Benjamini-Hochberg procedure
     Holm = p.adjust(
       p,
       method = "holm"),
@@ -289,7 +276,7 @@ all_pvalues_Q2_u %<>%
       method = "hommel"),
     BY = p.adjust(
       p,
-      method = "BY"))  # stands for Benjamini, Hochberg, and Yekutieli procedure- what I want (tests for FDR)
+      method = "BY"))  # stands for Benjamini, Hochberg, and Yekutieli procedure
 
 ```
 

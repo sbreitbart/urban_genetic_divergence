@@ -277,6 +277,7 @@ export_anovas(anovas_alt_u, "./Figures_Tables/ANOVA_multi_yr/Defense/all_anova_D
 ```{r}
 source(knitr::purl("scripts/Model_diagnostics/Model_diagnostics_Reproduc.Rmd", quiet=TRUE))
 ```
+
 ## Export all best / alt multi-year models in separate word docs
 ### Distance / best
 ```{r}

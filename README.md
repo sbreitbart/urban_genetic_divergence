@@ -13,7 +13,7 @@ Urbanization is altering landscapes globally at an unprecedented rate. While eco
 
 ### R script key
 
-* `functions.R`: Contains functions used in analyses.
+* `functions.R`: Contains functions used in analyses. Make sure the [`librarian` package](https://cran.r-project.org/web/packages/librarian/vignettes/intro-to-librarian.html) is installed before running this script.
 * `libraries.R`: Contains libraries used in analyses.
 
 ### Folder key
