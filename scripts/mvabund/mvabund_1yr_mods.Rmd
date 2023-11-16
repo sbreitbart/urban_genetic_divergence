@@ -890,8 +890,6 @@ plot(mvab_all_u ~ as.factor(all_traits_u$Urb_Rur),
 # THIS DOESN'T WORK B/C OF NEGATIVE VALUES
 
 
-
-
 mod1_u <- manylm(mvab_all_u ~ Urb_score*Transect_ID,
               data = all_traits_u)
 

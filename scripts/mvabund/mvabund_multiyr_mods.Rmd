@@ -368,13 +368,8 @@ boxplot(all_traits[, c(2, 6:35)],
         las = 2,
         main = "Abundance")
 
-# It looks like some traits are much more variable than others. It’s probably a good idea to check our mean-variance relationship then! We can do this using the meanvar.plot function:
+# Check our mean-variance relationship
 meanvar.plot(mvab_all)
-
-# the species with high means (on the x axis) also have high variances (y axis).
-# We can deal with this relationship by choosing a family of GLMs with an appropriate mean-variance assumption. The default family used by mvabund when fitting multivariate GLMs is negative binomial which assumes a quadratic mean-variance relationship and a log-linear relationship between the response variables and any continuous variables. In [the site's] example, we only have categorical variables so that one’s not too important. If you are unsure of these relationships, don’t worry, we can check our model fit later. [I have quantitative variables too]
-
-# There is a ‘quick and dirty’ built-in plotting function in the mvabund package that allows us to contrast transformed abundances to the predictor variables of our choice. To contrast abundances against urban-rural habitat, we would use:
 
 plot(mvab_all ~ as.factor(all_traits$Urb_Rur),
      cex.axis = 0.8,
@@ -386,9 +381,9 @@ plot(mvab_all ~ as.factor(all_traits$Urb_Rur),
 mod1 <- manylm(mvab_all ~ Urb_Rur,
               data = all_traits)
 
-# Before we examine the output, we need to check our model assumptions. We can use the plot function to generate a plot of residuals.
-
+# Check our model assumptions
 plot(mod1)
+
 # We can test the multivariate hypothesis of whether species composition varied across the habitats by using the anova function. This gives an analysis of deviance table where we use likelihood ratio tests and resampled p values to look for a significant effect of Habitat on the community data.
 
 anova(mod1)
@@ -430,31 +425,21 @@ boxplot(all_traits_u[, c(2, 6:35)],
         las = 2,
         main = "Abundance")
 
-# It looks like some traits are much more variable than others. It’s probably a good idea to check our mean-variance relationship then! We can do this using the meanvar.plot function:
 meanvar.plot(mvab_all_u)
-
-# the species with high means (on the x axis) also have high variances (y axis).
-# We can deal with this relationship by choosing a family of GLMs with an appropriate mean-variance assumption. The default family used by mvabund when fitting multivariate GLMs is negative binomial which assumes a quadratic mean-variance relationship and a log-linear relationship between the response variables and any continuous variables. In [the site's] example, we only have categorical variables so that one’s not too important. If you are unsure of these relationships, don’t worry, we can check our model fit later. [I have quantitative variables too]
-
-# There is a ‘quick and dirty’ built-in plotting function in the mvabund package that allows us to contrast transformed abundances to the predictor variables of our choice. To contrast abundances against urban-rural habitat, we would use:
 
 plot(mvab_all_u ~ as.factor(all_traits_u$Urb_Rur),
      cex.axis = 0.8,
      cex = 0.8)
 # THIS DOESN'T WORK B/C OF NEGATIVE VALUES
 
-# Let’s now contrast the species composition across urb/rural habitat type to see if the models support our observations.
-# The model syntax below fits our response variable (the mvabund object Herb_spp with the counts of 9 species) to the predictor variable Habitat (urban/rural classification).
 
 mod1_u <- manylm(mvab_all_u ~ Urb_Rur,
                data = all_traits_u)
 
-# Before we examine the output, we need to check our model assumptions. We can use the plot function to generate a plot of residuals.
-
+# Check our model assumptions
 plot(mod1_u)
 
-# We can test the multivariate hypothesis of whether species composition varied across the habitats by using the anova function. This gives an analysis of deviance table where we use likelihood ratio tests and resampled p values to look for a significant effect of Habitat on the community data.
-
+# anova
 anova(mod1_u)
 
 # We can see from this table that there is NOT an effect of Urban vs. rural habitat, meaning that the overall phenotype does not differ between the urban/rural classification of population they were sourced from.
@@ -869,7 +854,6 @@ boxplot(all_traits[, c(2, 6:30)],
         las = 2,
         main = "Abundance")
 
-# It looks like some traits are much more variable than others. It’s probably a good idea to check our mean-variance relationship then! We can do this using the meanvar.plot function:
 meanvar.plot(mvab_all)
 
 plot(mvab_all ~ as.factor(all_traits$Urb_Rur),
@@ -919,7 +903,6 @@ plot(mvab_all_u ~ as.factor(all_traits_u$Urb_Rur),
 mod1_u <- manylm(mvab_all_u ~ Urb_score*Transect_ID,
               data = all_traits_u)
 
-# Before we examine the output, we need to check our model assumptions. We can use the plot function to generate a plot of residuals.
 
 plot(mod1_u)
 

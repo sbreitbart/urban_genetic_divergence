@@ -1,9 +1,6 @@
 # Load libraries
 ```{r}
 source("libraries.R")
-library(GGally)
-library(corrplot)
-library(colorRamps)
 ```
 
 # Import data (multi-year models)
